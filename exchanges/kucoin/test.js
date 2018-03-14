@@ -4,13 +4,16 @@ const Exchange = require('./index');
 
 async function test(o) {
   const ex = new Exchange(o);
+  const now = new Date().getTime();
   // const ds = await ex.kline({
   //   symbol: 'ETH-BTC',
-  //   from: 'BTC',
-  //   to: 'ETH'
+  //   from: now - 1000 * 60 * 10000,
+  //   to: now,
+  //   resolution: 1,
+  //   limit: '100'
   // });
-  const ds = await ex.orders({
-    symbol: 'ETH-BTC'
+  const ds = await ex.coins({
+    coin: 'ETH'
   });
   console.log(ds, 'ds...');
 }

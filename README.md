@@ -1,10 +1,15 @@
 # exchanges
 ### 虚拟币交易所集成
 
-|     | kucoin    |  binance  | bitfinex  |
-| --------   | -----:  |   -----:  |  :----: |
-|  订单接口(orders) | ✅ |  |  |
-| 大盘接口() | |  |  |
-| tick数据(ticks) | ✅|  |  |
-| orderBook(orders) |✅ |  |  |
+| 名称 | 方法  |  kucoin  | binance | bitfinex |
+| --------   | -----:  |   -----:  |  :----: | --------   |
+| 订单表(orderBook) | orders | ✅ |  |  |
+| tick数据 | ticks | ✅ |  |  |
+| k线图 | kline | ✅ |  |  |
+| 币种信息(转账资费、最小转账等币种在交易所的相关信息) |coin | ✅ |  |  |
+| 所有币种信息 |coins | ✅ | |  |
+|  | | ✅ | |  |
+|  | | ✅ | |  |
+|  | | ✅ | |  |
+|  | | ✅ | |  |
 
