@@ -1,0 +1,10 @@
+node_modules
+coverage
+.idea
+npm-debug.log
+.DS_Store
+dist
+dbconfig1.js
+dump
+build
+static/src/libs

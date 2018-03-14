@@ -1,0 +1,25 @@
+{
+  "name": "exchanges",
+  "version": "1.0.0",
+  "description": "bitcoin exchanges",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhouningyi/exchanges.git"
+  },
+  "dependencies": {
+    "bcore": "^0.0.21",
+    "crypto": "^1.0.1",
+    "lodash": "^4.17.5",
+    "request": "^2.85.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-flow-vars": "^0.5.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.8.0"
+  }
+}
