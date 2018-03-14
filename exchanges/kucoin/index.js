@@ -4,18 +4,9 @@ const querystring = require('querystring');
 const request = require('request');
 const crypto = require('crypto');
 const _ = require('lodash');
+const Utils = require('./utils');
 
-const {floor} = Math;
-function _formatTime(o){
-  return {
-    ...o,
-    from: o.from ? floor(o.from / 1000) : null,
-    to: o.to ? floor(o.to / 1000) : null,
-    // from : 1507479171 - 1000 * 60,
-    // to: 1507479171
-  };
-}
-
+//
 const URL = 'https://api.kucoin.com';
 class Exchange extends Base {
   constructor(options) {
@@ -33,6 +24,9 @@ class Exchange extends Base {
   }
   async get(endpoint, params){
     return await this.request('GET', endpoint, params);
+  }
+  async post(endpoint, params){
+    return await this.request('POST', endpoint, params);
   }
   async request(method='GET', endpoint, params = {}) {
     const signed = this.apiKey && this.apiSecret;
@@ -66,17 +60,23 @@ class Exchange extends Base {
       });
     });
   }
-  //
+  //下订单
   async order(o={}) {
+    return await this.post(`order?symbol=${o.symbol}`, o);
+  }
+  async balances(o={}){
+    let ds = await this.get('account/balances', o);
+    ds = Utils.getFilteredBalances(ds);
+    return ds;
   }
   async coin(o={}){
-    return this.get('market/open/coin-info', o);
+    return await this.get('market/open/coin-info', o);
   }
   async coins(o){
-    return this.get('market/open/coins', o);
+    return await this.get('market/open/coins', o);
   }
   async kline(params = {}) {
-    params = _formatTime(params);
+    params = Utils.formatTime(params);
     let ds = await this.get('open/chart/history', params);
     const {l, h, c, o, v, t} = ds;
     return _.map(ds.l, (d, i) => {

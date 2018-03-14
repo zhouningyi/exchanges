@@ -12,8 +12,13 @@ async function test(o) {
   //   resolution: 1,
   //   limit: '100'
   // });
-  const ds = await ex.coins({
-    coin: 'ETH'
+  // const ds = await ex.order({
+  //   coin: 'ETH-BTC',
+  //   type: 'sell',
+  //   amount: 0.001
+  // });
+  const ds = await ex.balances({
+    // coin: 'ETH-BTC',
   });
   console.log(ds, 'ds...');
 }
