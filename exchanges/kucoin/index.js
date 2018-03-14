@@ -37,16 +37,15 @@ class Exchange extends Base {
   }
   async orders(o={}){
     const ds = await this.get('open/orders', o);
-    console.log(ds);
     const _map = d => ({
       price: d[0],
       amount: d[1],
       volume: d[2]
     });
     return {
-      sell: _.map(ds.SELL, _map),
-      buy: _.map(ds.BUY, _map)
-    }
+      sell: _.map(ds.SELL, _map),//SELL
+      buy: _.map(ds.BUY, _map),//BUY
+    };
   }
   async get(endpoint, params){
     return await this.request('GET', endpoint, params);

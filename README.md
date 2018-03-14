@@ -3,6 +3,8 @@
 
 |     | kucoin    |  binance  | bitfinex  |
 | --------   | -----:  |   -----:  |  :----: |
-|  订单接口(order) | ✅ | ✅ | ✅ |
-| 大盘接口() | ✅ | ✅ | ✅ |
+|  订单接口(orders) | ✅ |  |  |
+| 大盘接口() | |  |  |
+| tick数据(ticks) | ✅|  |  |
+| orderBook(orders) |✅ |  |  |
 
