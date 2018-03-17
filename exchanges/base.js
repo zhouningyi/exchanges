@@ -1,12 +1,13 @@
 // const Utils = require('./utils');
 const Event = require('bcore/event');
+const config = require('./../config');
 
 class exchange extends Event {
   constructor({apiKey, apiSecret}) {
     super();
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
-    this.proxy = 'http://127.0.0.1:1087';
+    this.proxy = config.proxy ? 'http://127.0.0.1:1087' : null;
   }
   async order() {
   }
