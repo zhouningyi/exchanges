@@ -14,10 +14,10 @@ async function test(o) {
   //   limit: 100
   // });
 
-  const ds = await ex.orderInfo({
-    pair: 'ETH-BTC',
-    orderid: '5aacfdd39dda15139bb4ddbb',
-    type: 'BUY',
+  const ds = await ex.prices({
+    // pair: 'ETH-BTC',
+    // orderid: '5aacfdd39dda15139bb4ddbb',
+    // type: 'BUY',
     // price: 	0.07278,
     // amount: 0.00005
   });

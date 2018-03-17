@@ -22,7 +22,24 @@ function getFilteredBalances(ds){
   });
 }
 
+function formatPrices(ds){
+  return _.map(ds, d => {
+    // return d;
+    // return [d.volValue, d.vol * d.sell];
+    return {
+      pair: d.symbol,
+      buy: d.buy,
+      sell: d.sell,
+      feeRate: d.feeRate,
+      trading: d.trading,
+      time: new Date(d.datetime),
+      volumeRight: d.volValue,
+      volume: d.vol
+    };
+  });
+}
+
 
 module.exports = {
-  formatTime, getFilteredBalances
+  formatTime, getFilteredBalances, formatPrices
 };

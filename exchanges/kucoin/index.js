@@ -60,7 +60,7 @@ class Exchange extends Base {
       request(o, (e, res, body) => {
         if (e) return reject(e);
         if (typeof body === 'string') body = JSON.parse(body);
-        const { error } = body;//body.msg 
+        const { error } = body;
         if (body.code === 'Forbidden') return reject(body.msg);
         if (body.code === 'ERROR') return reject(body.msg);
         if (error) return reject(error);
@@ -120,6 +120,10 @@ class Exchange extends Base {
   async ticks(){
     const ds = await this.get('open/tick', {});
     return ds;
+  }
+  async prices (){
+    const ds = await this.get('market/open/symbols', {});
+    return kUtils.formatPrices(ds);
   }
   async orders(o={}){
     const ds = await this.get('open/orders', o);
