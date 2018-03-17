@@ -1,5 +1,6 @@
 
 const morph = require('./morph');
+const Console = require('./console');
 
 // function filterByList(o, list){
 //   const result = {};
@@ -7,5 +8,5 @@ const morph = require('./morph');
 // }
 
 module.exports = {
-  ...morph
+  ...morph, ...Console
 };

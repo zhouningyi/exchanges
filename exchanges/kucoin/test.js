@@ -21,7 +21,7 @@ async function test(o) {
     // price: 	0.07278,
     // amount: 0.00005
   });
-  console.log(ds, 'ds...');
+  // console.log(ds, 'ds...');
 }
 
 test(config.kucoinZhou);
