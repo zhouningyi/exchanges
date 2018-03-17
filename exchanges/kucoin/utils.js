@@ -10,16 +10,18 @@ function formatTime(o){
 }
 
 function getFilteredBalances(ds){
-  return _.filter(ds, d => d.balance !== 0).map(d => {
+  ds = _.filter(ds, d => d.balance !== 0);
+  return _.map(ds, d => {
     return {
       balanceStr: d.balanceStr,
       balance: d.balance,
-      freezeBalance: d.freezeBalanceStr,
+      freezeBalanceStr: d.freezeBalanceStr,
       coin: d.coinType,
       freezeBalance: d.freezeBalance
     };
   });
 }
+
 
 module.exports = {
   formatTime, getFilteredBalances

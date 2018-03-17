@@ -6,7 +6,7 @@ class exchange extends Event {
     super();
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
-    // this.proxy = 'http://127.0.0.1:1087';
+    this.proxy = 'http://127.0.0.1:1087';
   }
   async order() {
   }

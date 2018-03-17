@@ -1,6 +1,7 @@
 
 const Exchange = require('./index');
 
+const config = require('./../../config');
 
 async function test(o) {
   const ex = new Exchange(o);
@@ -10,20 +11,17 @@ async function test(o) {
   //   from: now - 1000 * 60 * 10000,
   //   to: now,
   //   resolution: 1,
-  //   limit: '100'
+  //   limit: 100
   // });
-  // const ds = await ex.order({
-  //   coin: 'ETH-BTC',
-  //   type: 'sell',
-  //   amount: 0.001
-  // });
-  const ds = await ex.balances({
-    // coin: 'ETH-BTC',
+
+  const ds = await ex.orderInfo({
+    pair: 'ETH-BTC',
+    orderid: '5aacfdd39dda15139bb4ddbb',
+    type: 'BUY',
+    // price: 	0.07278,
+    // amount: 0.00005
   });
   console.log(ds, 'ds...');
 }
 
-test({
-  apiKey: "5a8733bf72455a83974f0f9a",
-  apiSecret: "70531b11-461f-4fef-95af-a98d619ba835"
-});
+test(config.kucoinZhou);
