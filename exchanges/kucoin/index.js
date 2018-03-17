@@ -35,9 +35,7 @@ class Exchange extends Base {
     const nonce = new Date().getTime();
     const qstr = Utils.getQueryString(params);
     const url = `${pth}?${qstr}`;
-    const formType = 'application/x-www-form-urlencoded';
-    const jsonType = 'application/json';
-    const cType = method === 'GET' ? formType : formType;
+    const cType = 'application/x-www-form-urlencoded';
     const o = {
       uri: url,
       proxy: this.proxy,
@@ -60,7 +58,7 @@ class Exchange extends Base {
   }
   // 下订单
   async order(o = {}) {
-    o.type = o.type.toUpperCase();
+    if (o.type) o.type = o.type.toUpperCase();
     return await this.post('order', o);
   }
   async activeOrders(o = {}) {
