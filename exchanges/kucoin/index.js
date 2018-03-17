@@ -1,6 +1,6 @@
 // const Utils = require('./utils');
 const Base = require('./../base');
-const request = require('request');
+const request = require('./../../utils/request');
 const crypto = require('crypto');
 const _ = require('lodash');
 const kUtils = require('./utils');
@@ -56,18 +56,12 @@ class Exchange extends Base {
         } : {})
       }
     };
-    return new Promise((resolve, reject) => {
-      request(o, (e, res, body) => {
-        if (e) return reject(e);
-        if (typeof body === 'string') body = JSON.parse(body);
-        const { error } = body;
-        if (body.code === 'Forbidden') return reject(body.msg);
-        if (body.code === 'ERROR') return reject(body.msg);
-        if (error) return reject(error);
-        if (body.data) return resolve(body.data);
-        resolve(body);
-      });
-    });
+    const body = await request(o);
+    const { error, msg, code } = body;
+    if (code === 'Forbidden') throw msg;
+    if (code === 'ERROR')  throw msg;
+    if (error) throw error;
+    return body.data;
   }
   //下订单
   async order(o={}) {
