@@ -3,7 +3,7 @@ const Event = require('bcore/event');
 const config = require('./../config');
 
 class exchange extends Event {
-  constructor({apiKey, apiSecret}) {
+  constructor({ apiKey, apiSecret }) {
     super();
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;

@@ -2,8 +2,8 @@
 ## 虚拟币交易所集成
 
 #### api比较
-| 名称 | 方法  | 支持 |参数 |  kucoin  | binance | bitfinex |
-| --------   | -----:  |-----:  |   -----:  |-----:  |  :----: | --------   |
+| 名称 | 方法  | 支持 |参数 |  kucoin  | [binance](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md) | bitfinex |
+| --------   | -----:  |-----:  |   :-----  |-----:  |  :----: | --------   |
 | 订单表(orderBook) | orders | ✅ ||  |  ||
 | tick数据 | ticks | ✅ |  |  |||
 | k线图 | kline | ✅ |  |  |可选范围 1m  3m  5m  15m  30m  1h  2h  4h  6h  8h  12h  1d  3d  1w  1M||
@@ -24,8 +24,14 @@
 |  |  |  | | |||
 |  |  |  | | |||
 
+#### 交易所比较
+
+
+
+
 
 #### 标准参数
+
 | 名称 | 含义  | 备注  |
 | --------   | -----:  | -----  |
 | coin | 币种 |  |
