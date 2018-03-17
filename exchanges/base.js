@@ -1,23 +1,25 @@
 // const Utils = require('./utils');
 const Event = require('bcore/event');
 const config = require('./../config');
+const deepmerge = require('deepmerge');
+
+const defaultOptions = {
+  timeout: 5000,
+};
 
 class exchange extends Event {
-  constructor({ apiKey, apiSecret }) {
+  constructor({ apiKey, apiSecret }, options = {}) {
     super();
+    this.options = deepmerge(defaultOptions, options);
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
     this.proxy = config.proxy ? 'http://127.0.0.1:1087' : null;
   }
-  async order() {
+  async get(endpoint, params) {
+    return await this.request('GET', endpoint, params, this.apiKey && this.apiSecret);
   }
-  getSignature(path, queryString, nonce) {
-    const strForSign = `${path}/${nonce}/${queryString}`;
-    const signatureStr = new Buffer(strForSign).toString('base64');
-    const signatureResult = crypto.createHmac('sha256', this._apiSecret)
-      .update(signatureStr)
-      .digest('hex');
-    return signatureResult;
+  async post(endpoint, params) {
+    return await this.request('POST', endpoint, params, this.apiKey && this.apiSecret);
   }
 }
 

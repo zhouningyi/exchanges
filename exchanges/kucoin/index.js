@@ -8,8 +8,8 @@ const Utils = require('./../../utils');
 //
 const URL = 'https://api.kucoin.com';
 class Exchange extends Base {
-  constructor(options) {
-    super(options);
+  constructor(o, options) {
+    super(o, options);
     this.url = URL;
     this.version = 'v1';
   }
@@ -20,12 +20,6 @@ class Exchange extends Base {
       .update(signatureStr)
       .digest('hex');
     return signatureResult;
-  }
-  async get(endpoint, params) {
-    return await this.request('GET', endpoint, params);
-  }
-  async post(endpoint, params, data) {
-    return await this.request('POST', endpoint, params);
   }
   async request(method = 'GET', endpoint, params = {}, data) {
     params = Utils.replace(params, { pair: 'symbol' });
@@ -54,7 +48,7 @@ class Exchange extends Base {
     if (code === 'Forbidden') throw msg;
     if (code === 'ERROR') throw msg;
     if (error) throw error;
-    return body.data;
+    return body.data || body;
   }
   // 下订单
   async order(o = {}) {
@@ -87,6 +81,10 @@ class Exchange extends Base {
   }
   async kline(params = {}) {
     params = kUtils.formatTime(params);
+    params = Utils.replace(params, {
+      startTime: 'from',
+      endTime: 'to',
+    });
     const ds = await this.get('open/chart/history', params);
     const { l, h, c, o, v, t } = ds;
     return _.map(ds.l, (d, i) => {

@@ -1,17 +1,17 @@
 const _ = require('lodash');
 
-const {floor} = Math;
-function formatTime(o){
+const { floor } = Math;
+function formatTime(o) {
   return {
     ...o,
-    from: o.from ? floor(o.from / 1000) : null,
-    to: o.to ? floor(o.to / 1000) : null,
+    startTime: o.startTime ? floor(o.startTime / 1000) : null,
+    endTime: o.endTime ? floor(o.endTime / 1000) : null,
   };
 }
 
-function getFilteredBalances(ds){
+function getFilteredBalances(ds) {
   ds = _.filter(ds, d => d.balance !== 0);
-  return _.map(ds, d => {
+  return _.map(ds, (d) => {
     return {
       balanceStr: d.balanceStr,
       balance: d.balance,
@@ -22,8 +22,8 @@ function getFilteredBalances(ds){
   });
 }
 
-function formatPrices(ds){
-  return _.map(ds, d => {
+function formatPrices(ds) {
+  return _.map(ds, (d) => {
     // return d;
     // return [d.volValue, d.vol * d.sell];
     return {
