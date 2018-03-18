@@ -15,6 +15,9 @@ class exchange extends Event {
     this.apiKey = apiKey;
     this.proxy = config.proxy ? 'http://127.0.0.1:1087' : null;
   }
+  async candlestick(o) { // 与kline意义一致
+    return await this.kline(o);
+  }
   async get(endpoint, params) {
     return await this.request('GET', endpoint, params, this.apiKey && this.apiSecret);
   }

@@ -53,13 +53,14 @@ class Exchange extends Base {
   // 下订单
   async order(o = {}) {
     if (o.type) o.type = o.type.toUpperCase();
+    o = Utils.replace(o, { side: 'type' });
     return await this.post('order', o);
   }
   async activeOrders(o = {}) {
     return await this.get('order/active', o);
   }
   async orderInfo(o) {
-    o = Utils.replace(o, { orderid: 'orderOid' });
+    o = Utils.replace(o, { orderId: 'orderOid' });
     return await this.get('order/detail', o);
   }
   async balances(o = {}) {
@@ -104,7 +105,7 @@ class Exchange extends Base {
   }
   async ticks() {
     const ds = await this.get('open/tick', {});
-    return ds;
+    return kUtils.formatTicks(ds);
   }
   async prices() {
     const ds = await this.get('market/open/symbols', {});

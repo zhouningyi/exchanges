@@ -15,31 +15,35 @@ function getFilteredBalances(ds) {
     return {
       balanceStr: d.balanceStr,
       balance: d.balance,
-      freezeBalanceStr: d.freezeBalanceStr,
       coin: d.coinType,
-      freezeBalance: d.freezeBalance
+      lockedBalanceStr: d.freezeBalanceStr,
+      lockedBalance: d.freezeBalance
     };
   });
 }
 
+
+function _map(d) {
+  return {
+    pair: d.symbol,
+    buy: d.buy,
+    sell: d.sell,
+    feeRate: d.feeRate,
+    trading: d.trading,
+    time: new Date(d.datetime),
+    volumeRight: d.volValue,
+    volume: d.vol
+  };
+}
+
 function formatPrices(ds) {
-  return _.map(ds, (d) => {
-    // return d;
-    // return [d.volValue, d.vol * d.sell];
-    return {
-      pair: d.symbol,
-      buy: d.buy,
-      sell: d.sell,
-      feeRate: d.feeRate,
-      trading: d.trading,
-      time: new Date(d.datetime),
-      volumeRight: d.volValue,
-      volume: d.vol
-    };
-  });
+  return _.map(ds, _map);
+}
+function formatTicks(ds) {
+  return _.map(ds, _map);
 }
 
 
 module.exports = {
-  formatTime, getFilteredBalances, formatPrices
+  formatTime, getFilteredBalances, formatPrices, formatTicks
 };
