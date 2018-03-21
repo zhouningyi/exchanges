@@ -21,7 +21,7 @@ class Exchange extends Base {
     const qstr = `${Utils.getQueryString({ ...params, api_key: this.apiKey })}&secret_key=${this.apiSecret}`;
     return md5(qstr).toUpperCase();
   }
-  async tick(o = {}) {
+  async ticks(o = {}) {
     const ds = await this.get('ticker', o);
     return kUtils.formatTick(ds);
   }
