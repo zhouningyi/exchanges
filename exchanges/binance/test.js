@@ -6,8 +6,8 @@ const config = require('./../../config');
 async function test(o) {
   const ex = new Exchange(o);
   const now = new Date().getTime();
-  const ds = await ex.depth({
-    pair: 'ETH-BTC',
+  const ds = await ex.balances({
+    // pair: 'ETH-BTC',
     // startTime: now - 1000 * 60 * 10000,
     // endTime: now,
     // interval: '1m',

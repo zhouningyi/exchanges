@@ -18,11 +18,11 @@ class exchange extends Event {
   async candlestick(o) { // 与kline意义一致
     return await this.kline(o);
   }
-  async get(endpoint, params) {
-    return await this.request('GET', endpoint, params, this.apiKey && this.apiSecret);
+  async get(endpoint, params, isSign) {
+    return await this.request('GET', endpoint, params, isSign);
   }
-  async post(endpoint, params) {
-    return await this.request('POST', endpoint, params, this.apiKey && this.apiSecret);
+  async post(endpoint, params, isSign) {
+    return await this.request('POST', endpoint, params, isSign);
   }
 }
 
