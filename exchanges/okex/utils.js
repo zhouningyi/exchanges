@@ -46,7 +46,7 @@ function formatOrderBook(ds) {
       price: d.price,
       volume: d.amount,
       side: d.type.toUpperCase(),
-      order_id: d.tid,
+      orderId: d.tid,
     };
   });
 }
@@ -96,7 +96,10 @@ function formatOrderResult(ds) {
     };
   }
   throw ds;
-  return null;
+  // return null;
+}
+
+function formatKline() {
 }
 
 // function _formatDepth(ds) {
@@ -115,5 +118,12 @@ function formatOrderResult(ds) {
 //   };
 // }
 module.exports = {
-  formatPair, formatTick, formatDepth, formatOrderBook, formatBalances, formatOrder, formatOrderResult
+  formatPair,
+  formatTick,
+  formatDepth,
+  formatOrderBook,
+  formatBalances,
+  formatOrder,
+  formatOrderResult,
+  formatKline
 };

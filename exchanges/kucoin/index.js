@@ -47,6 +47,7 @@ class Exchange extends Base {
     const { error, msg, code } = body;
     if (code === 'Forbidden') throw msg;
     if (code === 'ERROR') throw msg;
+    if (code === 'UNAUTH') throw msg;
     if (error) throw error;
     return body.data || body;
   }
@@ -111,7 +112,7 @@ class Exchange extends Base {
     const ds = await this.get('market/open/symbols', {});
     return kUtils.formatPrices(ds);
   }
-  async orders(o = {}) {
+  async orderBook(o = {}) {
     const ds = await this.get('open/orders', o);
     const _map = d => ({
       price: d[0],

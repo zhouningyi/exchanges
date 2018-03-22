@@ -4,5 +4,10 @@ const Binance = require('./exchanges/binance');
 const Kucoin = require('./exchanges/kucoin');
 
 module.exports = {
-  Okex, Binance, Kucoin
+  Binance,
+  Kucoin,
+  Okex,
+  binance: Binance,
+  kucoin: Kucoin,
+  okex: Okex,
 };
