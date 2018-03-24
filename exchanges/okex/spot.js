@@ -75,7 +75,7 @@ class Exchange extends Base {
     };
     // console.log(o, 'o...');
     const body = await request(o);
-    console.log(body, 'body...');
+    // console.log(body, 'body...');
     const { error_code } = body;
     if (error_code) {
       throw error.getErrorFromCode(error_code);

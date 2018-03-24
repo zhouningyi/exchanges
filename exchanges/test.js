@@ -77,5 +77,5 @@ async function test(exNames, tasks) {
 }
 
 
-// test(spotList, spotTasks);
-test(futureList, futureTasks);
+test(spotList, spotTasks);
+// test(futureList, futureTasks);
