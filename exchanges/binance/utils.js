@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const Utils = require('./../../utils');
+const META = require('./meta');
 
 const { floor } = Math;
 
@@ -11,7 +12,6 @@ function formatPair(params) {
   if (params.symbol) params.symbol = params.symbol.replace('-', '');
   return params;
 }
-
 
 function formatKline(ds) {
   return _.map(ds, (d) => {

@@ -19,24 +19,30 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-const spotList = ['binance', 'okex'];
+const spotList = ['binance'];// , 'okex'
 const spotTasks = [{
-  fn: 'ticks',
-  params: { pair: 'ETH-BTC' },
-  name: 'ticks数据'
-}, {
-  fn: 'balances',
+  fn: 'pairs',
   params: {},
-  name: '账户余额'
-}, {
-  fn: 'depth',
-  params: { pair: 'ETH-BTC' },
-  name: '深度'
-}, {
-  fn: 'orderBook',
-  params: { pair: 'ETH-BTC' },
-  name: 'orderBook数据'
-}];
+  name: '交易对信息'
+},
+// {
+//   fn: 'ticks',
+//   params: { pair: 'ETH-BTC' },
+//   name: 'ticks数据'
+// }, {
+//   fn: 'balances',
+//   params: {},
+//   name: '账户余额'
+// }, {
+//   fn: 'depth',
+//   params: { pair: 'ETH-BTC' },
+//   name: '深度'
+// }, {
+//   fn: 'orderBook',
+//   params: { pair: 'ETH-BTC' },
+//   name: 'orderBook数据'
+// }
+];
 
 const futureList = ['okex'];
 const futureTasks = [

@@ -22,7 +22,6 @@ function getFilteredBalances(ds) {
   });
 }
 
-
 function _map(d) {
   return {
     pair: d.symbol,
@@ -37,12 +36,11 @@ function _map(d) {
 }
 
 function formatPrices(ds) {
-  return _.map(ds, _map);
+  return _.map(ds, _map).filter(d => d.trading);
 }
 function formatTicks(ds) {
-  return _.map(ds, _map);
+  return _.map(ds, _map).filter(d => d.trading);
 }
-
 
 module.exports = {
   formatTime, getFilteredBalances, formatPrices, formatTicks
