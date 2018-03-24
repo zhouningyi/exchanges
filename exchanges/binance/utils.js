@@ -12,7 +12,6 @@ function formatPair(params) {
   return params;
 }
 
-
 function formatKline(ds) {
   return _.map(ds, (d) => {
     return {

@@ -47,6 +47,7 @@ class Exchange extends Base {
   // }
   async pairs(o = {}) {
     const ds = await this.get('v1/exchangeInfo', o);
+    console.log(ds);
     return tUtils.formatPairs(_.get(ds, 'symbols'));
   }
   async orderBook(o = {}) {
