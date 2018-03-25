@@ -44,8 +44,9 @@ class Exchange extends Base {
     return tUtils.formatTicks(ds);
   }
   async order(o) {
-    o = tUtils.formatOrderO(o);
-    const ds = await this.post('v3/order', o, true, true);
+    const opt = tUtils.formatOrderO(o);
+    Utils.print(`${opt.side} - ${o.pair} - ${opt.quantity}`, 'red');
+    const ds = await this.post('v3/order', opt, true, true);
     return ds;
   }
   async fastOrder(o) {
@@ -70,9 +71,13 @@ class Exchange extends Base {
     const ds = await this.delete('v3/order', o, true, true);
     return ds;
   }
-  // async activeOrders(o = {}) {
-  //   return await this.get('v3/openOrders', o, true);
-  // }
+  async activeOrders(o = {}) {
+    const ds = await this.get('v3/openOrders', o, true, true);
+    return ds;
+  }
+  async cancelActiveOrders(o = {}) {
+    const { timeInterval } = o;
+  }
   async pairs(o = {}) {
     const ds = await this.get('v1/exchangeInfo', o);
     return tUtils.formatPairs(_.get(ds, 'symbols'));
@@ -131,7 +136,7 @@ class Exchange extends Base {
       if (error) throw error;
       return body.data || body;
     } catch (e) {
-      console.log(e.stack);
+      if (e.stack) console.log(e.stack);
       return null;
     }
   }

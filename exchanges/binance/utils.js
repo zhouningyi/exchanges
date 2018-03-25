@@ -107,13 +107,11 @@ function formatQuatity(amount, symbol) {
   }
   const { filters } = d;
   const LOT_SIZE = _.filter(filters, f => f.filterType === 'LOT_SIZE')[0];
-  console.log('formatQuatity', LOT_SIZE);
   if (LOT_SIZE) {
     const stepSize = parseFloat(LOT_SIZE.stepSize, 10);
     amount = Math.floor(amount / stepSize) * stepSize;
     if (stepSize < 1) {
       const num = Math.round(Math.log10(1 / stepSize));
-      console.log(num, 'num....');
       return amount.toFixed(num);
     } else if (stepSize === 1) {
       return Math.floor(amount);
@@ -171,7 +169,6 @@ function formatOrderO(o) {
       timeInForce: 'GTC'
     } : {}),
   };
-  console.log(opt);
   return opt;
 }
 
