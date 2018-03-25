@@ -38,10 +38,13 @@ class Exchange extends Base {
   }
   async ticks(o = {}) {
     const ds = await this.get('v3/ticker/bookTicker', o);
-    return ds;
+    return tUtils.formatTicks(ds);
   }
-  // async order(o) {
-  // }
+  async order(o) {
+    o = tUtils.formatOrderO(o);
+    process.exit();
+    const ds = await this.post();
+  }
   // async activeOrders(o = {}) {
   //   return await this.get('v3/openOrders', o, true);
   // }
@@ -90,12 +93,16 @@ class Exchange extends Base {
     };
 
     // console.log(o);
-    const body = await request(o);
-    // console.log(body);
-    const { error, msg, code } = body;
-    if (code) throw msg;
-    if (error) throw error;
-    return body.data || body;
+    try {
+      const body = await request(o);
+      const { error, msg, code } = body;
+      if (code) throw msg;
+      if (error) throw error;
+      return body.data || body;
+    } catch (e) {
+      console.log(e.stack);
+      return null;
+    }
   }
 }
 

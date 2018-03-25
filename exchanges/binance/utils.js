@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Utils = require('./../../utils');
 const META = require('./meta');
 
+const { pairMap } = META;
 const { floor } = Math;
 
 // function _formatPair
@@ -14,6 +15,7 @@ function formatPair(params) {
 }
 
 function formatKline(ds) {
+  if (!ds) return null;
   return _.map(ds, (d) => {
     return {
       open_time: new Date(d[0]),
@@ -39,6 +41,7 @@ function _hasValue(d, key) {
 }
 
 function formatBalances(ds) {
+  if (!ds) return null;
   return _.filter(ds, (d) => {
     return _hasValue(d, 'locked') || _hasValue(d, 'free');
   }).map((d) => {
@@ -53,6 +56,7 @@ function formatBalances(ds) {
 }
 
 function formatPairs(ds) {
+  if (!ds) return null;
   return _.map(ds, (d) => {
     return {
       ...d,
@@ -62,6 +66,7 @@ function formatPairs(ds) {
 }
 
 function _formatDepth(ds) {
+  if (!ds) return null;
   return _.map(ds, (d) => {
     return {
       priceStr: d[0],
@@ -72,6 +77,30 @@ function _formatDepth(ds) {
   });
 }
 
+function formatPairName(name) {
+  if (!name) return null;
+  return pairMap[name];
+}
+
+function formatTicks(ds) {
+  if (!ds) return null;
+  return _.map(ds, (d) => {
+    const pair = formatPairName(d.symbol);
+    if (d.symbol === '123456') return;
+    if (!pair) {
+      console.log(`binance的币种${d.symbol} 无法翻译为标准symbol... 请联系开发者`);
+      return null;
+    }
+    return {
+      pair,
+      bidPrice: _parse(d.bidPrice),
+      bidVolume: _parse(d.bidQty),
+      askPrice: _parse(d.askPrice),
+      askVolume: _parse(d.askQty),
+    };
+  }).filter(d => d);
+}
+
 function formatDepth(ds) {
   return {
     time: new Date(ds.lastUpdateId * 1000),
@@ -79,6 +108,17 @@ function formatDepth(ds) {
     asks: _formatDepth(ds.asks),
   };
 }
+
+function formatOrderO(o) {
+  console.log(o);
+}
+
 module.exports = {
-  formatPair, formatKline, formatBalances, formatPairs, formatDepth
+  formatPair,
+  formatKline,
+  formatBalances,
+  formatPairs,
+  formatDepth,
+  formatTicks,
+  formatOrderO
 };

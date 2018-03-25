@@ -1,7 +1,6 @@
 
 
 const pairMap = {
-  123456: '123-456',
   ETHBTC: 'ETH-BTC',
   LTCBTC: 'LTC-BTC',
   BNBBTC: 'BNB-BTC',

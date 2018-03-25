@@ -25,13 +25,13 @@ function getFilteredBalances(ds) {
 function _map(d) {
   return {
     pair: d.symbol,
-    buy: d.buy,
-    sell: d.sell,
+    bidPrice: d.buy,
+    askPrice: d.sell,
     feeRate: d.feeRate,
     trading: d.trading,
     time: new Date(d.datetime),
-    volumeBuy: d.volValue,
-    volumeSell: d.vol
+    bidVolume: d.volValue,
+    askVolume: d.vol
   };
 }
 
