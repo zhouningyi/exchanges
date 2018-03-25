@@ -156,9 +156,9 @@ class Exchange extends Base {
       }
     };
     try {
-      console.log(o);
+      // console.log(o);
       const body = await request(o);
-      console.log(body);
+      // console.log(body);
       const { error, msg, code } = body;
       if (code === 'Forbidden') throw msg;
       if (code === 'ERROR') throw msg;

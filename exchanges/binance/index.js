@@ -49,6 +49,7 @@ class Exchange extends Base {
   async fastOrder(o) {
     const waitTime = 200;
     const ds = await this.order(o);
+    if (!ds) return;
     if (ds.status === 'NEW') {
       await Utils.delay(waitTime);
       await this.cancelOrder({
@@ -61,7 +62,6 @@ class Exchange extends Base {
   async cancelOrder(o) {
     o = tUtils.formatCancelOrderO(o);
     const ds = await this.delete('v3/order', o, true, true);
-    console.log(ds, 'ds');
     return ds;
   }
   // async activeOrders(o = {}) {
@@ -111,10 +111,13 @@ class Exchange extends Base {
       }
     };
 
-    console.log(o, 'o');
+    // console.log(o, 'o');
     try {
       const body = await request(o);
-      console.log(body, 'body');
+      if (url.indexOf('order') !== -1) {
+        console.log(body, 'body');
+        process.exit();
+      }
       const { error, msg, code } = body;
       if (code) {
         throw msg;

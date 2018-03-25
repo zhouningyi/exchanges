@@ -2,11 +2,13 @@
 const Event = require('bcore/event');
 // const config = require('./../config');
 const deepmerge = require('deepmerge');
+const argv = require('optimist').argv;
+
 
 const defaultOptions = {
   timeout: 5000,
 };
-const isProxy = true;
+const isProxy = !!argv.proxy;
 
 class exchange extends Event {
   constructor({ apiKey, apiSecret }, options = {}) {

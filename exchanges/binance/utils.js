@@ -83,6 +83,24 @@ function formatPairName(name) {
   if (!name) return null;
   return pairMap[name];
 }
+function formatQuatity(amount, symbol) {
+  const d = ds[symbol];
+  const { filter } = d;
+  const LOT_SIZE = _.filter(filter, f => f.filterType === 'LOT_SIZE')[0];
+  if (LOT_SIZE) {
+    const stepSize = parseFloat(LOT_SIZE.stepSize, 10);
+    amount = Math.floor(amount / stepSize) * stepSize;
+    if (stepSize < 1) {
+      const num = Math.round(Math.log10(1 / stepSize));
+      return amount.toFixed(num);
+    } else if (stepSize === 1) {
+      return Math.floor(amount);
+    }
+  } else {
+    const q = amount.toFixed(3);
+    if (q === '0.000') return `${amount.toFixed(8)}`;
+  }
+}
 
 function formatTicks(ds) {
   if (!ds) return null;
@@ -119,8 +137,10 @@ function formatCancelOrderO(o) {
   };
 }
 function formatOrderO(o) {
+  const symbol = formatPairString(o.pair);
+  const quantity = formatQuatity(o.quantity, symbol);
   return {
-    symbol: formatPairString(o.pair),
+    symbol,
     quantity: +(o.amount),
     side: o.side,
     type: o.type || 'LIMIT',
