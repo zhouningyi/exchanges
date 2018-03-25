@@ -172,6 +172,15 @@ function formatOrderO(o) {
   return opt;
 }
 
+function formatActiveOrders(ds) {
+  return _.map(ds, (d) => {
+    return {
+      ...d,
+      pair: formatPairName(d.symbol)
+    };
+  });
+}
+
 module.exports = {
   formatPair,
   formatKline,
@@ -181,5 +190,6 @@ module.exports = {
   formatTicks,
   //
   formatOrderO,
-  formatCancelOrderO
+  formatCancelOrderO,
+  formatActiveOrders
 };

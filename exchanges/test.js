@@ -32,17 +32,27 @@ const spotTasks = [
   //   },
   //   name: '交易'
   // },
+  // {
+  //   fn: 'fastOrder',
+  //   params: {
+  //     pair: 'ETH-BTC',
+  //     amount: 0.02,
+  //     price: 0.05,
+  //     side: 'BUY',
+  //     type: 'LIMIT'
+  //   },
+  //   name: '交易'
+  // },
   {
-    fn: 'fastOrder',
-    params: {
-      pair: 'ETH-BTC',
-      amount: 0.02,
-      price: 0.05,
-      side: 'BUY',
-      type: 'LIMIT'
-    },
-    name: '交易'
+    fn: 'cancelActiveOrders',
+    params: {},
+    name: '取消正在执行中的订单'
   },
+  // {
+  //   fn: 'activeOrders',
+  //   params: {},
+  //   name: '正在执行中的订单'
+  // },
   // {
   //   fn: 'orderInfo',
   //   params: {

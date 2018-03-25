@@ -73,10 +73,18 @@ class Exchange extends Base {
   }
   async activeOrders(o = {}) {
     const ds = await this.get('v3/openOrders', o, true, true);
-    return ds;
+    return tUtils.formatActiveOrders(ds);
   }
   async cancelActiveOrders(o = {}) {
-    const { timeInterval } = o;
+    const ds = await this.activeOrders();
+    await Promise.all(_.map(ds, async (d) => {
+      const opt = {
+        orderId: d.orderId,
+        pair: d.pair,
+        side: d.side
+      };
+      await this.cancelOrder(opt);
+    }));
   }
   async pairs(o = {}) {
     const ds = await this.get('v1/exchangeInfo', o);
