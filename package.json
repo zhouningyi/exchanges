@@ -14,6 +14,7 @@
     "deepmerge": "^2.1.0",
     "lodash": "^4.17.5",
     "md5": "^2.2.1",
+    "optimist": "^0.6.1",
     "request": "^2.85.0"
   },
   "devDependencies": {

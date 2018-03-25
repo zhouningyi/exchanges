@@ -5,6 +5,8 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const Utils = require('./../../utils');
 const tUtils = require('./utils');
+
+const { checkKey } = Utils;
 //
 const REST_URL = 'https://api.binance.com/api';
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node Binance API)';
@@ -47,19 +49,23 @@ class Exchange extends Base {
     return ds;
   }
   async fastOrder(o) {
+    checkKey(o, ['amount', 'side', 'pair']);
     const waitTime = 200;
     const ds = await this.order(o);
     if (!ds) return;
     if (ds.status === 'NEW') {
       await Utils.delay(waitTime);
       await this.cancelOrder({
-        orderId: ds.orderId
+        orderId: ds.orderId,
+        pair: o.pair,
+        side: o.side
       });
       return ds;
     }
     return ds;
   }
   async cancelOrder(o) {
+    checkKey(o, ['orderId', 'side']);
     o = tUtils.formatCancelOrderO(o);
     const ds = await this.delete('v3/order', o, true, true);
     return ds;
@@ -114,10 +120,10 @@ class Exchange extends Base {
     // console.log(o, 'o');
     try {
       const body = await request(o);
-      if (url.indexOf('order') !== -1) {
-        console.log(body, 'body');
-        process.exit();
-      }
+      // if (url.indexOf('order') !== -1) {
+      //   console.log(body, 'body');
+      //   process.exit();
+      // }
       const { error, msg, code } = body;
       if (code) {
         throw msg;

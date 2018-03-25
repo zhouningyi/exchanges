@@ -19,14 +19,14 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-const spotList = ['kucoin'];// , 'okex'
+const spotList = ['binance'];// , 'okex'
 const spotTasks = [
   // {
   //   fn: 'order',
   //   params: {
   //     pair: 'BTC-USDT',
   //     amount: 0.0012,
-  //     // price: 8155,
+  //     price: 7155,
   //     side: 'BUY',
   //     type: 'MARKET'
   //   },
@@ -36,10 +36,10 @@ const spotTasks = [
     fn: 'fastOrder',
     params: {
       pair: 'ETH-BTC',
-      amount: 0.0002,
+      amount: 0.02,
       price: 0.05,
       side: 'BUY',
-      type: 'MARKET'
+      type: 'LIMIT'
     },
     name: '交易'
   },

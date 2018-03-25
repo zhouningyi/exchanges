@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Utils = require('./../../utils');
 const META = require('./meta');
 
-const { pairMap } = META;
+const { pairMap, pairInfo } = META;
 const { floor } = Math;
 
 // function _formatPair
@@ -83,15 +83,37 @@ function formatPairName(name) {
   if (!name) return null;
   return pairMap[name];
 }
+
+function formatPrice(price, symbol) {
+  const d = pairInfo[symbol];
+  if (!d) {
+    console.log(`${symbol}的详细信息找不到...`);
+    process.exit();
+  }
+  const { filters } = d;
+  const PRICE_FILTER = _.filter(filters, f => f.filterType === 'PRICE_FILTER')[0];
+  if (!PRICE_FILTER) return `${parseFloat(price, 10).toFixed(6)}00`;
+  let { minPrice } = PRICE_FILTER;
+  minPrice = parseFloat(minPrice, 10);
+  const num = Math.round(Math.log10(1 / minPrice));
+  return parseFloat(price, 10).toFixed(num);
+}
+
 function formatQuatity(amount, symbol) {
-  const d = ds[symbol];
-  const { filter } = d;
-  const LOT_SIZE = _.filter(filter, f => f.filterType === 'LOT_SIZE')[0];
+  const d = pairInfo[symbol];
+  if (!d) {
+    console.log(`${symbol}的详细信息找不到...`);
+    process.exit();
+  }
+  const { filters } = d;
+  const LOT_SIZE = _.filter(filters, f => f.filterType === 'LOT_SIZE')[0];
+  console.log('formatQuatity', LOT_SIZE);
   if (LOT_SIZE) {
     const stepSize = parseFloat(LOT_SIZE.stepSize, 10);
     amount = Math.floor(amount / stepSize) * stepSize;
     if (stepSize < 1) {
       const num = Math.round(Math.log10(1 / stepSize));
+      console.log(num, 'num....');
       return amount.toFixed(num);
     } else if (stepSize === 1) {
       return Math.floor(amount);
@@ -138,18 +160,19 @@ function formatCancelOrderO(o) {
 }
 function formatOrderO(o) {
   const symbol = formatPairString(o.pair);
-  const quantity = formatQuatity(o.quantity, symbol);
-  return {
+  const quantity = formatQuatity(o.amount, symbol);
+  const opt = {
     symbol,
-    quantity: +(o.amount),
+    quantity,
     side: o.side,
     type: o.type || 'LIMIT',
     ...(o.price || o.type === 'LIMIT' ? {
-      price: o.price,
+      price: formatPrice(o.price, symbol),
       timeInForce: 'GTC'
     } : {}),
-
   };
+  console.log(opt);
+  return opt;
 }
 
 module.exports = {
