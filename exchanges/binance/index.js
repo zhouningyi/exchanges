@@ -45,8 +45,9 @@ class Exchange extends Base {
   }
   async order(o) {
     const opt = tUtils.formatOrderO(o);
-    Utils.print(`${opt.side} - ${o.pair} - ${opt.quantity}`, 'red');
     const ds = await this.post('v3/order', opt, true, true);
+    console.log(ds);
+    // Utils.print(`${opt.side} - ${o.pair} - ${ds.ex}`, 'red');
     return ds;
   }
   async fastOrder(o) {
@@ -133,12 +134,13 @@ class Exchange extends Base {
     // console.log(o, 'o');
     try {
       const body = await request(o);
-      // if (url.indexOf('order') !== -1) {
-      //   console.log(body, 'body');
-      //   process.exit();
-      // }
+      if (url.indexOf('order') !== -1) {
+        console.log(body, 'body');
+        // process.exit();
+      }
       const { error, msg, code } = body;
       if (code) {
+        console.log(msg);
         throw msg;
       }
       if (error) throw error;
