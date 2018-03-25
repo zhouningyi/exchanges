@@ -25,6 +25,9 @@ class exchange extends Event {
   async post(endpoint, params, isSign) {
     return await this.request('POST', endpoint, params, isSign);
   }
+  async delete(endpoint, params, isSign) {
+    return await this.request('DELETE', endpoint, params, isSign);
+  }
 }
 
 module.exports = exchange;

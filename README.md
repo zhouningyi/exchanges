@@ -12,8 +12,8 @@
 | 所有币种信息 | coins |  | | ✅ |||  |
 | 账户余额 | balances |  | | ✅ |||  |
 | 下单 | order |  | | ✅ |||  |
-| 订单详情 | orderInfo |  | | ✅ |||  |
-| 正在执行中的订单 | activeOrders |  | | ✅ |✅||  |
+| 订单详情 | orderInfo | side pair  orderId | pendingAmount  未完成数量dealAmount 完成数量 | ✅ |||  |
+| 正在执行中的订单 | activeOrders |  |  | ✅ |✅||  |
 | 测试连接 | ping | 无 | | |✅||  |
 | 服务器时间 | time | 无 | | |✅||  |
 | 交易对信息(偏静态) | pairs |  | | |✅||  |

@@ -5,6 +5,8 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
+
+const { checkKey } = Utils;
 //
 const URL = 'https://api.kucoin.com';
 class Exchange extends Base {
@@ -21,48 +23,55 @@ class Exchange extends Base {
       .digest('hex');
     return signatureResult;
   }
-  async request(method = 'GET', endpoint, params = {}, data) {
-    params = Utils.replace(params, { pair: 'symbol' });
-    const signed = this.apiKey && this.apiSecret;
-    const _path = `${this.version}/${endpoint}`;
-    const pth = `${this.url}/${_path}`;
-    const nonce = new Date().getTime();
-    const qstr = Utils.getQueryString(params);
-    const url = `${pth}?${qstr}`;
-    const cType = 'application/x-www-form-urlencoded';
-    const o = {
-      uri: url,
-      proxy: this.proxy,
-      method,
-      headers: {
-        'Content-Type': cType,
-        ...(signed ? {
-          'KC-API-KEY': this.apiKey,
-          'KC-API-NONCE': nonce,
-          'KC-API-SIGNATURE': this.getSignature(_path, qstr, nonce)
-        } : {})
-      }
-    };
-    const body = await request(o);
-    const { error, msg, code } = body;
-    if (code === 'Forbidden') throw msg;
-    if (code === 'ERROR') throw msg;
-    if (code === 'UNAUTH') throw msg;
-    if (error) throw error;
-    return body.data || body;
-  }
   // 下订单
   async order(o = {}) {
+    checkKey(o, ['pair', 'price', 'amount']);
     if (o.type) o.type = o.type.toUpperCase();
     o = Utils.replace(o, { side: 'type' });
-    return await this.post('order', o);
+    const ds = await this.post('order', o);
+    return ds ? { orderId: ds.orderOid } : null;
+  }
+  async fastOrder(o = {}) {
+    checkKey(o, ['amount', 'side', 'pair', 'price']);
+    const waitTime = 200;
+    const ds = await this.order(o);
+    await Utils.delay(waitTime);
+    if (!ds) return null;
+    const { orderId } = ds;
+    const orderInfo = await this.orderInfo({ orderId, pair: o.pair, side: o.side });
+    if (!orderInfo) return;
+    const { pendingAmount, dealAmount } = orderInfo;
+    if (pendingAmount === 0) return orderInfo;
+    await this.cancelOrder({
+      orderId, pair: o.pair, side: o.side
+    });
+    return { ...orderInfo, pendingAmount: 0, dealAmount };
   }
   async activeOrders(o = {}) {
     return await this.get('order/active', o);
   }
   async orderInfo(o) {
-    o = Utils.replace(o, { orderId: 'orderOid' });
-    return await this.get('order/detail', o);
+    checkKey(o, ['orderId', 'side', 'pair']);
+    const opt = Utils.replace(o, { orderId: 'orderOid', side: 'type' });
+    const ds = await this.get('order/detail', opt);
+    return ds ? {
+      orderId: o.orderId,
+      side: o.side,
+      dealAmount: ds.dealAmount,
+      pendingAmount: ds.pendingAmount,
+      create_time: new Date(ds.createdAt)
+    } : null;
+  }
+  async cancelOrder(o = {}) {
+    checkKey(o, ['orderId', 'side']);
+    const opt = Utils.replace(o, { orderId: 'orderOid', side: 'type' });
+    const ds = await this.post('cancel-order', opt);
+    return ds ? {
+      orderId: o.orderId,
+      side: o.side,
+      success: ds.success,
+      time: new Date(ds.timestamp)
+    } : null;
   }
   async balances(o = {}) {
     const defaultO = {
@@ -123,6 +132,43 @@ class Exchange extends Base {
       sell: _.map(ds.SELL, _map), // SELL
       buy: _.map(ds.BUY, _map), // BUY
     };
+  }
+  async request(method = 'GET', endpoint, params = {}, data) {
+    params = Utils.replace(params, { pair: 'symbol' });
+    const signed = this.apiKey && this.apiSecret;
+    const _path = `${this.version}/${endpoint}`;
+    const pth = `${this.url}/${_path}`;
+    const nonce = new Date().getTime();
+    const qstr = Utils.getQueryString(params);
+    const url = `${pth}?${qstr}`;
+    const cType = 'application/x-www-form-urlencoded';
+    const o = {
+      uri: url,
+      proxy: this.proxy,
+      method,
+      headers: {
+        'Content-Type': cType,
+        ...(signed ? {
+          'KC-API-KEY': this.apiKey,
+          'KC-API-NONCE': nonce,
+          'KC-API-SIGNATURE': this.getSignature(_path, qstr, nonce)
+        } : {})
+      }
+    };
+    try {
+      console.log(o);
+      const body = await request(o);
+      console.log(body);
+      const { error, msg, code } = body;
+      if (code === 'Forbidden') throw msg;
+      if (code === 'ERROR') throw msg;
+      if (code === 'UNAUTH') throw msg;
+      if (error) throw error;
+      return body.data || body;
+    } catch (e) {
+      console.log(e.stack);
+      return null;
+    }
   }
 }
 

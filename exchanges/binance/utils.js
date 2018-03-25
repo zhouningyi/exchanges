@@ -7,7 +7,9 @@ const { floor } = Math;
 
 // function _formatPair
 
-
+function formatPairString(pair) {
+  return pair.split('-').join('');
+}
 function formatPair(params) {
   params = Utils.replace(params, { pair: 'symbol' });
   if (params.symbol) params.symbol = params.symbol.replace('-', '');
@@ -109,8 +111,25 @@ function formatDepth(ds) {
   };
 }
 
+
+function formatCancelOrderO(o) {
+  return {
+    symbol: formatPairString(o.pair),
+    orderId: o.orderId
+  };
+}
 function formatOrderO(o) {
-  console.log(o);
+  return {
+    symbol: formatPairString(o.pair),
+    quantity: +(o.amount),
+    side: o.side,
+    type: o.type || 'LIMIT',
+    ...(o.price || o.type === 'LIMIT' ? {
+      price: o.price,
+      timeInForce: 'GTC'
+    } : {}),
+
+  };
 }
 
 module.exports = {
@@ -120,5 +139,7 @@ module.exports = {
   formatPairs,
   formatDepth,
   formatTicks,
-  formatOrderO
+  //
+  formatOrderO,
+  formatCancelOrderO
 };

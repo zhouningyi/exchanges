@@ -7,7 +7,7 @@ const config = require('./../config');
 async function extrude(ex, exName, d) {
   function print(ds, str) {
     const space = '========';
-    ds = JSON.stringify(ds, null, 2).substring(0, 400);
+    ds = (ds && typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
     console.log(ds, `${space}${exName}.${str}${space}`);
   }
   const fn = ex[d.fn];
@@ -19,12 +19,53 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-const spotList = ['binance'];// , 'okex'
-const spotTasks = [{
-  fn: 'pairs',
-  params: {},
-  name: '交易对信息'
-},
+const spotList = ['kucoin'];// , 'okex'
+const spotTasks = [
+  // {
+  //   fn: 'order',
+  //   params: {
+  //     pair: 'BTC-USDT',
+  //     amount: 0.0012,
+  //     // price: 8155,
+  //     side: 'BUY',
+  //     type: 'MARKET'
+  //   },
+  //   name: '交易'
+  // },
+  {
+    fn: 'fastOrder',
+    params: {
+      pair: 'ETH-BTC',
+      amount: 0.0002,
+      price: 0.05,
+      side: 'BUY',
+      type: 'MARKET'
+    },
+    name: '交易'
+  },
+  // {
+  //   fn: 'orderInfo',
+  //   params: {
+  //     pair: 'ETH-BTC',
+  //     orderId: '5ab781719dda152895660f43',
+  //     side: 'BUY'
+  //   },
+  //   name: '交易'
+  // },
+  // {
+  //   fn: 'cancelOrder',
+  //   params: {
+  //     pair: 'ETH-BTC',
+  //     side: 'BUY',
+  //     orderId: '5ab781719dda152895660f43'
+  //   },
+  //   name: '取消交易'
+  // },
+  // {
+  //   fn: 'pairs',
+  //   params: {},
+  //   name: '交易对信息'
+  // },
 // {
 //   fn: 'ticks',
 //   params: { pair: 'ETH-BTC' },
@@ -69,7 +110,7 @@ async function testOneExchange(exName, tasks) {
   const ex = new Exchange(config[keyName]);
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
-    console.log(`开始测试第【${i}】个任务${task.fn}(${task.name})......`);
+    console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
     await extrude(ex, exName, task);
   }
 }
@@ -77,7 +118,7 @@ async function testOneExchange(exName, tasks) {
 async function test(exNames, tasks) {
   for (let i = 0; i < exNames.length; i++) {
     const exName = exNames[i];
-    console.log(`开始测试交易所${exName}...`);
+    console.log(`测试交易所${exName}...`);
     await testOneExchange(exName, tasks);
   }
 }

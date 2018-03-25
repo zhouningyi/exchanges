@@ -9,6 +9,7 @@ const tUtils = require('./utils');
 const REST_URL = 'https://api.binance.com/api';
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node Binance API)';
 const CONTENT_TYPE = 'application/x-www-form-urlencoded';
+
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
@@ -42,8 +43,26 @@ class Exchange extends Base {
   }
   async order(o) {
     o = tUtils.formatOrderO(o);
-    process.exit();
-    const ds = await this.post();
+    const ds = await this.post('v3/order', o, true, true);
+    return ds;
+  }
+  async fastOrder(o) {
+    const waitTime = 200;
+    const ds = await this.order(o);
+    if (ds.status === 'NEW') {
+      await Utils.delay(waitTime);
+      await this.cancelOrder({
+        orderId: ds.orderId
+      });
+      return ds;
+    }
+    return ds;
+  }
+  async cancelOrder(o) {
+    o = tUtils.formatCancelOrderO(o);
+    const ds = await this.delete('v3/order', o, true, true);
+    console.log(ds, 'ds');
+    return ds;
   }
   // async activeOrders(o = {}) {
   //   return await this.get('v3/openOrders', o, true);
@@ -92,11 +111,14 @@ class Exchange extends Base {
       }
     };
 
-    // console.log(o);
+    console.log(o, 'o');
     try {
       const body = await request(o);
+      console.log(body, 'body');
       const { error, msg, code } = body;
-      if (code) throw msg;
+      if (code) {
+        throw msg;
+      }
       if (error) throw error;
       return body.data || body;
     } catch (e) {

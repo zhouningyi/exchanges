@@ -41,6 +41,7 @@ const error2code = {
   NO_SUCH_ORDER: -2013,
   BAD_API_KEY_FMT: -2014,
   REJECTED_MBX_KEY: -2015,
+  UNKNOWN_ORDER: -2011
 };
 const code2error = _.invert(error2code);
 function getErrorFromCode(msg) {
