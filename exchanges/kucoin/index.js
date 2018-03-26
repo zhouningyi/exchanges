@@ -27,7 +27,7 @@ class Exchange extends Base {
   async order(o = {}) {
     checkKey(o, ['pair', 'price', 'amount']);
     o = kUtils.formatOrderO(o);
-    Utils.print(`${o.side} - ${o.pair} - ${o.amount}`, 'red');
+    Utils.print(`${o.type} - ${o.pair} - ${o.amount}`, 'red');
     const ds = await this.post('order', o);
     return ds ? { orderId: ds.orderOid } : null;
   }
@@ -167,13 +167,14 @@ class Exchange extends Base {
     try {
       // console.log(o);
       const body = await request(o);
-      if (url.indexOf('order') !== -1) {
-        console.log(body);
-      }
+      // if (url.indexOf('order') !== -1) {
+      //   console.log(body);
+      // }
       const { error, msg, code } = body;
-      if (code === 'Forbidden') throw msg;
-      if (code === 'ERROR') throw msg;
-      if (code === 'UNAUTH') throw msg;
+      if (code !== 'OK') {
+        console.log(msg);
+        throw msg;
+      }
       if (error) throw error;
       return body.data || body;
     } catch (e) {
