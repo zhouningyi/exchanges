@@ -174,7 +174,7 @@ class Exchange extends Base {
       if (error) throw error;
       return body.data || body;
     } catch (e) {
-      console.log(e.stack);
+      console.log(e.message);
       return null;
     }
   }

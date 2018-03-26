@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const Utils = require('./../../utils');
-const META = require('./meta');
+const Utils = require('./../../../utils');
+const META = require('./../meta');
 
 const { pairMap, pairInfo } = META;
 const { floor } = Math;
@@ -141,6 +141,26 @@ function formatTicks(ds) {
   }).filter(d => d);
 }
 
+function formatTicksWS(ds) {
+  if (!ds) return null;
+  return _.map(ds, (d) => {
+    const pair = formatPairName(d.s);
+    if (d.symbol === '123456') return;
+    if (!pair) {
+      console.log(`binance的币种${d.symbol} 无法翻译为标准symbol... 请联系开发者`);
+      return null;
+    }
+    return {
+      pair,
+      bidPrice: _parse(d.b),
+      bidVolume: _parse(d.B),
+      askPrice: _parse(d.a),
+      askVolume: _parse(d.A),
+      price_change: _parse(d.p)
+    };
+  }).filter(d => d);
+}
+
 function formatDepth(ds) {
   return {
     time: new Date(ds.lastUpdateId * 1000),
@@ -188,6 +208,7 @@ module.exports = {
   formatPairs,
   formatDepth,
   formatTicks,
+  formatTicksWS,
   //
   formatOrderO,
   formatCancelOrderO,

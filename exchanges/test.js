@@ -134,5 +134,17 @@ async function test(exNames, tasks) {
 }
 
 
-test(spotList, spotTasks);
+function testOneExchangeWs(exName) {
+  const keyName = `${exName}Zhou`;
+  const Exchange = Exchanges[exName];
+  const ex = new Exchange(config[keyName]);
+  ex.wsTicks((ds) => {
+    console.log(ds);
+  });
+}
+
+testOneExchangeWs('binance');
+
+
+// test(spotList, spotTasks);
 // test(futureList, futureTasks);
