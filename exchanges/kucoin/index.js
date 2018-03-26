@@ -26,6 +26,7 @@ class Exchange extends Base {
   // 下订单
   async order(o = {}) {
     checkKey(o, ['pair', 'price', 'amount']);
+    Utils.print(`${o.side} - ${o.pair} - ${o.amount}`, 'red');
     if (o.type) o.type = o.type.toUpperCase();
     o = Utils.replace(o, { side: 'type' });
     const ds = await this.post('order', o);
@@ -163,7 +164,9 @@ class Exchange extends Base {
     try {
       // console.log(o);
       const body = await request(o);
-      // console.log(body);
+      if (url.indexOf('order') !== -1) {
+        console.log(body);
+      }
       const { error, msg, code } = body;
       if (code === 'Forbidden') throw msg;
       if (code === 'ERROR') throw msg;
