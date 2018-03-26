@@ -19,7 +19,7 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-const spotList = ['binance'];// , 'okex'
+const spotList = ['kucoin'];// , 'okex'
 const spotTasks = [
   // {
   //   fn: 'order',
@@ -44,7 +44,7 @@ const spotTasks = [
   //   name: '交易'
   // },
   {
-    fn: 'cancelActiveOrders',
+    fn: 'cancelAllOrders',
     params: {},
     name: '取消正在执行中的订单'
   },

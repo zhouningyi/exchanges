@@ -48,7 +48,12 @@ class Exchange extends Base {
     return { ...orderInfo, pendingAmount: 0, dealAmount };
   }
   async activeOrders(o = {}) {
-    return await this.get('order/active', o);
+    const ds = await this.get('order/active', o);
+    return ds;
+  }
+  async cancelAllOrders(o = {}) {
+    const ds = await this.post('order/cancel-all', {});
+    return ds;
   }
   async orderInfo(o) {
     checkKey(o, ['orderId', 'side', 'pair']);
@@ -140,7 +145,7 @@ class Exchange extends Base {
     const pth = `${this.url}/${_path}`;
     const nonce = new Date().getTime();
     const qstr = Utils.getQueryString(params);
-    const url = `${pth}?${qstr}`;
+    const url = qstr ? `${pth}?${qstr}` : pth;
     const cType = 'application/x-www-form-urlencoded';
     const o = {
       uri: url,
