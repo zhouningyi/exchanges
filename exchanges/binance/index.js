@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const Utils = require('./../../utils');
 const tUtils = require('./utils');
+const WebSocket = require('ws');
 
 const { checkKey } = Utils;
 //
