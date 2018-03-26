@@ -27,7 +27,8 @@ class Exchange extends Base {
   async order(o = {}) {
     checkKey(o, ['pair', 'price', 'amount']);
     o = kUtils.formatOrderO(o);
-    Utils.print(`${o.side} - ${o.pair} - ${o.amount}`, 'red');
+    // console.log(o, 'o..');
+    Utils.print(`${o.type} - ${o.pair} - ${o.amount}`, 'red');
     const ds = await this.post('order', o);
     return ds ? { orderId: ds.orderOid } : null;
   }
@@ -86,8 +87,12 @@ class Exchange extends Base {
     const defaultO = {
       limit: 20// 最多是20个
     };
-    let ds = await this.get('account/balances', { ...defaultO, ...o });
-    ds = kUtils.getFilteredBalances(ds.datas);
+    let dataAll = [];
+    await Promise.all(_.range(12).map(async (page) => {
+      const ds = await this.get('account/balances', { ...defaultO, ...o, page });
+      if (ds && ds.datas) dataAll = dataAll.concat(ds.datas);
+    }));
+    const ds = kUtils.getFilteredBalances(dataAll);
     return ds;
   }
   async coin(o = {}) {

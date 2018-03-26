@@ -77,20 +77,22 @@ const spotTasks = [
   //   params: {},
   //   name: '交易对信息'
   // },
-  {
-    fn: 'coins',
-    params: {},
-    name: '币信息'
-  },
+  // {
+  //   fn: 'coins',
+  //   params: {},
+  //   name: '币信息'
+  // },
 // {
 //   fn: 'ticks',
 //   params: { pair: 'ETH-BTC' },
 //   name: 'ticks数据'
-// }, {
-//   fn: 'balances',
-//   params: {},
-//   name: '账户余额'
-// }, {
+// },
+  {
+    fn: 'balances',
+    params: {},
+    name: '账户余额'
+  },
+//{
 //   fn: 'depth',
 //   params: { pair: 'ETH-BTC' },
 //   name: '深度'
@@ -138,7 +140,6 @@ async function test(exNames, tasks) {
     await testOneExchange(exName, tasks);
   }
 }
-
 
 function testOneExchangeWs(exName) {
   const keyName = `${exName}Zhou`;
