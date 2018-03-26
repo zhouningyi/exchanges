@@ -172,13 +172,14 @@ class Exchange extends Base {
     try {
       // console.log(o);
       const body = await request(o);
-      if (url.indexOf('order') !== -1) {
-        console.log(body);
-      }
+      // if (url.indexOf('order') !== -1) {
+      //   console.log(body);
+      // }
       const { error, msg, code } = body;
-      if (code === 'Forbidden') throw msg;
-      if (code === 'ERROR') throw msg;
-      if (code === 'UNAUTH') throw msg;
+      if (code !== 'OK') {
+        console.log(msg);
+        throw msg;
+      }
       if (error) throw error;
       return body.data || body;
     } catch (e) {
