@@ -86,8 +86,12 @@ class Exchange extends Base {
     const defaultO = {
       limit: 20// 最多是20个
     };
-    let ds = await this.get('account/balances', { ...defaultO, ...o });
-    ds = kUtils.getFilteredBalances(ds.datas);
+    let dataAll = [];
+    await Promise.all(_.range(12).map(async (page) => {
+      const ds = await this.get('account/balances', { ...defaultO, ...o, page });
+      dataAll = dataAll.concat(ds.datas);
+    }));
+    const ds = kUtils.getFilteredBalances(dataAll);
     return ds;
   }
   async coin(o = {}) {
@@ -178,7 +182,7 @@ class Exchange extends Base {
       if (error) throw error;
       return body.data || body;
     } catch (e) {
-      console.log(e.message);
+      if (e && e.message)console.log(e.message);
       return null;
     }
   }

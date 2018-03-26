@@ -170,7 +170,6 @@ function formatDepth(ds) {
   };
 }
 
-
 function formatCancelOrderO(o) {
   return {
     symbol: formatPairString(o.pair),
