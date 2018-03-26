@@ -27,6 +27,7 @@ class Exchange extends Base {
   async order(o = {}) {
     checkKey(o, ['pair', 'price', 'amount']);
     o = kUtils.formatOrderO(o);
+    // console.log(o, 'o..');
     Utils.print(`${o.type} - ${o.pair} - ${o.amount}`, 'red');
     const ds = await this.post('order', o);
     return ds ? { orderId: ds.orderOid } : null;
@@ -89,7 +90,7 @@ class Exchange extends Base {
     let dataAll = [];
     await Promise.all(_.range(12).map(async (page) => {
       const ds = await this.get('account/balances', { ...defaultO, ...o, page });
-      dataAll = dataAll.concat(ds.datas);
+      if (ds && ds.datas) dataAll = dataAll.concat(ds.datas);
     }));
     const ds = kUtils.getFilteredBalances(dataAll);
     return ds;
