@@ -10446,5 +10446,30 @@ const pairInfo = {
   }
 };
 
+// const wsMap = {
+//   e: 'eventType,
+//   E: 'eventTime,
+//   s: 'symbol,
+//   p: 'priceChange,
+//   P: 'percentChange',
+//   w: 'averagePrice',
+//   x: prevClose,
+//   c: close,
+//   Q: closeQty,
+//   b: bestBid,
+//   B: bestBidQty,
+//   a: bestAsk,
+//   A: bestAskQty,
+//   o: open,
+//   h: high,
+//   l: low,
+//   v: volume,
+//   q: quoteVolume,
+//   O: openTime,
+//   C: closeTime,
+//   F: firstTradeId,
+//   L: lastTradeId,
+//   n: numTrades };
+
 
 module.exports = { pairMap, pairInfo };

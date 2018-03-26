@@ -3,6 +3,8 @@ const _ = require('lodash');
 
 const morph = require('./morph');
 const Console = require('./console');
+const ws = require('./ws');
+
 
 function getQueryString(params, isEncode = false) {
   params = _.map(params, (value, key) => ({ value, key }));
@@ -32,5 +34,5 @@ function checkKey(o, vs) {
 }
 
 module.exports = {
-  ...morph, ...Console, getQueryString, delay, checkKey
+  ...morph, ...Console, getQueryString, delay, checkKey, ws
 };

@@ -12,6 +12,8 @@ const { checkKey } = Utils;
 const REST_URL = 'https://api.binance.com/api';
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node Binance API)';
 const CONTENT_TYPE = 'application/x-www-form-urlencoded';
+const WS_BASE = 'wss://stream.binance.com:9443/stream?streams=';
+const subscribe = Utils.ws.genSubscribe(WS_BASE);
 
 class Exchange extends Base {
   constructor(o, options) {
@@ -149,9 +151,20 @@ class Exchange extends Base {
       if (error) throw error;
       return body.data || body;
     } catch (e) {
-      if (e.stack) console.log(e.stack);
+      if (e.message) console.log(e.message);
       return null;
     }
+  }
+  //
+  wsTicks(cb) {
+    const { proxy } = this;
+    subscribe('!ticker@arr', (data = {}) => {
+      data = data.data;
+      if (!data) return console.log(`${'wsTicks'}数据为空....`);
+      data = tUtils.formatTicksWS(data);
+      console.log(data, 'data...');
+      cb();
+    }, { proxy });
   }
 }
 
