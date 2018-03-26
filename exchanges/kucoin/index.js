@@ -26,11 +26,17 @@ class Exchange extends Base {
   // 下订单
   async order(o = {}) {
     checkKey(o, ['pair', 'price', 'amount']);
+    const digit = 1000 * 1000;
+    o.amount = Math.floor(o.amount * digit) / digit;
     Utils.print(`${o.side} - ${o.pair} - ${o.amount}`, 'red');
     if (o.type) o.type = o.type.toUpperCase();
     o = Utils.replace(o, { side: 'type' });
     const ds = await this.post('order', o);
     return ds ? { orderId: ds.orderOid } : null;
+  }
+  async pairs(o = {}) {
+    const ds = await this.get('open/markets', o);
+    console.log(ds, 'ds...');
   }
   async fastOrder(o = {}) {
     checkKey(o, ['amount', 'side', 'pair', 'price']);
