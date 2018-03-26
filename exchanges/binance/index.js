@@ -161,7 +161,6 @@ class Exchange extends Base {
       data = data.data;
       if (!data) return console.log(`${'wsTicks'}数据为空....`);
       data = tUtils.formatTicksWS(data);
-      console.log(data, 'data...');
       cb();
     }, { proxy });
   }

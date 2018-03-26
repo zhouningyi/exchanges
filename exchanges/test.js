@@ -8,7 +8,7 @@ async function extrude(ex, exName, d) {
   function print(ds, str) {
     const space = '========';
     ds = (ds && typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
-    console.log(ds, `${space}${exName}.${str}${space}`);
+    console.log(ds.length, `${space}${exName}.${str}${space}`);
   }
   const fn = ex[d.fn];
   if (!fn) {
@@ -19,7 +19,7 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-const spotList = ['kucoin'];// , 'okex'
+const spotList = ['binance'];// , 'okex'
 const spotTasks = [
   // {
   //   fn: 'order',
@@ -43,11 +43,11 @@ const spotTasks = [
   //   },
   //   name: '交易'
   // },
-  {
-    fn: 'cancelAllOrders',
-    params: {},
-    name: '取消正在执行中的订单'
-  },
+  // {
+  //   fn: 'cancelAllOrders',
+  //   params: {},
+  //   name: '取消正在执行中的订单'
+  // },
   // {
   //   fn: 'activeOrders',
   //   params: {},
@@ -71,11 +71,11 @@ const spotTasks = [
   //   },
   //   name: '取消交易'
   // },
-  // {
-  //   fn: 'pairs',
-  //   params: {},
-  //   name: '交易对信息'
-  // },
+  {
+    fn: 'pairs',
+    params: {},
+    name: '交易对信息'
+  },
 // {
 //   fn: 'ticks',
 //   params: { pair: 'ETH-BTC' },
@@ -143,8 +143,8 @@ function testOneExchangeWs(exName) {
   });
 }
 
-testOneExchangeWs('binance');
+// testOneExchangeWs('binance');
 
 
-// test(spotList, spotTasks);
+test(spotList, spotTasks);
 // test(futureList, futureTasks);
