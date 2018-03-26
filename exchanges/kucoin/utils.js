@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const { coinMap } = require('./meta');
+const Utils = require('./../../utils');
 
 const { floor } = Math;
 function formatTime(o) {
@@ -42,6 +44,15 @@ function formatTicks(ds) {
   return _.map(ds, _map).filter(d => d.trading);
 }
 
+function formatOrderO(o) {
+  const coinInfo = coinMap[o.pair.split('-')[0]];
+  const { tradePrecision } = coinInfo;
+  o.amount = o.amount.toFixed(tradePrecision);
+  if (o.type) o.type = o.type.toUpperCase();
+  o = Utils.replace(o, { side: 'type' });
+  return o;
+}
+
 module.exports = {
-  formatTime, getFilteredBalances, formatPrices, formatTicks
+  formatTime, getFilteredBalances, formatPrices, formatTicks, formatOrderO
 };

@@ -7,6 +7,7 @@ const config = require('./../config');
 async function extrude(ex, exName, d) {
   function print(ds, str) {
     const space = '========';
+    console.log(JSON.stringify(ds, null, 2));
     ds = (ds && typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
     console.log(ds.length, `${space}${exName}.${str}${space}`);
   }
@@ -19,7 +20,7 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-const spotList = ['binance'];// , 'okex'
+const spotList = ['kucoin'];// , 'okex'
 const spotTasks = [
   // {
   //   fn: 'order',
@@ -71,10 +72,15 @@ const spotTasks = [
   //   },
   //   name: '取消交易'
   // },
+  // {
+  //   fn: 'pairs',
+  //   params: {},
+  //   name: '交易对信息'
+  // },
   {
-    fn: 'pairs',
+    fn: 'coins',
     params: {},
-    name: '交易对信息'
+    name: '币信息'
   },
 // {
 //   fn: 'ticks',
