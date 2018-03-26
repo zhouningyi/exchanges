@@ -48,10 +48,10 @@ class Exchange extends Base {
   }
   async order(o) {
     const opt = tUtils.formatOrderO(o);
+    if (!opt) return;
     const ds = await this.post('v3/order', opt, true, true);
     if (ds) {
-      console.log(ds);
-      Utils.print(`${opt.side} - ${o.pair} - ${ds.ex}/${o.quantity}`, 'red');
+      Utils.print(`${opt.side} - ${o.pair} - ${ds.executedQty}/${o.amount}`, 'red');
     }
     return ds;
   }
@@ -139,13 +139,12 @@ class Exchange extends Base {
     // console.log(o, 'o');
     try {
       const body = await request(o);
-      if (url.indexOf('order') !== -1) {
-        console.log(body, 'body');
-        // process.exit();
-      }
+      // if (url.indexOf('order') !== -1) {
+      //   console.log(body, 'body');
+      // }
       const { error, msg, code } = body;
       if (code) {
-        console.log(msg);
+        Utils.print(msg, 'gray');
         throw msg;
       }
       if (error) throw error;
@@ -162,8 +161,7 @@ class Exchange extends Base {
       data = data.data;
       if (!data) return console.log(`${'wsTicks'}数据为空....`);
       data = tUtils.formatTicksWS(data);
-      console.log(data, 'data...');
-      cb();
+      cb(data);
     }, { proxy });
   }
 }

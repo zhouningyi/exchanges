@@ -88,7 +88,7 @@ function formatPrice(price, symbol) {
   const d = pairInfo[symbol];
   if (!d) {
     console.log(`${symbol}的详细信息找不到...`);
-    process.exit();
+    return null;
   }
   const { filters } = d;
   const PRICE_FILTER = _.filter(filters, f => f.filterType === 'PRICE_FILTER')[0];
@@ -103,7 +103,7 @@ function formatQuatity(amount, symbol) {
   const d = pairInfo[symbol];
   if (!d) {
     console.log(`${symbol}的详细信息找不到...`);
-    process.exit();
+    return null;
   }
   const { filters } = d;
   const LOT_SIZE = _.filter(filters, f => f.filterType === 'LOT_SIZE')[0];
@@ -144,10 +144,11 @@ function formatTicks(ds) {
 function formatTicksWS(ds) {
   if (!ds) return null;
   return _.map(ds, (d) => {
-    const pair = formatPairName(d.s);
+    const symbol = d.s;
+    const pair = formatPairName(symbol);
     if (d.symbol === '123456') return;
     if (!pair) {
-      console.log(`binance的币种${d.symbol} 无法翻译为标准symbol... 请联系开发者`);
+      console.log(`binance的币种${d.s} 无法翻译为标准symbol... 请联系开发者`);
       return null;
     }
     return {
@@ -179,15 +180,20 @@ function formatCancelOrderO(o) {
 function formatOrderO(o) {
   const symbol = formatPairString(o.pair);
   const quantity = formatQuatity(o.amount, symbol);
+  const isLimit = o.price || o.type === 'LIMIT';
+  const price = formatPrice(o.price, symbol);
+  if (isLimit && !price) return null;
   const opt = {
     symbol,
     quantity,
     side: o.side,
     type: o.type || 'LIMIT',
-    ...(o.price || o.type === 'LIMIT' ? {
-      price: formatPrice(o.price, symbol),
-      timeInForce: 'GTC'
-    } : {}),
+    ...(
+      isLimit ? {
+        price,
+        timeInForce: 'GTC'
+      } : {}
+    ),
   };
   return opt;
 }

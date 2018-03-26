@@ -290,7 +290,9 @@ const pairMap = {
   XEMBNB: 'XEM-BNB',
   WANBTC: 'WAN-BTC',
   WANETH: 'WAN-ETH',
-  WANBNB: 'WAN-BNB'
+  WANBNB: 'WAN-BNB',
+  QLCBTC: 'QLC-BTC',
+  QLCETH: 'QLC-ETH',
 };
 
 const pairInfo = {
