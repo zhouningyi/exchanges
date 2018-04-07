@@ -36,7 +36,6 @@ function genSubscribe(stream) {
     ws.on('error', e => console.log(e, 'error'));
     ws.on('close', e => console.log(e, 'close'));
     ws.on('message', (data) => {
-      console.log('message', data);
       try {
         if (typeof data === 'string') data = JSON.parse(data);
         callback(data);

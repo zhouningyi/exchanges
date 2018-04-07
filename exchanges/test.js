@@ -143,15 +143,10 @@ async function test(exNames, tasks) {
 
 const wsList = [
   {
-    fn: 'wsTick',
-    params: { pair: 'ETH-BTC' },
+    fn: 'wsTicks',
+    params: {},
     name: 'tick数据...'
-  },
-  // {
-  //   fn: 'wsTicks',
-  //   params: {},
-  //   name: 'tick数据...'
-  // }
+  }
 ];
 
 function testOneExchangeWs(exName, list) {
@@ -160,7 +155,6 @@ function testOneExchangeWs(exName, list) {
   const ex = new Exchange(config[keyName]);
   _.forEach(list, (o) => {
     const { fn, params } = o;
-    console.log(fn, params);
     ex[fn](params, (ds) => {
       console.log(ds);
     });

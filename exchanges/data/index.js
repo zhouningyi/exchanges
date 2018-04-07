@@ -9,8 +9,6 @@ function formatExchangeName(name) {
 
 const exchangePairs = _.groupBy(allPairs, d => formatExchangeName(d.exchange));
 
-console.log(exchangePairs.okex);
-
 module.exports = {
   exchangePairs
 };

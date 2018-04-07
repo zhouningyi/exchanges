@@ -7,6 +7,7 @@ const kUtils = require('./utils');
 const Utils = require('./../../utils');
 const md5 = require('md5');
 const error = require('./errors');
+const { exchangePairs } = require('./../data');
 //
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node OKEX API)';
 const WS_BASE = 'wss://real.okex.com:10441/websocket';
@@ -85,16 +86,24 @@ class Exchange extends Base {
     return body.data || body;
   }
   // ws接口
-  async wsTick(o, cb) {
+  async wsTicks(o, cb) {
+    let data = [];
+    const cbf = _.throttle(() => {
+      cb(data);
+      data = [];
+    }, 300);
+    //
+    let pairs = exchangePairs.okex;
+    if (o.filter) pairs = _.filter(pairs, o.filter);
+    const chanelString = kUtils.createWsChanelTick(pairs);
     const options = {
       proxy: this.proxy,
-      willLink: (ws) => {
-        ws.send("[{'event':'addChannel','channel':'ok_sub_spot_bch_btc_ticker'}]");
-      }
+      willLink: ws => ws.send(chanelString)
     };
     subscribe('', (ds) => {
-      console.log(ds);
-      cb(ds);
+      ds = kUtils.formatWsTick(ds);
+      data = data.concat(ds);
+      cbf();
     }, options);
   }
 }
