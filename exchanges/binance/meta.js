@@ -293,6 +293,9 @@ const pairMap = {
   WANBNB: 'WAN-BNB',
   QLCBTC: 'QLC-BTC',
   QLCETH: 'QLC-ETH',
+  SYSBTC: 'SYS-ETH',
+  SYSETH: 'SYS-ETH',
+  SYSBNB: 'SYS-ETH',
 };
 
 const pairInfo = {

@@ -63,7 +63,6 @@ class Exchange extends Base {
     let url = `${URL}/${this.version}/${endpoint}.do`;
     if (method === 'GET') url += `?${qstr}`;
     const cType = 'application/x-www-form-urlencoded';
-    console.log(signedParams, method, 'signedParams...');
     const o = {
       uri: url,
       proxy: this.proxy,

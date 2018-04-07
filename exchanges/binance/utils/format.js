@@ -2,7 +2,8 @@ const _ = require('lodash');
 const Utils = require('./../../../utils');
 const META = require('./../meta');
 
-const { pairMap, pairInfo } = META;
+const meta = META;
+const { pairMap, pairInfo } = meta;
 const { floor } = Math;
 
 // function _formatPair
@@ -42,9 +43,13 @@ function _hasValue(d, key) {
   return _parse(d[key]) !== 0;
 }
 
-function formatBalances(ds) {
+function formatBalances(ds, o = {}) {
+  const { isAll = false } = o;
   if (!ds) return null;
   return _.filter(ds, (d) => {
+    if (isAll) {
+      return d.asset !== '123' && d.asset !== '456';
+    }
     return _hasValue(d, 'locked') || _hasValue(d, 'free');
   }).map((d) => {
     return {
@@ -137,6 +142,7 @@ function formatTicks(ds) {
       bidVolume: _parse(d.bidQty),
       askPrice: _parse(d.askPrice),
       askVolume: _parse(d.askQty),
+      // time: new Date()
     };
   }).filter(d => d);
 }
@@ -157,7 +163,8 @@ function formatTicksWS(ds) {
       bidVolume: _parse(d.B),
       askPrice: _parse(d.a),
       askVolume: _parse(d.A),
-      price_change: _parse(d.p)
+      price_change: _parse(d.p),
+      time: new Date(d.E)
     };
   }).filter(d => d);
 }
@@ -169,7 +176,6 @@ function formatDepth(ds) {
     asks: _formatDepth(ds.asks),
   };
 }
-
 
 function formatCancelOrderO(o) {
   return {
@@ -207,6 +213,27 @@ function formatActiveOrders(ds) {
   });
 }
 
+function updatePairs(pairs) {
+  _.forEach(pairs, (d) => {
+    const { pair, symbol, filters } = d;
+    // console.log(filters, 'filters...');
+    pairMap[symbol] = pair;
+    pairInfo[symbol] = {
+      ...d,
+      ...(_.keyBy(filters, d => d.filterType))
+    };
+  });
+}
+
+function testOrder(o) {
+  const { symbol, ammout, price } = o;
+  const nominal = price * ammout;
+  const info = pairInfo[symbol];
+  const { MIN_NOTIONAL } = info;
+  if (nominal < MIN_NOTIONAL) return false;
+  return true;
+}
+
 module.exports = {
   formatPair,
   formatKline,
@@ -218,5 +245,9 @@ module.exports = {
   //
   formatOrderO,
   formatCancelOrderO,
-  formatActiveOrders
+  formatActiveOrders,
+  //
+  updatePairs,
+  //
+  testOrder,
 };

@@ -6,7 +6,7 @@ const argv = require('optimist').argv;
 
 
 const defaultOptions = {
-  timeout: 5000,
+  timeout: 10000,
 };
 const isProxy = !!argv.proxy;
 
