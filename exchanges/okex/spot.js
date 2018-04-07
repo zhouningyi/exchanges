@@ -9,6 +9,8 @@ const md5 = require('md5');
 const error = require('./errors');
 //
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node OKEX API)';
+const WS_BASE = 'wss://real.okex.com:10441/websocket';
+const subscribe = Utils.ws.genSubscribe(WS_BASE);
 
 const URL = 'https://www.okex.com/api';
 class Exchange extends Base {
@@ -82,7 +84,19 @@ class Exchange extends Base {
     }
     return body.data || body;
   }
-  // 下订单
+  // ws接口
+  async wsTick(o, cb) {
+    const options = {
+      proxy: this.proxy,
+      willLink: (ws) => {
+        ws.send("[{'event':'addChannel','channel':'ok_sub_spot_bch_btc_ticker'}]");
+      }
+    };
+    subscribe('', (ds) => {
+      console.log(ds);
+      cb(ds);
+    }, options);
+  }
 }
 
 module.exports = Exchange;

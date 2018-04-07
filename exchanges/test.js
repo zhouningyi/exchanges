@@ -141,17 +141,34 @@ async function test(exNames, tasks) {
   }
 }
 
-function testOneExchangeWs(exName) {
+const wsList = [
+  {
+    fn: 'wsTick',
+    params: { pair: 'ETH-BTC' },
+    name: 'tick数据...'
+  },
+  // {
+  //   fn: 'wsTicks',
+  //   params: {},
+  //   name: 'tick数据...'
+  // }
+];
+
+function testOneExchangeWs(exName, list) {
   const keyName = `${exName}Zhou`;
   const Exchange = Exchanges[exName];
   const ex = new Exchange(config[keyName]);
-  ex.wsTicks((ds) => {
-    console.log(ds);
+  _.forEach(list, (o) => {
+    const { fn, params } = o;
+    console.log(fn, params);
+    ex[fn](params, (ds) => {
+      console.log(ds);
+    });
   });
 }
 
-// testOneExchangeWs('binance');
+testOneExchangeWs('okex', wsList);
 
 
-test(spotList, spotTasks);
+// test(spotList, spotTasks);
 // test(futureList, futureTasks);

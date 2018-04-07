@@ -166,7 +166,7 @@ class Exchange extends Base {
     }
   }
   //
-  wsTicks(cb) {
+  wsTicks(o, cb) {
     const { proxy } = this;
     subscribe('!ticker@arr', (data = {}) => {
       data = data.data;
