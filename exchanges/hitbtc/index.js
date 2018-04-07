@@ -8,7 +8,7 @@ const Utils = require('./../../utils');
 
 const { checkKey } = Utils;
 //
-const URL = 'https://api.kucoin.com';
+const URL = 'http://api.hitbtc.com';
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
@@ -27,6 +27,7 @@ class Exchange extends Base {
   async order(o = {}) {
     checkKey(o, ['pair', 'price', 'amount']);
     o = kUtils.formatOrderO(o);
+    // console.log(o, 'o..');
     Utils.print(`${o.type} - ${o.pair} - ${o.amount}`, 'red');
     const ds = await this.post('order', o);
     return ds ? { orderId: ds.orderOid } : null;

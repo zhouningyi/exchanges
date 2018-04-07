@@ -32,8 +32,8 @@ function _map(d) {
     feeRate: d.feeRate,
     trading: d.trading,
     time: new Date(d.datetime),
-    bidVolume: d.volValue,
-    askVolume: d.vol
+    bidVolume: d.volValue / 24,
+    askVolume: d.vol / 24
   };
 }
 

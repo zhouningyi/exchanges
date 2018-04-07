@@ -13,14 +13,26 @@ const REST_URL = 'https://api.binance.com/api';
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node Binance API)';
 const CONTENT_TYPE = 'application/x-www-form-urlencoded';
 const WS_BASE = 'wss://stream.binance.com:9443/stream?streams=';
+//
 const subscribe = Utils.ws.genSubscribe(WS_BASE);
 
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
+    this.init();
   }
   getSignature(qs) {
     return crypto.createHmac('sha256', this.apiSecret).update(qs).digest('hex');
+  }
+  async init() {
+    const waitTime = 1000 * 60 * 5;
+    const pairs = await this.pairs();
+    tUtils.updatePairs(pairs);
+    await Utils.delay(waitTime);
+    await this.init();
+  }
+  testOrder(o) {
+    return tUtils.testOrder(o);
   }
   async time() {
     return await this.get('time');
@@ -108,9 +120,9 @@ class Exchange extends Base {
     const ds = await this.get('v1/ping');
     return !!ds;
   }
-  async balances() {
+  async balances(o = {}) {
     const ds = await this.get('v3/account', {}, true, true);
-    return tUtils.formatBalances(_.get(ds, 'balances'));
+    return tUtils.formatBalances(_.get(ds, 'balances'), o);
   }
   async request(method = 'GET', endpoint, params = {}, signed, isTimestamp) {
     const { options } = this;
@@ -136,7 +148,6 @@ class Exchange extends Base {
       }
     };
 
-    // console.log(o, 'o');
     try {
       const body = await request(o);
       // if (url.indexOf('order') !== -1) {

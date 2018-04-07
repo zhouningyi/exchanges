@@ -14,8 +14,8 @@ function getQueryString(params, isEncode = false) {
 
 function delay(time) {
   return new Promise((resolve, reject) => {
-    resolve();
-  }, time);
+    setTimeout(() => resolve(), time);
+  });
 }
 function isNull(v) {
   return v === undefined || v === null || v === '';
