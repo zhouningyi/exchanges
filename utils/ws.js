@@ -29,7 +29,7 @@ function genSubscribe(stream) {
         if (typeof data === 'string') data = JSON.parse(data);
         callback(data);
       } catch (error) {
-        consle.log(`Parse error: ${error.message}`);
+        console.log(`Parse error: ${error.message}`);
       }
     });
     return ws;
