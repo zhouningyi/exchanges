@@ -183,7 +183,7 @@ class Exchange extends Base {
       if (error) throw error;
       return body.data || body;
     } catch (e) {
-      console.log(e.message);
+      if (e && e.message)console.log(e.message);
       return null;
     }
   }
