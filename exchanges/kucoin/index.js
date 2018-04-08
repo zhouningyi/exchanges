@@ -126,8 +126,9 @@ class Exchange extends Base {
     const ds = await this.get('user/info', {});
     return ds;
   }
-  async ticks() {
-    const ds = await this.get('open/tick', {});
+  async ticks(o = {}) {
+    o = kUtils.formatTicksO(o);
+    const ds = await this.get('open/tick', o);
     return kUtils.formatTicks(ds);
   }
   async prices() {
@@ -172,7 +173,7 @@ class Exchange extends Base {
       // console.log(o);
       const body = await request(o);
       // if (url.indexOf('order') !== -1) {
-      //   console.log(body);
+      // console.log(body);
       // }
       const { error, msg, code } = body;
       if (code !== 'OK') {
