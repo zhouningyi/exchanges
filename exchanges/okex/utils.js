@@ -117,6 +117,39 @@ function formatKline() {
 //     asks: _formatDepth(asks),
 //   };
 // }
+
+function createWsChanelTick(pairs) {
+  const ds = _.map(pairs, ({ pair }) => {
+    pair = pair.replace(/-/g, '_').toLowerCase();
+    return { event: 'addChannel', channel: `ok_sub_spot_${pair}_ticker` };
+  });
+  return JSON.stringify(ds);
+}
+
+function parsePairName(channel) {
+  return channel.replace('ok_sub_spot_', '').replace('_ticker', '').replace('_', '-').toUpperCase();
+}
+
+function formatWsTick(ds) {
+  return _.map(ds, (d) => {
+    const { data, channel } = d;
+    const bidPrice = parseFloat(data.buy, 10);
+    const askPrice = parseFloat(data.sell, 10);
+    const volume24 = parseFloat(data.vol, 10);
+    const change = parseFloat(data.change, 10);
+    const lastPrice = parseFloat(data.last, 10);
+    if (!bidPrice || !askPrice) return null;
+    return {
+      pair: parsePairName(channel),
+      bidPrice,
+      askPrice,
+      lastPrice,
+      volume24,
+      change,
+      time: new Date()
+    };
+  }).filter(d => d);
+}
 module.exports = {
   formatPair,
   formatTick,
@@ -125,5 +158,8 @@ module.exports = {
   formatBalances,
   formatOrder,
   formatOrderResult,
-  formatKline
+  formatKline,
+  // ws
+  createWsChanelTick,
+  formatWsTick
 };

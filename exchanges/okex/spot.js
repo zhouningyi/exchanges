@@ -7,8 +7,11 @@ const kUtils = require('./utils');
 const Utils = require('./../../utils');
 const md5 = require('md5');
 const error = require('./errors');
+const { exchangePairs } = require('./../data');
 //
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node OKEX API)';
+const WS_BASE = 'wss://real.okex.com:10441/websocket';
+const subscribe = Utils.ws.genSubscribe(WS_BASE);
 
 const URL = 'https://www.okex.com/api';
 class Exchange extends Base {
@@ -82,7 +85,27 @@ class Exchange extends Base {
     }
     return body.data || body;
   }
-  // 下订单
+  // ws接口
+  async wsTicks(o, cb) {
+    let data = [];
+    const cbf = _.throttle(() => {
+      cb(data);
+      data = [];
+    }, 300);
+    //
+    let pairs = exchangePairs.okex;
+    if (o.filter) pairs = _.filter(pairs, o.filter);
+    const chanelString = kUtils.createWsChanelTick(pairs);
+    const options = {
+      proxy: this.proxy,
+      willLink: ws => ws.send(chanelString)
+    };
+    subscribe('', (ds) => {
+      ds = kUtils.formatWsTick(ds);
+      data = data.concat(ds);
+      cbf();
+    }, options);
+  }
 }
 
 module.exports = Exchange;
