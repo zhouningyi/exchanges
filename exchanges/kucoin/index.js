@@ -91,7 +91,7 @@ class Exchange extends Base {
       const ds = await this.get('account/balances', { ...defaultO, ...o, page });
       if (ds && ds.datas) dataAll = dataAll.concat(ds.datas);
     }));
-    const ds = kUtils.getFilteredBalances(dataAll);
+    const ds = kUtils.getFilteredBalances(dataAll, o);
     return ds;
   }
   async coin(o = {}) {
@@ -126,8 +126,9 @@ class Exchange extends Base {
     const ds = await this.get('user/info', {});
     return ds;
   }
-  async ticks() {
-    const ds = await this.get('open/tick', {});
+  async ticks(o = {}) {
+    o = kUtils.formatTicksO(o);
+    const ds = await this.get('open/tick', o);
     return kUtils.formatTicks(ds);
   }
   async prices() {
@@ -172,11 +173,11 @@ class Exchange extends Base {
       // console.log(o);
       const body = await request(o);
       // if (url.indexOf('order') !== -1) {
-      //   console.log(body);
+      // console.log(body);
       // }
       const { error, msg, code } = body;
-      if (code !== 'OK') {
-        console.log(msg);
+      if (code !== 'OK' && msg) {
+        console.log(msg, 'msg');
         throw msg;
       }
       if (error) throw error;

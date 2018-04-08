@@ -11,7 +11,7 @@ function formatTime(o) {
   };
 }
 
-function getFilteredBalances(ds) {
+function getFilteredBalances(ds, o = {}) {
   ds = _.filter(ds, d => d.balance !== 0);
   return _.map(ds, (d) => {
     return {
@@ -31,6 +31,7 @@ function _map(d) {
     askPrice: d.sell,
     feeRate: d.feeRate,
     trading: d.trading,
+    lastPirce: d.lastDealPrice,
     time: new Date(d.datetime),
     bidVolume24: d.volValue,
     askVolume24: d.vol
@@ -40,8 +41,19 @@ function _map(d) {
 function formatPrices(ds) {
   return _.map(ds, _map).filter(d => d.trading);
 }
+
+function formatTicksO(o = {}) {
+  const opt = {};
+  if (o.pair) {
+    opt.symbol = o.pair;
+  }
+  return opt;
+}
 function formatTicks(ds) {
-  return _.map(ds, _map).filter(d => d.trading);
+  if (Array.isArray(ds)) {
+    return _.map(ds, _map).filter(d => d.trading);
+  }
+  return _map(ds);
 }
 
 function formatOrderO(o) {
@@ -54,5 +66,5 @@ function formatOrderO(o) {
 }
 
 module.exports = {
-  formatTime, getFilteredBalances, formatPrices, formatTicks, formatOrderO
+  formatTime, getFilteredBalances, formatPrices, formatTicks, formatOrderO, formatTicksO
 };

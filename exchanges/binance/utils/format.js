@@ -127,24 +127,27 @@ function formatQuatity(amount, symbol) {
   }
 }
 
+function _map(d) {
+  const pair = formatPairName(d.symbol);
+  if (d.symbol === '123456') return;
+  if (!pair) {
+    console.log(`binance的币种${d.symbol} 无法翻译为标准symbol... 请联系开发者`);
+    return null;
+  }
+  return {
+    pair,
+    bidPrice: _parse(d.bidPrice),
+    bidVolume: _parse(d.bidQty),
+    askPrice: _parse(d.askPrice),
+    askVolume: _parse(d.askQty),
+    time: new Date()
+  };
+}
+
 function formatTicks(ds) {
   if (!ds) return null;
-  return _.map(ds, (d) => {
-    const pair = formatPairName(d.symbol);
-    if (d.symbol === '123456') return;
-    if (!pair) {
-      console.log(`binance的币种${d.symbol} 无法翻译为标准symbol... 请联系开发者`);
-      return null;
-    }
-    return {
-      pair,
-      bidPrice: _parse(d.bidPrice),
-      bidVolume: _parse(d.bidQty),
-      askPrice: _parse(d.askPrice),
-      askVolume: _parse(d.askQty),
-      // time: new Date()
-    };
-  }).filter(d => d);
+  if (Array.isArray(ds)) return _.map(ds, _map).filter(d => d);
+  return _map(ds);
 }
 
 function formatTicksWS(ds) {

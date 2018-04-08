@@ -3,22 +3,8 @@ const _ = require('lodash');
 //
 const Exchanges = require('./../index');
 const config = require('./../config');
+const { extrude, getAppKey } = require('./utils');
 
-async function extrude(ex, exName, d) {
-  function print(ds, str) {
-    const space = '========';
-    console.log(JSON.stringify(ds, null, 2));
-    ds = (ds && typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
-    console.log(ds.length, `${space}${exName}.${str}${space}`);
-  }
-  const fn = ex[d.fn];
-  if (!fn) {
-    print(d.fn, '无法找到...');
-    return;
-  }
-  const ds = await fn.bind(ex)(d.params);
-  print(ds, d.name);
-}
 
 const spotList = ['kucoin'];// , 'okex'
 const spotTasks = [
@@ -123,9 +109,8 @@ const futureTasks = [
 ];
 
 async function testOneExchange(exName, tasks) {
-  const keyName = `${exName}Zhou`;
   const Exchange = Exchanges[exName];
-  const ex = new Exchange(config[keyName]);
+  const ex = new Exchange(getAppKey(exName));
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
     console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
@@ -141,28 +126,6 @@ async function test(exNames, tasks) {
   }
 }
 
-const wsList = [
-  {
-    fn: 'wsTicks',
-    params: {},
-    name: 'tick数据...'
-  }
-];
 
-function testOneExchangeWs(exName, list) {
-  const keyName = `${exName}Zhou`;
-  const Exchange = Exchanges[exName];
-  const ex = new Exchange(config[keyName]);
-  _.forEach(list, (o) => {
-    const { fn, params } = o;
-    ex[fn](params, (ds) => {
-      console.log(ds);
-    });
-  });
-}
-
-testOneExchangeWs('okex', wsList);
-
-
-// test(spotList, spotTasks);
+test(spotList, spotTasks);
 // test(futureList, futureTasks);
