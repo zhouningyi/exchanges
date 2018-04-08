@@ -11,7 +11,7 @@ function formatTime(o) {
   };
 }
 
-function getFilteredBalances(ds) {
+function getFilteredBalances(ds, o = {}) {
   ds = _.filter(ds, d => d.balance !== 0);
   return _.map(ds, (d) => {
     return {
