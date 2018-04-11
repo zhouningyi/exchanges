@@ -147,23 +147,26 @@ class Exchange extends Base {
         } : {})
       }
     };
-
+    //
+    let body;
     try {
-      const body = await request(o);
+      // console.log('request', o);
+      body = await request(o);
+      // console.log(body, 'body...');
       // if (url.indexOf('order') !== -1) {
       //   console.log(body, 'body');
       // }
-      const { error, msg, code } = body;
-      if (code) {
-        Utils.print(msg, 'gray');
-        throw msg;
-      }
-      if (error) throw error;
-      return body.data || body;
     } catch (e) {
-      if (e.message) console.log(e.message);
+      if (e) console.log('request...', e.message || e);
       return null;
     }
+    const { error, msg, code } = body;
+    if (code) {
+      Utils.print(msg, 'gray');
+      throw msg;
+    }
+    if (error) throw error;
+    return body.data || body;
   }
   //
   wsTicks(o, cb) {

@@ -9,6 +9,8 @@ const md5 = require('md5');
 const error = require('./errors');
 const { exchangePairs } = require('./../data');
 //
+const { checkKey } = Utils;
+//
 const USER_AGENT = 'Mozilla/4.0 (compatible; Node OKEX API)';
 const WS_BASE = 'wss://real.okex.com:10441/websocket';
 const subscribe = Utils.ws.genSubscribe(WS_BASE);
@@ -28,6 +30,10 @@ class Exchange extends Base {
     const ds = await this.get('ticker', o);
     return kUtils.formatTick(ds);
   }
+  async ticks(o = {}) {
+    const ds = await this.tick(o);
+    return ds;
+  }
   async depth(o = {}) {
     const ds = await this.get('depth', o, false);
     return kUtils.formatDepth(ds);
@@ -36,6 +42,17 @@ class Exchange extends Base {
     const { orderId: order_id } = o;
     const ds = await this.get('trades', { order_id }, true, true);
     return ds;
+  }
+  async activeOrders() {}
+  async allOrders() { // 近2天来的order
+    await this.post('order_history');
+  }
+  async cancelAllOrders(o) {
+  }
+  async cancelOrder(o = {}) {
+    checkKey(o, ['orderId', 'pair']);
+    o = kUtils.formatCancelOrderO(o);
+    await this.post('cancel_order', o);
   }
   async orderBook(o = {}) {
     const ds = await this.get('trades', o, true, true);
@@ -46,8 +63,9 @@ class Exchange extends Base {
     return kUtils.formatBalances(ds);
   }
   async order(o = {}) {
-    o = kUtils.formatOrder(o);
+    o = kUtils.formatOrderO(o);
     let ds = await this.post('trade', o, true);
+    console.log(ds, 'ds...');
     ds = kUtils.formatOrderResult(ds);
     return ds;
   }
@@ -77,11 +95,16 @@ class Exchange extends Base {
       form: signedParams
     };
     // console.log(o, 'o...');
-    const body = await request(o);
-    // console.log(body, 'body...');
-    const { error_code } = body;
-    if (error_code) {
-      throw error.getErrorFromCode(error_code);
+    let body;
+    try {
+      // console.log('request...', o);
+      body = await request(o);
+    } catch (e) {
+      if (e) console.log(e.message);
+      return;
+    }
+    if (body && body.error_code) {
+      throw error.getErrorFromCode(body.error_code);
     }
     return body.data || body;
   }
@@ -102,6 +125,26 @@ class Exchange extends Base {
     };
     subscribe('', (ds) => {
       ds = kUtils.formatWsTick(ds);
+      data = data.concat(ds);
+      cbf();
+    }, options);
+  }
+  async wsBalance(o, cb) {
+    let data = [];
+    const cbf = _.throttle(() => {
+      cb(data);
+      data = [];
+    }, 300);
+    //
+    let pairs = exchangePairs.okex;
+    if (o.filter) pairs = _.filter(pairs, o.filter);
+    const chanelString = kUtils.createWsChanelBalance(pairs);
+    const options = {
+      proxy: this.proxy,
+      willLink: ws => ws.send(chanelString)
+    };
+    subscribe('', (ds) => {
+      ds = kUtils.formatWsBalance(ds);
       data = data.concat(ds);
       cbf();
     }, options);

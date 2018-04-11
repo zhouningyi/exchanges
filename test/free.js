@@ -6,6 +6,8 @@ const config = require('./../config');
 const { extrude, getAppKey } = require('./utils');
 const Utils = require('./../utils');
 
+// 关于交易费用的测试
+
 function filterBalance(balances, arr) {
   arr = _.keyBy(arr, d => d);
   return _.filter(balances, balance => balance.coin in arr);
@@ -47,6 +49,12 @@ function getCoinTS(pair, side) {
   }
 }
 
+async function delay(timeout) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, timeout);
+  });
+}
+
 function print(str, color = 'gray') {
   Utils.print(str, color);
 }
@@ -58,7 +66,8 @@ function diff(balances1, balances2, pair, side, price) {
   const free = side === 'BUY' ? price : 1 / price;
   const dTargetBySource = dTarget * free;
   // console.log(free, 'free', dTargetBySource, 'dTargetBySource');
-  // const dBNB = balances2.BNB - balances1.BNB;
+  // const dBNB = balances2.BNB - balances1.BNB;// 币安的规则
+
   if (!dTarget) return;
   let tradeFree = (dSource + dTargetBySource) / dSource;
   tradeFree = (tradeFree * 1000).toFixed(3);
@@ -73,24 +82,26 @@ async function test(exName, pair, side = 'BUY') {
   const Exchange = Exchanges[exName];
   const conf = getAppKey(exName);
   const ex = new Exchange(conf);
-
+  //
+  if (ex.wsBalance) {
+    ex.wsBalance({}, (ds) => {
+      console.log(ds);
+    });
+  }
+  await delay(10000);
   //
   print('交易前账户资金...');
   let balanceBefore = await ex.balances();
   balanceBefore = getRefBalance(balanceBefore, pair);
-
+  console.log(balanceBefore, 'balanceBefore');
   //
   print('交易价格...');
   const tick = await ex.ticks({ pair });
-  console.log(tick);
-  process.exit();
-
   //
   print('开始交易...');
   const price = tick.askPrice * (1 + 0.4 / 1000);
-  const amount = 0.0001;
+  const amount = 0.00101;
   const orderO = { price, amount, pair, side };
-  console.log(orderO);
   await ex.order(orderO);
 
   //
@@ -101,12 +112,12 @@ async function test(exName, pair, side = 'BUY') {
   //
   diff(balanceBefore, balanceAfter, pair, side, price);
   print('取消未成交的资金...');
-  await ex.cancelAllOrders();
+  // await ex.cancelAllOrders();
 
   //
-  let balanceFinal = await ex.balances();
-  balanceFinal = getRefBalance(balanceFinal, pair);
-  diff(balanceAfter, balanceFinal, pair, side, price);
+  // let balanceFinal = await ex.balances();
+  // balanceFinal = getRefBalance(balanceFinal, pair);
+  // diff(balanceAfter, balanceFinal, pair, side, price);
 }
 
-test('binance', 'ETH-BTC');
+test('okex', 'ETH-BTC');

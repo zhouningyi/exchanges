@@ -31,7 +31,7 @@ function _map(d) {
     askPrice: d.sell,
     feeRate: d.feeRate,
     trading: d.trading,
-    lastPirce: d.lastDealPrice,
+    lastPrice: d.lastDealPrice,
     time: new Date(d.datetime),
     bidVolume24: d.volValue,
     askVolume24: d.vol

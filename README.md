@@ -10,11 +10,12 @@
 | tick数据(只能按照单个pair返回) | tick(futureTick) | | |  ||| ✅ |  |
 | k线图 | kline / candlestick |  |  | ✅ |✅  可选范围 1m  3m  5m  15m  30m  1h  2h  4h  6h  8h  12h  1d  3d  1w  1M||  |  |
 | 币种信息(转账资费、最小转账等币种在交易所的相关信息) |coin |  |  | ✅ |||  |  |
-| 所有币种信息 | coins |  | | ✅ |||  |  |
+| 所有币种信息 | coins |  | | ✅ ||✅|  |  |
 | 账户余额 | balances |  | | ✅ |||  |  |
 | 下单 | order |  | | ✅ |||  |  |
 | 订单详情 | orderInfo | side pair  orderId | pendingAmount  未完成数量dealAmount 完成数量 | ✅ |||  |  |
-| 正在执行中的订单 | activeOrders |  |  | ✅ |✅||  |  |
+| 近期所有订单 | allOrders |  |  |  ||| ✅ | |
+| 正在执行中的订单 | activeOrders |  |  | ✅ |✅|| ✅ |  |
 | 测试连接 | ping | 无 | | |✅||  |  |
 | 服务器时间 | time | 无 | | |✅||  |  |
 | 交易对信息(偏静态) | pairs |  | | |✅||  |  |
@@ -25,6 +26,8 @@
 |  |  |  | | |||  |  |
 |  |  |  | | |||  |  |
 |  |  |  | | |||  |  |
+
+
 
 #### 交易所比较
 

@@ -11,7 +11,7 @@ function getAppKey(name) {
 async function extrude(ex, exName, d) {
   function print(ds, str) {
     const space = '========';
-    console.log(JSON.stringify(ds, null, 2));
+    // console.log(JSON.stringify(ds, null, 2));
     ds = (ds && typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
     console.log('数组长度:', ds.length, `${space}${exName}.${str}${space}`);
   }

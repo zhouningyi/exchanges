@@ -180,13 +180,13 @@ function formatDepth(ds) {
   };
 }
 
-function formatCancelOrderO(o) {
+function formatCancelOrderO(o = {}) {
   return {
     symbol: formatPairString(o.pair),
     orderId: o.orderId
   };
 }
-function formatOrderO(o) {
+function formatOrderO(o = {}) {
   const symbol = formatPairString(o.pair);
   const quantity = formatQuatity(o.amount, symbol);
   const isLimit = o.price || o.type === 'LIMIT';

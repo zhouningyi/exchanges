@@ -10,12 +10,13 @@ function formatPair(pair) {
 function formatTick(d) {
   const { date, ticker } = d;
   const time = new Date(date * 1000);
-  return Utils.replace({
+  return {
     time,
-    ...ticker
-  }, {
-    vol: 'vol24'
-  });
+    lastPrice: _parse(ticker.last),
+    askPrice: _parse(ticker.buy),
+    bidPrice: _parse(ticker.sell),
+    volume_24: _parse(ticker.vol)
+  };
 }
 function _parse(v) {
   return parseFloat(v, 10);
@@ -68,18 +69,17 @@ function formatBalances(ds) {
     _.set(result, `${coin}.lockedBalanceStr`, str);
     _.set(result, `${coin}.lockedBalance`, _parse(str));
     //
-    _.set(result, `${coin}.coin`, coin);
+    _.set(result, `${coin}.coin`, coin.toUpperCase());
   });
   return _.values(result).filter((d) => {
     return d.balance !== 0 || d.lockedBalance !== 0 || d.borrowBalance !== 0;
   });
 }
 
-
-function formatOrder(o) {
-  const { type, side, price, pair, amount } = o;
+function formatOrderO(o) {
+  const { type = 'LIMIT', side, price, pair, amount } = o;
   let okexType = side.toLowerCase();
-  if (type.toLowerCase() === 'market') okexType += '_market';
+  if (type && type.toLowerCase() === 'market') okexType += '_market';
   const extra = price ? { price } : {};
   return {
     symbol: formatPair(pair),
@@ -87,6 +87,13 @@ function formatOrder(o) {
     amount,
     ...extra
   };
+}
+
+function formatCancelOrderO(o = {}) {
+  let { orderId } = o;
+  if (Array.isArray(orderId)) orderId = orderId.join(',');
+  const symbol = formatPair(o.pair);
+  return { order_id: orderId, symbol };
 }
 
 function formatOrderResult(ds) {
@@ -125,9 +132,34 @@ function createWsChanelTick(pairs) {
   });
   return JSON.stringify(ds);
 }
+function createWsChanelBalance(pairs) {
+  const ds = _.map(pairs, ({ pair }) => {
+    pair = pair.replace(/-/g, '_').toLowerCase();
+    return { event: 'addChannel', channel: `ok_sub_spot_${pair}_balance` };
+  });
+  return JSON.stringify(ds);
+}
 
+function _extactChannel(str) {
+  return str.replace('ok_sub_spot_', '').replace('_ticker', '');
+}
 function parsePairName(channel) {
-  return channel.replace('ok_sub_spot_', '').replace('_ticker', '').replace('_', '-').toUpperCase();
+  return _extactChannel(channel).replace('_', '-').toUpperCase();
+}
+
+function formatWsBalance(ds) {
+  console.log(ds);
+  return _.map(ds, (d) => {
+    const { data, channel } = d;
+    const pair = parsePairName(channel);
+    if (!data) return;
+    const { info } = data;
+    if (!info) return;
+    const { free: balance, freezed: balanceLocked } = info;
+    return {
+      pair, balance, balanceLocked
+    };
+  }).filter(d => d);
 }
 
 function formatWsTick(ds) {
@@ -156,10 +188,13 @@ module.exports = {
   formatDepth,
   formatOrderBook,
   formatBalances,
-  formatOrder,
+  formatOrderO,
+  formatCancelOrderO,
   formatOrderResult,
   formatKline,
   // ws
+  createWsChanelBalance,
   createWsChanelTick,
-  formatWsTick
+  formatWsBalance,
+  formatWsTick,
 };

@@ -6,7 +6,7 @@ const config = require('./../config');
 const { extrude, getAppKey } = require('./utils');
 
 
-const spotList = ['kucoin'];// , 'okex'
+const spotList = ['hitbtc'];// , 'okex'
 const spotTasks = [
   // {
   //   fn: 'order',
@@ -58,26 +58,26 @@ const spotTasks = [
   //   },
   //   name: '取消交易'
   // },
-  // {
-  //   fn: 'pairs',
-  //   params: {},
-  //   name: '交易对信息'
-  // },
+  {
+    fn: 'pairs',
+    params: {},
+    name: '交易对信息'
+  },
   // {
   //   fn: 'coins',
   //   params: {},
   //   name: '币信息'
   // },
-// {
-//   fn: 'ticks',
-//   params: { pair: 'ETH-BTC' },
-//   name: 'ticks数据'
-// },
   {
-    fn: 'balances',
-    params: {},
-    name: '账户余额'
+    fn: 'ticks',
+    params: { pair: 'ETH-BTC' },
+    name: 'ticks数据'
   },
+  // {
+  //   fn: 'balances',
+  //   params: {},
+  //   name: '账户余额'
+  // },
 //{
 //   fn: 'depth',
 //   params: { pair: 'ETH-BTC' },
