@@ -53,6 +53,7 @@ function formatTickers(ds) {
       low: _parse(d.low),
       high: _parse(d.high),
       open: _parse(d.open),
+      time: new Date(d.timestamp)
     };
   });
 }
