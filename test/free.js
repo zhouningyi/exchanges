@@ -99,7 +99,7 @@ async function test(exName, pair, side = 'BUY') {
   const tick = await ex.ticks({ pair });
   //
   print('开始交易...');
-  const price = tick.askPrice * (1 + 0.4 / 1000);
+  const price = tick.ask_price * (1 + 0.4 / 1000);
   const amount = 0.00101;
   const orderO = { price, amount, pair, side, type: 'LIMIT' };
   await ex.order(orderO);
@@ -110,7 +110,7 @@ async function test(exName, pair, side = 'BUY') {
   balanceAfter = getRefBalance(balanceAfter, pair);
 
   //
-  diff(balanceBefore, balanceAfter, pair, side, price, tick.lastPrice);
+  diff(balanceBefore, balanceAfter, pair, side, price, tick.last_price);
   print('取消未成交的资金...');
   await ex.cancelAllOrders();
 
