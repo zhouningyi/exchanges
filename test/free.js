@@ -101,7 +101,7 @@ async function test(exName, pair, side = 'BUY') {
   print('开始交易...');
   const price = tick.askPrice * (1 + 0.4 / 1000);
   const amount = 0.00101;
-  const orderO = { price, amount, pair, side };
+  const orderO = { price, amount, pair, side, type: 'LIMIT' };
   await ex.order(orderO);
 
   //
