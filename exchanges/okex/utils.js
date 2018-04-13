@@ -12,9 +12,9 @@ function formatTick(d) {
   const time = new Date(date * 1000);
   return {
     time,
-    lastPrice: _parse(ticker.last),
-    askPrice: _parse(ticker.buy),
-    bidPrice: _parse(ticker.sell),
+    last_price: _parse(ticker.last),
+    ask_price: _parse(ticker.buy),
+    bid_price: _parse(ticker.sell),
     volume_24: _parse(ticker.vol)
   };
 }
@@ -58,16 +58,16 @@ function formatBalances(ds) {
   const { free, freezed, borrow } = funds;
   const result = {};
   _.forEach(free, (str, coin) => {
-    _.set(result, `${coin}.balanceStr`, str);
+    _.set(result, `${coin}.balance_str`, str);
     _.set(result, `${coin}.balance`, _parse(str));
   });
   _.forEach(borrow, (str, coin) => {
-    _.set(result, `${coin}.borrowBalanceStr`, str);
-    _.set(result, `${coin}.borrowBalance`, _parse(str));
+    _.set(result, `${coin}.borrow_balance_str`, str);
+    _.set(result, `${coin}.borrow_balance`, _parse(str));
   });
   _.forEach(freezed, (str, coin) => {
-    _.set(result, `${coin}.lockedBalanceStr`, str);
-    _.set(result, `${coin}.lockedBalance`, _parse(str));
+    _.set(result, `${coin}.locked_balance_str`, str);
+    _.set(result, `${coin}.locked_balance`, _parse(str));
     //
     _.set(result, `${coin}.coin`, coin.toUpperCase());
   });
@@ -148,7 +148,6 @@ function parsePairName(channel) {
 }
 
 function formatWsBalance(ds) {
-  console.log(ds);
   return _.map(ds, (d) => {
     const { data, channel } = d;
     const pair = parsePairName(channel);
@@ -165,17 +164,17 @@ function formatWsBalance(ds) {
 function formatWsTick(ds) {
   return _.map(ds, (d) => {
     const { data, channel } = d;
-    const bidPrice = parseFloat(data.buy, 10);
-    const askPrice = parseFloat(data.sell, 10);
+    const bid_price = parseFloat(data.buy, 10);
+    const ask_price = parseFloat(data.sell, 10);
     const volume24 = parseFloat(data.vol, 10);
     const change = parseFloat(data.change, 10);
-    const lastPrice = parseFloat(data.last, 10);
-    if (!bidPrice || !askPrice) return null;
+    const last_price = parseFloat(data.last, 10);
+    if (!bid_price || !ask_price) return null;
     return {
       pair: parsePairName(channel),
-      bidPrice,
-      askPrice,
-      lastPrice,
+      bid_price,
+      ask_price,
+      last_price,
       volume24,
       change,
       time: new Date()

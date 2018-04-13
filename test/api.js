@@ -1,12 +1,13 @@
+import { utimes } from 'fs';
 
 const _ = require('lodash');
 //
 const Exchanges = require('./../index');
 const config = require('./../config');
-const { extrude, getAppKey } = require('./utils');
+const { extrude, getExchange, upperFirst } = require('./utils');
 
 
-const spotList = ['hitbtc'];// , 'okex'
+const spotExchangeList = ['bittrex'];// , 'okex'. 'hitbtc'
 const spotTasks = [
   // {
   //   fn: 'order',
@@ -108,9 +109,9 @@ const futureTasks = [
   },
 ];
 
+
 async function testOneExchange(exName, tasks) {
-  const Exchange = Exchanges[exName];
-  const ex = new Exchange(getAppKey(exName));
+  const ex = getExchange(exName);
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
     console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
@@ -126,6 +127,5 @@ async function test(exNames, tasks) {
   }
 }
 
-
-test(spotList, spotTasks);
+test(spotExchangeList, spotTasks);
 // test(futureList, futureTasks);

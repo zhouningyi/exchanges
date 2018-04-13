@@ -1,13 +1,12 @@
 
 const _ = require('lodash');
 //
-const Exchanges = require('./../index');
+
 const config = require('./../config');
-const { extrude, getAppKey } = require('./utils');
+const { getExchange } = require('./utils');
 const Utils = require('./../utils');
 
 // 关于交易费用的测试
-
 function filterBalance(balances, arr) {
   arr = _.keyBy(arr, d => d);
   return _.filter(balances, balance => balance.coin in arr);
@@ -59,15 +58,18 @@ function print(str, color = 'gray') {
   Utils.print(str, color);
 }
 
-function diff(balances1, balances2, pair, side, price) {
+
+function diff(balances1, balances2, pair, side, price, lastPrice) {
   const { source, target } = getCoinTS(pair, side);
   const dSource = balances2[source].totalBalance - balances1[source].totalBalance;
   const dTarget = balances2[target].totalBalance - balances1[target].totalBalance;
-  const free = side === 'BUY' ? price : 1 / price;
-  const dTargetBySource = dTarget * free;
+
   // console.log(free, 'free', dTargetBySource, 'dTargetBySource');
   // const dBNB = balances2.BNB - balances1.BNB;// 币安的规则
-
+  const tradePrice = -dSource / dTarget;
+  console.log(price, lastPrice, tradePrice, 'price, lastPrice, tradePrice');
+  const free = side === 'BUY' ? tradePrice : 1 / tradePrice;
+  const dTargetBySource = dTarget * free;
   if (!dTarget) return;
   let tradeFree = (dSource + dTargetBySource) / dSource;
   tradeFree = (tradeFree * 1000).toFixed(3);
@@ -79,21 +81,19 @@ function diff(balances1, balances2, pair, side, price) {
 }
 
 async function test(exName, pair, side = 'BUY') {
-  const Exchange = Exchanges[exName];
-  const conf = getAppKey(exName);
-  const ex = new Exchange(conf);
+  const ex = getExchange(exName);
   //
-  if (ex.wsBalance) {
-    ex.wsBalance({}, (ds) => {
-      console.log(ds);
-    });
-  }
-  await delay(10000);
-  //
+  // if (ex.wsBalance) {
+  //   ex.wsBalance({}, (ds) => {
+  //     console.log(ds);
+  //   });
+  // }
+  // await delay(10000);
+
   print('交易前账户资金...');
   let balanceBefore = await ex.balances();
   balanceBefore = getRefBalance(balanceBefore, pair);
-  console.log(balanceBefore, 'balanceBefore');
+  // console.log(balanceBefore, 'balanceBefore');
   //
   print('交易价格...');
   const tick = await ex.ticks({ pair });
@@ -110,9 +110,9 @@ async function test(exName, pair, side = 'BUY') {
   balanceAfter = getRefBalance(balanceAfter, pair);
 
   //
-  diff(balanceBefore, balanceAfter, pair, side, price);
+  diff(balanceBefore, balanceAfter, pair, side, price, tick.lastPrice);
   print('取消未成交的资金...');
-  // await ex.cancelAllOrders();
+  await ex.cancelAllOrders();
 
   //
   // let balanceFinal = await ex.balances();
@@ -120,4 +120,4 @@ async function test(exName, pair, side = 'BUY') {
   // diff(balanceAfter, balanceFinal, pair, side, price);
 }
 
-test('okex', 'ETH-BTC');
+test('binance', 'ETH-BTC');

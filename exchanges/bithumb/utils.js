@@ -6,8 +6,8 @@ const { floor } = Math;
 
 function formatTick(d) {
   return {
-    bidPrice: parseFloat(d.sell_price, 10),
-    askPrice: parseFloat(d.buy_price, 10),
+    bid_price: parseFloat(d.sell_price, 10),
+    ask_price: parseFloat(d.buy_price, 10),
     time: new Date(d.time)
   };
 }

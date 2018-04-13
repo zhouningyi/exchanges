@@ -47,9 +47,9 @@ function formatTickers(ds) {
   return _.map(ds, (d) => {
     return {
       pair: _formatPair(d.symbol),
-      askPrice: _parse(d.ask),
-      bidPrice: _parse(d.bid),
-      lastPrice: _parse(d.last),
+      ask_price: _parse(d.ask),
+      bid_price: _parse(d.bid),
+      last_price: _parse(d.last),
       low: _parse(d.low),
       high: _parse(d.high),
       open: _parse(d.open),
