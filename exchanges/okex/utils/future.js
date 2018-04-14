@@ -49,7 +49,6 @@ function formatWsFutureTick(ds) {
   return _.keyBy(ds, 'pair');
 }
 
-
 //
 const createWsChanelFutureTick = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);

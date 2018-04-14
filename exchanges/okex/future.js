@@ -36,19 +36,16 @@ class Exchange extends Spot {
     const chanelString = kUtils.createWsChanelFutureTick(FUTURE_PAIRS, { contact_type });
     this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureTick, cb);
   }
-  async wsFutureKlines(o = {}, cb) {
-    const symbol = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
+  wsFutureKlines(o = {}, cb) {
+    const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
     const { contact_type = 'quarter', interval = '1m' } = o;
-    const chanelString = kUtils.createWsChanelFutureKline([symbol], { contact_type, interval });
+    const chanelString = kUtils.createWsChanelFutureKline(symbols, { contact_type, interval });
     this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureKline, cb);
   }
-  // async wsFutureKlines(o = {}, cb) {
-  //   checkKey(o, ['pair']);
-  //   const symbol = kUtils.formatPair(o.pair, true);
-  //   const { contact_type = 'quarter', interval = '1m' } = o;
-  //   const chanelString = kUtils.createWsChanelFutureKline([symbol], { contact_type, interval });
-  //   this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureKline, cb);
-  // }
+  wsFutureKline(o = {}, cb) {
+    checkKey(o, ['pair']);
+    this.wsFutureKlines(o, cb);
+  }
 }
 
 module.exports = Exchange;

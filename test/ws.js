@@ -22,12 +22,18 @@ const wsList = [
   //   name: '期货余额数据'
   // },
   {
-    fn: 'wsFutureKline',
+    fn: 'wsFutureKlines',
     params: {
-      pair: 'BTC-USD'
     },
     name: '期货tick k线图...'
   },
+  // {
+  //   fn: 'wsFutureKline',
+  //   params: {
+  //     pair: 'BTC-USD'
+  //   },
+  //   name: '期货tick k线图...(指定pair)'
+  // },
 ];
 
 function testOneExchangeWs(exName, list) {

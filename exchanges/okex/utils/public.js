@@ -41,6 +41,7 @@ const intervalMap = {
   '1d': '1day',
   '3d': '2hour',
 };
+
 function formatInterval(iter) {
   const it = intervalMap[iter];
   if (!it) {
@@ -52,14 +53,15 @@ function formatInterval(iter) {
 
 
 function formatWsResult(_format) {
+  let result = {};
   return (ds) => {
-    const res = _.map(ds, (d) => {
+    _.forEach(ds, (d) => {
       const { channel } = d;
       d = d.data;
       if (d.result) return null;
-      return _format(d, channel);
-    }).filter(d => d);
-    return _.flatten(res);
+      result = { ...result, ..._format(d, channel) };
+    });
+    return result;
   };
 }
 

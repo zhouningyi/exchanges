@@ -1,4 +1,4 @@
 
-const all = require('./feature');
+const all = require('./future');
 
 module.exports = all;
