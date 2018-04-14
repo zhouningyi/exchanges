@@ -4,8 +4,8 @@
 #### api比较
 | 名称 | 方法  | 输入 | 输出 |kucoin  | [binance](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md) | [hitBTC](https://github.com/hitbtc-com/hitbtc-api/blob/master/APIv1.md) | [okex](https://github.com/okcoin-okex/OKEx.com-api-docs) | [bithumb](https://www.bithumb.com/u1/US127) |
 | --------   | -----:  |-----:  |   :-----  |-----:  |  :----: | --------   | --------   | --------   |
-| 市场(现货) |  |  |  | |  |  |  |  |
-| 订单表(orderBook) | orderBook |  || ✅ | ✅ ||  |  |
+| [市场(现货)](#市场类) |  |  |  | |  |  |  |  |
+| [订单表(orderBook)](#订单表(orderBook)) | orderBook |  || ✅ | ✅ ||  |  |
 | tick数据（可以返回全量ticks, 也可以返回单个tick） | ticks |  |  | ✅ |✅||  | ✅ |
 | tick数据(ws版) | wsTicks | | (注意输入的不是全量数据，是变化量) |  |✅|| |  |
 | 市场(期货) |  | |  | ||| | |
@@ -38,7 +38,7 @@
 
 
 
-#### 标准参数
+#### 常见参数
 
 | 名称 | 含义  | 备注  |
 | --------   | -----:  | -----  |
@@ -62,4 +62,24 @@
 |  |  | |
 |  |  | |
 
- 
+ ## 市场类
+
+市场信息类，基本不用 appKey 与 appSecret 即可访问
+
+
+
+#### 订单表(orderBook)
+
+```
+<details>
+<summary>输入</summary>
+| 名称 | 含义  | 备注  |
+| --------   | -----:  | -----  |
+| coin | 币种 |  |
+</details>
+```
+
+#### ticks(全量tick数据)
+输入
+
+
