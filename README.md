@@ -5,8 +5,8 @@
 | 名称 | 方法  | 输入 | 输出 |kucoin  | [binance](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md) | [hitBTC](https://github.com/hitbtc-com/hitbtc-api/blob/master/APIv1.md) | [okex](https://github.com/okcoin-okex/OKEx.com-api-docs) | [bithumb](https://www.bithumb.com/u1/US127) |
 | --------   | -----:  |-----:  |   :-----  |-----:  |  :----: | --------   | --------   | --------   |
 | [市场(现货)](#市场类) |  |  |  | |  |  |  |  |
-| [订单表(orderBook)](#orderBook) | orderBook |  || ✅ | ✅ ||  |  |
-| [tick数据（可以返回全量ticks, 也可以返回单个tick）](#ticks) | ticks |  |  | ✅ |✅||  | ✅ |
+| [orderBook 订单表 ](#orderBook) | orderBook |  || ✅ | ✅ ||  |  |
+| [ticks tick行情](#ticks) | ticks |  |  | ✅ |✅||  | ✅ |
 | tick数据(ws版) | wsTicks | | (注意输入的不是全量数据，是变化量) |  |✅|| |  |
 | 市场(期货) |  | |  | ||| | |
 | tick数据(只能按照单个pair返回) | tick(futureTick) | | |  ||| ✅ |  |
@@ -67,25 +67,27 @@
 市场信息类，不用 appKey / appSecret 即可运行
 
 
-
-#### orderBook 
+### orderBook 
 订单表
 
 
-#### ticks
+### ticks
 返回全量tick数据
 
 <details>
 <summary>输入</summary>
+
 ```javascript
 {
-    pair: 'ETH-BTC'//可选，如果为空，默认返回所有pair的数据
+  pair: 'ETH-BTC'//可选，如果为空，默认返回所有pair的数据
 }
 ```
+
 </details>
 
 <details>
 <summary>输出</summary>
+
 ```javascript
 //输入包含pair的情况:
   {
@@ -115,6 +117,7 @@
     "time": "2018-04-13T19:15:53.933Z"//最后更新时间
  }]
 ```
+
 </details>
 
 
