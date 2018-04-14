@@ -23,7 +23,9 @@ const wsList = [
   // },
   {
     fn: 'wsFutureKline',
-    params: {},
+    params: {
+      pair: 'BTC-USD'
+    },
     name: '期货tick k线图...'
   },
 ];
@@ -33,7 +35,7 @@ function testOneExchangeWs(exName, list) {
   _.forEach(list, (o) => {
     const { fn, params } = o;
     ex[fn](params, (ds) => {
-      console.log(ds, 'ds...');
+      console.log(ds, 'ds.222..');
     });
   });
 }

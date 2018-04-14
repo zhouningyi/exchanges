@@ -1,6 +1,6 @@
 {
-  "name": "future_tick",
-  "desc": "future_tick",
+  "name": "tick",
+  "desc": "tick",
   "columns": {
     "unique_id": {
       "type": ["STRING", 28],
@@ -13,8 +13,6 @@
     "last_price": "FLOAT",
     "ask_price": "FLOAT",
     "exchange": ["STRING", 10],
-    "contract_id": ["STRING", 20],
-    "hold_amount":  "FLOAT",
     "volume_24": "FLOAT"
   }
 }

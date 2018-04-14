@@ -1,0 +1,30 @@
+{
+  "name": "future_kline",
+  "desc": "future_kline",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 28],
+      "unique": true
+    },
+    "pair": {
+      "type": ["STRING", 16],
+      "index": true
+    },
+    "time":{
+      "type": "DATE",
+      "index": true
+    },
+    "open": "FLOAT",
+    "close": "FLOAT",
+    "high": "FLOAT",
+    "low": ["STRING", 10],
+    "volume_amount":{
+      "type": ["STRING", 20],
+      "comment": "持仓量(张数)"
+    },
+    "volume_coin":  {
+      "type": "FLOAT",
+      "comment": "持仓量(币的数量)"
+    }
+  }
+}

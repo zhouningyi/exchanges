@@ -34,14 +34,22 @@ class Exchange extends Spot {
   async wsFutureTicks(o = {}, cb) {
     const { contact_type = 'quarter' } = o;
     const chanelString = kUtils.createWsChanelFutureTick(FUTURE_PAIRS, { contact_type });
-    this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFeatureTick, cb);
+    this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureTick, cb);
   }
   async wsFutureKline(o = {}, cb) {
-    // checkKey(o, ['pair']);
+    checkKey(o, ['pair']);
+    const symbol = kUtils.formatPair(o.pair, true);
     const { contact_type = 'quarter', interval = '1m' } = o;
-    const chanelString = kUtils.createWsChanelFutureKline(FUTURE_PAIRS, { contact_type, interval });
-    this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFeatureKline, cb);
+    const chanelString = kUtils.createWsChanelFutureKline([symbol], { contact_type, interval });
+    this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureKline, cb);
   }
+  // async wsFutureKlines(o = {}, cb) {
+  //   checkKey(o, ['pair']);
+  //   const symbol = kUtils.formatPair(o.pair, true);
+  //   const { contact_type = 'quarter', interval = '1m' } = o;
+  //   const chanelString = kUtils.createWsChanelFutureKline([symbol], { contact_type, interval });
+  //   this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureKline, cb);
+  // }
 }
 
 module.exports = Exchange;

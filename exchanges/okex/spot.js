@@ -13,7 +13,13 @@ const { USER_AGENT, WS_BASE } = require('./config');
 const { checkKey } = Utils;
 //
 const ALL_PAIRS = exchangePairs.okex;
+function mergeArray(data, d) {
+  return data.concat(data, d);
+}
 
+function merge(data, d) {
+  return { ...data, ...d };
+}
 const URL = 'https://www.okex.com/api';
 class Exchange extends Base {
   constructor(o, options) {
@@ -93,10 +99,8 @@ class Exchange extends Base {
       },
       form: signedParams
     };
-    // console.log(o, 'o...');
     let body;
     try {
-      // console.log('request...', o);
       body = await request(o);
     } catch (e) {
       if (e) console.log(e.message);
@@ -115,17 +119,19 @@ class Exchange extends Base {
   createWs(o = {}) {
     const { timeInterval, chanelString } = o;
     return (formatData, cb) => {
-      let data = [];
+      let data = {};
       const cbf = _.throttle(() => {
-        if (data && data.length) {
-          cb(data);
-          data = [];
+        const res = _.values(data);
+        if (res.length) {
+          cb(res);
+          data = {};
         }
       }, timeInterval);
       //
       const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString) };
       kUtils.subscribe('', (ds) => {
-        data = data.concat(formatData(ds));
+        console.log(formatData(ds), 'formatData(ds)');
+        data = merge(data, formatData(ds));
         cbf();
       }, options);
     };
@@ -133,12 +139,12 @@ class Exchange extends Base {
   // ws接口
   async wsTicks(o, cb) {
     const pairs = this._getPairs(o.filter);
-    const chanelString = kUtils.createWsChanelTick(pairs);
-    this.createWs({ chanelString })(kUtils.formatWsTick, cb);
+    const chanelString = kUtils.createSpotChanelTick(pairs);
+    this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb);
   }
   async wsBalance(o, cb) {
     const pairs = this._getPairs(o.filter);
-    const chanelString = kUtils.createWsChanelBalance(pairs);
+    const chanelString = kUtils.createSpotChanelBalance(pairs);
     this.createWs({ chanelString })(kUtils.formatWsBalance, cb);
   }
 }
