@@ -25,7 +25,6 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-
 function upperFirst(d) {
   const str = d[0].toUpperCase();
   return str + d.substring(1);

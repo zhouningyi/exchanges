@@ -157,6 +157,28 @@ function _createWsChanel(genChanel) {
   };
 }
 
+const intervalMap = {
+  '1m': '1min',
+  '3m': '3min',
+  '15m': '15min',
+  '1h': '1hour',
+  '2h': '2hour',
+  '4h': '4hour',
+  '6h': '6hour',
+  '12h': '12hour',
+  '1d': '1day',
+  '3d': '2hour',
+};
+
+function _formatInterval(iter) {
+  const it = intervalMap[iter];
+  if (!it) {
+    console.log(`okex 的kline图没有时间周期${iter}`);
+    process.exit();
+  }
+  return it;
+}
+
 //
 const createWsChanelFutureTick = _createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
@@ -171,6 +193,29 @@ const createWsChanelBalance = _createWsChanel((pair) => {
   return `ok_sub_spot_${pair}_balance`;
 });
 
+const createWsChanelFutureKline = _createWsChanel((pair, o) => {
+  pair = formatPair(pair, true);
+  const interval = _formatInterval(o.interval);
+  return `ok_sub_future${pair}_kline_${o.contact_type}_${interval}`;
+});
+
+function formatWsResult(_format) {
+  return (ds) => {
+    return _.map(ds, (d) => {
+      const { channel } = d;
+      d = d.data;
+      if (d.result) return null;
+      _format(d, channel);
+    }).filter(d => d);
+  };
+}
+
+const formatWsFeatureKline = formatWsResult((d, chanel) => {
+  console.log(d);
+  process.exit();
+  return {
+  };
+});
 
 function _extactChannel(str) {
   return str.replace('ok_sub_spot_', '').replace('_ticker', '');
@@ -223,9 +268,12 @@ module.exports = {
   formatCancelOrderO,
   formatOrderResult,
   // ws
+  createWsChanelFutureKline,
   createWsChanelFutureTick,
   createWsChanelBalance,
   createWsChanelTick,
+  //
+  formatWsFeatureKline,
   formatWsFeatureTick,
   formatWsBalance,
   formatWsTick,

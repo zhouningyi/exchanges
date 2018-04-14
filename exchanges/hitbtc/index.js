@@ -37,7 +37,6 @@ class Exchange extends Base {
   async ticks(o = {}) {
     let ds = await this.get('public/ticker', o);
     ds = kUtils.formatTickers(ds);
-    // console.log(ds, 'ds...');
     return ds;
   }
   //

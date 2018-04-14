@@ -6,13 +6,16 @@ const HttpsProxyAgent = require('https-proxy-agent');
 
 function loop(fn, time) {
   fn();
-  setTimeout(loop, time);
+  setTimeout(() => loop(fn, time), time);
 }
+
+const onceLoop = _.once(loop);
 
 function noop() {}
 
+const loopInterval = 4000;
 function genSubscribe(stream) {
-  return (endpoint, callback, o = { }) => {
+  return (endpoint, cb, o = { }) => {
     const { proxy, willLink, pingInterval } = o;
     // if (options.verbose) options.log(`Subscribed to ${endpoint}`);
     const options = proxy ? {
@@ -28,6 +31,8 @@ function genSubscribe(stream) {
       // console.log(`${stream} open...`);
     });
     ws.on('pong', () => {
+      console.log('receive pong...');
+      // ws.ping();
       // console.log(`${stream} pong...`);
     });
     ws.on('ping', () => {
@@ -38,10 +43,14 @@ function genSubscribe(stream) {
     ws.on('message', (data) => {
       try {
         if (typeof data === 'string') data = JSON.parse(data);
-        callback(data);
+        cb(data);
       } catch (error) {
         console.log(`Parse error: ${error.message}`);
       }
+      onceLoop(() => {
+        console.log('ping...');
+        ws.ping();
+      }, loopInterval);
     });
     return ws;
   };

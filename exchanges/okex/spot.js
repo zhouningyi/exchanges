@@ -107,41 +107,39 @@ class Exchange extends Base {
     }
     return body.data || body;
   }
-  createWs(o = {}) {
-    const { timeInterval, chanelString } = o;
-    return (cb) => {
-      let data = [];
-      const cbf = _.throttle(() => {
-        if (data && data.length) cb(data);
-        data = [];
-      }, timeInterval);
-      //
-      const options = {
-        proxy: this.proxy,
-        willLink: ws => ws.send(chanelString)
-      };
-      kUtils.subscribe('', (ds) => {
-        ds = kUtils.formatWsTick(ds);
-        data = data.concat(ds);
-        cbf();
-      }, options);
-    };
-  }
   _getPairs(filter) {
     let pairs = ALL_PAIRS;
     if (filter) pairs = _.filter(pairs, filter);
     return _.map(pairs, d => d.pair);
   }
+  createWs(o = {}) {
+    const { timeInterval, chanelString } = o;
+    return (formatData, cb) => {
+      let data = [];
+      const cbf = _.throttle(() => {
+        if (data && data.length) {
+          cb(data);
+          data = [];
+        }
+      }, timeInterval);
+      //
+      const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString) };
+      kUtils.subscribe('', (ds) => {
+        data = data.concat(formatData(ds));
+        cbf();
+      }, options);
+    };
+  }
   // ws接口
   async wsTicks(o, cb) {
     const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createWsChanelTick(pairs);
-    this.createWs({ chanelString })(cb);
+    this.createWs({ chanelString })(kUtils.formatWsTick, cb);
   }
   async wsBalance(o, cb) {
     const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createWsChanelBalance(pairs);
-    this.createWs({ chanelString })(cb);
+    this.createWs({ chanelString })(kUtils.formatWsBalance, cb);
   }
 }
 

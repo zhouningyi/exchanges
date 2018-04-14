@@ -6,11 +6,11 @@ const config = require('./../config');
 const Utils = require('./utils');
 
 const wsList = [
-  {
-    fn: 'wsTicks',
-    params: {},
-    name: 'tick数据...'
-  },
+  // {
+  //   fn: 'wsTicks',
+  //   params: {},
+  //   name: 'tick数据...'
+  // },
   // {
   //   fn: 'wsFutureTicks',
   //   params: {},
@@ -20,7 +20,12 @@ const wsList = [
   //   fn: 'wsBalance',
   //   params: {},
   //   name: '期货余额数据'
-  // }
+  // },
+  {
+    fn: 'wsFutureKline',
+    params: {},
+    name: '期货tick k线图...'
+  },
 ];
 
 function testOneExchangeWs(exName, list) {

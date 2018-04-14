@@ -33,7 +33,7 @@ class exchange extends Event {
   }
   saveConfig(json = {}, file) {
     const { name } = this;
-    const pth = path.join(__dirname, `./${name}/${file}.json`);
+    const pth = path.join(__dirname, `./${name}/meta/${file}.json`);
     const str = JSON.stringify(json, null, 2);
     fs.writeFileSync(pth, str, 'utf8');
   }
