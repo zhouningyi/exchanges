@@ -128,9 +128,9 @@
 websocket 期货k线图, 可以返回所有交易对的信息，也可以只返回指定的pair
 
 ```javascript
-  //options: 配置
-  //cb: 回调函数
-  exchange.wsFutureKlines(options, cb);
+//options: 配置
+//cb: 回调函数
+exchange.wsFutureKlines(options, cb);
 ```
 
 #### 输入配置(options)
