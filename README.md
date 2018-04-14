@@ -73,18 +73,9 @@
 
 <details>
 <summary>输入</summary>
-| 名称 | 含义  | 备注  |
-| --------   | -----:  | -----  |
-| coin | 币种 |  |
-</details>
-
-<details>
-<summary>Output</summary>
-
-```js
-1508478457643
-```
-
+ ```js
+   console.log('test')
+ ```
 </details>
 
 #### ticks(全量tick数据)
