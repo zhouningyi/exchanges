@@ -33,9 +33,15 @@ class Exchange extends Base {
     return md5(qstr).toUpperCase();
   }
   async tick(o = {}) {
-    checkKey(o, ['pair']);
+    checkKey(o, 'pair');
     const ds = await this.get('ticker', o);
     return kUtils.formatTick(ds, o.pair);
+  }
+  async kline(o = {}) {
+    checkKey(o, 'pair');
+    o = kUtils.formatKlineO(o);
+    const ds = await this.get('kline', o);
+    return kUtils.formatKline(ds, o.pair);
   }
   async ticks(o = {}) {
     const ds = await this.tick(o);
@@ -102,6 +108,7 @@ class Exchange extends Base {
     };
     let body;
     try {
+      // console.log(o, '===');
       body = await request(o);
     } catch (e) {
       if (e) console.log(e.message);

@@ -51,7 +51,6 @@ function formatInterval(iter) {
   return it;
 }
 
-
 function formatWsResult(_format) {
   let result = {};
   return (ds) => {

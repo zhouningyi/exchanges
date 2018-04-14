@@ -19,6 +19,7 @@ class Exchange extends Spot {
     const ds = await this.get('future_ticker', o);
     return kUtils.formatTick(ds);
   }
+
   async futureDepth(o = {}) {
     const ds = await this.get('future_depth', o);
     return kUtils.formatDepth(ds);
@@ -27,7 +28,19 @@ class Exchange extends Spot {
     const ds = await this.get('future_trades', o, true, true);
     return kUtils.formatOrderBook(ds);
   }
+  async futureKlines(o = {}) {
+    if (o.pair) {
+      const ds = await this.futureKline(o);
+      return ds;
+    }
+    const tasks = _.map(FUTURE_PAIRS, (pair) => {
+      return this.futureKlines({ ...o, pair });
+    });
+    const dss = await Promise.all(tasks);
+    // return kUtils.formatKline(ds);
+  }
   async futureKline(o = {}) {
+    checkKey(o, ['pair']);
     const ds = await this.get('future_kline', o, true, true);
     return kUtils.formatOrderBook(ds);
   }

@@ -8,7 +8,7 @@ const {
   createWsChanel,
   formatPair,
   _parse,
-  extactPairFromFutureChannel,
+  formatInterval,
   extactPairFromSpotChannel,
 } = require('./public');
 
@@ -23,6 +23,33 @@ function formatTick(d, pair) {
     bid_price: _parse(ticker.sell),
     volume_24: _parse(ticker.vol)
   };
+}
+
+// kline
+const defaultKlineO = {
+  interval: '1m',
+  size: 2000
+};
+function formatKlineO(o) {
+  o = { ...defaultKlineO, ...o };
+  o.type = formatInterval(o.interval);
+  delete o.interval;
+  return o;
+}
+function formatKline(ds, pair) {
+  return _.map(ds, (d) => {
+    const time = new Date(d[0]);
+    const tstr = Math.floor(time.getTime() / 1000);
+    return {
+      unique_id: `${pair}_${tstr}`,
+      pair,
+      time,
+      open: _parse(d[1]),
+      high: _parse(d[2]),
+      low: _parse(d[3]),
+      close: _parse(d[4]),
+    };
+  });
 }
 
 // depth
@@ -165,6 +192,8 @@ module.exports = {
   formatOrderO,
   formatCancelOrderO,
   formatOrderResult,
+  formatKline,
+  formatKlineO,
   // ws
   createSpotChanelBalance,
   createSpotChanelTick,

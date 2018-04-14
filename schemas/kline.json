@@ -1,0 +1,22 @@
+{
+  "name": "kline",
+  "desc": "kline",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 28],
+      "unique": true
+    },
+    "pair": {
+      "type": ["STRING", 16],
+      "index": true
+    },
+    "time":{
+      "type": "DATE",
+      "index": true
+    },
+    "open": "FLOAT",
+    "close": "FLOAT",
+    "high": "FLOAT",
+    "low": ["STRING", 10]
+  }
+}

@@ -154,9 +154,21 @@ exchange.wsFutureKlines(options, cb);
    high: 8267.76,
    low: 8246.75,
    close: 8250,
-   volume_amount: 29668,
-   volume_coin: 359.375501249285 
+   volume_amount: 29668,//数量(张)
+   volume_coin: 359.375501249285 //数量(币)
  }
 ```
 </details>
+
+
+### futureKlines
+期货k线图,  功能如 [wsFutureKlines](#wsFutureKlines)
+
+```javascript
+//options: 配置
+//cb: 回调函数
+await exchange.futureKlines(options, cb);
+```
+
+
 

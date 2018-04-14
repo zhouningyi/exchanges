@@ -63,10 +63,17 @@ const tasks = [
   //   name: '币信息'
   // },
   {
-    fn: 'ticks',
-    params: { pair: 'ETH-BTC' },
-    name: 'ticks数据'
+    fn: 'kline',
+    params: {
+      pair: 'BTC-USDT'
+    },
+    name: 'k线图'
   },
+  // {
+  //   fn: 'ticks',
+  //   params: { pair: 'ETH-BTC' },
+  //   name: 'ticks数据'
+  // },
   // {
   //   fn: 'balances',
   //   params: {},

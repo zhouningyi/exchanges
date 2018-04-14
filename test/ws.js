@@ -21,19 +21,19 @@ const wsList = [
   //   params: {},
   //   name: '期货余额数据'
   // },
-  {
-    fn: 'wsFutureKlines',
-    params: {
-    },
-    name: '期货tick k线图...'
-  },
   // {
-  //   fn: 'wsFutureKline',
+  //   fn: 'wsFutureKlines',
   //   params: {
-  //     pair: 'BTC-USD'
   //   },
-  //   name: '期货tick k线图...(指定pair)'
+  //   name: '期货tick k线图...'
   // },
+  {
+    fn: 'wsFutureKline',
+    params: {
+      pair: 'BTC-USD'
+    },
+    name: '期货tick k线图...(指定pair)'
+  },
 ];
 
 function testOneExchangeWs(exName, list) {
@@ -41,7 +41,7 @@ function testOneExchangeWs(exName, list) {
   _.forEach(list, (o) => {
     const { fn, params } = o;
     ex[fn](params, (ds) => {
-      console.log(ds, 'ds.222..');
+      console.log(ds, 'ds.....');
     });
   });
 }

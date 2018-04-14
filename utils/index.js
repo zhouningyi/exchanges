@@ -27,10 +27,12 @@ function _handelNull(k) {
 }
 
 function checkKey(o, vs) {
-  vs = _.keyBy(vs, v => v);
-  _.forEach(vs, (k) => {
-    if (isNull(o[k])) _handelNull(k);
-  });
+  if (Array.isArray(vs)) {
+    vs = _.keyBy(vs, v => v);
+    _.forEach(vs, (k) => {
+      if (isNull(o[k])) _handelNull(k);
+    });
+  } else if (isNull(o[vs])) _handelNull(vs);
 }
 
 module.exports = {
