@@ -31,9 +31,7 @@ function genSubscribe(stream) {
       // console.log(`${stream} open...`);
     });
     ws.on('pong', () => {
-      console.log('receive pong...');
-      // ws.ping();
-      // console.log(`${stream} pong...`);
+      // console.log('receive pong...');
     });
     ws.on('ping', () => {
       // console.log(`${stream} pong...`);
@@ -48,7 +46,6 @@ function genSubscribe(stream) {
         console.log(`Parse error: ${error.message}`);
       }
       onceLoop(() => {
-        console.log('ping...');
         ws.ping();
       }, loopInterval);
     });
