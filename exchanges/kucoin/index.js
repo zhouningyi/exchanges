@@ -13,6 +13,7 @@ class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
     this.url = URL;
+    this.name = 'kucoin';
     this.version = 'v1';
   }
   getSignature(path, queryStr, nonce) {

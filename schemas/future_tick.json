@@ -1,0 +1,20 @@
+{
+  "name": "future_tick",
+  "desc": "future_tick",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 28],
+      "unique": true,
+      "index": true
+    },
+    "pair": ["STRING", 16],
+    "time": "DATE",
+    "bid_price": "FLOAT",
+    "last_price": "FLOAT",
+    "ask_price": "FLOAT",
+    "exchange": ["STRING", 10],
+    "contract_id": ["STRING", 20],
+    "hold_amount":  "FLOAT",
+    "volume_24": "volume_24"
+  }
+}

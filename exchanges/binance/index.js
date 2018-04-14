@@ -19,6 +19,7 @@ const subscribe = Utils.ws.genSubscribe(WS_BASE);
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
+    this.name = 'binance';
     this.init();
   }
   getSignature(qs) {

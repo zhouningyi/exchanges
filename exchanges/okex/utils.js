@@ -1,10 +1,15 @@
 const _ = require('lodash');
 const Utils = require('./../../utils');
+const config = require('./config');
+const md5 = require('md5');
+
+const subscribe = Utils.ws.genSubscribe(config.WS_BASE);
 
 const { floor } = Math;
 
-function formatPair(pair) {
-  return pair.replace('-', '_').toLowerCase();
+function formatPair(pair, isReverse = false) {
+  if (!isReverse) return pair.replace('-', '_').toLowerCase();
+  return pair.split('-').reverse().join('_').toLowerCase();
 }
 
 function formatTick(d) {
@@ -106,39 +111,66 @@ function formatOrderResult(ds) {
   // return null;
 }
 
-function formatKline() {
+function parseFutureTickChanel(channel) {
+  const ds = channel.replace('ok_sub_future', '').split('_ticker_');
+  return {
+    pair: ds[0].split('_').reverse().join('-').toUpperCase(),
+    contact_type: ds[1]
+  };
 }
 
-// function _formatDepth(ds) {
-//   return _.map(ds, (d) => {
-//     return {
-//       price: d[0],
-//       volume: d[1]
-//     };
-//   });
-// }
-// function formatDepth(d) {
-//   const { bids, asks } = d;
-//   return {
-//     bids: _formatDepth(bids),
-//     asks: _formatDepth(asks),
-//   };
-// }
+function formatWsFeatureTick(ds) {
+  return _.map(ds, (d) => {
+    const { channel } = d;
+    d = d.data;
+    if (d.result) return null;
+    const pps = parseFutureTickChanel(channel);
+    const bid_price = _parse(d.buy);
+    const ask_price = _parse(d.sell);
+    const time = new Date();
+    const tstr = time.getTime() % (24 * 3600 * 1000);
+    return {
+      unique_id: md5(`${pps.pair}_${pps.contact_type}_${bid_price}_${tstr}`),
+      ...pps,
+      time,
+      high: _parse(d.high),
+      low: _parse(d.low),
+      volume_24: _parse(d.vol),
+      bid_price,
+      ask_price,
+      last_price: _parse(d.last),
+      unit_amount: _parse(d.unitAmount),
+      hold_amount: _parse(d.hold_amount),
+      contract_id: d.contractId,
+    };
+  }).filter(d => d);
+}
 
-function createWsChanelTick(pairs) {
-  const ds = _.map(pairs, ({ pair }) => {
-    pair = pair.replace(/-/g, '_').toLowerCase();
-    return { event: 'addChannel', channel: `ok_sub_spot_${pair}_ticker` };
-  });
-  return JSON.stringify(ds);
+
+function _createWsChanel(genChanel) {
+  return (pairs, o) => {
+    const ds = _.map(pairs, (pair) => {
+      const channel = genChanel(pair, o);
+      return { event: 'addChannel', channel };
+    });
+    return JSON.stringify(ds);
+  };
 }
-function createWsChanelBalance(pairs) {
-  const ds = _.map(pairs, ({ pair }) => {
-    pair = pair.replace(/-/g, '_').toLowerCase();
-    return { event: 'addChannel', channel: `ok_sub_spot_${pair}_balance` };
-  });
-  return JSON.stringify(ds);
-}
+
+//
+const createWsChanelFutureTick = _createWsChanel((pair, o) => {
+  pair = formatPair(pair, true);
+  return `ok_sub_future${pair}_ticker_${o.contact_type}`;
+});
+const createWsChanelTick = _createWsChanel((pair) => {
+  pair = formatPair(pair, false);
+  return `ok_sub_spot_${pair}_ticker`;
+});
+const createWsChanelBalance = _createWsChanel((pair) => {
+  pair = formatPair(pair, false);
+  return `ok_sub_spot_${pair}_balance`;
+});
+
 
 function _extactChannel(str) {
   return str.replace('ok_sub_spot_', '').replace('_ticker', '');
@@ -190,10 +222,13 @@ module.exports = {
   formatOrderO,
   formatCancelOrderO,
   formatOrderResult,
-  formatKline,
   // ws
+  createWsChanelFutureTick,
   createWsChanelBalance,
   createWsChanelTick,
+  formatWsFeatureTick,
   formatWsBalance,
   formatWsTick,
+  //
+  subscribe,
 };

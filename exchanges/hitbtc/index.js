@@ -19,6 +19,7 @@ class Exchange extends Base {
     this.url = REST_URL;
     this.version = '2';
     this.init();
+    this.name = 'hitbtc';
   }
   async init() {
     this.pairs();

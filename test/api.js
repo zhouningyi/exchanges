@@ -1,5 +1,3 @@
-import { utimes } from 'fs';
-
 const _ = require('lodash');
 //
 const Exchanges = require('./../index');
@@ -112,11 +110,12 @@ const futureTasks = [
 
 async function testOneExchange(exName, tasks) {
   const ex = getExchange(exName);
-  for (let i = 0; i < tasks.length; i++) {
-    const task = tasks[i];
-    console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
-    await extrude(ex, exName, task);
-  }
+  ex.saveConfig({ a: 1 }, 'conf');
+  // for (let i = 0; i < tasks.length; i++) {
+  //   const task = tasks[i];
+  //   console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
+  //   await extrude(ex, exName, task);
+  // }
 }
 
 async function test(exNames, tasks) {

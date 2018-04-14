@@ -58,7 +58,6 @@ function print(str, color = 'gray') {
   Utils.print(str, color);
 }
 
-
 function diff(balances1, balances2, pair, side, price, lastPrice) {
   const { source, target } = getCoinTS(pair, side);
   const dSource = balances2[source].totalBalance - balances1[source].totalBalance;

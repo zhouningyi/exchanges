@@ -35,9 +35,17 @@ function getExchange(name) {
   const conf = getAppKey(name);
   name = upperFirst(name);
   const Exchange = Exchanges[name];
-  return new Exchange(conf);
+  const ex = new Exchange(conf);
+  validate(ex);
+  return ex;
+}
+
+function validate(ex) {
+  if (!ex.name) {
+    console.log('exchange对象必须有name');
+  }
 }
 
 module.exports = {
-  extrude, getAppKey, upperFirst, getExchange
+  extrude, getAppKey, upperFirst, getExchange, validate
 };

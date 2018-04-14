@@ -17,6 +17,7 @@ class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
     this.url = REST_URL;
+    this.name = 'bittrex';
     this.version = 'v1.1';
     this.init();
   }

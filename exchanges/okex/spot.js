@@ -8,12 +8,11 @@ const Utils = require('./../../utils');
 const md5 = require('md5');
 const error = require('./errors');
 const { exchangePairs } = require('./../data');
+const { USER_AGENT, WS_BASE } = require('./config');
 //
 const { checkKey } = Utils;
 //
-const USER_AGENT = 'Mozilla/4.0 (compatible; Node OKEX API)';
-const WS_BASE = 'wss://real.okex.com:10441/websocket';
-const subscribe = Utils.ws.genSubscribe(WS_BASE);
+const ALL_PAIRS = exchangePairs.okex;
 
 const URL = 'https://www.okex.com/api';
 class Exchange extends Base {
@@ -21,6 +20,7 @@ class Exchange extends Base {
     super(o, options);
     this.url = URL;
     this.version = 'v1';
+    this.name = 'okex';
   }
   getSignature(params) {
     const qstr = `${Utils.getQueryString({ ...params, api_key: this.apiKey })}&secret_key=${this.apiSecret}`;
@@ -65,7 +65,6 @@ class Exchange extends Base {
   async order(o = {}) {
     o = kUtils.formatOrderO(o);
     let ds = await this.post('trade', o, true);
-    console.log(ds, 'ds...');
     ds = kUtils.formatOrderResult(ds);
     return ds;
   }
@@ -108,46 +107,41 @@ class Exchange extends Base {
     }
     return body.data || body;
   }
+  createWs(o = {}) {
+    const { timeInterval, chanelString } = o;
+    return (cb) => {
+      let data = [];
+      const cbf = _.throttle(() => {
+        if (data && data.length) cb(data);
+        data = [];
+      }, timeInterval);
+      //
+      const options = {
+        proxy: this.proxy,
+        willLink: ws => ws.send(chanelString)
+      };
+      kUtils.subscribe('', (ds) => {
+        ds = kUtils.formatWsTick(ds);
+        data = data.concat(ds);
+        cbf();
+      }, options);
+    };
+  }
+  _getPairs(filter) {
+    let pairs = ALL_PAIRS;
+    if (filter) pairs = _.filter(pairs, filter);
+    return _.map(pairs, d => d.pair);
+  }
   // ws接口
   async wsTicks(o, cb) {
-    let data = [];
-    const cbf = _.throttle(() => {
-      cb(data);
-      data = [];
-    }, 300);
-    //
-    let pairs = exchangePairs.okex;
-    if (o.filter) pairs = _.filter(pairs, o.filter);
+    const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createWsChanelTick(pairs);
-    const options = {
-      proxy: this.proxy,
-      willLink: ws => ws.send(chanelString)
-    };
-    subscribe('', (ds) => {
-      ds = kUtils.formatWsTick(ds);
-      data = data.concat(ds);
-      cbf();
-    }, options);
+    this.createWs({ chanelString })(cb);
   }
   async wsBalance(o, cb) {
-    let data = [];
-    const cbf = _.throttle(() => {
-      cb(data);
-      data = [];
-    }, 300);
-    //
-    let pairs = exchangePairs.okex;
-    if (o.filter) pairs = _.filter(pairs, o.filter);
+    const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createWsChanelBalance(pairs);
-    const options = {
-      proxy: this.proxy,
-      willLink: ws => ws.send(chanelString)
-    };
-    subscribe('', (ds) => {
-      ds = kUtils.formatWsBalance(ds);
-      data = data.concat(ds);
-      cbf();
-    }, options);
+    this.createWs({ chanelString })(cb);
   }
 }
 
