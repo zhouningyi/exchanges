@@ -62,17 +62,18 @@ const tasks = [
   //   params: {},
   //   name: '币信息'
   // },
-  {
-    fn: 'ticks',
-    params: { pair: 'ETH-BTC' },
-    name: 'ticks数据'
-  },
+  // {
+  //   fn: 'ticks',
+  //   params: { pair: 'ETH-BTC' },
+  //   name: 'ticks数据'
+  // },
+
   // {
   //   fn: 'balances',
   //   params: {},
   //   name: '账户余额'
   // },
-//{
+// {
 //   fn: 'depth',
 //   params: { pair: 'ETH-BTC' },
 //   name: '深度'

@@ -63,11 +63,9 @@ const tasks = [
   //   name: '币信息'
   // },
   {
-    fn: 'kline',
-    params: {
-      pair: 'BTC-USDT'
-    },
-    name: 'k线图'
+    fn: 'futureKline',
+    params: { pair: 'ETH-USD' },
+    name: '期货k线图'
   },
   // {
   //   fn: 'ticks',

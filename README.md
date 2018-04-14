@@ -138,7 +138,7 @@ exchange.wsFutureKlines(options, cb);
 | 名称 | 意义 | 默认 | 必选  |
 | --------   | -----:  | -----  | --------   |
 | pair | 交易对 | 无(返回所有的kline数据) |  |
-| contact_type | 合约类型: this_week:当周 next_week:下周 quarter:季度 | quarter |  |
+| contract_type | 合约类型: this_week:当周 next_week:下周 quarter:季度 | quarter |  |
 |interval|时间窗口:1min/3min/5min/15min/30min/1day/3day/1week/1hour/2hour/4hour/6hour/12hour|1m||
 
 

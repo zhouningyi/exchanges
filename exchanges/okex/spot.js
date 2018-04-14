@@ -138,7 +138,7 @@ class Exchange extends Base {
       //
       const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString) };
       kUtils.subscribe('', (ds) => {
-        // console.log(formatData(ds), 'formatData(ds)');
+        // console.log(formatData(ds), 'formatData...');
         data = merge(data, formatData(ds));
         cbf();
       }, options);

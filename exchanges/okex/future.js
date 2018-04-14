@@ -41,18 +41,20 @@ class Exchange extends Spot {
   }
   async futureKline(o = {}) {
     checkKey(o, ['pair']);
+    const { pair } = o;
+    o = kUtils.formatFutureKlineO(o);
     const ds = await this.get('future_kline', o, true, true);
-    return kUtils.formatOrderBook(ds);
+    return kUtils.formatFutureKline(ds, pair);
   }
   wsFutureTicks(o = {}, cb) {
-    const { contact_type = 'quarter' } = o;
-    const chanelString = kUtils.createWsChanelFutureTick(FUTURE_PAIRS, { contact_type });
+    const { contract_type = 'quarter' } = o;
+    const chanelString = kUtils.createWsChanelFutureTick(FUTURE_PAIRS, { contract_type });
     this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureTick, cb);
   }
   wsFutureKlines(o = {}, cb) {
     const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
-    const { contact_type = 'quarter', interval = '1m' } = o;
-    const chanelString = kUtils.createWsChanelFutureKline(symbols, { contact_type, interval });
+    const { contract_type = 'quarter', interval = '1m' } = o;
+    const chanelString = kUtils.createWsChanelFutureKline(symbols, { contract_type, interval });
     this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureKline, cb);
   }
   wsFutureKline(o = {}, cb) {

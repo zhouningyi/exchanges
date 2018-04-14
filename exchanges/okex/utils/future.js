@@ -9,15 +9,43 @@ const {
   formatPair,
   _parse,
   formatInterval,
-  extactPairFromFutureChannel,
 } = require('./public');
 
+// future kline
+const defaultFutureKlineO = {
+  contract_type: 'quarter',
+  interval: '1m'
+};
+function formatFutureKlineO(o = {}) {
+  o = { ...defaultFutureKlineO, ...o };
+  o.type = formatInterval(o.interval);
+  delete o.interval;
+  return o;
+}
 
+function formatFutureKline(ds, pair) {
+  return _.map(ds, (d) => {
+    const time = new Date(d[0]);
+    const tstr = Math.floor(time.getTime() / 1000);
+    return {
+      unique_id: `${pair}_${tstr}`,
+      pair,
+      time,
+      open: _parse(d[1]),
+      high: _parse(d[2]),
+      low: _parse(d[3]),
+      close: _parse(d[4]),
+      unit_amount: _parse(d[5]),
+      hold_amount: _parse(d[6])
+    };
+  });
+}
+//
 function parseFutureTickChanel(channel) {
   const ds = channel.replace('ok_sub_future', '').split('_ticker_');
   return {
     pair: ds[0].split('_').reverse().join('-').toUpperCase(),
-    contact_type: ds[1]
+    contract_type: ds[1]
   };
 }
 
@@ -32,7 +60,7 @@ function formatWsFutureTick(ds) {
     const time = new Date();
     const tstr = time.getTime() % (24 * 3600 * 1000);
     return {
-      unique_id: md5(`${pps.pair}_${pps.contact_type}_${bid_price}_${tstr}`),
+      unique_id: md5(`${pps.pair}_${pps.contract_type}_${bid_price}_${tstr}`),
       ...pps,
       time,
       high: _parse(d.high),
@@ -52,13 +80,13 @@ function formatWsFutureTick(ds) {
 //
 const createWsChanelFutureTick = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
-  return `ok_sub_future${pair}_ticker_${o.contact_type}`;
+  return `ok_sub_future${pair}_ticker_${o.interval}`;
 });
 
 const createWsChanelFutureKline = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
   const interval = formatInterval(o.interval);
-  return `ok_sub_future${pair}_kline_${o.contact_type}_${interval}`;
+  return `ok_sub_future${pair}_kline_${o.contract_type}_${interval}`;
 });
 
 function _parseWsFutureChannel(channel) {  // usd_btc_kline_quarter_1min
@@ -86,7 +114,6 @@ const formatWsFutureKline = formatWsResult((kline, chanel) => {
   return _.keyBy(res, 'unique_id');
 });
 
-//
 module.exports = {
   // ws
   createWsChanelFutureKline,
@@ -94,4 +121,6 @@ module.exports = {
   //
   formatWsFutureKline,
   formatWsFutureTick,
+  formatFutureKlineO,
+  formatFutureKline,
 };
