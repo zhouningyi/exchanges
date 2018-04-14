@@ -64,20 +64,20 @@
 
  ## 市场类
 
-市场信息类，基本不用 appKey 与 appSecret 即可访问
+市场信息类，不用 appKey / appSecret 即可运行
 
 
 
 #### 订单表(orderBook)
 
-```
+
 <details>
 <summary>输入</summary>
 | 名称 | 含义  | 备注  |
 | --------   | -----:  | -----  |
 | coin | 币种 |  |
 </details>
-```
+
 
 #### ticks(全量tick数据)
 输入
