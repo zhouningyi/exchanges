@@ -75,7 +75,7 @@
 返回全量tick数据
 
 <details>
-<summary>输入</summary>
+<summary>输入配置(options)</summary>
 
 ```javascript
 {
@@ -121,5 +121,41 @@
 </details>
 
 
+### wsFutureKlines
+websocket 期货k线图
 
-### ticks
+```javascript
+  //options: 配置
+  //cb: 回调函数
+  exchange.wsFutureKlines(options, cb);
+```
+
+
+
+#### 输入配置(options)
+
+| 名称 | 意义 | 默认 | 必选  |
+| --------   | -----:  | -----  | --------   |
+| pair | 交易对 | 无(返回所有的kline数据) |  |
+| contact_type | 合约类型: this_week:当周 next_week:下周 quarter:季度 | quarter |  |
+|interval|时间窗口:1min/3min/5min/15min/30min/1day/3day/1week/1hour/2hour/4hour/6hour/12hour|1m||
+
+
+<details>
+<summary>输出</summary>
+```javascript
+ { 
+   unique_id: 'BTC-USD_1523691240',
+   pair: 'BTC-USD',
+   time: 2018-04-14T07:34:00.000Z,
+   open: 8267.75,
+   high: 8267.76,
+   low: 8246.75,
+   close: 8250,
+   volume_amount: 29668,
+   volume_coin: 359.375501249285 
+ }
+```
+
+</details>
+

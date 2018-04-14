@@ -64,7 +64,7 @@ const createWsChanelFutureKline = createWsChanel((pair, o) => {
 
 function _parseWsFutureChannel(channel) {  // usd_btc_kline_quarter_1min
   const symbol = channel.replace('ok_sub_future', '').split('_kline_')[0];
-  return deFormatPair(symbol);
+  return deFormatPair(symbol, true);
 }
 
 const formatWsFutureKline = formatWsResult((kline, chanel) => {
@@ -84,7 +84,7 @@ const formatWsFutureKline = formatWsResult((kline, chanel) => {
       volume_coin: _parse(d[6]),
     };
   });
-  return res;
+  return _.keyBy(res, 'unique_id');
 });
 
 //

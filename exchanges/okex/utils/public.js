@@ -9,8 +9,10 @@ function formatPair(pair, isReverse = false) {
   return pair.split('-').reverse().join('_').toLowerCase();
 }
 
-function deFormatPair(symbol) {
-  return symbol.split('_').join('-').toUpperCase();
+function deFormatPair(symbol, isFuture = false) {
+  let ss = symbol.split('_');
+  if (isFuture) ss = ss.reverse();
+  return ss.join('-').toUpperCase();
 }
 
 function _parse(v) {
@@ -63,14 +65,14 @@ function formatWsResult(_format) {
 
 function extactPairFromFutureChannel(channel, str) {  // usd_btc_kline_quarter_1min
   const symbol = channel.replace('ok_sub_future', '').split(str)[0];
-  return deFormatPair(symbol);
+  return deFormatPair(symbol, true);
 }
 
 function extactPairFromSpotChannel(channel, str) {
   const symbol = channel.replace('ok_sub_spot_', '').split(str)[0];
   // console.log(channel, symbol, 'symbol');
   // process.exit();
-  return deFormatPair(symbol);
+  return deFormatPair(symbol, false);
 }
 
 module.exports = {
