@@ -12,6 +12,7 @@
 | tick数据(只能按照单个pair返回) | tick(futureTick) | | |  ||| ✅ |  |
 | 期货tick数据(ws版) | wsFutureTicks | | | |||  | |
 | k线图 | kline / candlestick |  |  | ✅ |✅  可选范围 1m  3m  5m  15m  30m  1h  2h  4h  6h  8h  12h  1d  3d  1w  1M||  |  |
+| [wsFutureKlines(期货ws k线图)](#wsFutureKlines) | wsFutureKlines | | |  ||| ✅ | |
 | 币种信息(转账资费、最小转账等币种在交易所的相关信息) |coin |  |  | ✅ |||  |  |
 | 所有币种信息 | coins |  | | ✅ ||✅|  |  |
 | 账户余额 | balances |  | | ✅ |||  |  |
@@ -29,6 +30,8 @@
 |  |  |  | | |||  |  |
 |  |  |  | | |||  |  |
 |  |  |  | | |||  |  |
+
+
 
 
 
@@ -122,15 +125,13 @@
 
 
 ### wsFutureKlines
-websocket 期货k线图
+websocket 期货k线图, 可以返回所有交易对的信息，也可以只返回指定的pair
 
 ```javascript
   //options: 配置
   //cb: 回调函数
   exchange.wsFutureKlines(options, cb);
 ```
-
-
 
 #### 输入配置(options)
 
@@ -143,6 +144,7 @@ websocket 期货k线图
 
 <details>
 <summary>输出</summary>
+
 ```javascript
  { 
    unique_id: 'BTC-USD_1523691240',
@@ -156,6 +158,5 @@ websocket 期货k线图
    volume_coin: 359.375501249285 
  }
 ```
-
 </details>
 
