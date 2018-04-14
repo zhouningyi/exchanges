@@ -33,8 +33,9 @@ class Exchange extends Base {
     return md5(qstr).toUpperCase();
   }
   async tick(o = {}) {
+    checkKey(o, ['pair']);
     const ds = await this.get('ticker', o);
-    return kUtils.formatTick(ds);
+    return kUtils.formatTick(ds, o.pair);
   }
   async ticks(o = {}) {
     const ds = await this.tick(o);

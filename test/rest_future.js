@@ -72,7 +72,7 @@ const tasks = [
   //   params: {},
   //   name: '账户余额'
   // },
-//{
+// {
 //   fn: 'depth',
 //   params: { pair: 'ETH-BTC' },
 //   name: '深度'
@@ -82,6 +82,5 @@ const tasks = [
 //   name: 'orderBook数据'
 // }
 ];
-
 
 testRest(exchanges, tasks);

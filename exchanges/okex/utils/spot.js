@@ -12,10 +12,11 @@ const {
   extactPairFromSpotChannel,
 } = require('./public');
 
-function formatTick(d) {
+function formatTick(d, pair) {
   const { date, ticker } = d;
   const time = new Date(date * 1000);
   return {
+    pair,
     time,
     last_price: _parse(ticker.last),
     ask_price: _parse(ticker.buy),
