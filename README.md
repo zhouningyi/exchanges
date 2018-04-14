@@ -78,6 +78,14 @@
 | coin | 币种 |  |
 </details>
 
+<details>
+<summary>Output</summary>
+
+```js
+1508478457643
+```
+
+</details>
 
 #### ticks(全量tick数据)
 输入
