@@ -52,7 +52,7 @@ class Exchange extends Base {
     return kUtils.formatDepth(ds);
   }
   async orderInfo(o = {}) {
-    const { orderId: order_id } = o;
+    const { order_id } = o;
     const ds = await this.get('trades', { order_id }, true, true);
     return ds;
   }
@@ -63,7 +63,7 @@ class Exchange extends Base {
   async cancelAllOrders(o) {
   }
   async cancelOrder(o = {}) {
-    checkKey(o, ['orderId', 'pair']);
+    checkKey(o, ['order_id', 'pair']);
     o = kUtils.formatCancelOrderO(o);
     await this.post('cancel_order', o);
   }

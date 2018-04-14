@@ -79,7 +79,7 @@ function formatOrderBook(ds) {
       price: d.price,
       volume: d.amount,
       side: d.type.toUpperCase(),
-      orderId: d.tid,
+      order_id: d.tid,
     };
   });
 }
@@ -122,16 +122,16 @@ function formatOrderO(o) {
 }
 
 function formatCancelOrderO(o = {}) {
-  let { orderId } = o;
-  if (Array.isArray(orderId)) orderId = orderId.join(',');
+  let { order_id } = o;
+  if (Array.isArray(order_id)) order_id = order_id.join(',');
   const symbol = formatPair(o.pair);
-  return { order_id: orderId, symbol };
+  return { order_id, symbol };
 }
 
 function formatOrderResult(ds) {
   if (ds.order_id) {
     return {
-      orderId: ds.order_id
+      order_id: ds.order_id
     };
   }
   throw ds;

@@ -183,7 +183,7 @@ function formatDepth(ds) {
 function formatCancelOrderO(o = {}) {
   return {
     symbol: formatPairString(o.pair),
-    orderId: o.orderId
+    order_id: o.order_id
   };
 }
 function formatOrderO(o = {}) {

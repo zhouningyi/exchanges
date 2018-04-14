@@ -40,6 +40,7 @@ function formatFutureKline(ds, pair) {
     };
   });
 }
+
 //
 function parseFutureTickChanel(channel) {
   const ds = channel.replace('ok_sub_future', '').split('_ticker_');

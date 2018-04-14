@@ -38,7 +38,7 @@ const tasks = [
   //   fn: 'orderInfo',
   //   params: {
   //     pair: 'ETH-BTC',
-  //     orderId: '5ab781719dda152895660f43',
+  //     order_id: '5ab781719dda152895660f43',
   //     side: 'BUY'
   //   },
   //   name: '交易'
@@ -48,7 +48,7 @@ const tasks = [
   //   params: {
   //     pair: 'ETH-BTC',
   //     side: 'BUY',
-  //     orderId: '5ab781719dda152895660f43'
+  //     order_id: '5ab781719dda152895660f43'
   //   },
   //   name: '取消交易'
   // },

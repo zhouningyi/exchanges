@@ -17,7 +17,7 @@
 | 所有币种信息 | coins |  | | ✅ ||✅|  |  |
 | 账户余额 | balances |  | | ✅ |||  |  |
 | 下单 | order |  | | ✅ |||  |  |
-| 订单详情 | orderInfo | side pair  orderId | pendingAmount  未完成数量dealAmount 完成数量 | ✅ |||  |  |
+| 订单详情 | orderInfo | side pair  order_id | pendingAmount  未完成数量dealAmount 完成数量 | ✅ |||  |  |
 | 近期所有订单 | allOrders |  |  |  ||| ✅ | |
 | 正在执行中的订单 | activeOrders |  |  | ✅ |✅|| ✅ |  |
 | 测试连接 | ping | 无 | | |✅||  |  |
@@ -52,7 +52,7 @@
 | endTime| 结束时间| 单位为毫秒 |
 | balance| 余额| 余额，某种币种的账户剩余量 |
 | lockedBalance | 冻结余额 | 交易中被锁定的余额 |
-| orderId | 订单id |  |
+| order_id | 订单id |  |
 | order | 订单 |  |
 | asks | 卖单 | |
 | price | 交易价格 | |
@@ -64,6 +64,11 @@
 |  |  | |
 |  |  | |
 |  |  | |
+
+
+ ## 规范
+1. 为了直接兼容数据库的格式，采用下划线命名变量
+
 
  ## 市场类
 

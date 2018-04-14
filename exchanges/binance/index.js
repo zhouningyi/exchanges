@@ -76,7 +76,7 @@ class Exchange extends Base {
     if (ds.status === 'NEW') {
       await Utils.delay(waitTime);
       await this.cancelOrder({
-        orderId: ds.orderId,
+        order_id: ds.order_id,
         pair: o.pair,
         side: o.side
       });
@@ -85,7 +85,7 @@ class Exchange extends Base {
     return ds;
   }
   async cancelOrder(o) {
-    checkKey(o, ['orderId', 'side']);
+    checkKey(o, ['order_id', 'side']);
     o = tUtils.formatCancelOrderO(o);
     const ds = await this.delete('v3/order', o, true, true);
     return ds;
@@ -98,7 +98,7 @@ class Exchange extends Base {
     const ds = await this.activeOrders();
     await Promise.all(_.map(ds, async (d) => {
       const opt = {
-        orderId: d.orderId,
+        order_id: d.order_id,
         pair: d.pair,
         side: d.side
       };
