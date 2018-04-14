@@ -1,12 +1,7 @@
-const _ = require('lodash');
-//
-const Exchanges = require('./../index');
-const config = require('./../config');
-const { extrude, getExchange, upperFirst } = require('./utils');
+const { testRest } = require('./utils');
 
-
-const spotExchangeList = ['bittrex'];// , 'okex'. 'hitbtc'
-const spotTasks = [
+const exchanges = ['okex'];// , 'okex'. 'hitbtc', 'bittrex'
+const tasks = [
   // {
   //   fn: 'order',
   //   params: {
@@ -88,43 +83,5 @@ const spotTasks = [
 // }
 ];
 
-const futureList = ['okex'];
-const futureTasks = [
-//   {
-//   fn: 'futureTick',
-//   params: { pair: 'ETH-BTC', contract_type: 'this_week' },
-//   name: '期货ticks数据'
-// },
-  // {
-  //   fn: 'futureDepth',
-  //   params: { pair: 'ETH-BTC', contract_type: 'this_week' },
-  //   name: '期货深度数据'
-  // },
-  {
-    fn: 'futureOrderBook',
-    params: { pair: 'ETH-BTC', contract_type: 'this_week' },
-    name: '期货订单数据'
-  },
-];
 
-
-async function testOneExchange(exName, tasks) {
-  const ex = getExchange(exName);
-  // ex.saveConfig({ a: 1 }, 'conf');
-  for (let i = 0; i < tasks.length; i++) {
-    const task = tasks[i];
-    console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
-    await extrude(ex, exName, task);
-  }
-}
-
-async function test(exNames, tasks) {
-  for (let i = 0; i < exNames.length; i++) {
-    const exName = exNames[i];
-    console.log(`测试交易所${exName}...`);
-    await testOneExchange(exName, tasks);
-  }
-}
-
-test(spotExchangeList, spotTasks);
-// test(futureList, futureTasks);
+testRest(exchanges, tasks);

@@ -45,6 +45,25 @@ function validate(ex) {
   }
 }
 
+
+async function testOneExchange(exName, tasks) {
+  const ex = getExchange(exName);
+  for (let i = 0; i < tasks.length; i++) {
+    const task = tasks[i];
+    console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
+    await extrude(ex, exName, task);
+  }
+}
+
+async function testRest(exNames, tasks) {
+  for (let i = 0; i < exNames.length; i++) {
+    const exName = exNames[i];
+    console.log(`测试交易所${exName}...`);
+    await testOneExchange(exName, tasks);
+  }
+}
+
+
 module.exports = {
-  extrude, getAppKey, upperFirst, getExchange, validate
+  extrude, getAppKey, upperFirst, getExchange, validate, testRest
 };

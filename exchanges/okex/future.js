@@ -31,7 +31,7 @@ class Exchange extends Spot {
     const ds = await this.get('future_kline', o, true, true);
     return kUtils.formatOrderBook(ds);
   }
-  async wsFutureTicks(o = {}, cb) {
+  wsFutureTicks(o = {}, cb) {
     const { contact_type = 'quarter' } = o;
     const chanelString = kUtils.createWsChanelFutureTick(FUTURE_PAIRS, { contact_type });
     this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureTick, cb);
