@@ -7,6 +7,8 @@ const {
   deFormatPair,
   formatWsResult,
   createWsChanel,
+  code2OrderStatus,
+  orderStatus2Code,
   formatPair,
   _parse,
   formatInterval,
@@ -141,11 +143,92 @@ function formatFutureOrderHistory() {
 function formatFutureBalances(ds) {
 }
 
+//
+const typeMap = {
+  buy: {
+    up: 1, // 开多
+    down: 2, // 开空
+  },
+  sell: {
+    up: 3, // 平多
+    down: 4, // 平空
+  }
+};
+const reverseTypeMap = {
+  1: {
+    side: 'BUY',
+    direction: 'UP'
+  },
+  2: {
+    side: 'BUY',
+    direction: 'DOWN'
+  },
+  3: {
+    side: 'SELL',
+    direction: 'UP'
+  },
+  4: {
+    side: 'SELL',
+    direction: 'DOWN'
+  }
+};
+function formatFutureOrderO(o) {
+  let { pair, contract_type, lever_rate, amount, side, direction, type, price } = o;
+  side = side.toLowerCase();
+  type = type.toLowerCase();
+  if (type === 'limit') {
+    if (!o.price) {
+      console.log('type=limit 必须有price');
+      process.exit();
+    }
+  }
+  pair = pair.toLowerCase().replace('usdt', 'usd');
+  const opt = {
+    pair,
+    type: _.get(typeMap, `${side}.${direction}`),
+    contract_type,
+    lever_rate,
+    amount,
+    ...(type === 'limit' ? {
+      price,
+      match_price: 0
+    } : {
+      match_price: 1
+    })
+  };
+  return opt;
+}
+
+function formatFutureOrderInfo(ds, o) {
+  if (!ds) return null;
+  const { orders } = ds;
+  if (!orders) return null;
+  let res = _.map(orders, (d) => {
+    return {
+      order_id: `${d.order_id}`,
+      contract_name: d.contract_name,
+      amount: d.deal_amount,
+      price: d.price || d.price_avg,
+      status: code2OrderStatus[d.status],
+      lever_rate: d.lever_rate,
+      fee: d.fee,
+      time: new Date(d.create_date),
+      pair: o.pair,
+      ...(reverseTypeMap[d.type])
+    };
+  });
+  if (Array.isArray(res) && res.length === 1) res = res[0];
+  return res;
+}
+
+
 module.exports = {
   formatFutureOrderHistoryO,
   formatFutureOrderHistory,
   formatFutureBalances,
   formatMoveBalanceO,
+  formatFutureOrderO,
+  formatFutureOrderInfo,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,

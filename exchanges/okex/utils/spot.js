@@ -7,6 +7,8 @@ const {
   formatWsResult,
   parseOrderType,
   createWsChanel,
+  code2OrderStatus,
+  orderStatus2Code,
   formatPair,
   _parse,
   formatInterval,
@@ -154,14 +156,7 @@ function formatOrderResult(ds) {
   throw ds;
 }
 //
-const code2Status = {
-  '-1': 'CANCEL',
-  0: 'UNFINISH',
-  1: 'PARTIAL',
-  2: 'SUCCESS',
-  3: 'CANCELLING'
-};
-const status2Code = _.invert(code2Status);
+
 
 function formatOrderInfo(ds, o) {
   if (!ds) return null;
@@ -176,7 +171,7 @@ function formatOrderInfo(ds, o) {
       order_main_id: `${d.order_id}`,
       amount: d.deal_amount,
       price: d.avg_price,
-      status: code2Status[d.status],
+      status: code2OrderStatus[d.status],
       side,
       type,
       time: new Date(d.create_date),
@@ -189,7 +184,7 @@ function formatOrderInfo(ds, o) {
 
 function formatAllOrdersO(o) {
   o = _.cloneDeep(o);
-  o.status = status2Code[o.status];
+  o.status = orderStatus2Code[o.status];
   return o;
 }
 function formatAllOrders(ds) {
@@ -202,7 +197,7 @@ function formatAllOrders(ds) {
       deal_amount: d.deal_amount,
       order_main_id: d.order_id,
       order_id: d.orders_id,
-      status: code2Status[d.status],
+      status: code2OrderStatus[d.status],
       pair: deFormatPair(d.symbol),
       ...parseOrderType(d.type)
     };

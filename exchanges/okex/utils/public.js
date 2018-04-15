@@ -84,12 +84,23 @@ function extactPairFromSpotChannel(channel, str) {
   return deFormatPair(symbol, false);
 }
 
+const code2OrderStatus = {
+  '-1': 'CANCEL',
+  0: 'UNFINISH',
+  1: 'PARTIAL',
+  2: 'SUCCESS',
+  3: 'CANCELLING'
+};
+const orderStatus2Code = _.invert(code2OrderStatus);
+
 module.exports = {
   formatInterval,
   deFormatPair,
   formatPair,
   intervalMap,
   _parse,
+  code2OrderStatus,
+  orderStatus2Code,
   //
   subscribe,
   extactPairFromFutureChannel,

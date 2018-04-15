@@ -84,16 +84,38 @@ class Exchange extends Spot {
     return { success: ds.result };
   }
   // 市场上的交易历史
-  async futureOrderHistory(o = {}) {
-    console.log('to do');
-    process.exit();
-    checkKey(o, ['pair', 'date']);
-    const opt = kUtils.formatFutureOrderHistoryO(o);
+  // async futureOrderHistory(o = {}) {
+  //   console.log('to do');
+  //   process.exit();
+  //   checkKey(o, ['pair', 'date']);
+  //   const opt = kUtils.formatFutureOrderHistoryO(o);
+  // }
+  // 下单
+  async futureOrder(o = {}) {
+    checkKey(o, ['pair', 'contract_type', 'lever_rate', 'side', 'direction', 'type']);
+    const opt = kUtils.formatFutureOrderO(o);
+    const ds = await this.post('future_trade', opt, true);
+    return {
+      success: ds.result,
+      order_id: ds.order_id
+    };
   }
-
-  // 账户类
-  async futureOrder() {
-    this.post();
+  async cancelFutureOrder(o = {}) {
+    const reqs = ['pair', 'order_id', 'contract_type'];
+    checkKey(o, reqs);
+    const opt = _.pick(o, reqs);
+    const ds = await this.post('future_cancel', opt, true);
+    return {
+      success: ds.result,
+      order_id: ds.order_id
+    };
+  }
+  async futureOrderInfo(o = {}) {
+    const reqs = ['pair', 'order_id', 'contract_type'];
+    checkKey(o, reqs);
+    const opt = _.pick(o, reqs);
+    const ds = await this.post('future_order_info', opt, true);
+    return kUtils.formatFutureOrderInfo(ds, o);
   }
 }
 
