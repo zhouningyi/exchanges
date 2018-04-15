@@ -72,6 +72,11 @@ class Exchange extends Spot {
     checkKey(o, ['pair']);
     this.wsFutureKlines(o, cb);
   }
+  async futureBalances(o = {}) {
+    let ds = await this.post('future_userinfo', o, true);
+    ds = kUtils.formatFutureBalances(ds);
+    return ds;
+  }
   // 市场上的交易历史
   async futureOrderHistory(o = {}) {
     console.log('to do');

@@ -1,14 +1,16 @@
 // const Utils = require('./utils');
-const Base = require('./../base');
-const request = require('./../../utils/request');
+const deepmerge = require('deepmerge');
 const crypto = require('crypto');
+const md5 = require('md5');
 const _ = require('lodash');
+const error = require('./errors');
+const Base = require('./../base');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
-const md5 = require('md5');
-const error = require('./errors');
+const request = require('./../../utils/request');
 const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE } = require('./config');
+
 //
 const { checkKey } = Utils;
 //
@@ -56,36 +58,70 @@ class Exchange extends Base {
     const ds = await this.get('depth', o, false);
     return kUtils.formatDepth(ds);
   }
+  // 交易状态
   async orderInfo(o = {}) {
-    const { order_id } = o;
-    const ds = await this.get('trades', { order_id }, true, true);
+    checkKey(o, ['order_id', 'pair']);
+    const { order_id, pair } = o;
+    let ds = await this.post('order_info', { order_id, pair }, true, true);
+    ds = kUtils.formatOrderInfo(ds, o);
     return ds;
   }
-  async activeOrders() {}
-  async allOrders() { // 近2天来的order
-    await this.post('order_history');
+  async activeOrders(o = {}) {
+    checkKey(o, ['pair']);
+    const ds = await this.allOrders({ ...o, status: 'UNFINISH' });
+    return ds;
   }
-  async cancelAllOrders(o) {
+  async finishOrders(o = {}) {
+    checkKey(o, ['pair']);
+    const ds = await this.allOrders({ ...o, status: 'SUCCESS' });
+    return ds;
   }
-  async cancelOrder(o = {}) {
-    checkKey(o, ['order_id', 'pair']);
-    o = kUtils.formatCancelOrderO(o);
-    await this.post('cancel_order', o);
+  async allOrders(o = {}) { // 近2天来的order
+    const defaultO = {
+      page_length: 2000,
+      current_page: 0,
+      status: 'UNFINISH'
+    };
+    checkKey(o, ['pair', 'status']);
+    o = { ...defaultO, ...o };
+    const opt = kUtils.formatAllOrdersO(o);
+    console.log(opt);
+    const ds = await this.post('order_history', opt, true);
+    return kUtils.formatAllOrders(ds);
   }
-  async orderBook(o = {}) {
-    const ds = await this.get('trades', o, true, true);
-    return kUtils.formatOrderBook(ds);
-  }
-  async balances() {
-    let ds = await this.post('userinfo', {}, true);
+  async balances(o = {}) {
+    let ds = await this.post('userinfo', o, true);
     ds = kUtils.formatBalances(ds);
     return ds;
   }
+  async allBalances() {
+    const tasks = [this.balances(), this.futureBalances()];
+    let [balances, futureBalances] = Promise.all(tasks);
+    balances = _.keyBy(balances, 'coin');
+    futureBalances = _.keyBy(futureBalances, 'coin');
+  }
+  // 交易
   async order(o = {}) {
     o = kUtils.formatOrderO(o);
     let ds = await this.post('trade', o, true);
     ds = kUtils.formatOrderResult(ds);
     return ds;
+  }
+  async cancelAllOrders(o) {
+    checkKey(o, ['pair']);
+  }
+  async cancelOrder(o = {}) {
+    checkKey(o, ['order_id', 'pair']);
+    o = kUtils.formatCancelOrderO(o);
+    const ds = await this.post('cancel_order', o, true);
+    return {
+      success: ds.result,
+      order_id: ds.order_id
+    };
+  }
+  async orderBook(o = {}) {
+    const ds = await this.get('trades', o, true, true);
+    return kUtils.formatOrderBook(ds);
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
     params = Utils.replace(params, { pair: 'symbol' });
@@ -116,13 +152,22 @@ class Exchange extends Base {
     try {
       // console.log(o, '===');
       body = await request(o);
+      // console.log(body);
     } catch (e) {
       if (e) console.log(e.message);
       return;
     }
-    if (body && body.error_code) {
+    // console.log(body, 'body...');
+    if (!body) {
+      throw `${endpoint}: body 返回为空`;
+    }
+    if (body.code === 500) {
+      throw `${endpoint}: 服务拒绝...`;
+    }
+    if (body.error_code) {
       throw error.getErrorFromCode(body.error_code);
     }
+    // console.log(body, 'body');
     return body.data || body;
   }
   _getPairs(filter) {

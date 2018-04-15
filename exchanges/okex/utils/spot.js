@@ -5,6 +5,7 @@ const md5 = require('md5');
 const {
   deFormatPair,
   formatWsResult,
+  parseOrderType,
   createWsChanel,
   formatPair,
   _parse,
@@ -13,6 +14,10 @@ const {
 } = require('./public');
 
 function formatTick(d, pair) {
+  if (!d) {
+    console.log('okex tick数据为空...');
+    return null;
+  }
   const { date, ticker } = d;
   const time = new Date(date * 1000);
   return {
@@ -108,7 +113,7 @@ function formatOrderO(o) {
   const { type = 'LIMIT', side, price, pair, amount } = o;
   let okexType = side.toLowerCase();
   if (type && type.toLowerCase() === 'market') okexType += '_market';
-  const extra = price ? { price } : {};
+  const extra = (price && type !== 'MARKET') ? { price } : {};
   return {
     symbol: formatPair(pair),
     type: okexType,
@@ -125,12 +130,63 @@ function formatCancelOrderO(o = {}) {
 }
 
 function formatOrderResult(ds) {
-  if (ds.order_id) {
-    return {
-      order_id: ds.order_id
-    };
-  }
+  if (ds.order_id) return { order_id: ds.order_id };
   throw ds;
+}
+//
+const code2Status = {
+  '-1': 'CANCEL',
+  0: 'UNFINISH',
+  1: 'PARTIAL',
+  2: 'SUCCESS',
+  3: 'CANCELLING'
+};
+const status2Code = _.invert(code2Status);
+
+function formatOrderInfo(ds, o) {
+  if (!ds) return null;
+  const { orders } = ds;
+  if (!orders) return null;
+  let res = _.map(orders, (d) => {
+    const { type: tp } = d;
+    let [side, type] = tp.split('_').map(d => d.toUpperCase());
+    type = type || 'LIMIT';
+    return {
+      order_id: `${d.orders_id}`,
+      order_main_id: `${d.order_id}`,
+      amount: d.deal_amount,
+      price: d.avg_price,
+      status: code2Status[d.status],
+      side,
+      type,
+      time: new Date(d.create_date),
+      pair: o.pair
+    };
+  });
+  if (Array.isArray(res) && res.length === 1) res = res[0];
+  return res;
+}
+
+function formatAllOrdersO(o) {
+  o = _.cloneDeep(o);
+  o.status = status2Code[o.status];
+  return o;
+}
+function formatAllOrders(ds) {
+  if (!ds) return null;
+  return _.map(ds.orders, (d) => {
+    return {
+      amount: d.amount,
+      price: d.price || null,
+      time: new Date(d.create_date),
+      deal_amount: d.deal_amount,
+      order_main_id: d.order_id,
+      order_id: d.orders_id,
+      status: code2Status[d.status],
+      pair: deFormatPair(d.symbol),
+      ...parseOrderType(d.type)
+    };
+  });
 }
 
 const createSpotChanelBalance = createWsChanel((pair) => {
@@ -190,6 +246,9 @@ module.exports = {
   formatOrderResult,
   formatKline,
   formatKlineO,
+  formatOrderInfo,
+  formatAllOrdersO,
+  formatAllOrders,
   // ws
   createSpotChanelBalance,
   createSpotChanelTick,

@@ -245,6 +245,7 @@ const allCode2Error = { ...code2error, ...code2errorFuture, ...code2errorWebsoke
 function getErrorFromCode(code) {
   return allCode2Error[code] || `code: ${code} 暂时不知道错误原因`;
 }
+//
 module.exports = {
   getErrorFromCode
 };

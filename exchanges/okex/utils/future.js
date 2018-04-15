@@ -120,9 +120,14 @@ function formatFutureOrderHistoryO(o) {
 function formatFutureOrderHistory() {
 }
 
+// future balances
+function formatFutureBalances(ds) {
+}
+
 module.exports = {
   formatFutureOrderHistoryO,
   formatFutureOrderHistory,
+  formatFutureBalances,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,

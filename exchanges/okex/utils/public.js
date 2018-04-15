@@ -42,6 +42,13 @@ const intervalMap = {
   '3d': '2hour',
 };
 
+function parseOrderType(typeStr) {
+  const ts = typeStr.toUpperCase().split('_');
+  const side = ts[0];
+  const type = ts[1] || 'LIMIT';
+  return { type, side };
+}
+
 function formatInterval(iter) {
   iter = iter.toLowerCase();
   const it = intervalMap[iter];
@@ -89,4 +96,6 @@ module.exports = {
   extactPairFromSpotChannel,
   formatWsResult,
   createWsChanel,
+  //
+  parseOrderType
 };
