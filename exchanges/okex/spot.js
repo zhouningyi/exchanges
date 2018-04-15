@@ -39,9 +39,14 @@ class Exchange extends Base {
   }
   async kline(o = {}) {
     checkKey(o, 'pair');
-    o = kUtils.formatKlineO(o);
-    const ds = await this.get('kline', o);
-    return kUtils.formatKline(ds, o.pair);
+    const defaultKlineO = {
+      interval: '1m',
+      size: 2000
+    };
+    o = { ...defaultKlineO, ...o };
+    const opt = kUtils.formatKlineO(o);
+    const ds = await this.get('kline', opt);
+    return kUtils.formatKline(ds, o);
   }
   async ticks(o = {}) {
     const ds = await this.tick(o);
@@ -72,8 +77,9 @@ class Exchange extends Base {
     return kUtils.formatOrderBook(ds);
   }
   async balances() {
-    const ds = await this.post('userinfo', {}, true);
-    return kUtils.formatBalances(ds);
+    let ds = await this.post('userinfo', {}, true);
+    ds = kUtils.formatBalances(ds);
+    return ds;
   }
   async order(o = {}) {
     o = kUtils.formatOrderO(o);
@@ -125,7 +131,7 @@ class Exchange extends Base {
     return _.map(pairs, d => d.pair);
   }
   createWs(o = {}) {
-    const { timeInterval, chanelString } = o;
+    const { timeInterval, chanelString, options: opt } = o;
     return (formatData, cb) => {
       let data = {};
       const cbf = _.throttle(() => {
@@ -138,8 +144,7 @@ class Exchange extends Base {
       //
       const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString) };
       kUtils.subscribe('', (ds) => {
-        // console.log(formatData(ds), 'formatData...');
-        data = merge(data, formatData(ds));
+        data = merge(data, formatData(ds, opt));
         cbf();
       }, options);
     };

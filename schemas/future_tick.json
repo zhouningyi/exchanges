@@ -3,7 +3,7 @@
   "desc": "future_tick",
   "columns": {
     "unique_id": {
-      "type": ["STRING", 28],
+      "type": ["STRING", 38],
       "unique": true,
       "index": true
     },

@@ -26,23 +26,19 @@ function formatTick(d, pair) {
 }
 
 // kline
-const defaultKlineO = {
-  interval: '1m',
-  size: 2000
-};
 function formatKlineO(o) {
-  o = { ...defaultKlineO, ...o };
+  o = _.cloneDeep(o);
   o.type = formatInterval(o.interval);
   delete o.interval;
   return o;
 }
-function formatKline(ds, pair) {
+function formatKline(ds, o) {
   return _.map(ds, (d) => {
     const time = new Date(d[0]);
-    const tstr = Math.floor(time.getTime() / 1000);
+    const tstr = time.getTime();
     return {
-      unique_id: `${pair}_${tstr}`,
-      pair,
+      unique_id: md5(`${o.pair}_${tstr}_${o.interval}`),
+      ...o,
       time,
       open: _parse(d[1]),
       high: _parse(d[2]),
@@ -104,7 +100,7 @@ function formatBalances(ds) {
     _.set(result, `${coin}.coin`, coin.toUpperCase());
   });
   return _.values(result).filter((d) => {
-    return d.balance !== 0 || d.lockedBalance !== 0 || d.borrowBalance !== 0;
+    return d.balance !== 0 || d.locked_balance !== 0 || d.borrow_balance !== 0;
   });
 }
 

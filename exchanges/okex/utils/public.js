@@ -43,6 +43,7 @@ const intervalMap = {
 };
 
 function formatInterval(iter) {
+  iter = iter.toLowerCase();
   const it = intervalMap[iter];
   if (!it) {
     console.log(`okex 的kline图没有时间周期${iter}`);

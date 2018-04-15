@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Utils = require('./../../../utils');
 const md5 = require('md5');
+const moment = require('moment');
 
 const {
   deFormatPair,
@@ -12,31 +13,28 @@ const {
 } = require('./public');
 
 // future kline
-const defaultFutureKlineO = {
-  contract_type: 'quarter',
-  interval: '1m'
-};
+
 function formatFutureKlineO(o = {}) {
-  o = { ...defaultFutureKlineO, ...o };
+  o = _.cloneDeep(o);
   o.type = formatInterval(o.interval);
   delete o.interval;
   return o;
 }
 
-function formatFutureKline(ds, pair) {
+function formatFutureKline(ds, o) {
   return _.map(ds, (d) => {
     const time = new Date(d[0]);
-    const tstr = Math.floor(time.getTime() / 1000);
+    const tstr = time.getTime();
     return {
-      unique_id: `${pair}_${tstr}`,
-      pair,
+      ...o,
+      unique_id: md5(`${o.pair}_${tstr}_${o.interval}_${o.contract_type}`),
       time,
       open: _parse(d[1]),
       high: _parse(d[2]),
       low: _parse(d[3]),
       close: _parse(d[4]),
-      unit_amount: _parse(d[5]),
-      hold_amount: _parse(d[6])
+      volume_amount: _parse(d[5]),
+      volume_coin: _parse(d[6])
     };
   });
 }
@@ -59,7 +57,7 @@ function formatWsFutureTick(ds) {
     const bid_price = _parse(d.buy);
     const ask_price = _parse(d.sell);
     const time = new Date();
-    const tstr = time.getTime() % (24 * 3600 * 1000);
+    const tstr = time.getTime();
     return {
       unique_id: md5(`${pps.pair}_${pps.contract_type}_${bid_price}_${tstr}`),
       ...pps,
@@ -95,14 +93,13 @@ function _parseWsFutureChannel(channel) {  // usd_btc_kline_quarter_1min
   return deFormatPair(symbol, true);
 }
 
-const formatWsFutureKline = formatWsResult((kline, chanel) => {
+const formatWsFutureKline = formatWsResult((kline, o) => {
   const res = _.map(kline, (d) => {
-    const pair = _parseWsFutureChannel(chanel);
     const time = new Date(_parse(d[0]));
-    const tstr = Math.floor(time.getTime() / 1000);
+    const tstr = time.getTime();
     return {
-      unique_id: `${pair}_${tstr}`,
-      pair,
+      ...o,
+      unique_id: md5(`${o.pair}_${tstr}_${o.interval}_${o.contract_type}`),
       time,
       open: _parse(d[1]),
       high: _parse(d[2]),
@@ -115,7 +112,17 @@ const formatWsFutureKline = formatWsResult((kline, chanel) => {
   return _.keyBy(res, 'unique_id');
 });
 
+// futureOrderHistory
+function formatFutureOrderHistoryO(o) {
+  const { date } = o;
+}
+
+function formatFutureOrderHistory() {
+}
+
 module.exports = {
+  formatFutureOrderHistoryO,
+  formatFutureOrderHistory,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,

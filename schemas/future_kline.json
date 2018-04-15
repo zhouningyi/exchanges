@@ -3,13 +3,14 @@
   "desc": "future_kline",
   "columns": {
     "unique_id": {
-      "type": ["STRING", 28],
+      "type": ["STRING", 38],
       "unique": true
     },
     "pair": {
       "type": ["STRING", 16],
       "index": true
     },
+    "interval": ["STRING", 8],
     "time":{
       "type": "DATE",
       "index": true
@@ -17,6 +18,7 @@
     "open": "FLOAT",
     "close": "FLOAT",
     "high": "FLOAT",
+    "contract_type": ["STRING", 10],
     "low": ["STRING", 10],
     "volume_amount":{
       "type": ["STRING", 20],
