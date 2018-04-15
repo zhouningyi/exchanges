@@ -122,11 +122,31 @@ function formatOrderO(o) {
   };
 }
 
+// cancelOrder
 function formatCancelOrderO(o = {}) {
   let { order_id } = o;
   if (Array.isArray(order_id)) order_id = order_id.join(',');
   const symbol = formatPair(o.pair);
   return { order_id, symbol };
+}
+function formatCancelOrder(ds) {
+  const { success, error, result, order_id } = ds;
+  if (result) {
+    return {
+      success: order_id.split(','),
+      error: []
+    };
+  } else if (result === false) {
+    return {
+      success: [],
+      error: order_id.split(',')
+    };
+  } else if (success || error) {
+    return {
+      success: success.split(','),
+      error: error.split(',')
+    };
+  }
 }
 
 function formatOrderResult(ds) {
@@ -243,6 +263,7 @@ module.exports = {
   formatBalances,
   formatOrderO,
   formatCancelOrderO,
+  formatCancelOrder,
   formatOrderResult,
   formatKline,
   formatKlineO,

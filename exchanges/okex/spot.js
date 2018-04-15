@@ -85,7 +85,6 @@ class Exchange extends Base {
     checkKey(o, ['pair', 'status']);
     o = { ...defaultO, ...o };
     const opt = kUtils.formatAllOrdersO(o);
-    console.log(opt);
     const ds = await this.post('order_history', opt, true);
     return kUtils.formatAllOrders(ds);
   }
@@ -109,15 +108,29 @@ class Exchange extends Base {
   }
   async cancelAllOrders(o) {
     checkKey(o, ['pair']);
+    const actives = await this.activeOrders({ pair: o.pair });
+    const order_ids = _.map(actives, (d) => {
+      return d.order_id;
+    });
+    const ds = await this.cancelOrder({
+      pair: o.pair,
+      order_id: order_ids
+    });
+    return ds;
   }
   async cancelOrder(o = {}) {
     checkKey(o, ['order_id', 'pair']);
-    o = kUtils.formatCancelOrderO(o);
-    const ds = await this.post('cancel_order', o, true);
-    return {
-      success: ds.result,
-      order_id: ds.order_id
-    };
+    const { order_id } = o;
+    if (Array.isArray(order_id) && order_id.length === 0) {
+      return {
+        success: [],
+        error: []
+      };
+    }
+    const opt = kUtils.formatCancelOrderO(o);
+    console.log(opt, 'opt....');
+    const ds = await this.post('cancel_order', opt, true);
+    return kUtils.formatCancelOrder(ds);
   }
   async orderBook(o = {}) {
     const ds = await this.get('trades', o, true, true);
