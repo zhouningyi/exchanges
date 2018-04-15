@@ -1,0 +1,14 @@
+{
+  "name": "balance",
+  "desc": "balance",
+  "columns": {
+    "coin": {
+      "type": ["STRING", 12],
+      "unique": true,
+      "index": true
+    },
+    "borrow_balance": "DOUBLE",
+    "locked_balance": "DOUBLE",
+    "balance": "DOUBLE"
+  }
+}
