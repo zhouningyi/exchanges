@@ -77,6 +77,12 @@ class Exchange extends Spot {
     ds = kUtils.formatFutureBalances(ds);
     return ds;
   }
+  async moveBalance(o = {}) {
+    checkKey(o, ['source', 'target', 'amount', 'coin']);
+    const opt = kUtils.formatMoveBalanceO(o);
+    const ds = await this.post('future_devolve', opt, true);
+    return { success: ds.result };
+  }
   // 市场上的交易历史
   async futureOrderHistory(o = {}) {
     console.log('to do');

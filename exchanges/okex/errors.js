@@ -240,7 +240,12 @@ const code2errorWebsoket = {
   1208: '没有该转账用户',
   1209: '当前api不可用',
 };
-const allCode2Error = { ...code2error, ...code2errorFuture, ...code2errorWebsoket };
+
+const errorAddOn = {
+  '-6': '可能是资金划转时没有足够的余额'
+};
+
+const allCode2Error = { ...code2error, ...code2errorFuture, ...code2errorWebsoket, ...errorAddOn };
 
 function getErrorFromCode(code) {
   return allCode2Error[code] || `code: ${code} 暂时不知道错误原因`;

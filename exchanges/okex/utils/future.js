@@ -112,6 +112,23 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
   return _.keyBy(res, 'unique_id');
 });
 
+// move Balance
+const moveType2code = {
+  future: {
+    spot: 2
+  },
+  spot: {
+    future: 1
+  }
+};
+function formatMoveBalanceO(o) {
+  const { source, target, amount, coin } = o;
+  const type = _.get(moveType2code, `${source}.${target}`);
+  const symbol = `${coin.toLowerCase()}_usd`;
+  return { type, amount, symbol };
+}
+
+
 // futureOrderHistory
 function formatFutureOrderHistoryO(o) {
   const { date } = o;
@@ -128,6 +145,7 @@ module.exports = {
   formatFutureOrderHistoryO,
   formatFutureOrderHistory,
   formatFutureBalances,
+  formatMoveBalanceO,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,

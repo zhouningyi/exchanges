@@ -106,7 +106,7 @@ class Exchange extends Base {
     ds = kUtils.formatOrderResult(ds);
     return ds;
   }
-  async cancelAllOrders(o) {
+  async cancelAllOrders(o = {}) {
     checkKey(o, ['pair']);
     const actives = await this.activeOrders({ pair: o.pair });
     const order_ids = _.map(actives, (d) => {
@@ -128,7 +128,6 @@ class Exchange extends Base {
       };
     }
     const opt = kUtils.formatCancelOrderO(o);
-    console.log(opt, 'opt....');
     const ds = await this.post('cancel_order', opt, true);
     return kUtils.formatCancelOrder(ds);
   }
@@ -174,6 +173,7 @@ class Exchange extends Base {
     if (!body) {
       throw `${endpoint}: body 返回为空`;
     }
+
     if (body.code === 500) {
       throw `${endpoint}: 服务拒绝...`;
     }
