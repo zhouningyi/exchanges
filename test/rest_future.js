@@ -62,11 +62,11 @@ const tasks = [
   //   params: {},
   //   name: '币信息'
   // },
-  {
-    fn: 'futureKline',
-    params: { pair: 'ETH-USD' },
-    name: '期货k线图'
-  },
+  // {
+  //   fn: 'futureKline',
+  //   params: { pair: 'ETH-USD' },
+  //   name: '期货k线图'
+  // },
   // {
   //   fn: 'ticks',
   //   params: { pair: 'ETH-BTC' },
@@ -85,7 +85,12 @@ const tasks = [
 //   fn: 'orderBook',
 //   params: { pair: 'ETH-BTC' },
 //   name: 'orderBook数据'
-// }
+// },
+  {
+    fn: 'moveBalance',
+    params: { source: 'future', target: 'spot', coin: 'BTC', amount: 0.0019 },
+    name: '移动资金'
+  }
 ];
 
 testRest(exchanges, tasks);

@@ -5,10 +5,10 @@ const tasks = [
   // {
   //   fn: 'order',
   //   params: {
-  //     pair: 'BTC-USDT',
-  //     amount: 0.0012,
-  //     price: 7155,
-  //     side: 'BUY',
+  //     pair: 'OKB-BTC',
+  //     amount: 2,
+  //     // price: 7155,
+  //     side: 'SELL',
   //     type: 'MARKET'
   //   },
   //   name: '交易'
@@ -26,20 +26,31 @@ const tasks = [
   // },
   // {
   //   fn: 'cancelAllOrders',
-  //   params: {},
+  //   params: {
+  //     pair: 'OKB-USDT'
+  //   },
   //   name: '取消正在执行中的订单'
   // },
   // {
   //   fn: 'activeOrders',
-  //   params: {},
+  //   params: {
+  //     pair: 'OKB-USDT'
+  //   },
   //   name: '正在执行中的订单'
+  // },
+  // {
+  //   fn: 'finishOrders',
+  //   params: {
+  //     pair: 'OKB-USDT'
+  //   },
+  //   name: '已经完成的订单'
   // },
   // {
   //   fn: 'orderInfo',
   //   params: {
-  //     pair: 'ETH-BTC',
-  //     order_id: '5ab781719dda152895660f43',
-  //     side: 'BUY'
+  //     pair: 'OKB-BTC',
+  //     order_id: '11931810',
+  //     side: 'SELL'
   //   },
   //   name: '交易'
   // },
@@ -64,15 +75,20 @@ const tasks = [
   // },
   // {
   //   fn: 'ticks',
-  //   params: { pair: 'ETH-BTC' },
+  //   params: { pair: 'OKB-USDT' },
   //   name: 'ticks数据'
   // },
 
-  {
-    fn: 'balances',
-    params: {},
-    name: '账户余额'
-  },
+  // {
+  //   fn: 'balances',
+  //   params: {},
+  //   name: '账户余额'
+  // },
+  // {
+  //   fn: 'futureBalances',
+  //   params: {},
+  //   name: '合约(全仓)余额'
+  // },
 // {
 //   fn: 'depth',
 //   params: { pair: 'ETH-BTC' },
