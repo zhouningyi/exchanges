@@ -86,11 +86,42 @@ const tasks = [
 //   params: { pair: 'ETH-BTC' },
 //   name: 'orderBook数据'
 // },
+// {
+//   fn: 'moveBalance',
+//   params: { source: 'future', target: 'spot', coin: 'BTC', amount: 0.0019 },
+//   name: '移动资金'
+// },
+  // {
+  //   fn: 'futureOrder',
+  //   params: {
+  //     pair: 'BTC-USDT',
+  //     contract_type: 'quarter',
+  //     lever_rate: 10,
+  //     side: 'SELL',
+  //     direction: 'up',
+  //     amount: 1,
+  //     type: 'LIMIT',
+  //     price: 8333,
+  //   },
+  //   name: '购买期货'
+  // },
   {
-    fn: 'moveBalance',
-    params: { source: 'future', target: 'spot', coin: 'BTC', amount: 0.0019 },
-    name: '移动资金'
-  }
+    fn: 'futureOrderInfo',
+    params: {
+      order_id: '594942061259776',
+      contract_type: 'quarter',
+      pair: 'BTC-USDT',
+    }
+  },
+  // {
+  //   fn: 'cancelFutureOrder',
+  //   params: {
+  //     order_id: '594942061259776',
+  //     contract_type: 'quarter',
+  //     pair: 'BTC-USDT',
+  //   },
+  //   name: '清空期货'
+  // }
 ];
 
 testRest(exchanges, tasks);

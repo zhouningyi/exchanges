@@ -15,11 +15,15 @@
 | [wsFutureKlines(期货ws k线图)](#wsFutureKlines) | wsFutureKlines | | |  ||| ✅ | |
 | 币种信息(转账资费、最小转账等币种在交易所的相关信息) |coin |  |  | ✅ |||  |  |
 | 所有币种信息 | coins |  | | ✅ ||✅|  |  |
-| 账户余额 | balances |  | | ✅ |||  |  |
+| 账户余额 | balances |  | | ✅ ||| ✅ |  |
+| 期货账户余额 | futureBalances | | |  ||| ✅ | |
+| 所有账户的余额 | allBalances | | |  ||| ✅ | |
+| 账户资金划转 | moveBalance | | | |||  | |
 | 下单 | order |  | | ✅ |||  |  |
-| 订单详情 | orderInfo | side pair  order_id | pendingAmount  未完成数量dealAmount 完成数量 | ✅ |||  |  |
+| [orderInfo(订单详情)](#orderInfo) | orderInfo | side pair  order_id | pendingAmount  未完成数量dealAmount 完成数量 | ✅ |||  |  |
 | 近期所有订单 | allOrders |  |  |  ||| ✅ | |
 | 正在执行中的订单 | activeOrders |  |  | ✅ |✅|| ✅ |  |
+| 已经完成的订单 | finishOrders | | |  ||| ✅ | |
 | 测试连接 | ping | 无 | | |✅||  |  |
 | 服务器时间 | time | 无 | | |✅||  |  |
 | 交易对信息(偏静态) | pairs |  | | |✅||  |  |
@@ -67,7 +71,8 @@
 
 
  ## 规范
-1. 为了直接兼容数据库的格式，采用下划线命名变量
+1. 为了与数据库字段更好地对接，采用下划线命名变量
+2. ​
 
 
  ## 市场类
@@ -175,5 +180,56 @@ exchange.wsFutureKlines(options, cb);
 await exchange.futureKlines(options, cb);
 ```
 
+### orderInfo
+订单详情
+```javascript
+await exchange.orderInfo({
+    order_id: 'xxx',
+    pair: 'BTC-USD'
+});
+```
+| 名称 | 意义 | 默认 | 必选  |
+| --------   | -----:  | -----  | --------   |
+| pair | 交易对 |  | ✅ |
+| order_id | 订单id |  | ✅ |
+
+<details>
+<summary>输出</summary>
+
+```javascript
+ { 
+    "order_id": '11931810',
+    "order_main_id": '11931810',
+    "amount": 2,
+    "price": 0.00017263,
+    "status": "SUCCESS",// 'CANCEL', 'UNFINISH','c', 'SUCCESS','CANCELLING'
+    "side": "SELL", //SELL | BUY
+    "type": "MARKET", // MARKET | LIMIT
+    "time": "2018-04-15T03:43:27.000Z"
+ }
+```
+</details>
 
 
+### cancelOrder
+
+取消订单
+
+```javascript
+await exchange.cancelOrder({
+    order_id: 'xxx',
+    pair: 'BTC-USD'
+});
+```
+<details>
+<summary>输出</summary>
+
+```javascript
+{
+  "success": [
+    "12761945"
+  ],
+  "error": []
+}
+```
+</details>

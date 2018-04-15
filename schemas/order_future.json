@@ -1,0 +1,27 @@
+{
+  "name": "order_future",
+  "desc": "order_future",
+  "columns": {
+    "order_id": {
+      "type": ["STRING", 20],
+      "unique": true
+    },
+    "contract_name": ["STRING", 20],
+    "lever_rate": "FLOAT",
+    "amount": "INTEGER",
+    "deal_amount": "FLOAT",
+    "price": "FLOAT",
+    "fee": "FLOAT",
+    "side": {
+      "type": ["STRING", 8],
+      "comment": "买/卖 SELL / BUY"
+    },
+    "type": {
+      "type": ["STRING", 12],
+      "comment": "MARKET / LIMIT"
+    },
+    "status":["STRING", 8],
+    "pair": ["STRING", 12],
+    "time": "DATE"
+  }
+}
