@@ -24,7 +24,7 @@ class Exchange extends Spot {
   }
   async futureDepth(o = {}) {
     const defaultO = {
-      size: 10
+      size: 50
     };
     checkKey(o, ['contract_type', 'pair']);
     const opt = { ...defaultO, ...o };
@@ -134,10 +134,7 @@ class Exchange extends Spot {
     checkKey(o, reqs);
     const opt = _.pick(o, reqs);
     const ds = await this.post('future_cancel', opt, true);
-    const res = {
-      success: ds.result,
-      order_id: ds.order_id
-    };
+    const res = { success: ds.result, order_id: ds.order_id };
     if (res.success) delete this.unfinishFutureOrders[res.order_id];
     return res;
   }
@@ -194,11 +191,6 @@ class Exchange extends Spot {
       success, error
     };
   }
-  // async activeOrders(o = {}) {
-  //   checkKey(o, ['pair']);
-  //   const ds = await this.allOrders({ ...o, status: 'UNFINISH' });
-  //   return ds;
-  // }
   async futureOrderInfo(o = {}) {
     const reqs = ['pair', 'order_id', 'contract_type'];
     checkKey(o, reqs);

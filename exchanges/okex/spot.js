@@ -55,7 +55,11 @@ class Exchange extends Base {
     return ds;
   }
   async depth(o = {}) {
-    const ds = await this.get('depth', o, false);
+    const defaultO = {
+      size: 50
+    };
+    const opt = { ...defaultO, ...o };
+    const ds = await this.get('depth', opt, false);
     return kUtils.formatDepth(ds);
   }
   // 交易状态

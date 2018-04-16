@@ -11,7 +11,6 @@ async function main(pair = 'BTC-USDT', contract_type = 'quarter') {
   const ex = getExchange('okex');
   const futureDepth = await ex.futureDepth({ pair, contract_type, size: 3 });
   const { asks } = futureDepth;
-  // console.log(asks, 'asks');
   const orders = [{
     price: asks[0].price + 100,
     amount: 1,
