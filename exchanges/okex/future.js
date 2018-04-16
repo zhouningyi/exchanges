@@ -1,3 +1,4 @@
+
 // const Utils = require('./utils');
 // const Base = require('./../base');
 // const request = require('./../../utils/request');
@@ -115,6 +116,18 @@ class Exchange extends Spot {
     };
     this._updateUnfinishFutureOrders(res);
     return res;
+  }
+  async batchFutureOrder(o = {}) {
+    checkKey(o, ['pair', 'orders', 'lever_rate', 'contract_type']);
+    const opt = kUtils.formatBatchFutureOrderO(o);
+    const ds = await this.post('future_batch_trade', opt, true);
+    return _.map(ds.order_info, (order) => {
+      if (order.error_code) return null;
+      const line = { ...o, success: true, order_id: order.order_id };
+      delete line.orders;
+      this._updateUnfinishFutureOrders(line);
+      return line;
+    }).filter(d => d);
   }
   async cancelFutureOrder(o = {}) {
     const reqs = ['pair', 'order_id', 'contract_type'];

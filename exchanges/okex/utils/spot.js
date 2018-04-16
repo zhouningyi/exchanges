@@ -69,9 +69,9 @@ function _formatDepth(ds) {
 
 function formatDepth(ds) {
   return {
-    time: new Date(ds.lastUpdateId * 1000),
+    time: new Date(),
     bids: _formatDepth(ds.bids),
-    asks: _formatDepth(ds.asks),
+    asks: _formatDepth(_.reverse(ds.asks)),
   };
 }
 

@@ -178,6 +178,9 @@ class Exchange extends Base {
     if (body.code === 500) {
       throw `${endpoint}: 服务拒绝...`;
     }
+    if (body.code === -1) {
+      throw `${endpoint}: ${body.msg}`;
+    }
     if (body.error_code) {
       throw error.getErrorFromCode(body.error_code);
     }

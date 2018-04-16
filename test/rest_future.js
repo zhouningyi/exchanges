@@ -151,14 +151,24 @@ const tasks = [
   //   },
   //   name: '清空期货'
   // },
+  // {
+  //   fn: 'futureDepth',
+  //   params: {
+  //     pair: 'BTC-USDT',
+  //     contract_type: 'quarter'
+  //   },
+  //   name: '深度数据'
+  // },
   {
-    fn: 'futureDepth',
+    fn: 'batchFutureOrder',
     params: {
       pair: 'BTC-USDT',
-      contract_type: 'quarter'
-    },
-    name: '深度数据'
+      contract_type: 'quarter',
+      lever_rate: 10,
+      orders: []
+    }
   }
+
 ];
 
 testRest(exchanges, tasks);

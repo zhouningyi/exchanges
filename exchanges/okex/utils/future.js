@@ -1,7 +1,9 @@
 const _ = require('lodash');
 const Utils = require('./../../../utils');
 const md5 = require('md5');
-const moment = require('moment');
+// const moment = require('moment');
+
+const { checkKey } = Utils;
 
 const {
   deFormatPair,
@@ -235,6 +237,30 @@ function formatFutureAllOrders(ds) {
   // return o;
 }
 
+function _formatOrders(orders, match_price, type) {
+  const res = _.map(orders, (o) => {
+    checkKey(o, ['amount']);
+    return {
+      amount: o.amount,
+      match_price,
+      type,
+      ...(match_price === 1 ? {} : { price: o.price })
+    };
+  });
+  return JSON.stringify(res);
+}
+function formatBatchFutureOrderO(o) {
+  let { side, type, direction } = o;
+  side = side.toLowerCase();
+  type = type.toLowerCase();
+  const match_price = type === 'limit' ? 0 : 1;
+  const opt = {
+    ..._.pick(o, ['contract_type', 'lever_rate', 'pair']),
+    orders_data: _formatOrders(o.orders, match_price, _.get(typeMap, `${side}.${direction}`))
+  };
+  return opt;
+}
+
 
 module.exports = {
   formatFutureOrderHistoryO,
@@ -245,6 +271,7 @@ module.exports = {
   formatFutureOrderInfo,
   formatFutureAllOrdersO,
   formatFutureAllOrders,
+  formatBatchFutureOrderO,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,
