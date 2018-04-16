@@ -70,7 +70,7 @@ function _formatDepth(ds) {
 function formatDepth(ds) {
   return {
     time: new Date(ds.lastUpdateId * 1000),
-    bids: _formatDepth(ds.biz),
+    bids: _formatDepth(ds.bids),
     asks: _formatDepth(ds.asks),
   };
 }

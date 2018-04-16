@@ -22,7 +22,12 @@ class Exchange extends Spot {
     return kUtils.formatTick(ds);
   }
   async futureDepth(o = {}) {
-    const ds = await this.get('future_depth', o);
+    const defaultO = {
+      size: 10
+    };
+    checkKey(o, ['contract_type', 'pair']);
+    const opt = { ...defaultO, ...o };
+    const ds = await this.get('future_depth', opt);
     return kUtils.formatDepth(ds);
   }
   async futureOrderBook(o = {}) {
