@@ -14,8 +14,9 @@ const FUTURE_PAIRS = require('./meta/future_pairs.json');
 class Exchange extends Spot {
   constructor(o, options) {
     super(o, options);
+    this.unfinishFutureOrders = {};
   }
-  // /市场类
+  // 市场类
   async futureTick(o = {}) {
     const ds = await this.get('future_ticker', o);
     return kUtils.formatTick(ds);
@@ -90,32 +91,117 @@ class Exchange extends Spot {
   //   checkKey(o, ['pair', 'date']);
   //   const opt = kUtils.formatFutureOrderHistoryO(o);
   // }
-  // 下单
+  _updateUnfinishFutureOrders(d) {
+    const { status } = d;
+    if (!status) { //
+      this.unfinishFutureOrders[d.order_id] = d;
+    } else if (status === 'FINISH') {
+      delete this.unfinishFutureOrders[d.order_id];
+    }
+  }
   async futureOrder(o = {}) {
     checkKey(o, ['pair', 'contract_type', 'lever_rate', 'side', 'direction', 'type']);
     const opt = kUtils.formatFutureOrderO(o);
     const ds = await this.post('future_trade', opt, true);
-    return {
+    const res = {
       success: ds.result,
-      order_id: ds.order_id
+      order_id: ds.order_id,
+      ...o
     };
+    this._updateUnfinishFutureOrders(res);
+    return res;
   }
   async cancelFutureOrder(o = {}) {
     const reqs = ['pair', 'order_id', 'contract_type'];
     checkKey(o, reqs);
     const opt = _.pick(o, reqs);
     const ds = await this.post('future_cancel', opt, true);
-    return {
+    const res = {
       success: ds.result,
       order_id: ds.order_id
     };
+    if (res.success) delete this.unfinishFutureOrders[res.order_id];
+    return res;
   }
+  async cancelAllFutureOrders() {
+    let unfinishs = this.unfinishFutureOrders;
+    if (!_.values(unfinishs).length) return { success: true, message: 'no order to cancel' };
+    const reqs = ['pair', 'order_id', 'contract_type'];
+    unfinishs = _.map(unfinishs, d => _.pick(d, reqs));
+    unfinishs = _.groupBy(unfinishs, 'pair');
+    unfinishs = _.mapValues(unfinishs, d => _.groupBy(d, 'contract_type'));
+    let tasks = _.map(unfinishs, (info, pair) => {
+      return _.map(info, (ds, contract_type) => {
+        const o = {
+          pair, contract_type, order_id: _.map(ds, d => d.order_id)
+        };
+        return this._cancelAllFutureOrders(o);
+      });
+    });
+    tasks = _.flatten(tasks);
+    const ds = await Promise.all(tasks);
+    const res = {
+      success: [],
+      error: []
+    };
+    _.forEach(ds, (d) => {
+      res.success = { ...res.success, ...d.success };
+      res.error = { ...res.error, ...d.error };
+    });
+    return {
+      success: _.keys(res.success),
+      error: _.keys(res.error)
+    };
+  }
+  async _cancelAllFutureOrders(o = {}) {
+    const reqs = ['pair', 'contract_type', 'order_id'];
+    checkKey(o, reqs);
+    const opt = _.pick(o, reqs);
+    if (Array.isArray(opt.order_id)) opt.order_id = opt.order_id.join(',');
+    const ds = await this.post('future_cancel', opt, true);
+    let success;
+    let error;
+    if (ds.result === true) {
+      success = { [ds.order_id]: ds.order_id };
+    } else if (ds.result === false) {
+      error = { [ds.order_id]: ds.order_id };
+    } else {
+      error = _.keyBy(ds.error.split(','), d => d);
+      success = _.keyBy(ds.success.split(','), d => d);
+    }
+    _.forEach(success, (suc_id) => {
+      delete this.unfinishFutureOrders[suc_id];
+    });
+    return {
+      success, error
+    };
+  }
+  // async activeOrders(o = {}) {
+  //   checkKey(o, ['pair']);
+  //   const ds = await this.allOrders({ ...o, status: 'UNFINISH' });
+  //   return ds;
+  // }
   async futureOrderInfo(o = {}) {
     const reqs = ['pair', 'order_id', 'contract_type'];
     checkKey(o, reqs);
     const opt = _.pick(o, reqs);
     const ds = await this.post('future_order_info', opt, true);
-    return kUtils.formatFutureOrderInfo(ds, o);
+    const res = kUtils.formatFutureOrderInfo(ds, o);
+    this._updateUnfinishFutureOrders(res);
+    return res;
+  }
+  async futureAllOrders(o = {}) {
+    const defaultO = {
+      page_length: 2000,
+      current_page: 0,
+      status: 'UNFINISH'
+    };
+    o = { ...defaultO, ...o };
+    checkKey(o, ['pair']);
+    const opt = kUtils.formatFutureAllOrdersO(o);
+    const ds = await this.post('future_trades_history', opt, true);
+    return kUtils.formatFutureAllOrders(ds);
+    // future_trades_history
   }
 }
 

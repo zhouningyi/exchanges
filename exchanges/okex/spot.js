@@ -61,8 +61,9 @@ class Exchange extends Base {
   // 交易状态
   async orderInfo(o = {}) {
     checkKey(o, ['order_id', 'pair']);
-    const { order_id, pair } = o;
-    let ds = await this.post('order_info', { order_id, pair }, true, true);
+    let { order_id, pair } = o;
+    if (Array.isArray(order_id)) order_id = order_id.join(',');
+    let ds = await this.post('orders_info', { order_id, pair }, true, true);
     ds = kUtils.formatOrderInfo(ds, o);
     return ds;
   }
@@ -82,7 +83,7 @@ class Exchange extends Base {
       current_page: 0,
       status: 'UNFINISH'
     };
-    checkKey(o, ['pair', 'status']);
+    checkKey(o, ['pair']);
     o = { ...defaultO, ...o };
     const opt = kUtils.formatAllOrdersO(o);
     const ds = await this.post('order_history', opt, true);

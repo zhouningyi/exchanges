@@ -199,6 +199,7 @@ function formatFutureOrderO(o) {
   return opt;
 }
 
+
 function formatFutureOrderInfo(ds, o) {
   if (!ds) return null;
   const { orders } = ds;
@@ -221,6 +222,19 @@ function formatFutureOrderInfo(ds, o) {
   return res;
 }
 
+function formatFutureAllOrdersO(o) {
+  o = _.cloneDeep(o);
+  o.status = orderStatus2Code[o.status];
+  return o;
+}
+
+function formatFutureAllOrders(ds) {
+  console.log(ds);
+  // o = _.cloneDeep(o);
+  // o.status = orderStatus2Code[o.status];
+  // return o;
+}
+
 
 module.exports = {
   formatFutureOrderHistoryO,
@@ -229,6 +243,8 @@ module.exports = {
   formatMoveBalanceO,
   formatFutureOrderO,
   formatFutureOrderInfo,
+  formatFutureAllOrdersO,
+  formatFutureAllOrders,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,

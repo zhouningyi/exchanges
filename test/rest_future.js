@@ -91,28 +91,57 @@ const tasks = [
 //   params: { source: 'future', target: 'spot', coin: 'BTC', amount: 0.0019 },
 //   name: '移动资金'
 // },
-  // {
-  //   fn: 'futureOrder',
-  //   params: {
-  //     pair: 'BTC-USDT',
-  //     contract_type: 'quarter',
-  //     lever_rate: 10,
-  //     side: 'SELL',
-  //     direction: 'up',
-  //     amount: 1,
-  //     type: 'LIMIT',
-  //     price: 8333,
-  //   },
-  //   name: '购买期货'
-  // },
+  {
+    fn: 'futureOrder',
+    params: {
+      pair: 'BTC-USDT',
+      contract_type: 'quarter',
+      lever_rate: 10,
+      side: 'BUY',
+      direction: 'up',
+      amount: 1,
+      type: 'LIMIT',
+      price: 7999,
+    },
+    name: '购买期货'
+  },
+  {
+    fn: 'futureOrder',
+    params: {
+      pair: 'BTC-USDT',
+      contract_type: 'quarter',
+      lever_rate: 10,
+      side: 'BUY',
+      direction: 'up',
+      amount: 1,
+      type: 'LIMIT',
+      price: 7998,
+    },
+    name: '购买期货'
+  },
   {
     fn: 'futureOrderInfo',
     params: {
-      order_id: '594942061259776',
+      order_id: '596402338479104',
       contract_type: 'quarter',
       pair: 'BTC-USDT',
-    }
+    },
+    name: '期货订单查询'
   },
+  {
+    fn: 'cancelAllFutureOrders',
+    params: {
+    },
+    name: '撤销所有的订单'
+  },
+  // {
+  //   fn: 'futureAllOrders',
+  //   params: {
+  //     contract_type: 'quarter',
+  //     pair: 'BTC-USDT',
+  //   },
+  //   name: '所有的订单'
+  // },
   // {
   //   fn: 'cancelFutureOrder',
   //   params: {
