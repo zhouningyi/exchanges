@@ -3,23 +3,45 @@ const _ = require('lodash');
 //
 const Exchanges = require('./../index');
 const config = require('./../config');
+const Utils = require('./utils');
 
 const wsList = [
+  // {
+  //   fn: 'wsTicks',
+  //   params: {},
+  //   name: 'tick数据...'
+  // },
+  // {
+  //   fn: 'wsFutureTicks',
+  //   params: {},
+  //   name: '期货tick数据...'
+  // },
+  // {
+  //   fn: 'wsBalance',
+  //   params: {},
+  //   name: '期货余额数据'
+  // },
+  // {
+  //   fn: 'wsFutureKlines',
+  //   params: {
+  //   },
+  //   name: '期货tick k线图...'
+  // },
   {
-    fn: 'wsTicks',
-    params: {},
-    name: 'tick数据...'
-  }
+    fn: 'wsFutureKline',
+    params: {
+      pair: 'BTC-USD'
+    },
+    name: '期货tick k线图...(指定pair)'
+  },
 ];
 
 function testOneExchangeWs(exName, list) {
-  const keyName = `${exName}Zhou`;
-  const Exchange = Exchanges[exName];
-  const ex = new Exchange(config[keyName]);
+  const ex = Utils.getExchange(exName);
   _.forEach(list, (o) => {
     const { fn, params } = o;
     ex[fn](params, (ds) => {
-      console.log(ds);
+      console.log(ds, 'ds.....');
     });
   });
 }

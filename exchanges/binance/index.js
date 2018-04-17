@@ -19,6 +19,7 @@ const subscribe = Utils.ws.genSubscribe(WS_BASE);
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
+    this.name = 'binance';
     this.init();
   }
   getSignature(qs) {
@@ -75,7 +76,7 @@ class Exchange extends Base {
     if (ds.status === 'NEW') {
       await Utils.delay(waitTime);
       await this.cancelOrder({
-        orderId: ds.orderId,
+        order_id: ds.order_id,
         pair: o.pair,
         side: o.side
       });
@@ -84,7 +85,7 @@ class Exchange extends Base {
     return ds;
   }
   async cancelOrder(o) {
-    checkKey(o, ['orderId', 'side']);
+    checkKey(o, ['order_id', 'side']);
     o = tUtils.formatCancelOrderO(o);
     const ds = await this.delete('v3/order', o, true, true);
     return ds;
@@ -97,7 +98,7 @@ class Exchange extends Base {
     const ds = await this.activeOrders();
     await Promise.all(_.map(ds, async (d) => {
       const opt = {
-        orderId: d.orderId,
+        order_id: d.order_id,
         pair: d.pair,
         side: d.side
       };
@@ -147,23 +148,26 @@ class Exchange extends Base {
         } : {})
       }
     };
-
+    //
+    let body;
     try {
-      const body = await request(o);
+      // console.log('request', o);
+      body = await request(o);
+      // console.log(body, 'body...');
       // if (url.indexOf('order') !== -1) {
       //   console.log(body, 'body');
       // }
-      const { error, msg, code } = body;
-      if (code) {
-        Utils.print(msg, 'gray');
-        throw msg;
-      }
-      if (error) throw error;
-      return body.data || body;
     } catch (e) {
-      if (e.message) console.log(e.message);
+      if (e) console.log('request...', e.message || e);
       return null;
     }
+    const { error, msg, code } = body;
+    if (code) {
+      Utils.print(msg, 'gray');
+      throw msg;
+    }
+    if (error) throw error;
+    return body.data || body;
   }
   //
   wsTicks(o, cb) {

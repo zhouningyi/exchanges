@@ -19,6 +19,7 @@ function warn(str, color) {
   console.log(content);
 }
 
+
 const warnExit = (text) => {
   warn(`${text}\n`);
   process.exit();

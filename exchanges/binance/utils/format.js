@@ -136,10 +136,10 @@ function _map(d) {
   }
   return {
     pair,
-    bidPrice: _parse(d.bidPrice),
-    bidVolume: _parse(d.bidQty),
-    askPrice: _parse(d.askPrice),
-    askVolume: _parse(d.askQty),
+    bid_price: _parse(d.bidPrice),
+    bid_volume: _parse(d.bidQty),
+    ask_price: _parse(d.askPrice),
+    ask_volume: _parse(d.askQty),
     time: new Date()
   };
 }
@@ -162,10 +162,10 @@ function formatTicksWS(ds) {
     }
     return {
       pair,
-      bidPrice: _parse(d.b),
-      bidVolume: _parse(d.B),
-      askPrice: _parse(d.a),
-      askVolume: _parse(d.A),
+      bid_price: _parse(d.b),
+      bid_volume: _parse(d.B),
+      ask_price: _parse(d.a),
+      ask_volume: _parse(d.A),
       price_change: _parse(d.p),
       time: new Date(d.E)
     };
@@ -180,13 +180,13 @@ function formatDepth(ds) {
   };
 }
 
-function formatCancelOrderO(o) {
+function formatCancelOrderO(o = {}) {
   return {
     symbol: formatPairString(o.pair),
-    orderId: o.orderId
+    order_id: o.order_id
   };
 }
-function formatOrderO(o) {
+function formatOrderO(o = {}) {
   const symbol = formatPairString(o.pair);
   const quantity = formatQuatity(o.amount, symbol);
   const isLimit = o.price || o.type === 'LIMIT';

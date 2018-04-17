@@ -1,0 +1,25 @@
+{
+  "name": "order",
+  "desc": "order",
+  "columns": {
+    "order_id": {
+      "type": ["STRING", 20],
+      "unique": true
+    },
+    "order_main_id": ["STRING", 20],
+    "amount": "FLOAT",
+    "deal_amount": "FLOAT",
+    "price": "FLOAT",
+    "side": {
+      "type": ["STRING", 8],
+      "comment": "买/卖 SELL / BUY"
+    },
+    "type": {
+      "type": ["STRING", 12],
+      "comment": "MARKET / LIMIT"
+    },
+    "status":["STRING", 8],
+    "pair": ["STRING", 12],
+    "time": "DATE"
+  }
+}

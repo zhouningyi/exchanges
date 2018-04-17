@@ -13,6 +13,7 @@ class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
     this.url = URL;
+    this.name = 'kucoin';
     this.version = 'v1';
   }
   getSignature(path, queryStr, nonce) {
@@ -29,7 +30,7 @@ class Exchange extends Base {
     o = kUtils.formatOrderO(o);
     Utils.print(`${o.type} - ${o.pair} - ${o.amount}`, 'red');
     const ds = await this.post('order', o);
-    return ds ? { orderId: ds.orderOid } : null;
+    return ds ? { order_id: ds.orderOid } : null;
   }
   // async pairs(o = {}) {
   //   const ds = await this.get('open/markets', o);
@@ -41,13 +42,13 @@ class Exchange extends Base {
     const ds = await this.order(o);
     await Utils.delay(waitTime);
     if (!ds) return null;
-    const { orderId } = ds;
-    const orderInfo = await this.orderInfo({ orderId, pair: o.pair, side: o.side });
+    const { order_id } = ds;
+    const orderInfo = await this.orderInfo({ order_id, pair: o.pair, side: o.side });
     if (!orderInfo) return;
     const { pendingAmount, dealAmount } = orderInfo;
     if (pendingAmount === 0) return orderInfo;
     await this.cancelOrder({
-      orderId, pair: o.pair, side: o.side
+      order_id, pair: o.pair, side: o.side
     });
     return { ...orderInfo, pendingAmount: 0, dealAmount };
   }
@@ -60,11 +61,11 @@ class Exchange extends Base {
     return ds;
   }
   async orderInfo(o) {
-    checkKey(o, ['orderId', 'side', 'pair']);
-    const opt = Utils.replace(o, { orderId: 'orderOid', side: 'type' });
+    checkKey(o, ['order_id', 'side', 'pair']);
+    const opt = Utils.replace(o, { order_id: 'orderOid', side: 'type' });
     const ds = await this.get('order/detail', opt);
     return ds ? {
-      orderId: o.orderId,
+      order_id: o.order_id,
       side: o.side,
       dealAmount: ds.dealAmount,
       pendingAmount: ds.pendingAmount,
@@ -72,11 +73,11 @@ class Exchange extends Base {
     } : null;
   }
   async cancelOrder(o = {}) {
-    checkKey(o, ['orderId', 'side']);
-    const opt = Utils.replace(o, { orderId: 'orderOid', side: 'type' });
+    checkKey(o, ['order_id', 'side']);
+    const opt = Utils.replace(o, { order_id: 'orderOid', side: 'type' });
     const ds = await this.post('cancel-order', opt);
     return ds ? {
-      orderId: o.orderId,
+      order_id: o.order_id,
       side: o.side,
       success: ds.success,
       time: new Date(ds.timestamp)

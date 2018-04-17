@@ -11,37 +11,42 @@ const uri = (path, params) => `${path}?${JSON.stringify(params)}`;
 
 //
 const CONTENT_TYPE = 'application/x-www-form-urlencoded';
-const USER_AGENT = 'Mozilla/4.0 (compatible; Node HitBTC API)';
-const REST_URL = 'https://api.hitbtc.com/api/';
+const USER_AGENT = 'Mozilla/4.0 (compatible; Node Bittrex API)';
+const REST_URL = 'https://bittrex.com/api/';
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
     this.url = REST_URL;
-    this.version = '2';
+    this.name = 'bittrex';
+    this.version = 'v1.1';
     this.init();
-    this.name = 'hitbtc';
   }
   async init() {
     this.pairs();
   }
   async coins(o = {}) {
-    let ds = await this.get('public/currency', o);
+    let ds = await this.get('public/getcurrencies', o);
     ds = kUtils.formatCoins(ds);
     return ds;
   }
   async pairs(o = {}) {
-    let ds = await this.get('public/symbol', o);
+    let ds = await this.get('public/getmarkets', o);
     ds = kUtils.formatPairs(ds);
     return ds;
   }
   async ticks(o = {}) {
-    let ds = await this.get('public/ticker', o);
-    ds = kUtils.formatTickers(ds);
+    const ds = await this.get('public/getmarketsummaries', o);
+    return kUtils.formatTickers(ds);
+  }
+  async tick(o = {}) {
+    checkKey(o, ['pair']);
+    let ds = await this.get('public/getticker', o);
+    ds = kUtils.formatTicker(ds, o.pair);
     return ds;
   }
   //
-  async balances(o = {}) {
-  }
+  // async balances(o = {}) {
+  // }
   getSignature(path, queryStr, nonce) {
     const message = {};
     return crypto
@@ -51,17 +56,9 @@ class Exchange extends Base {
   }
   async request(method = 'GET', endpoint, params = {}, signed) {
     const { options } = this;
-    const url = `${REST_URL}${this.version}/${endpoint}`;
-    //
-    const authParams = {
-      apikey: this.apiKey,
-      nonce: Date.now(),
-    };
-
-    // const uri = (path, params) =>
-    // `${path}?${stringify(params)}`;
-    // const pathstring = signed && method === 'GET' ?  : ;
-
+    params = kUtils.formatPairOpt(params);
+    const queryStr = (params && method === 'GET') ? `?${Utils.getQueryString(params)}` : '';
+    const url = `${REST_URL}${this.version}/${endpoint}${queryStr}`;
     const o = {
       timeout: options.timeout,
       uri: url,
@@ -94,7 +91,7 @@ class Exchange extends Base {
       throw msg;
     }
     if (error) throw error;
-    return body.data || body;
+    return body.result || body;
   }
   // 下订单
 }

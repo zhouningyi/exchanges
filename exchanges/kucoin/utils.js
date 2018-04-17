@@ -15,11 +15,11 @@ function getFilteredBalances(ds, o = {}) {
   ds = _.filter(ds, d => d.balance !== 0);
   return _.map(ds, (d) => {
     return {
-      balanceStr: d.balanceStr,
+      balance_str: d.balanceStr,
       balance: d.balance,
       coin: d.coinType,
-      lockedBalanceStr: d.freezeBalanceStr,
-      lockedBalance: d.freezeBalance
+      locked_balance_str: d.freezeBalanceStr,
+      locked_balance: d.freezeBalance
     };
   });
 }
@@ -27,14 +27,14 @@ function getFilteredBalances(ds, o = {}) {
 function _map(d) {
   return {
     pair: d.symbol,
-    bidPrice: d.buy,
-    askPrice: d.sell,
+    bid_price: d.buy,
+    ask_price: d.sell,
     feeRate: d.feeRate,
     trading: d.trading,
-    lastPirce: d.lastDealPrice,
+    last_price: d.lastDealPrice,
     time: new Date(d.datetime),
-    bidVolume24: d.volValue,
-    askVolume24: d.vol
+    bid_volume_24: d.volValue,
+    ask_volume_24: d.vol
   };
 }
 

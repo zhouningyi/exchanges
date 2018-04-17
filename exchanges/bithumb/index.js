@@ -12,6 +12,7 @@ const URL = 'https://api.bithumb.com';
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
+    this.name = 'bithumb';
     this.url = URL;
   }
 

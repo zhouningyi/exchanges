@@ -3,7 +3,8 @@ const Event = require('bcore/event');
 // const config = require('./../config');
 const deepmerge = require('deepmerge');
 const argv = require('optimist').argv;
-
+const fs = require('fs');
+const path = require('path');
 
 const defaultOptions = {
   timeout: 10000,
@@ -29,6 +30,12 @@ class exchange extends Event {
   }
   async delete(endpoint, params, isSign) {
     return await this.request('DELETE', endpoint, params, isSign);
+  }
+  saveConfig(json = {}, file) {
+    const { name } = this;
+    const pth = path.join(__dirname, `./${name}/meta/${file}.json`);
+    const str = JSON.stringify(json, null, 2);
+    fs.writeFileSync(pth, str, 'utf8');
   }
 }
 
