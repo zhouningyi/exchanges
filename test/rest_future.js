@@ -159,16 +159,25 @@ const tasks = [
   //   },
   //   name: '深度数据'
   // },
+  // {
+  //   fn: 'batchFutureOrder',
+  //   params: {
+  //     pair: 'BTC-USDT',
+  //     contract_type: 'quarter',
+  //     lever_rate: 20,
+  //     type: 'MARKET',
+  //     side: 'BUY',
+  //     direction: 'up',
+  //     orders: [{ amount: 1 }]
+  //   },
+  //   name: '批量下单'
+  // },
   {
-    fn: 'batchFutureOrder',
+    fn: 'futureBalances',
     params: {
-      pair: 'BTC-USDT',
-      contract_type: 'quarter',
-      lever_rate: 10,
-      orders: []
-    }
+    },
+    name: '期货资金'
   }
-
 ];
 
 testRest(exchanges, tasks);

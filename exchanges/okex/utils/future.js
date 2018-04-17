@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Utils = require('./../../../utils');
 const md5 = require('md5');
 // const moment = require('moment');
+const error = require('./../errors');
 
 const { checkKey } = Utils;
 
@@ -143,6 +144,14 @@ function formatFutureOrderHistory() {
 
 // future balances
 function formatFutureBalances(ds) {
+  if (!ds) return null;
+  return _.map(ds.info, (line, coin) => {
+    coin = coin.toUpperCase();
+    return {
+      coin,
+      ..._.pick(line, ['risk_rate', 'profit_real', 'profit_unreal', 'keep_deposit', 'account_rights'])
+    };
+  }).filter(d => d.keep_deposit);
 }
 
 //
@@ -231,7 +240,7 @@ function formatFutureAllOrdersO(o) {
 }
 
 function formatFutureAllOrders(ds) {
-  console.log(ds);
+  // console.log(ds);
   // o = _.cloneDeep(o);
   // o.status = orderStatus2Code[o.status];
   // return o;
@@ -261,6 +270,20 @@ function formatBatchFutureOrderO(o) {
   return opt;
 }
 
+function formatBatchFutureOrder(ds, o) {
+  return _.map(ds.order_info, (order) => {
+    if (order.error_code) {
+      const msg = error.getErrorFromCode(order.error_code);
+      console.log(msg);
+      return null;
+    }
+    const line = { ...o, success: true, order_id: order.order_id };
+    delete line.orders;
+
+    return line;
+  }).filter(d => d);
+}
+
 
 module.exports = {
   formatFutureOrderHistoryO,
@@ -272,6 +295,7 @@ module.exports = {
   formatFutureAllOrdersO,
   formatFutureAllOrders,
   formatBatchFutureOrderO,
+  formatBatchFutureOrder,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,

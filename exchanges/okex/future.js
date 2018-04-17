@@ -118,16 +118,12 @@ class Exchange extends Spot {
     return res;
   }
   async batchFutureOrder(o = {}) {
-    checkKey(o, ['pair', 'orders', 'lever_rate', 'contract_type']);
+    checkKey(o, ['pair', 'orders', 'lever_rate', 'contract_type', 'type']);
     const opt = kUtils.formatBatchFutureOrderO(o);
     const ds = await this.post('future_batch_trade', opt, true);
-    return _.map(ds.order_info, (order) => {
-      if (order.error_code) return null;
-      const line = { ...o, success: true, order_id: order.order_id };
-      delete line.orders;
-      this._updateUnfinishFutureOrders(line);
-      return line;
-    }).filter(d => d);
+    const res = kUtils.formatBatchFutureOrder(ds, o);
+    _.forEach(res, line => this._updateUnfinishFutureOrders(line));
+    return res;
   }
   async cancelFutureOrder(o = {}) {
     const reqs = ['pair', 'order_id', 'contract_type'];

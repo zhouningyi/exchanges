@@ -1,0 +1,15 @@
+{
+  "name": "future_blance",
+  "desc": "future_blance",
+  "columns": {
+    "app_key": {
+      "type": ["STRING", 48],
+      "unique": true
+    },
+    "risk_rate": "FLOAT",
+    "profit_real": "FLOAT", 
+    "profit_unreal": "FLOAT",
+    "keep_deposit": "FLOAT",
+    "account_rights": "FLOAT"
+  }
+}

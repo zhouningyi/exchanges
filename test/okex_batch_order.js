@@ -24,12 +24,12 @@ async function main(pair = 'BTC-USDT', contract_type = 'quarter') {
     side: 'BUY',
     direction: 'down',
     contract_type: 'quarter',
-    lever_rate: 10,
+    lever_rate: 20,
     orders
   };
   const ds = await ex.batchFutureOrder(orderO);
-  // await ex.cancelAllFutureOrders();
-  // console.log(ds);
+  console.log(ds, 'ds');
+  await ex.cancelAllFutureOrders();
 }
 
 main();
