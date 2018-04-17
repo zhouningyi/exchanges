@@ -117,6 +117,16 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
   return _.keyBy(res, 'unique_id');
 });
 
+//
+const createWsFutureDepth = createWsChanel((pair) => {
+  return `ok_sub_spot_${pair}_depth`;
+});
+
+function formatWsFutureDepth(ds) {
+  console.log(ds);
+}
+
+
 // move Balance
 const moveType2code = {
   future: {
@@ -299,6 +309,8 @@ module.exports = {
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,
+  createWsFutureDepth,
+  formatWsFutureDepth,
   //
   formatWsFutureKline,
   formatWsFutureTick,

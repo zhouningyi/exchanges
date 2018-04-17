@@ -31,7 +31,7 @@ function genSubscribe(stream) {
       // console.log(`${stream} open...`);
     });
     ws.on('pong', () => {
-      // console.log('receive pong...');
+      console.log('receive pong...');
     });
     ws.on('ping', () => {
       // console.log(`${stream} pong...`);
@@ -39,6 +39,7 @@ function genSubscribe(stream) {
     ws.on('error', e => console.log(e, 'error'));
     ws.on('close', e => console.log(e, 'close'));
     ws.on('message', (data) => {
+      console.log('message....');
       try {
         if (typeof data === 'string') data = JSON.parse(data);
         cb(data);
@@ -46,6 +47,7 @@ function genSubscribe(stream) {
         console.log(`Parse error: ${error.message}`);
       }
       onceLoop(() => {
+        console.log('ping...');
         ws.ping();
       }, loopInterval);
     });

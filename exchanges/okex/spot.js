@@ -191,8 +191,9 @@ class Exchange extends Base {
     // console.log(body, 'body');
     return body.data || body;
   }
-  _getPairs(filter) {
-    let pairs = ALL_PAIRS;
+  _getPairs(filter, pairs) {
+    if (pairs) return pairs;
+    pairs = ALL_PAIRS;
     if (filter) pairs = _.filter(pairs, filter);
     return _.map(pairs, d => d.pair);
   }
@@ -217,7 +218,7 @@ class Exchange extends Base {
   }
   // ws接口
   async wsTicks(o, cb) {
-    const pairs = this._getPairs(o.filter);
+    const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelTick(pairs);
     this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb);
   }

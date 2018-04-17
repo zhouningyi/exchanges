@@ -63,21 +63,32 @@ class Exchange extends Spot {
   }
   wsFutureTicks(o = {}, cb) {
     const { contract_type = 'quarter' } = o;
-    const chanelString = kUtils.createWsChanelFutureTick(FUTURE_PAIRS, { contract_type });
+    const pairs = o.pairs || FUTURE_PAIRS;
+    const chanelString = kUtils.createWsChanelFutureTick(pairs, { contract_type });
     this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureTick, cb);
   }
   wsFutureKlines(o = {}, cb) {
     const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
     const { contract_type = 'quarter', interval = '1m' } = o;
-    const options = {
-      contract_type, interval
-    };
+    const options = { contract_type, interval };
     const chanelString = kUtils.createWsChanelFutureKline(symbols, { contract_type, interval });
     this.createWs({ timeInterval: 300, chanelString, options })(kUtils.formatWsFutureKline, cb);
   }
   wsFutureKline(o = {}, cb) {
     checkKey(o, ['pair']);
     this.wsFutureKlines(o, cb);
+  }
+  wsFutureDepth(o = {}, cb) {
+    const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
+    // const defaultO = {
+    //   size: 50,
+    // };
+    checkKey(o, ['contract_type']);
+    const { contract_type } = o;
+    const opt = { contract_type };
+    const chanelString = kUtils.createWsFutureDepth(symbols, opt);
+    const options = { contract_type };
+    this.createWs({ timeInterval: 300, chanelString, options })(kUtils.formatWsFutureDepth, cb);
   }
   async futureBalances(o = {}) {
     let ds = await this.post('future_userinfo', o, true);
