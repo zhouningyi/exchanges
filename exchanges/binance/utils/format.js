@@ -53,10 +53,10 @@ function formatBalances(ds, o = {}) {
     return _hasValue(d, 'locked') || _hasValue(d, 'free');
   }).map((d) => {
     return {
-      balanceStr: d.free,
+      balance_str: d.free,
       balance: _parse(d.free),
-      lockedBalanceStr: d.locked,
-      lockedBalance: _parse(d.locked),
+      locked_balance_str: d.locked,
+      locked_balance: _parse(d.locked),
       coin: d.asset
     };
   });
