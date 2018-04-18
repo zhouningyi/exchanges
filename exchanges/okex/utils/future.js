@@ -124,24 +124,40 @@ function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const contract_type = ds[1];
   return { contract_type, symbol };
 }
-const createWsFutureDepth = createWsChanel((pair) => {
-  return `ok_sub_spot_${pair}_depth`;
+const createWsFutureDepth = createWsChanel((pair, o) => {
+  pair = formatPair(pair, true);
+  return `ok_sub_future${pair}_depth_${o.contract_type}`;
 });
+//
+// depth
+function _formatFutureDepth(ds) {
+  return _.map(ds, (d) => {
+    return {
+      price: _parse(d[0]),
+      volume_amount: _parse(d[1]),
+      volume_coin: _parse(d[2]),
+      sum_volume_amount: _parse(d[3]),
+      sum_volume_coin: _parse(d[4]),
+    };
+  });
+}
 
 function formatWsFutureDepth(ds) {
+  const res = {};
   _.map(ds, (d) => {
     const { data, channel } = d;
-    if (!data) return null;
+    if (!data || data.result) return null;
     const { bids, asks, timestamp } = data;
-    console.log(bids, asks);
-    return {
-      time: new Date(timestamp),
-    };
     const info = _parseWsFutureDepthChannel(channel);
+    const line = {
+      ...info,
+      time: new Date(timestamp),
+      bids: _formatFutureDepth(bids),
+      asks: _formatFutureDepth(_.reverse(asks))
+    };
+    res[`${info.contract_type}_${info.symbol}`] = line;
   }).filter(d => d);
-
-  // ok_sub_futureusd_eth_depth_quarter
-  // console.log(ds);
+  return res;
 }
 
 

@@ -86,7 +86,6 @@ function formatOrderBook(ds) {
     };
   });
 }
-
 function formatBalances(ds) {
   const funds = _.get(ds, 'info.funds');
   if (!funds) return null;
@@ -250,6 +249,36 @@ function formatWsTick(ds) {
   }).filter(d => d);
   return _.keyBy(ds, 'pair');
 }
+
+function _parseWsDepthChannel(channel) {  // usd_btc_kline_quarter_1min
+  const ds = channel.replace('ok_sub_spot_', '').split('_depth');
+  const pair = deFormatPair(ds[0], false);
+  return { pair };
+}
+
+const createSpotChanelDepth = createWsChanel((pair, o) => {
+  const symbol = formatPair(pair, false);
+  return `ok_sub_spot_${symbol}_depth_${o.size}`;
+});
+
+function formatWsDepth(ds) {
+  const res = {};
+  _.forEach(ds, (d) => {
+    const { channel, data } = d;
+    const { bids, asks, timestamp } = data;
+    const info = _parseWsDepthChannel(channel);
+    const line = {
+      ...info,
+      time: new Date(timestamp),
+      bids: _formatDepth(bids),
+      asks: _formatDepth(_.reverse(asks)),
+    };
+    res[info.symbol] = line;
+  });
+  return res;
+}
+
+
 module.exports = {
   formatPair,
   formatTick,
@@ -267,7 +296,9 @@ module.exports = {
   formatAllOrders,
   // ws
   createSpotChanelBalance,
+  createSpotChanelDepth,
   createSpotChanelTick,
   formatWsBalance,
+  formatWsDepth,
   formatWsTick,
 };
