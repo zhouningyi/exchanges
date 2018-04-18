@@ -154,7 +154,6 @@ class Exchange extends Base {
     let url = `${URL}/${this.version}/${endpoint}.do`;
     if (method === 'GET') url += `?${qstr}`;
     const cType = 'application/x-www-form-urlencoded';
-    // console.log(signedParams, method, 'signedParams...');
     const o = {
       uri: url,
       proxy: this.proxy,
@@ -217,15 +216,22 @@ class Exchange extends Base {
     };
   }
   // ws接口
-  async wsTicks(o, cb) {
+  wsTicks(o = {}, cb) {
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelTick(pairs);
     this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb);
   }
-  async wsBalance(o, cb) {
+  wsBalance(o = {}, cb) {
     const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createSpotChanelBalance(pairs);
     this.createWs({ chanelString })(kUtils.formatWsBalance, cb);
+  }
+  wsDepth(o = {}, cb) {
+    const defaultO = { size: 20 };
+    o = { ...defaultO, ...o };
+    const pairs = this._getPairs(o.filter, o.pairs);
+    const chanelString = kUtils.createSpotChanelDepth(pairs, o);
+    this.createWs({ chanelString })(kUtils.formatWsDepth, cb);
   }
 }
 

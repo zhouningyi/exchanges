@@ -34,12 +34,20 @@ const wsList = [
   //   },
   //   name: '期货tick k线图...(指定pair)'
   // },
+  // {
+  //   fn: 'wsFutureDepth',
+  //   params: {
+  //     contract_type: 'quarter'
+  //   },
+  //   name: '期货深度图'
+  // },
   {
-    fn: 'wsFutureDepth',
+    fn: 'wsDepth',
     params: {
-      contract_type: 'quarter'
+      contract_type: 'quarter',
+      pairs: ['BTC-USDT', 'EOS-USDT']
     },
-    name: '期货深度图'
+    name: '深度图'
   },
 ];
 
