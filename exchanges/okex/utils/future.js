@@ -118,12 +118,30 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
 });
 
 //
+function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
+  const ds = channel.replace('ok_sub_future', '').split('_depth_');
+  const symbol = deFormatPair(ds[0], true);
+  const contract_type = ds[1];
+  return { contract_type, symbol };
+}
 const createWsFutureDepth = createWsChanel((pair) => {
   return `ok_sub_spot_${pair}_depth`;
 });
 
 function formatWsFutureDepth(ds) {
-  console.log(ds);
+  _.map(ds, (d) => {
+    const { data, channel } = d;
+    if (!data) return null;
+    const { bids, asks, timestamp } = data;
+    console.log(bids, asks);
+    return {
+      time: new Date(timestamp),
+    };
+    const info = _parseWsFutureDepthChannel(channel);
+  }).filter(d => d);
+
+  // ok_sub_futureusd_eth_depth_quarter
+  // console.log(ds);
 }
 
 
