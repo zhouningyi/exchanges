@@ -118,10 +118,11 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
 });
 
 //
-const createWsFutureDepth = createWsChanel((pair) => {
-  return `ok_sub_spot_${pair}_depth`;
+const createWsFutureDepth = createWsChanel((pair, o) => {
+  pair = formatPair(pair, true);
+  return `ok_sub_future${pair}_depth_${o.contract_type}`;
 });
-
+//
 function formatWsFutureDepth(ds) {
   console.log(ds);
 }

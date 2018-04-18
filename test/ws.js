@@ -27,12 +27,19 @@ const wsList = [
   //   },
   //   name: '期货tick k线图...'
   // },
+  // {
+  //   fn: 'wsFutureKline',
+  //   params: {
+  //     pair: 'BTC-USD'
+  //   },
+  //   name: '期货tick k线图...(指定pair)'
+  // },
   {
-    fn: 'wsFutureKline',
+    fn: 'wsFutureDepth',
     params: {
-      pair: 'BTC-USD'
+      contract_type: 'quarter'
     },
-    name: '期货tick k线图...(指定pair)'
+    name: '期货深度图'
   },
 ];
 
