@@ -56,9 +56,7 @@ class Exchange extends Spot {
     o = { ...defaultFutureKlineO, ...o };
     const opt = kUtils.formatFutureKlineO(o);
     const ds = await this.get('future_kline', opt, true, true);
-    if (o.isUSDT) {
-      pair += 'T';
-    }
+    if (o.isUSDT) pair += 'T';
     return kUtils.formatFutureKline(ds, { ...o, pair });
   }
   wsFutureTicks(o = {}, cb) {
