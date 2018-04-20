@@ -4,7 +4,6 @@ const md5 = require('md5');
 
 const {
   deFormatPair,
-  formatWsResult,
   parseOrderType,
   createWsChanel,
   code2OrderStatus,
@@ -25,6 +24,7 @@ function formatTick(d, pair) {
   return {
     pair,
     time,
+    exchange: 'okex',
     last_price: _parse(ticker.last),
     ask_price: _parse(ticker.buy),
     bid_price: _parse(ticker.sell),
@@ -46,6 +46,7 @@ function formatKline(ds, o) {
     return {
       unique_id: md5(`${o.pair}_${tstr}_${o.interval}`),
       ...o,
+      exchange: 'okex',
       time,
       open: _parse(d[1]),
       high: _parse(d[2]),
@@ -59,6 +60,7 @@ function formatKline(ds, o) {
 function _formatDepth(ds) {
   return _.map(ds, (d) => {
     return {
+      exchange: 'okex',
       priceStr: d[0],
       price: _parse(d[0]),
       volumeStr: _parse(d[1]),
@@ -69,6 +71,7 @@ function _formatDepth(ds) {
 
 function formatDepth(ds) {
   return {
+    exchange: 'okex',
     time: new Date(),
     bids: _formatDepth(ds.bids),
     asks: _formatDepth(_.reverse(ds.asks)),
@@ -117,6 +120,7 @@ function formatOrderO(o) {
   const extra = (price && type !== 'MARKET') ? { price } : {};
   return {
     symbol: formatPair(pair),
+    exchange: 'okex',
     type: okexType,
     amount,
     ...extra
@@ -166,6 +170,7 @@ function formatOrderInfo(ds, o) {
     let [side, type] = tp.split('_').map(d => d.toUpperCase());
     type = type || 'LIMIT';
     return {
+      exchange: 'okex',
       order_id: `${d.orders_id}`,
       order_main_id: `${d.order_id}`,
       amount: d.deal_amount,
@@ -190,6 +195,7 @@ function formatAllOrders(ds) {
   if (!ds) return null;
   return _.map(ds.orders, (d) => {
     return {
+      exchange: 'okex',
       amount: d.amount,
       price: d.price || null,
       time: new Date(d.create_date),
@@ -230,7 +236,8 @@ function formatWsBalance(ds) {
 
 function formatWsTick(ds) {
   ds = _.map(ds, (d) => {
-    const { data, channel } = d;
+    const { data, channel, result } = d;
+    if (result) return null;
     const bid_price = parseFloat(data.buy, 10);
     const ask_price = parseFloat(data.sell, 10);
     const volume_24 = parseFloat(data.vol, 10);
@@ -239,6 +246,7 @@ function formatWsTick(ds) {
     if (!bid_price || !ask_price) return null;
     return {
       pair: extactPairFromSpotChannel(channel, '_ticker'),
+      exchange: 'okex',
       bid_price,
       ask_price,
       last_price,
@@ -265,10 +273,12 @@ function formatWsDepth(ds) {
   const res = {};
   _.forEach(ds, (d) => {
     const { channel, data } = d;
-    const { bids, asks, timestamp } = data;
+    const { bids, asks, timestamp, result } = data;
+    if (result) return null;
     const info = _parseWsDepthChannel(channel);
     const line = {
       ...info,
+      exchange: 'okex',
       time: new Date(timestamp),
       bids: _formatDepth(bids),
       asks: _formatDepth(_.reverse(asks)),

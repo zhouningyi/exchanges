@@ -34,6 +34,7 @@ function formatFutureKline(ds, o) {
       ...o,
       unique_id: md5(`${o.pair}_${tstr}_${o.interval}_${o.contract_type}`),
       time,
+      exchange: 'okex',
       open: _parse(d[1]),
       high: _parse(d[2]),
       low: _parse(d[3]),
@@ -66,6 +67,7 @@ function formatWsFutureTick(ds) {
     return {
       unique_id: md5(`${pps.pair}_${pps.contract_type}_${bid_price}_${tstr}`),
       ...pps,
+      exchange: 'okex',
       time,
       high: _parse(d.high),
       low: _parse(d.low),
@@ -105,6 +107,7 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
     return {
       ...o,
       unique_id: md5(`${o.pair}_${tstr}_${o.interval}_${o.contract_type}`),
+      exchange: 'okex',
       time,
       open: _parse(d[1]),
       high: _parse(d[2]),
@@ -133,6 +136,7 @@ const createWsFutureDepth = createWsChanel((pair, o) => {
 function _formatFutureDepth(ds) {
   return _.map(ds, (d) => {
     return {
+      exchange: 'okex',
       price: _parse(d[0]),
       volume_amount: _parse(d[1]),
       volume_coin: _parse(d[2]),
@@ -151,6 +155,7 @@ function formatWsFutureDepth(ds) {
     const info = _parseWsFutureDepthChannel(channel);
     const line = {
       ...info,
+      exchange: 'okex',
       time: new Date(timestamp),
       bids: _formatFutureDepth(bids),
       asks: _formatFutureDepth(_.reverse(asks))
