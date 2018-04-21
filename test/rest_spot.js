@@ -8,7 +8,7 @@ const tasks = [
   //     pair: 'OKB-BTC',
   //     amount: 2,
   //     // price: 7155,
-  //     side: 'SELL',
+  //     side: 'BUY',
   //     type: 'MARKET'
   //   },
   //   name: '交易'

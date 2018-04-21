@@ -120,7 +120,6 @@ function formatOrderO(o) {
   const extra = (price && type !== 'MARKET') ? { price } : {};
   return {
     symbol: formatPair(pair),
-    exchange: 'okex',
     type: okexType,
     amount,
     ...extra

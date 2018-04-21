@@ -200,7 +200,7 @@ function formatFutureBalances(ds) {
       coin,
       ..._.pick(line, ['risk_rate', 'profit_real', 'profit_unreal', 'keep_deposit', 'account_rights'])
     };
-  }).filter(d => d.keep_deposit);
+  }).filter(d => d.account_rights);
 }
 
 //

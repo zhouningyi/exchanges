@@ -165,6 +165,7 @@ class Exchange extends Base {
       form: signedParams
     };
     let body;
+    if (url.indexOf('trade') !== -1)console.log(o, 'o....');
     try {
       // console.log(o, '===');
       body = await request(o);
@@ -173,9 +174,8 @@ class Exchange extends Base {
       if (e) console.log(e.message);
       return;
     }
-    // console.log(body, 'body...');
     if (!body) {
-      throw `${endpoint}: body 返回为空`;
+      throw `${endpoint}: body 返回为空...`;
     }
 
     if (body.code === 500) {
