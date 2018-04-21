@@ -78,12 +78,13 @@ class Exchange extends Spot {
   }
   wsFutureDepth(o = {}, cb) {
     const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
-    // const defaultO = {
-    //   size: 50,
-    // };
+    const defaultO = {
+      size: 50,
+    };
+    o = { ...defaultO, ...o };
     checkKey(o, ['contract_type']);
-    const { contract_type } = o;
-    const opt = { contract_type };
+    const { contract_type, size } = o;
+    const opt = { contract_type, size };
     const chanelString = kUtils.createWsFutureDepth(symbols, opt);
     const options = { contract_type };
     this.createWs({ timeInterval: 300, chanelString, options })(kUtils.formatWsFutureDepth, cb);

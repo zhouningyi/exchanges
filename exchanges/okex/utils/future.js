@@ -63,9 +63,9 @@ function formatWsFutureTick(ds) {
     const bid_price = _parse(d.buy);
     const ask_price = _parse(d.sell);
     const time = new Date();
-    const tstr = time.getTime();
+    // const tstr = time.getTime();
     return {
-      unique_id: md5(`${pps.pair}_${pps.contract_type}_${bid_price}_${tstr}`),
+      unique_id: md5(`${pps.pair}_${pps.contract_type}`),
       ...pps,
       exchange: 'okex',
       time,
@@ -86,7 +86,7 @@ function formatWsFutureTick(ds) {
 //
 const createWsChanelFutureTick = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
-  return `ok_sub_future${pair}_ticker_${o.interval}`;
+  return `ok_sub_future${pair}_ticker_${o.contract_type}`;
 });
 
 const createWsChanelFutureKline = createWsChanel((pair, o) => {
@@ -123,13 +123,13 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
 //
 function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_future', '').split('_depth_');
-  const symbol = deFormatPair(ds[0], true);
+  const pair = deFormatPair((ds[0] || '').replace('usd', 'usdt'), true);
   const contract_type = ds[1];
-  return { contract_type, symbol };
+  return { contract_type, pair };
 }
 const createWsFutureDepth = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
-  return `ok_sub_future${pair}_depth_${o.contract_type}`;
+  return `ok_sub_future${pair}_depth_${o.contract_type}_${o.size}`;
 });
 //
 // depth
@@ -140,8 +140,8 @@ function _formatFutureDepth(ds) {
       price: _parse(d[0]),
       volume_amount: _parse(d[1]),
       volume_coin: _parse(d[2]),
-      sum_volume_amount: _parse(d[3]),
-      sum_volume_coin: _parse(d[4]),
+      sum_volume_amount: _parse(d[4]),
+      sum_volume_coin: _parse(d[3]),
     };
   });
 }
