@@ -106,9 +106,9 @@ class Exchange extends Base {
   }
   // 交易
   async order(o = {}) {
-    o = kUtils.formatOrderO(o);
-    let ds = await this.post('trade', o, true);
-    ds = kUtils.formatOrderResult(ds);
+    const opt = kUtils.formatOrderO(o);
+    let ds = await this.post('trade', opt, true);
+    ds = kUtils.formatOrderResult(ds, o);
     return ds;
   }
   async cancelAllOrders(o = {}) {
@@ -165,7 +165,7 @@ class Exchange extends Base {
       form: signedParams
     };
     let body;
-    if (url.indexOf('trade') !== -1)console.log(o, 'o....');
+    // if (url.indexOf('trade') !== -1)console.log(o, 'o....');
     try {
       // console.log(o, '===');
       body = await request(o);

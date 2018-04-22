@@ -153,12 +153,11 @@ function formatCancelOrder(ds) {
   }
 }
 
-function formatOrderResult(ds) {
-  if (ds.order_id) return { order_id: ds.order_id };
+function formatOrderResult(ds, o = {}) {
+  if (ds.order_id) return { order_id: ds.order_id, ...o };
   throw ds;
 }
 //
-
 
 function formatOrderInfo(ds, o) {
   if (!ds) return null;
