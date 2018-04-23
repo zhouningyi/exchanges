@@ -89,7 +89,7 @@ class Exchange extends Spot {
     const opt = { contract_type, size };
     const chanelString = kUtils.createWsFutureDepth(symbols, opt);
     const options = { contract_type };
-    const reconnect = this.wsFutureDepth(o, cb);
+    const reconnect = () => this.wsFutureDepth(o, cb);
     this.createWs({ timeInterval: 300, chanelString, options })(kUtils.formatWsFutureDepth, cb, reconnect);
   }
   async futureBalances(o = {}) {

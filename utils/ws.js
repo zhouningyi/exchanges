@@ -38,6 +38,7 @@ function genSubscribe(stream) {
     });
     ws.on('error', (e) => {
       console.log(e, 'error');
+      console.log('reconnect');
       if (reconnect) reconnect();
     });
     ws.on('close', (e) => {
