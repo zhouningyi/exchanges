@@ -198,7 +198,7 @@ class Exchange extends Base {
   }
   createWs(o = {}) {
     const { timeInterval, chanelString, options: opt } = o;
-    return (formatData, cb) => {
+    return (formatData, cb, reconnect) => {
       let data = {};
       const cbf = _.throttle(() => {
         const res = _.values(data);
@@ -208,7 +208,7 @@ class Exchange extends Base {
         }
       }, timeInterval);
       //
-      const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString) };
+      const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString), reconnect };
       kUtils.subscribe('', (ds) => {
         data = merge(data, formatData(ds, opt));
         cbf();
@@ -219,19 +219,22 @@ class Exchange extends Base {
   wsTicks(o = {}, cb) {
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelTick(pairs);
-    this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb);
+    const reconnect = () => this.wsTicks(o, cb);
+    this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb, reconnect);
   }
   wsBalance(o = {}, cb) {
     const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createSpotChanelBalance(pairs);
-    this.createWs({ chanelString })(kUtils.formatWsBalance, cb);
+    const reconnect = () => this.wsBalance(o, cb);
+    this.createWs({ chanelString })(kUtils.formatWsBalance, cb, reconnect);
   }
   wsDepth(o = {}, cb) {
     const defaultO = { size: 20 };
     o = { ...defaultO, ...o };
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelDepth(pairs, o);
-    this.createWs({ chanelString })(kUtils.formatWsDepth, cb);
+    const reconnect = () => this.wsDepth(o, cb);
+    this.createWs({ chanelString })(kUtils.formatWsDepth, cb, reconnect);
   }
 }
 

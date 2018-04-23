@@ -16,7 +16,7 @@ function noop() {}
 const loopInterval = 4000;
 function genSubscribe(stream) {
   return (endpoint, cb, o = { }) => {
-    const { proxy, willLink, pingInterval } = o;
+    const { proxy, willLink, pingInterval, reconnect } = o;
     // if (options.verbose) options.log(`Subscribed to ${endpoint}`);
     const options = proxy ? {
       agent: new HttpsProxyAgent(url.parse(proxy))
@@ -36,8 +36,14 @@ function genSubscribe(stream) {
     ws.on('ping', () => {
       // console.log(`${stream} pong...`);
     });
-    ws.on('error', e => console.log(e, 'error'));
-    ws.on('close', e => console.log(e, 'close'));
+    ws.on('error', (e) => {
+      console.log(e, 'error');
+      if (reconnect) reconnect();
+    });
+    ws.on('close', (e) => {
+      console.log(e, 'close');
+      if (reconnect) reconnect();
+    });
     ws.on('message', (data) => {
       try {
         if (typeof data === 'string') data = JSON.parse(data);
