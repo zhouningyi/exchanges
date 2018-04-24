@@ -2,17 +2,17 @@ const { testRest } = require('./utils');
 
 const exchanges = ['okex'];// , ''. 'hitbtc' 'bittrex'
 const tasks = [
-  // {
-  //   fn: 'order',
-  //   params: {
-  //     pair: 'OKB-BTC',
-  //     amount: 2,
-  //     // price: 7155,
-  //     side: 'SELL',
-  //     type: 'MARKET'
-  //   },
-  //   name: '交易'
-  // },
+  {
+    fn: 'order',
+    params: {
+      pair: 'OKB-USDT',
+      amount: 500,
+      price: 1.784,
+      side: 'SELL',
+      type: 'LIMIT'
+    },
+    name: '交易'
+  },
   // {
   //   fn: 'fastOrder',
   //   params: {
@@ -89,12 +89,12 @@ const tasks = [
   //   params: {},
   //   name: '合约(全仓)余额'
   // },
-  {
-    fn: 'depth',
-    params: { pair: 'ETH-BTC' },
-    name: '深度'
-  },
-/// {
+  // {
+  //   fn: 'depth',
+  //   params: { pair: 'ETH-BTC' },
+  //   name: '深度'
+  // },
+// / {
 //   fn: 'orderBook',
 //   params: { pair: 'ETH-BTC' },
 //   name: 'orderBook数据'

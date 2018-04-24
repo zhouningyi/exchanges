@@ -128,7 +128,7 @@ const createWsFutureDepth = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
   return `ok_sub_future${pair}_depth_${o.contract_type}`;
 });
-//
+
 // depth
 function _formatFutureDepth(ds) {
   return _.map(ds, (d) => {
@@ -176,7 +176,6 @@ function formatMoveBalanceO(o) {
   const symbol = `${coin.toLowerCase()}_usd`;
   return { type, amount, symbol };
 }
-
 
 // futureOrderHistory
 function formatFutureOrderHistoryO(o) {
