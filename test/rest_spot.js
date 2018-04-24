@@ -89,12 +89,12 @@ const tasks = [
   //   params: {},
   //   name: '合约(全仓)余额'
   // },
-  {
-    fn: 'depth',
-    params: { pair: 'ETH-BTC' },
-    name: '深度'
-  },
-/// {
+  // {
+  //   fn: 'depth',
+  //   params: { pair: 'ETH-BTC' },
+  //   name: '深度'
+  // },
+// / {
 //   fn: 'orderBook',
 //   params: { pair: 'ETH-BTC' },
 //   name: 'orderBook数据'
