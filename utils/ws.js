@@ -4,46 +4,62 @@ const url = require('url');
 const _ = require('lodash');
 const HttpsProxyAgent = require('https-proxy-agent');
 
-function loop(fn, time) {
-  fn();
-  setTimeout(() => loop(fn, time), time);
-}
-
-const onceLoop = _.once(loop);
-
 function noop() {}
 
 const loopInterval = 4000;
 function genSubscribe(stream) {
-  return (endpoint, cb, o = { }) => {
+  return (endpoint, cb, o = {}) => {
+    let isable = true;
+    function loop(fn, time) {
+      fn();
+      if (!isable) return;
+      setTimeout(() => loop(fn, time), time);
+    }
+    const onceLoop = _.once(loop);
+    //
     const { proxy, willLink, pingInterval, reconnect } = o;
-    // if (options.verbose) options.log(`Subscribed to ${endpoint}`);
     const options = proxy ? {
       agent: new HttpsProxyAgent(url.parse(proxy))
     } : {};
     //
-    const ws = new WebSocket(stream + endpoint, options);
+    let ws;
+    try {
+      ws = new WebSocket(stream + endpoint, options);
+    } catch (e) {
+      console.log(e);
+      restart();
+    }
+
+    function restart() {
+      if (reconnect) reconnect();
+      isable = false;
+    }
+    //
+    ws.tryPing = (noop) => {
+      try {
+        ws.ping(noop);
+      } catch (e) {
+        console.log(e, 'ping error');
+      }
+    };
+    //
     if (endpoint) ws.endpoint = endpoint;
     ws.isAlive = false;
     ws.on('open', () => {
       if (willLink) willLink(ws);
-      if (pingInterval) loop(() => ws.ping(noop), pingInterval);
-      // console.log(`${stream} open...`);
+      if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
     ws.on('pong', () => {
-      // console.log('receive pong...');
     });
     ws.on('ping', () => {
-      // console.log(`${stream} pong...`);
     });
     ws.on('error', (e) => {
       console.log(e, 'error');
-      console.log('reconnect');
-      if (reconnect) reconnect();
+      restart();
     });
     ws.on('close', (e) => {
       console.log(e, 'close');
-      if (reconnect) reconnect();
+      restart();
     });
     ws.on('message', (data) => {
       try {
@@ -53,8 +69,7 @@ function genSubscribe(stream) {
         console.log(`Parse error: ${error.message}`);
       }
       onceLoop(() => {
-        // console.log('ping...');
-        ws.ping();
+        ws.tryPing();
       }, loopInterval);
     });
     return ws;
