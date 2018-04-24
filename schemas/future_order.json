@@ -1,6 +1,6 @@
 {
-  "name": "order_future",
-  "desc": "order_future",
+  "name": "future_order",
+  "desc": "future_order",
   "columns": {
     "order_id": {
       "type": ["STRING", 20],

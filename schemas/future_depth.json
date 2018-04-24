@@ -1,0 +1,14 @@
+{
+  "name": "future_depth",
+  "desc": "future_depth",
+  "columns": {
+    "pair": {
+      "type": ["STRING", 10],
+      "unique": true,
+      "index": true
+    },
+    "bids": "JSONB",
+    "asks": "JSONB",
+    "time": "DATE"
+  }
+}

@@ -106,9 +106,9 @@ class Exchange extends Base {
   }
   // 交易
   async order(o = {}) {
-    o = kUtils.formatOrderO(o);
-    let ds = await this.post('trade', o, true);
-    ds = kUtils.formatOrderResult(ds);
+    const opt = kUtils.formatOrderO(o);
+    let ds = await this.post('trade', opt, true);
+    ds = kUtils.formatOrderResult(ds, o);
     return ds;
   }
   async cancelAllOrders(o = {}) {
@@ -165,6 +165,7 @@ class Exchange extends Base {
       form: signedParams
     };
     let body;
+    // if (url.indexOf('trade') !== -1)console.log(o, 'o....');
     try {
       // console.log(o, '===');
       body = await request(o);
@@ -173,9 +174,8 @@ class Exchange extends Base {
       if (e) console.log(e.message);
       return;
     }
-    // console.log(body, 'body...');
     if (!body) {
-      throw `${endpoint}: body 返回为空`;
+      throw `${endpoint}: body 返回为空...`;
     }
 
     if (body.code === 500) {
@@ -198,7 +198,7 @@ class Exchange extends Base {
   }
   createWs(o = {}) {
     const { timeInterval, chanelString, options: opt } = o;
-    return (formatData, cb) => {
+    return (formatData, cb, reconnect) => {
       let data = {};
       const cbf = _.throttle(() => {
         const res = _.values(data);
@@ -208,7 +208,7 @@ class Exchange extends Base {
         }
       }, timeInterval);
       //
-      const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString) };
+      const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString), reconnect };
       kUtils.subscribe('', (ds) => {
         data = merge(data, formatData(ds, opt));
         cbf();
@@ -219,19 +219,22 @@ class Exchange extends Base {
   wsTicks(o = {}, cb) {
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelTick(pairs);
-    this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb);
+    const reconnect = () => this.wsTicks(o, cb);
+    this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb, reconnect);
   }
   wsBalance(o = {}, cb) {
     const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createSpotChanelBalance(pairs);
-    this.createWs({ chanelString })(kUtils.formatWsBalance, cb);
+    const reconnect = () => this.wsBalance(o, cb);
+    this.createWs({ chanelString })(kUtils.formatWsBalance, cb, reconnect);
   }
   wsDepth(o = {}, cb) {
     const defaultO = { size: 20 };
     o = { ...defaultO, ...o };
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelDepth(pairs, o);
-    this.createWs({ chanelString })(kUtils.formatWsDepth, cb);
+    const reconnect = () => this.wsDepth(o, cb);
+    this.createWs({ chanelString })(kUtils.formatWsDepth, cb, reconnect);
   }
 }
 

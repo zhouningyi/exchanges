@@ -2,12 +2,11 @@
   "name": "tick",
   "desc": "tick",
   "columns": {
-    "unique_id": {
-      "type": ["STRING", 28],
+    "pair": {
+      "type": ["STRING", 14],
       "unique": true,
       "index": true
     },
-    "pair": ["STRING", 16],
     "time": "DATE",
     "bid_price": "FLOAT",
     "last_price": "FLOAT",
