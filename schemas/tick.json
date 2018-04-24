@@ -8,10 +8,10 @@
       "index": true
     },
     "time": "DATE",
+    "volume_24": "FLOAT",
+    "ask_price": "FLOAT",
     "bid_price": "FLOAT",
     "last_price": "FLOAT",
-    "ask_price": "FLOAT",
-    "exchange": ["STRING", 10],
-    "volume_24": "FLOAT"
+    "exchange": ["STRING", 10]
   }
 }
