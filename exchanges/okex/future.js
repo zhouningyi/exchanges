@@ -205,8 +205,10 @@ class Exchange extends Spot {
   async futureOrderInfo(o = {}) {
     const reqs = ['pair', 'order_id', 'contract_type'];
     checkKey(o, reqs);
-    const opt = _.pick(o, reqs);
-    const ds = await this.post('future_order_info', opt, true);
+    const opt = _.pick(o, ['order_id', 'contract_type']);
+    if (Array.isArray(opt.order_id)) opt.order_id = opt.order_id.join(',');
+    opt.symbol = kUtils.formatPair(o.pair).replace('usdt', 'usd');
+    const ds = await this.post('future_orders_info', opt, true);
     const res = kUtils.formatFutureOrderInfo(ds, o);
     this._updateUnfinishFutureOrders(res);
     return res;

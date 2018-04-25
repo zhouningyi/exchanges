@@ -64,10 +64,14 @@ class Exchange extends Base {
   }
   // 交易状态
   async orderInfo(o = {}) {
-    checkKey(o, ['order_id', 'pair']);
-    let { order_id, pair } = o;
+    checkKey(o, ['order_id', 'pair', 'type']);
+    let { order_id, pair, type } = o;
+    type = {
+      UNFINISH: 0,
+      FINISH: 1
+    }[type];
     if (Array.isArray(order_id)) order_id = order_id.join(',');
-    let ds = await this.post('orders_info', { order_id, pair }, true, true);
+    let ds = await this.post('orders_info', { order_id, pair, type }, true);
     ds = kUtils.formatOrderInfo(ds, o);
     return ds;
   }
