@@ -112,6 +112,7 @@ class Exchange extends Spot {
   //   const opt = kUtils.formatFutureOrderHistoryO(o);
   // }
   _updateUnfinishFutureOrders(d) {
+    if (!d) return;
     const { status } = d;
     if (!status) { //
       this.unfinishFutureOrders[d.order_id] = d;
@@ -198,9 +199,7 @@ class Exchange extends Spot {
     _.forEach(success, (suc_id) => {
       delete this.unfinishFutureOrders[suc_id];
     });
-    return {
-      success, error
-    };
+    return { success, error };
   }
   async futureOrderInfo(o = {}) {
     const reqs = ['pair', 'order_id', 'contract_type'];

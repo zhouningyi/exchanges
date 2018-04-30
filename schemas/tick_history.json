@@ -1,0 +1,17 @@
+{
+  "name": "tick_history",
+  "desc": "tick_history",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 40],
+      "unique": true,
+      "index": true
+    },
+    "pair":  ["STRING", 14],
+    "time": "DATE",
+    "ask_price": "FLOAT",
+    "bid_price": "FLOAT",
+    "last_price": "FLOAT",
+    "exchange": ["STRING", 10]
+  }
+}

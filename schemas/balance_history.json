@@ -1,0 +1,15 @@
+{
+  "name": "balance_history",
+  "desc": "balance_history",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 20],
+      "unique": true,
+      "index": true
+    },
+    "coin":  ["STRING", 12],
+    "borrow_balance": "DOUBLE",
+    "locked_balance": "DOUBLE",
+    "balance": "DOUBLE"
+  }
+}

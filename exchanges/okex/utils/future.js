@@ -65,7 +65,7 @@ function formatWsFutureTick(ds) {
     const time = new Date();
     // const tstr = time.getTime();
     return {
-      unique_id: md5(`${pps.pair}_${pps.contract_type}`),
+      future_id: `${pps.pair}_${pps.contract_type}`,
       ...pps,
       exchange: 'okex',
       time,

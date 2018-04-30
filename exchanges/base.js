@@ -9,14 +9,17 @@ const path = require('path');
 const defaultOptions = {
   timeout: 10000,
 };
+
 const isProxy = !!argv.proxy;
 
 class exchange extends Event {
-  constructor({ apiKey, apiSecret }, options = {}) {
+  constructor(o = {}, options = {}) {
+    const { apiKey, apiSecret, unique_id } = o;
     super();
     this.options = deepmerge(defaultOptions, options);
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
+    this.unique_id = unique_id;
     this.proxy = isProxy ? 'http://127.0.0.1:1087' : null;
   }
   async candlestick(o) { // 与kline意义一致
