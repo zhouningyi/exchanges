@@ -59,6 +59,12 @@ class Exchange extends Spot {
     if (o.isUSDT) pair += 'T';
     return kUtils.formatFutureKline(ds, { ...o, pair });
   }
+  async futurePosition(o = {}){
+    checkKey(o, ['pair', 'contract_type']);
+    const opt = _.pick(o, ['pair', 'contract_type']);
+    const info = await this.post('future_position', opt, true);
+    console.log(info);
+  }
   wsFutureTicks(o = {}, cb) {
     const { contract_type = 'quarter' } = o;
     const pairs = o.pairs || FUTURE_PAIRS;

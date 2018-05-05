@@ -50,8 +50,10 @@ function genSubscribe(stream) {
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
     ws.on('pong', () => {
+      // console.log('pong');
     });
     ws.on('ping', () => {
+      // console.log('ping');
     });
     ws.on('error', (e) => {
       console.log(e, 'error');

@@ -169,7 +169,7 @@ class Exchange extends Base {
       form: signedParams
     };
     let body;
-    // if (url.indexOf('trade') !== -1)console.log(o, 'o....');
+    // if (url.indexOf('trade') !== -1) console.log(o, 'o....');
     try {
       // console.log(o, '===');
       body = await request(o);
@@ -191,7 +191,6 @@ class Exchange extends Base {
     if (body.error_code) {
       throw error.getErrorFromCode(body.error_code);
     }
-    // console.log(body, 'body');
     return body.data || body;
   }
   _getPairs(filter, pairs) {
