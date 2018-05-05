@@ -63,7 +63,8 @@ class Exchange extends Spot {
     checkKey(o, ['pair', 'contract_type']);
     const opt = _.pick(o, ['pair', 'contract_type']);
     const info = await this.post('future_position', opt, true);
-    console.log(info);
+    const ds = kUtils.formatFuturePosition(info, o);
+    return ds;
   }
   wsFutureTicks(o = {}, cb) {
     const { contract_type = 'quarter' } = o;

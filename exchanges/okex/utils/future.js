@@ -45,6 +45,20 @@ function formatFutureKline(ds, o) {
   });
 }
 
+function formatFuturePosition(data={}, o){
+  const { holding, result } = data;
+  const { pair, contract_type } = o;
+  if (!result) return null;
+  return _.map(holding, (d) => {
+    return {
+      pair,
+      unique_id: `${pair}_${contract_type}`,
+      contract_type,
+      ..._.pick(d, ['buy_amount', 'buy_available', 'buy_price_avg', 'buy_price_cost', 'buy_profit_real', 'contract_id', 'create_date', 'lever_rate', 'sell_amount', 'sell_available', 'sell_price_avg', 'sell_price_cost', 'sell_profit_real', 'force_liqu_price'])
+    };
+  });
+}
+
 //
 function parseFutureTickChanel(channel) {
   const ds = channel.replace('ok_sub_future', '').split('_ticker_');
@@ -344,6 +358,7 @@ module.exports = {
   formatFutureAllOrders,
   formatBatchFutureOrderO,
   formatBatchFutureOrder,
+  formatFuturePosition,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,
