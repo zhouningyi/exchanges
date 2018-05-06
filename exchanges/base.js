@@ -13,9 +13,10 @@ const defaultOptions = {
 const isProxy = !!argv.proxy;
 
 class exchange extends Event {
-  constructor(o = {}, options = {}) {
-    const { apiKey, apiSecret, unique_id } = o;
+  constructor(config = {}, options = {}) {
     super();
+    const { apiKey, apiSecret, unique_id } = config;
+    this.config = config;
     this.options = deepmerge(defaultOptions, options);
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
