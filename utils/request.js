@@ -18,7 +18,7 @@ function requestPromise(o) {
         if (typeof body === 'string') body = JSON.parse(body);
         resolve(body);
       } catch (e) {
-        console.log(e);
+        console.log(e, body);
         reject();
       }
     });

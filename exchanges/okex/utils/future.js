@@ -45,7 +45,7 @@ function formatFutureKline(ds, o) {
   });
 }
 
-function formatFuturePosition(data={}, o){
+function formatFuturePosition(data = {}, o) {
   const { holding, result } = data;
   const { pair, contract_type } = o;
   if (!result) return null;
@@ -54,7 +54,8 @@ function formatFuturePosition(data={}, o){
       pair,
       unique_id: `${pair}_${contract_type}`,
       contract_type,
-      ..._.pick(d, ['buy_amount', 'buy_available', 'buy_price_avg', 'buy_price_cost', 'buy_profit_real', 'contract_id', 'create_date', 'lever_rate', 'sell_amount', 'sell_available', 'sell_price_avg', 'sell_price_cost', 'sell_profit_real', 'force_liqu_price'])
+      time: new Date(d.create_date),
+      ..._.pick(d, ['buy_amount', 'buy_available', 'buy_price_avg', 'buy_price_cost', 'buy_profit_real', 'contract_id', 'lever_rate', 'sell_amount', 'sell_available', 'sell_price_avg', 'sell_price_cost', 'sell_profit_real', 'force_liqu_price'])
     };
   });
 }
