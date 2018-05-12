@@ -190,8 +190,14 @@ const moveType2code = {
     future: 1
   }
 };
+
+function formatDigit(num, n) {
+  const k = Math.pow(10, n);
+  return Math.floor(num * k) / k;
+}
 function formatMoveBalanceO(o) {
-  const { source, target, amount, coin } = o;
+  const { source, target, coin } = o;
+  const amount = formatDigit(o.amount, 5);//有时候会有精度问题
   const type = _.get(moveType2code, `${source}.${target}`);
   const symbol = `${coin.toLowerCase()}_usd`;
   return { type, amount, symbol };

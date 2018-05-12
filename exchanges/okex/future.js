@@ -107,7 +107,9 @@ class Exchange extends Spot {
   async moveBalance(o = {}) {
     checkKey(o, ['source', 'target', 'amount', 'coin']);
     const opt = kUtils.formatMoveBalanceO(o);
+    console.log(opt, o, 'opt....opt...opt....opt...opt....opt...');
     const ds = await this.post('future_devolve', opt, true);
+    console.log(999);
     const success = !!(ds && ds.result);
     return { success };
   }
@@ -131,14 +133,17 @@ class Exchange extends Spot {
     checkKey(o, ['pair', 'contract_type', 'lever_rate', 'side', 'direction', 'type']);
     const opt = kUtils.formatFutureOrderO(o);
     const ds = await this.post('future_trade', opt, true);
-    const res = {
-      success: ds.result,
-      order_id: ds.order_id,
-      time: new Date(),
-      ...o
-    };
-    this._updateUnfinishFutureOrders(res);
-    return res;
+    if (ds) {
+      const res = {
+        success: ds ? ds.result : false,
+        order_id: ds.order_id,
+        time: new Date(),
+        ...o
+      };
+      this._updateUnfinishFutureOrders(res);
+      return res;
+    }
+    return null;
   }
   async batchFutureOrder(o = {}) {
     checkKey(o, ['pair', 'orders', 'lever_rate', 'contract_type', 'type']);
@@ -152,7 +157,7 @@ class Exchange extends Spot {
     const reqs = ['pair', 'order_id', 'contract_type'];
     checkKey(o, reqs);
     const opt = _.pick(o, reqs);
-    const ds = await this.post('future_cancel', opt, true);
+    const ds = await this.post('future_cancel', opt, true) || {};
     const res = { success: ds.result, order_id: ds.order_id };
     if (res.success) delete this.unfinishFutureOrders[res.order_id];
     return res;
