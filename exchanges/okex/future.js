@@ -107,9 +107,7 @@ class Exchange extends Spot {
   async moveBalance(o = {}) {
     checkKey(o, ['source', 'target', 'amount', 'coin']);
     const opt = kUtils.formatMoveBalanceO(o);
-    console.log(opt, o, 'opt....opt...opt....opt...opt....opt...');
     const ds = await this.post('future_devolve', opt, true);
-    console.log(999);
     const success = !!(ds && ds.result);
     return { success };
   }

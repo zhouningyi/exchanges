@@ -197,7 +197,7 @@ function formatDigit(num, n) {
 }
 function formatMoveBalanceO(o) {
   const { source, target, coin } = o;
-  const amount = formatDigit(o.amount, 5);//有时候会有精度问题
+  const amount = formatDigit(o.amount, 5);// 有时候会有精度问题
   const type = _.get(moveType2code, `${source}.${target}`);
   const symbol = `${coin.toLowerCase()}_usd`;
   return { type, amount, symbol };
