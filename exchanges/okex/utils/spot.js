@@ -154,7 +154,7 @@ function formatCancelOrder(ds) {
 }
 
 function formatOrderResult(ds, o = {}) {
-  if (ds.order_id) return { order_id: ds.order_id, time: new Date(), ...o };
+  if (ds && ds.order_id) return { order_id: ds.order_id, time: new Date(), ...o };
   throw ds;
 }
 //

@@ -181,7 +181,6 @@ class Exchange extends Base {
     if (!body) {
       throw `${endpoint}: body 返回为空...`;
     }
-
     if (body.code === 500) {
       throw `${endpoint}: 服务拒绝...`;
     }
@@ -189,7 +188,8 @@ class Exchange extends Base {
       throw `${endpoint}: ${body.msg}`;
     }
     if (body.error_code) {
-      throw error.getErrorFromCode(body.error_code + ' | ' + endpoint);
+      console.log('error...', endpoint, params);
+      throw (`${error.getErrorFromCode(body.error_code)  } | ${  endpoint}`);
     }
     return body.data || body;
   }
