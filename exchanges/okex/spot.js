@@ -189,7 +189,7 @@ class Exchange extends Base {
     }
     if (body.error_code) {
       console.log('error...', endpoint, params);
-      throw (`${error.getErrorFromCode(body.error_code)  } | ${  endpoint}`);
+      throw (`${error.getErrorFromCode(body.error_code)} | ${endpoint}`);
     }
     return body.data || body;
   }

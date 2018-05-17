@@ -99,6 +99,14 @@ class Exchange extends Spot {
     const reconnect = () => this.wsFutureDepth(o, cb);
     this.createWs({ timeInterval: 300, chanelString, options })(kUtils.formatWsFutureDepth, cb, reconnect);
   }
+  wsFutureBalances(o = {}, cb) {
+    const chanelString = kUtils.createWsFutureBalancesDepth();
+    console.log(chanelString, 'chanelString...');
+    const reconnect = () => this.wsFutureBalances(o, cb);
+    this.createWs({ timeInterval: 300, chanelString, {} })(kUtils.formatWsFutureBalances, cb, reconnect);
+    // ok_sub_futureusd_userinfo
+  }
+
   async futureBalances(o = {}) {
     let ds = await this.post('future_userinfo', o, true);
     ds = kUtils.formatFutureBalances(ds);

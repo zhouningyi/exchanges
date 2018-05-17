@@ -110,6 +110,10 @@ const createWsChanelFutureKline = createWsChanel((pair, o) => {
   return `ok_sub_future${pair}_kline_${o.contract_type}_${interval}`;
 });
 
+// const createWsFutureBalancesDepth = createWsChanel((o) => {
+//   return 'ok_sub_futureusd_userinfo';
+// });
+
 function _parseWsFutureChannel(channel) {  // usd_btc_kline_quarter_1min
   const symbol = channel.replace('ok_sub_future', '').split('_kline_')[0];
   return deFormatPair(symbol, true);
@@ -161,9 +165,14 @@ function _formatFutureDepth(ds) {
   });
 }
 
+function formatWsFutureBalances(ds) {
+  console.log(ds);
+  return ds;
+}
+
 function formatWsFutureDepth(ds) {
   const res = {};
-  _.map(ds, (d) => {
+  _.forEach(ds, (d) => {
     const { data, channel } = d;
     if (!data || data.result) return null;
     const { bids, asks, timestamp } = data;
@@ -371,6 +380,7 @@ module.exports = {
   createWsChanelFutureTick,
   createWsFutureDepth,
   formatWsFutureDepth,
+  formatWsFutureBalances,
   //
   formatWsFutureKline,
   formatWsFutureTick,
