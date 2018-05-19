@@ -165,10 +165,72 @@ function _formatFutureDepth(ds) {
   });
 }
 
+
+// future balances
+function formatFutureBalances(ds) {
+  if (!ds) return null;
+  return _.map(ds.info, (line, coin) => {
+    coin = coin.toUpperCase();
+    return {
+      coin,
+      ..._.pick(line, ['risk_rate', 'profit_real', 'profit_unreal', 'keep_deposit', 'account_rights'])
+    };
+  }).filter(d => d.account_rights);
+}
+
 function formatWsFutureBalances(ds) {
-  console.log(ds);
+  ds = _.filter(ds, d =>  d.channel === 'ok_sub_futureusd_userinfo');
+  ds = _.map(ds, (d) => {
+    d = d.data;
+    const coin = d.symbol.replace('_usd', '').toUpperCase();
+    return {
+      coin,
+      ..._.pick(d, ['balance', 'profit_real', 'keep_deposit', 'account_rights'])
+    };
+  });
+  ds = _.keyBy(ds, (d) => {
+    return d.coin;
+  });
   return ds;
 }
+
+// [
+//   {
+//     "pair": "EOS-USDT",
+//     "unique_id": "EOS-USDT_quarter",
+//     "contract_type": "quarter",
+//     "time": "2018-04-24T00:39:07.000Z",
+//     "buy_amount": 0,
+//     "buy_available": 0,
+//     "buy_price_avg": 15.24020885,
+//     "buy_price_cost": 15.21894142,
+//     "buy_profit_real": 0,
+//     "contract_id": 201806290200057,
+//     "lever_rate": 20,
+//     "sell_amount": 0,
+//     "sell_available": 0,
+//     "sell_price_avg": 14.8593015,
+//     "sell_price_cost": 14.8593015,
+//     "sell_profit_real": 0
+//   }
+// ]
+
+// function formatWsFuturePosition(ds){
+//   ds = _.filter(ds, d => d.channel === 'ok_sub_futureusd_positions');
+//   ds = _.map(ds, (d) => {
+//     d = d.data;
+//     const coin = d.symbol.replace('_usd', '').toUpperCase();
+//     const pair = `${coin}-USDT`;
+//     const { positions } = d;
+//     console.log(positions, 'positions');
+//     const sell = _.filter(positions, p => p.balance.position === 1);
+//     return {
+//       pair,
+//       unique_id: `${pair}_${contract_type}`,
+//       ..._.pick(sell, ['balance', 'profit_real', 'keep_deposit', 'account_rights'])
+//     };
+//   });
+// }
 
 function formatWsFutureDepth(ds) {
   const res = {};
@@ -220,17 +282,6 @@ function formatFutureOrderHistoryO(o) {
 function formatFutureOrderHistory() {
 }
 
-// future balances
-function formatFutureBalances(ds) {
-  if (!ds) return null;
-  return _.map(ds.info, (line, coin) => {
-    coin = coin.toUpperCase();
-    return {
-      coin,
-      ..._.pick(line, ['risk_rate', 'profit_real', 'profit_unreal', 'keep_deposit', 'account_rights'])
-    };
-  }).filter(d => d.account_rights);
-}
 
 //
 const typeMap = {
@@ -381,6 +432,7 @@ module.exports = {
   createWsFutureDepth,
   formatWsFutureDepth,
   formatWsFutureBalances,
+  // formatWsFuturePosition,
   //
   formatWsFutureKline,
   formatWsFutureTick,

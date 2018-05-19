@@ -172,20 +172,20 @@ const tasks = [
   //   },
   //   name: '批量下单'
   // },
-  // {
-  //   fn: 'futureBalances',
-  //   params: {
-  //   },
-  //   name: '期货资金'
-  // },
   {
-    fn: 'futurePosition',
+    fn: 'futureBalances',
     params: {
-      contract_type: 'quarter',
-      pair: 'EOS-USDT'
     },
-    name: '期货仓位'
-  }
+    name: '期货资金'
+  },
+  // {
+  //   fn: 'futurePosition',
+  //   params: {
+  //     contract_type: 'quarter',
+  //     pair: 'EOS-USDT'
+  //   },
+  //   name: '期货仓位'
+  // }
 ];
 
 testRest(exchanges, tasks);

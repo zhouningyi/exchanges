@@ -41,13 +41,19 @@ const wsList = [
   //   },
   //   name: '期货深度图'
   // },
+  // {
+  //   fn: 'wsDepth',
+  //   params: {
+  //     contract_type: 'quarter',
+  //     pairs: ['BTC-USDT', 'EOS-USDT']
+  //   },
+  //   name: '深度图'
+  // },
   {
-    fn: 'wsDepth',
+    fn: 'wsFutureBalances',
     params: {
-      contract_type: 'quarter',
-      pairs: ['BTC-USDT', 'EOS-USDT']
     },
-    name: '深度图'
+    name: 'ws的余额'
   },
 ];
 
@@ -56,7 +62,7 @@ function testOneExchangeWs(exName, list) {
   _.forEach(list, (o) => {
     const { fn, params } = o;
     ex[fn](params, (ds) => {
-      console.log(ds, 'ds.....');
+      console.log(ds, 'ds test...');
     });
   });
 }

@@ -71,7 +71,7 @@ class Exchange extends Spot {
     const pairs = o.pairs || FUTURE_PAIRS;
     const chanelString = kUtils.createWsChanelFutureTick(pairs, { contract_type });
     const reconnect = () => this.wsFutureTicks(o, cb);
-    this.createWs({ timeInterval: 300, chanelString })(kUtils.formatWsFutureTick, cb, reconnect);
+    this.createWs({ timeInterval: 300, chanelString, name: 'wsFutureTicks' })(kUtils.formatWsFutureTick, cb, reconnect);
   }
   wsFutureKlines(o = {}, cb) {
     const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
@@ -79,7 +79,7 @@ class Exchange extends Spot {
     const options = { contract_type, interval };
     const chanelString = kUtils.createWsChanelFutureKline(symbols, { contract_type, interval });
     const reconnect = () => this.wsFutureTicks(o, cb);
-    this.createWs({ timeInterval: 300, chanelString, options })(kUtils.formatWsFutureKline, cb, reconnect);
+    this.createWs({ timeInterval: 300, chanelString, options, name: 'wsFutureKlines' })(kUtils.formatWsFutureKline, cb, reconnect);
   }
   wsFutureKline(o = {}, cb) {
     checkKey(o, ['pair']);
@@ -97,21 +97,26 @@ class Exchange extends Spot {
     const chanelString = kUtils.createWsFutureDepth(symbols, opt);
     const options = { contract_type };
     const reconnect = () => this.wsFutureDepth(o, cb);
-    this.createWs({ timeInterval: 300, chanelString, options })(kUtils.formatWsFutureDepth, cb, reconnect);
+    this.createWs({ timeInterval: 300, chanelString, options, name: 'wsFutureDepth' })(kUtils.formatWsFutureDepth, cb, reconnect);
   }
+
   wsFutureBalances(o = {}, cb) {
-    const chanelString = kUtils.createWsFutureBalancesDepth();
-    console.log(chanelString, 'chanelString...');
+    const chanelString = [{ event: 'login', channel: 'ok_sub_futureusd_userinfo' }];
     const reconnect = () => this.wsFutureBalances(o, cb);
-    this.createWs({ timeInterval: 300, chanelString, {} })(kUtils.formatWsFutureBalances, cb, reconnect);
-    // ok_sub_futureusd_userinfo
+    this.createWs({ timeInterval: 300, chanelString, name: 'wsFutureBalances' }, true)(kUtils.formatWsFutureBalances, cb, reconnect);
   }
+  // wsFuturePosition(o = {}, cb) {
+  //   const chanelString = [{ event: 'login', channel: 'ok_sub_futureusd_positions' }];
+  //   const reconnect = () => this.wsFuturePosition(o, cb);
+  //   this.createWs({ timeInterval: 300, chanelString, name: 'wsFuturePosition' }, true)(kUtils.formatWsFuturePosition, cb, reconnect);
+  // }
 
   async futureBalances(o = {}) {
     let ds = await this.post('future_userinfo', o, true);
     ds = kUtils.formatFutureBalances(ds);
     return ds;
   }
+
   async moveBalance(o = {}) {
     checkKey(o, ['source', 'target', 'amount', 'coin']);
     const opt = kUtils.formatMoveBalanceO(o);
@@ -119,6 +124,7 @@ class Exchange extends Spot {
     const success = !!(ds && ds.result);
     return { success };
   }
+
   // 市场上的交易历史
   // async futureOrderHistory(o = {}) {
   //   console.log('to do');

@@ -199,8 +199,17 @@ class Exchange extends Base {
     if (filter) pairs = _.filter(pairs, filter);
     return _.map(pairs, d => d.pair);
   }
-  createWs(o = {}) {
-    const { timeInterval, chanelString, options: opt } = o;
+  createWs(o = {}, isSign = false) {
+    let { timeInterval, chanelString, options: opt, name } = o;
+    if (isSign) {
+      const parameters = { api_key: this.apiKey, sign: this.getSignature({}) };
+      chanelString = _.map(chanelString, (c) => {
+        c.parameters = parameters;
+        return c;
+      });
+      chanelString = [{ event: 'login', parameters }, ...chanelString];
+    }
+    chanelString = chanelString && typeof chanelString === 'object' ? JSON.stringify(chanelString) : chanelString;
     return (formatData, cb, reconnect) => {
       let data = {};
       const cbf = _.throttle(() => {
@@ -213,7 +222,11 @@ class Exchange extends Base {
       //
       const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString), reconnect };
       kUtils.subscribe('', (ds) => {
-        data = merge(data, formatData(ds, opt));
+        if (ds && ds.error_code) {
+          const str = `${error.getErrorFromCode(ds.error_code)} | [ws] ${name}`;
+          throw new Error(str);
+        }
+        data = merge(data, formatData(ds, opt || {}));
         cbf();
       }, options);
     };
@@ -223,13 +236,13 @@ class Exchange extends Base {
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelTick(pairs);
     const reconnect = () => this.wsTicks(o, cb);
-    this.createWs({ chanelString }, 'pair')(kUtils.formatWsTick, cb, reconnect);
+    this.createWs({ chanelString, name: 'wsTicks' }, 'pair')(kUtils.formatWsTick, cb, reconnect);
   }
   wsBalance(o = {}, cb) {
     const pairs = this._getPairs(o.filter);
     const chanelString = kUtils.createSpotChanelBalance(pairs);
     const reconnect = () => this.wsBalance(o, cb);
-    this.createWs({ chanelString })(kUtils.formatWsBalance, cb, reconnect);
+    this.createWs({ chanelString, name: 'wsBalance' })(kUtils.formatWsBalance, cb, reconnect);
   }
   wsDepth(o = {}, cb) {
     const defaultO = { size: 20 };
@@ -237,7 +250,7 @@ class Exchange extends Base {
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelDepth(pairs, o);
     const reconnect = () => this.wsDepth(o, cb);
-    this.createWs({ chanelString })(kUtils.formatWsDepth, cb, reconnect);
+    this.createWs({ chanelString, name: 'wsDepth' })(kUtils.formatWsDepth, cb, reconnect);
   }
 }
 

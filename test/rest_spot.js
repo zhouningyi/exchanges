@@ -1,6 +1,7 @@
 const { testRest } = require('./utils');
 
 const exchanges = ['okex'];// , ''. 'hitbtc' 'bittrex'
+
 const tasks = [
   // {
   //   fn: 'order',
@@ -84,11 +85,11 @@ const tasks = [
   //   params: {},
   //   name: '账户余额'
   // },
-  // {
-  //   fn: 'futureBalances',
-  //   params: {},
-  //   name: '合约(全仓)余额'
-  // },
+  {
+    fn: 'futureBalances',
+    params: {},
+    name: '合约(全仓)余额'
+  },
   // {
   //   fn: 'depth',
   //   params: { pair: 'ETH-BTC' },
