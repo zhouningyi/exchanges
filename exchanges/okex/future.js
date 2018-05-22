@@ -174,12 +174,15 @@ class Exchange extends Spot {
     return res;
   }
   async cancelFutureOrder(o = {}) {
+    const defaultO = {
+      current_page: 0,
+      page_length: 100
+    };
     const reqs = ['pair', 'order_id', 'contract_type'];
     checkKey(o, reqs);
-    const opt = _.pick(o, reqs);
-    if (Array.isArray(opt.order_id)) {
-      opt.order_id = opt.order_id.join(',');
-    }
+    let opt = _.pick(o, reqs);
+    if (Array.isArray(opt.order_id)) opt.order_id = opt.order_id.join(',');
+    opt = { ...defaultO, ...opt };
     const ds = await this.post('future_cancel', opt, true) || {};
     const res = { success: ds.result, order_id: ds.order_id };
     if (res.success) delete this.unfinishFutureOrders[res.order_id];
