@@ -175,8 +175,8 @@ function formatFutureBalances(ds) {
       coin,
       ..._.pick(line, ['risk_rate', 'profit_real', 'profit_unreal', 'keep_deposit', 'account_rights'])
     };
-  })//不要随意filter
-  //.filter(d => d.account_rights);
+  });// 不要随意filter
+  // .filter(d => d.account_rights);
 }
 
 function formatWsFutureBalances(ds) {
@@ -341,7 +341,7 @@ function formatFutureOrderO(o) {
 }
 
 
-function formatFutureOrderInfo(ds, o) {
+function formatFutureOrderInfo(ds, o, isFlat = true) {
   if (!ds) return null;
   const { orders } = ds;
   if (!orders) return null;
@@ -359,7 +359,7 @@ function formatFutureOrderInfo(ds, o) {
       ...(reverseTypeMap[d.type])
     };
   });
-  if (Array.isArray(res) && res.length === 1) res = res[0];
+  if (isFlat && Array.isArray(res) && res.length === 1) res = res[0];
   return res;
 }
 

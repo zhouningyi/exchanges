@@ -148,11 +148,15 @@ class Exchange extends Base {
     checkKey(o, ['pair']);
     o = { ...o, order_id: -1 };
     const ds = await this.post('order_info', o, true, true);
-    return kUtils.formatOrderInfo(ds);
+    return kUtils.formatOrderInfo(ds, o);
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
-    params = Utils.replace(params, { pair: 'symbol' });
-    if (params.symbol) params.symbol = kUtils.formatPair(params.symbol);
+    params = _.cloneDeep(params);
+    if (!params.symbol) {
+      params = Utils.replace(params, { pair: 'symbol' });
+      if (params.symbol) params.symbol = kUtils.formatPair(params.symbol);
+    }
+    delete params.pair;
     const signedParams = {
       ...params,
       ...(isSign ? {

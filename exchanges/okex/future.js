@@ -124,7 +124,14 @@ class Exchange extends Spot {
     const success = !!(ds && ds.result);
     return { success };
   }
-
+  async unfinishedFutureOrderInfo(o = {}) {
+    checkKey(o, ['pair', 'contract_type']);
+    const opt = { ...o, order_id: '-1' };
+    opt.symbol = kUtils.formatPair(o.pair).replace('usdt', 'usd');
+    const ds = await this.post('future_order_info', opt, true, true);
+    const res = kUtils.formatFutureOrderInfo(ds, o, false);
+    return res;
+  }
   // 市场上的交易历史
   // async futureOrderHistory(o = {}) {
   //   console.log('to do');
@@ -170,8 +177,10 @@ class Exchange extends Spot {
     const reqs = ['pair', 'order_id', 'contract_type'];
     checkKey(o, reqs);
     const opt = _.pick(o, reqs);
+    if (Array.isArray(opt.order_id)) {
+      opt.order_id = opt.order_id.join(',');
+    }
     const ds = await this.post('future_cancel', opt, true) || {};
-    console.log(ds, 'ds cancelFutureOrder');
     const res = { success: ds.result, order_id: ds.order_id };
     if (res.success) delete this.unfinishFutureOrders[res.order_id];
     return res;

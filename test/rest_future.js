@@ -142,15 +142,15 @@ const tasks = [
   //   },
   //   name: '所有的订单'
   // },
-  // {
-  //   fn: 'cancelFutureOrder',
-  //   params: {
-  //     order_id: '594942061259776',
-  //     contract_type: 'quarter',
-  //     pair: 'BTC-USDT',
-  //   },
-  //   name: '清空期货'
-  // },
+  {
+    fn: 'cancelFutureOrder',
+    params: {
+      order_id: ['804573827181568'],
+      contract_type: 'quarter',
+      pair: 'LTC-USDT',
+    },
+    name: '清空期货'
+  },
   // {
   //   fn: 'futureDepth',
   //   params: {
@@ -172,12 +172,24 @@ const tasks = [
   //   },
   //   name: '批量下单'
   // },
+  // {
+  //   fn: 'futureBalances',
+  //   params: {
+  //   },
+  //   name: '期货资金'
+  // },
   {
-    fn: 'futureBalances',
+    fn: 'unfinishedFutureOrderInfo',
     params: {
+      pair: 'LTC-USDT',
+      status: '1',
+      contract_type: 'quarter',
+      current_page: 0,
+      page_length: 100
     },
-    name: '期货资金'
+    name: '未完成期货订单'
   },
+
   // {
   //   fn: 'futurePosition',
   //   params: {
