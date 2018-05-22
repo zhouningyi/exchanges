@@ -68,7 +68,8 @@ function genSubscribe(stream) {
         if (typeof data === 'string') data = JSON.parse(data);
         cb(data);
       } catch (error) {
-        console.log(`Parse error: ${error.message}`);
+        console.log(data);
+        console.log(`ws Parse json error: ${error.message}`);
       }
       onceLoop(() => {
         ws.tryPing();

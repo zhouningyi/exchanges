@@ -144,6 +144,12 @@ class Exchange extends Base {
     const ds = await this.get('trades', o, true, true);
     return kUtils.formatOrderBook(ds);
   }
+  async unfinishedOrderInfo(o = {}) {
+    checkKey(o, ['pair']);
+    o = { ...o, order_id: -1 };
+    const ds = await this.post('order_info', o, true, true);
+    return kUtils.formatOrderInfo(ds);
+  }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
     params = Utils.replace(params, { pair: 'symbol' });
     if (params.symbol) params.symbol = kUtils.formatPair(params.symbol);
@@ -188,10 +194,18 @@ class Exchange extends Base {
       throw `${endpoint}: ${body.msg}`;
     }
     if (body.error_code) {
+      // if (body.error_code === 20015) {
+      //   return {
+      //     order_id: params.order_id,
+      //     success: true,
+      //     status: 'FINISHED'
+      //   };
+      // } else {
       console.log('error...', endpoint, params);
       throw (`${error.getErrorFromCode(body.error_code)} | ${endpoint}`);
+      // }
     }
-    return body.data || body;
+    return body.data || body || false;
   }
   _getPairs(filter, pairs) {
     if (pairs) return pairs;
@@ -207,7 +221,6 @@ class Exchange extends Base {
         c.parameters = parameters;
         return c;
       });
-      chanelString = [{ event: 'login', parameters }, ...chanelString];
     }
     chanelString = chanelString && typeof chanelString === 'object' ? JSON.stringify(chanelString) : chanelString;
     return (formatData, cb, reconnect) => {
@@ -236,7 +249,7 @@ class Exchange extends Base {
     const pairs = this._getPairs(o.filter, o.pairs);
     const chanelString = kUtils.createSpotChanelTick(pairs);
     const reconnect = () => this.wsTicks(o, cb);
-    this.createWs({ chanelString, name: 'wsTicks' }, 'pair')(kUtils.formatWsTick, cb, reconnect);
+    this.createWs({ chanelString, name: 'wsTicks' })(kUtils.formatWsTick, cb, reconnect);
   }
   wsBalance(o = {}, cb) {
     const pairs = this._getPairs(o.filter);

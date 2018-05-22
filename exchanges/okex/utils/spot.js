@@ -108,9 +108,10 @@ function formatBalances(ds) {
     //
     _.set(result, `${coin}.coin`, coin.toUpperCase());
   });
-  return _.values(result).filter((d) => {
-    return d.balance !== 0 || d.locked_balance !== 0 || d.borrow_balance !== 0;
-  });
+  return _.values(result); // 随意filter会引起一些问题
+  // .filter((d) => {
+  //   return d.balance !== 0 || d.locked_balance !== 0 || d.borrow_balance !== 0;
+  // });
 }
 
 function formatOrderO(o) {
@@ -145,7 +146,13 @@ function formatCancelOrder(ds) {
       success: [],
       error: order_id.split(',')
     };
+  } else if (success === true) {
+    return {
+      success,
+      error: null
+    };
   } else if (success || error) {
+    console.log(success, error);
     return {
       success: success.split(','),
       error: error.split(',')
@@ -285,6 +292,13 @@ function formatWsDepth(ds) {
   });
   return res;
 }
+
+// function formatOrderInfo(ds) {
+//   ds = _.map(ds, (d) => {
+//     console.log(ds);
+//   });
+//   return ds;
+// }
 
 
 module.exports = {

@@ -175,11 +175,12 @@ function formatFutureBalances(ds) {
       coin,
       ..._.pick(line, ['risk_rate', 'profit_real', 'profit_unreal', 'keep_deposit', 'account_rights'])
     };
-  }).filter(d => d.account_rights);
+  })//不要随意filter
+  //.filter(d => d.account_rights);
 }
 
 function formatWsFutureBalances(ds) {
-  ds = _.filter(ds, d =>  d.channel === 'ok_sub_futureusd_userinfo');
+  ds = _.filter(ds, d => d.channel === 'ok_sub_futureusd_userinfo');
   ds = _.map(ds, (d) => {
     d = d.data;
     const coin = d.symbol.replace('_usd', '').toUpperCase();

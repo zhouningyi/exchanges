@@ -145,6 +145,7 @@ class Exchange extends Spot {
     checkKey(o, ['pair', 'contract_type', 'lever_rate', 'side', 'direction', 'type']);
     const opt = kUtils.formatFutureOrderO(o);
     const ds = await this.post('future_trade', opt, true);
+    console.log(ds, 'futureOrder...');
     if (ds) {
       const res = {
         success: ds ? ds.result : false,
@@ -170,6 +171,7 @@ class Exchange extends Spot {
     checkKey(o, reqs);
     const opt = _.pick(o, reqs);
     const ds = await this.post('future_cancel', opt, true) || {};
+    console.log(ds, 'ds cancelFutureOrder');
     const res = { success: ds.result, order_id: ds.order_id };
     if (res.success) delete this.unfinishFutureOrders[res.order_id];
     return res;

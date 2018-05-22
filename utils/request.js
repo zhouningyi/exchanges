@@ -15,11 +15,14 @@ function requestPromise(o) {
       }
       if (e) return reject(e);
       try {
-        if (typeof body === 'string') body = JSON.parse(body);
-        resolve(body);
+        if (typeof body === 'string') {
+          if (body === '') return reject();
+          return resolve(JSON.parse(body));
+        }
+        console.log(body);
+        reject();
       } catch (e) {
         Utils.print(url, 'red');
-        console.log(e, body);
         reject();
       }
     });
