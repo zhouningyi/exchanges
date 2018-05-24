@@ -46,11 +46,8 @@ function getExchange(name) {
 }
 
 function validate(ex) {
-  if (!ex.name) {
-    console.log('exchange对象必须有name');
-  }
+  if (!ex.name) console.log('exchange对象必须有name');
 }
-
 
 async function testOneExchange(exName, tasks) {
   const ex = getExchange(exName);

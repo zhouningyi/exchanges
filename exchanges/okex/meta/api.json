@@ -1,38 +1,47 @@
 {
   "order": {
-    "timeout": 110,
+    "timeout": 1500,
+    "rateLimit": 110,
     "retry": 0
   },
   "futureOrder": {
-    "timeout": 110,
+    "timeout": 1500,
+    "rateLimit": 110,
     "retry": 0
   },
   "cancelOrder": {
-    "timeout": 110,
+    "timeout": 1500,
+    "rateLimit": 110,
     "retry": 3
   },
   "futureBalances": {
-    "timeout": 220,
+    "timeout": 1500,
+    "rateLimit": 220,
     "retry": 3
   },
   "futurePosition": {
-    "timeout": 220,
+    "timeout": 1500,
+    "rateLimit": 220,
     "retry": 3
   },
   "unfinishedOrderInfo": {
-    "timeout": 220,
+    "timeout": 1500,
+    "rateLimit": 220,
     "retry": 3
   },
   "balances": {
-    "timeout": 366,
+    "timeout": 1500,
+    "rateLimit": 366,
     "retry": 3
   },
   "unfinishedFutureOrderInfo": {
-    "timeout": 366,
+    "timeout": 1500,
+    "rateLimit": 366,
     "retry": 3
   },
   "cancelFutureOrder": {
-    "timeout": 550,
+    "timeout": 1500,
+    "rateLimit": 550,
     "retry": 3
   }
 }

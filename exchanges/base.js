@@ -8,6 +8,8 @@ const argv = require('optimist').argv;
 const fs = require('fs');
 const path = require('path');
 
+const { delay } = Utils;
+
 const defaultOptions = {
   timeout: 10000,
 };
@@ -25,17 +27,38 @@ class exchange extends Event {
     this.unique_id = unique_id;
     this.proxy = isProxy ? 'http://127.0.0.1:1087' : null;
   }
+  // io
+  getApiKey() {
+    return this.apiKey;
+  }
   // 工具函数
   print(str, color = 'yellow') {
     str = `${this.name}: ${str}`;
     return Utils.print(str, color);
   }
-  warn(str) {
+  warn(str, e) {
+    console.log(e);
     this.print(str, 'red');
   }
-  warnExit(str) {
-    this.warn(str);
+  warnExit(str, e) {
+    this.warn(str, e);
     process.exit();
+  }
+  // 锁机制
+  _getLockName(side, coin = '') {
+    return `${side}${coin}Lock`;
+  }
+  isLock(side, coin = '') {
+    const lock = this._getLockName(side, coin);
+    return !!this[lock];
+  }
+  addLock(side, coin = '') {
+    const lock = this._getLockName(side, coin);
+    this[lock] = true;
+  }
+  cancelLock(side, coin = '') {
+    const lock = this._getLockName(side, coin);
+    this[lock] = false;
   }
   // CURD
   async get(endpoint, params, isSign) {
@@ -65,22 +88,45 @@ class exchange extends Event {
   // 别名 alias
   async candlestick(o) { // 与kline意义一致
     return await this.kline(o);
-  }//
+  }
+
+  // 函数包装
   _getWrapConfig(config = {}) {
     let defaultConfig;
     try {
       defaultConfig = this.readConfig('api');
     } catch (e) {
-      this.warnExit('可能未配置wrap (exchange/meta/api.json)');
+      this.warnExit('可能未配置wrap (exchange/meta/api.json)', e);
     }
     return { ...defaultConfig, ...config };
   }
-  wrap(config = {}) {
+  genRateLimitFn(fn, t = 100, fnName) {
+    const lockName = `rate_limit_${fnName}`;
+    return async (a, b, c, d) => {
+      let ds = false;
+      if (this.isLock(lockName)) {
+        await delay(t);
+        this.cancelLock(lockName);
+      }
+      this.addLock(lockName);
+      try {
+        ds = await fn(a, b, c, d);
+      } catch (e) {
+        this.warn(`${fnName} error`, e);
+      }
+      return ds;
+    };
+  }
+  wrap(config = {}, o = {}) {
+    const { isPrint = false } = o;
     config = this._getWrapConfig(config);
     _.forEach(config, (conf, fnName) => {
-      const fn = this[fnName];
-      if (!fn) this.warnExit(`不存在函数${fnName}`, 'red');
-      this[fnName] = Utils.wrapFn(fn, conf);
+      let fn = this[fnName];
+      if (!fn) this.warnExit(`不存在函数${fnName}`);
+      fn = fn.bind(this);
+      if (conf.timeout || conf.retryN) fn = Utils.wrapFn(fn, conf, isPrint, fnName);
+      if (conf.rateLimit) fn = this.genRateLimitFn(fn, conf.rateLimit, fnName);
+      this[fnName] = fn;
     });
     return true;
   }

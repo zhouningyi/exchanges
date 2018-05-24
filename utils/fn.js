@@ -1,5 +1,6 @@
 
 const { delay } = require('./base');
+const { print } = require('./console');
 
 
 const defaultO = {
@@ -7,7 +8,7 @@ const defaultO = {
   retryN: 0
 };
 
-function wrapFn(fn, o = {}) {
+function wrapFn(fn, o = {}, isPrint, fnName) {
   if (typeof fn !== 'function') throw 'genFn: fn必须是函数';
   o = { ...defaultO, ...o };
   const { timeout = 1000, retryN = 0 } = o;
@@ -15,6 +16,8 @@ function wrapFn(fn, o = {}) {
   const f = async (a, b, c, d) => {
     const tasks = [delay(timeout), fn(a, b, c, d)];
     const info = await Promise.race(tasks);
+    console.log(fnName, retryIndex, 'fnName');
+    if (isPrint && retryIndex > 0) print(`${fnName}重试${retryIndex}次`);
     if (!info) {
       if (retryIndex >= retryN) {
         retryIndex = 0;
