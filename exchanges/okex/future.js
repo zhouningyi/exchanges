@@ -125,8 +125,13 @@ class Exchange extends Spot {
     return { success };
   }
   async unfinishedFutureOrderInfo(o = {}) {
+    const defaultO = {
+      status: '1',
+      current_page: 0,
+      page_length: 100
+    };
     checkKey(o, ['pair', 'contract_type']);
-    const opt = { ...o, order_id: '-1' };
+    const opt = { ...defaultO, ...o, order_id: '-1' };
     opt.symbol = kUtils.formatPair(o.pair).replace('usdt', 'usd');
     const ds = await this.post('future_order_info', opt, true, true);
     const res = kUtils.formatFutureOrderInfo(ds, o, false);
@@ -175,10 +180,8 @@ class Exchange extends Spot {
   }
   async cancelFutureOrder(o = {}) {
     const defaultO = {
-      current_page: 0,
-      page_length: 100
     };
-    const reqs = ['pair', 'order_id', 'contract_type'];
+    const reqs = ['order_id', 'pair', 'contract_type'];
     checkKey(o, reqs);
     let opt = _.pick(o, reqs);
     if (Array.isArray(opt.order_id)) opt.order_id = opt.order_id.join(',');

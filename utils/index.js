@@ -4,7 +4,8 @@ const _ = require('lodash');
 const morph = require('./morph');
 const Console = require('./console');
 const ws = require('./ws');
-
+const fn = require('./fn');
+const base = require('./base');
 
 function getQueryString(params, isEncode = false) {
   params = _.map(params, (value, key) => ({ value, key }));
@@ -12,11 +13,6 @@ function getQueryString(params, isEncode = false) {
   return _.map(params, ({ value, key }) => `${key}=${isEncode ? encodeURIComponent(value) : value}`).join('&');
 }
 
-function delay(time) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => resolve(), time);
-  });
-}
 function isNull(v) {
   return v === undefined || v === null || v === '';
 }
@@ -36,5 +32,5 @@ function checkKey(o, vs) {
 }
 
 module.exports = {
-  ...morph, ...Console, getQueryString, delay, checkKey, ws
+  ...base, ...morph, ...Console, ...fn, getQueryString, checkKey, ws
 };

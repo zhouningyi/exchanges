@@ -1,10 +1,10 @@
 
 const _ = require('lodash');
 
-function _exist(d){
+function _exist(d) {
   return d !== undefined && d !== null;
 }
-function _replace(o={}, kFrom, kTo){
+function _replace(o = {}, kFrom, kTo) {
   const v = o[kFrom];
   if (!_exist(v)) return o;
   o[kTo] = v;
@@ -12,8 +12,8 @@ function _replace(o={}, kFrom, kTo){
   return o;
 }
 
-function replace(o, replaces){
-  o = {...o};
+function replace(o, replaces) {
+  o = { ...o };
   _.forEach(replaces, (kTo, kFrom) => {
     _replace(o, kFrom, kTo);
   });

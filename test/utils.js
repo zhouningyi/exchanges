@@ -11,7 +11,7 @@ function getAppKey(name) {
 
 async function extrude(ex, exName, d) {
   function print(ds, str) {
-    const space = '========';
+    const space = '------';
     if (ds) {
       console.log(JSON.stringify(ds, null, 2));
       ds = (typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
@@ -56,7 +56,7 @@ async function testOneExchange(exName, tasks) {
   const ex = getExchange(exName);
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
-    console.log(`测试第【${i}】个任务 ${task.fn}(${task.name})`);
+    console.log(`测试任务${i}: ${task.fn}(${task.name})`);
     await extrude(ex, exName, task);
   }
 }
@@ -64,7 +64,7 @@ async function testOneExchange(exName, tasks) {
 async function testRest(exNames, tasks) {
   for (let i = 0; i < exNames.length; i++) {
     const exName = exNames[i];
-    console.log(`测试交易所${exName}...`);
+    console.log(`测试交易所【${exName}】...`);
     await testOneExchange(exName, tasks);
   }
 }
