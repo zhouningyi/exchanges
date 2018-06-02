@@ -6,7 +6,6 @@ const Kucoin = require('./exchanges/kucoin');
 const Hitbtc = require('./exchanges/hitbtc');
 const Bittrex = require('./exchanges/bittrex');
 
-
 module.exports = {
   Binance,
   Kucoin,
