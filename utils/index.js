@@ -1,6 +1,7 @@
 
 const _ = require('lodash');
 
+const unique = require('./unique');
 const morph = require('./morph');
 const Console = require('./console');
 const ws = require('./ws');
@@ -32,5 +33,5 @@ function checkKey(o, vs) {
 }
 
 module.exports = {
-  ...base, ...morph, ...Console, ...fn, getQueryString, checkKey, ws
+  ...base, ...morph, ...Console, ...fn, unique, getQueryString, checkKey, ws
 };

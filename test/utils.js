@@ -12,13 +12,14 @@ function getAppKey(name) {
 async function extrude(ex, exName, d) {
   function print(ds, str) {
     const space = '------';
-    if (ds) {
-      console.log(JSON.stringify(ds, null, 2));
-      ds = (typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
-    }
     let dstr = '';
     if (ds) {
       dstr = `数组长度: ${ds.length}`;
+    }
+    //
+    if (ds) {
+      console.log(JSON.stringify(ds, null, 2));
+      ds = (typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
     }
     console.log(dstr, `${space}${exName}.${str}${space}`);
   }

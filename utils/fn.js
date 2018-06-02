@@ -16,7 +16,6 @@ function wrapFn(fn, o = {}, isPrint, fnName) {
   const f = async (a, b, c, d) => {
     const tasks = [delay(timeout), fn(a, b, c, d)];
     const info = await Promise.race(tasks);
-    console.log(fnName, retryIndex, 'fnName');
     if (isPrint && retryIndex > 0) print(`${fnName}重试${retryIndex}次`);
     if (!info) {
       if (retryIndex >= retryN) {
