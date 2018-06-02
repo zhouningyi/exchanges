@@ -83,10 +83,18 @@ const tasks = [
   // },
 
   // {
-  //   fn: 'balances',
+  //   fn: 'accounts',
   //   params: {},
-  //   name: '账户余额'
+  //   name: 'accounts'
   // },
+
+  {
+    fn: 'balances',
+    params: {
+      type: 'otc'
+    },
+    name: '账户余额'
+  },
   // {
   //   fn: 'futureBalances',
   //   params: {},
@@ -98,11 +106,11 @@ const tasks = [
   //   name: '深度'
   // },
 
-  {
-    fn: 'kline',
-    params: { pair: 'ETH-BTC', interval: '1m' },
-    name: 'orderBook数据'
-  },
+  // {
+  //   fn: 'kline',
+  //   params: { pair: 'ETH-BTC', interval: '1m' },
+  //   name: 'orderBook数据'
+  // },
 // / {
 //   fn: 'orderBook',
 //   params: { pair: 'ETH-BTC' },

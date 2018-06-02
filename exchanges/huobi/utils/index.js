@@ -48,7 +48,31 @@ function formatKline(ds, o) {
   });
 }
 
+function formatBalance(ds) {
+  if (!ds) return null;
+  ds = ds.list;
+  if (!ds) return null;
+  const res = {};
+  _.forEach(ds, (d) => {
+    let { type, currency, balance } = d;
+    balance = _parse(balance);
+    const coin = currency.toUpperCase();
+    let line = res[coin];
+    if (!line) {
+      line = { coin };
+      res[coin] = line;
+    }
+    if (type === 'trade') {
+      line.balance = balance;
+    } else if (type === 'frozen') {
+      line.lockedBalance = balance;
+    }
+  });
+  return _.values(res);
+}
+
 module.exports = {
+  formatBalance,
   formatPairName,
   formatPair,
   formatKlineO,

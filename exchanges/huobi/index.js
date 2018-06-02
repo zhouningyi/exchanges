@@ -2,6 +2,8 @@
 const Base = require('./../base');
 const request = require('./../../utils/request');
 const crypto = require('crypto');
+const CryptoJS = require('crypto-js');
+const HmacSHA256 = require('crypto-js/hmac-sha256');
 const moment = require('moment');
 const md5 = require('md5');
 const _ = require('lodash');
@@ -110,12 +112,18 @@ class Exchange extends Base {
     console.log(ds);
     // return tUtils.formatPairs(_.get(ds, 'symbols'));
   }
-  async balances() {
-    const endpoint = `v1/account/accounts/${this.apiKey}/balance`;
-    const ds = await this.post(endpoint, {}, true);
-    console.log(ds);
-    // const ds = await this.get(`/v1/account/accounts/${this.apiKey}/balance`, {}, true, true);
-    // console.log(ds, 'ds...');
+  async accounts() {
+    const endpoint = '/v1/account/accounts';
+    const ds = await this.get(endpoint, {}, true);
+    return ds;
+  }
+  async balances(o = {}) {
+    const defaultO = { type: 'spot' };
+    o = { ...defaultO, ...o };
+    const id = o.type === 'spot' ? this.spot_id : this.otc_id;
+    const endpoint = `/v1/account/accounts/${id}/balance`;
+    const ds = await this.get(endpoint, {}, true);
+    return tUtils.formatBalance(ds);
   }
   // async orderBook(o = {}) {
   //   return await this.get('v3/allOrders', o, true, true);
@@ -140,10 +148,14 @@ class Exchange extends Base {
       pars.push(`${item}=${encodeURIComponent(data[item])}`);
     }
     let p = pars.sort().join('&');
+    console.log(p);
     const meta = [method, baseurl, path, p].join('\n');
-    const hash = crypto.createHmac('sha256', this.apiSecret).update(meta).digest('hex');
-    const sig = new Buffer(hash).toString('base64');
-    const Signature = encodeURIComponent(sig);
+    const hash = HmacSHA256(meta, this.apiSecret);
+    // const signatureStr = new Buffer(meta).toString('base64');
+    const Signature = encodeURIComponent(CryptoJS.enc.Base64.stringify(hash));
+    // const hash = crypto.createHmac('sha256', this.apiSecret).update(signatureStr).digest('hex');
+    // const sig = new Buffer(hash).toString('base64');
+    // const Signature = encodeURIComponent(hash);
     p += `&Signature=${Signature}`;
     return p;
   }
@@ -164,28 +176,14 @@ class Exchange extends Base {
     if (method === 'GET') {
     } else if (method === 'POST') {
     }
-    // const nonce = new Date().getTime();
-    // if (signed) params = { recvWindow: options.timeout || params.timeout, ...params };
-    // if (isTimestamp) params.timestamp = nonce;
-    // let base = `${REST_URL}/${endpoint}`;
-    // base = (qstr || signed) ? `${base}?` : base;
-    // a('GET', URL_HUOBI_PRO, path, body);/
-    let qstr = Utils.getQueryString(params, true);
+    let qstr = '';
     if (isSign) {
       const info = this._getBody();
       const payload = this.signSha(method, REST_URL, endpoint, info);
-      qstr = [qstr, payload].join('&');
+      qstr = payload; // [payload].join('&');// qstr,
     }
-    const url = `https://${REST_URL}/${endpoint}?${qstr}`;
+    const url = `https://${REST_URL}${endpoint}?${qstr}`;
     console.log(url, 'url');
-    // const signedParams = {
-    //   ...params,
-    //   ...(isSign ? {
-    //     sign: this.getSignature(params),
-    //     api_key: this.apiKey
-    //   } : {})
-    // };
-    // console.log(signedParams, isSign, 'signedParams');
     const o = {
       timeout: options.timeout,
       uri: url,

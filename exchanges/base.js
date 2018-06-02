@@ -19,11 +19,13 @@ const isProxy = !!argv.proxy;
 class exchange extends Event {
   constructor(config = {}, options = {}) {
     super();
-    const { apiKey, apiSecret, unique_id } = config;
+    const { apiKey, apiSecret, unique_id, otc_id, spot_id } = config;
     this.config = config;
     this.options = deepmerge(defaultOptions, options);
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
+    this.otc_id = otc_id;
+    this.spot_id = spot_id;
     this.unique_id = unique_id;
     this.proxy = isProxy ? 'http://127.0.0.1:1087' : null;
   }
