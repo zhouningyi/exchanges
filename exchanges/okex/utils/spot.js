@@ -42,9 +42,7 @@ function formatKlineO(o) {
 function formatKline(ds, o) {
   return _.map(ds, (d) => {
     const time = new Date(d[0]);
-    const tstr = time.getTime();
-    return {
-      unique_id: md5(`${o.pair}_${tstr}_${o.interval}`),
+    return Utils.unique.kline({
       ...o,
       exchange: 'okex',
       time,
@@ -52,7 +50,7 @@ function formatKline(ds, o) {
       high: _parse(d[2]),
       low: _parse(d[3]),
       close: _parse(d[4]),
-    };
+    });
   });
 }
 

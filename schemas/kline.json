@@ -18,6 +18,11 @@
     "open": "FLOAT",
     "close": "FLOAT",
     "high": "FLOAT",
-    "low": ["STRING", 10]
+    "low": ["STRING", 10],
+    "amount": "FLOAT",
+    "count": {
+      "type": "FLOAT",
+      "comment": "交易笔数"
+    }
   }
 }

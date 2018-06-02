@@ -19,7 +19,6 @@ function requestPromise(o) {
           if (body === '') return reject();
           return resolve(JSON.parse(body));
         }
-        console.log(body);
         reject();
       } catch (e) {
         Utils.print(url, 'red');

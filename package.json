@@ -11,11 +11,12 @@
     "bcore": "^0.0.21",
     "chalk": "^2.3.2",
     "crypto": "^1.0.1",
+    "crypto-js": "^3.1.9-1",
     "deepmerge": "^2.1.0",
     "https-proxy-agent": "^2.2.0",
     "lodash": "^4.17.5",
     "md5": "^2.2.1",
-    "moment": "^2.22.0",
+    "moment": "^2.22.1",
     "optimist": "^0.6.1",
     "request": "^2.85.0",
     "ws": "^5.1.0"

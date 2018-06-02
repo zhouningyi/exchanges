@@ -1,6 +1,7 @@
 const { testRest } = require('./utils');
 
-const exchanges = ['okex'];// , ''. 'hitbtc' 'bittrex'
+const exchanges = ['huobi'];
+// , 'okex'. 'hitbtc' 'bittrex'
 
 const tasks = [
   // {
@@ -74,6 +75,7 @@ const tasks = [
   //   params: {},
   //   name: '币信息'
   // },
+
   // {
   //   fn: 'ticks',
   //   params: { pair: 'OKB-USDT' },
@@ -81,10 +83,18 @@ const tasks = [
   // },
 
   // {
-  //   fn: 'balances',
+  //   fn: 'accounts',
   //   params: {},
-  //   name: '账户余额'
+  //   name: 'accounts'
   // },
+
+  {
+    fn: 'balances',
+    params: {
+      type: 'otc'
+    },
+    name: '账户余额'
+  },
   // {
   //   fn: 'futureBalances',
   //   params: {},
@@ -95,16 +105,22 @@ const tasks = [
   //   params: { pair: 'ETH-BTC' },
   //   name: '深度'
   // },
+
+  // {
+  //   fn: 'kline',
+  //   params: { pair: 'ETH-BTC', interval: '1m' },
+  //   name: 'orderBook数据'
+  // },
 // / {
 //   fn: 'orderBook',
 //   params: { pair: 'ETH-BTC' },
 //   name: 'orderBook数据'
 // },
-  {
-    fn: 'unfinishedOrderInfo',
-    params: { pair: 'OKB-USDT' },
-    name: 'orderBook未成交的订单'
-  },
+  // {
+  //   fn: 'unfinishedOrderInfo',
+  //   params: { pair: 'OKB-USDT' },
+  //   name: 'orderBook未成交的订单'
+  // },
 
 ];
 
