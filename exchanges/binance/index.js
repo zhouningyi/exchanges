@@ -39,6 +39,7 @@ class Exchange extends Base {
     return await this.get('time');
   }
   async kline(o) {
+    checkKey(o, ['pair']);
     const ds = await this.get('v1/klines', o, false);
     return tUtils.formatKline(ds);
   }

@@ -20,18 +20,18 @@ function formatPair(params) {
 function formatKline(ds) {
   if (!ds) return null;
   return _.map(ds, (d) => {
-    return {
-      open_time: new Date(d[0]),
+    return Utils.unique.kline({
+      time: new Date(d[0]),
       open: parseFloat(d[1], 10),
       high: parseFloat(d[2], 10),
       low: parseFloat(d[3], 10),
       close: parseFloat(d[4], 10),
       volume: parseFloat(d[5], 10),
-      quote_asset_volume: parseFloat(d[7], 10),
-      trades_count: parseInt(d[8], 10),
-      taker_buy_base_asset_volume: parseInt(d[9], 10),
-      taker_buy_quote_asset_volume: parseInt(d[10], 10),
-    };
+      quote_volume: parseFloat(d[7], 10),
+      count: parseInt(d[8], 10),
+      taker_buy_base_volume: parseInt(d[9], 10),
+      taker_buy_quote_volume: parseInt(d[10], 10),
+    });
   });
 }
 

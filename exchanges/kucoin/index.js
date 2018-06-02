@@ -119,7 +119,7 @@ class Exchange extends Base {
         close: c[i],
         open: o[i],
         volume: v[i],
-        open_time: new Date(t[i] * 1000)
+        time: new Date(t[i] * 1000)
       };
     });
   }

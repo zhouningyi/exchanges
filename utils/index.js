@@ -5,7 +5,6 @@ const morph = require('./morph');
 const Console = require('./console');
 const ws = require('./ws');
 
-
 function getQueryString(params, isEncode = false) {
   params = _.map(params, (value, key) => ({ value, key }));
   params = _.sortBy(params, d => d.key);
