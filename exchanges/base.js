@@ -126,7 +126,7 @@ class exchange extends Event {
       let fn = this[fnName];
       if (!fn) this.warnExit(`不存在函数${fnName}`);
       fn = fn.bind(this);
-      if (conf.timeout || conf.retryN) fn = Utils.wrapFn(fn, conf, isPrint, fnName);
+      if (conf.timeout || conf.retry) fn = Utils.wrapFn(fn, conf, isPrint, fnName);
       if (conf.rateLimit) fn = this.genRateLimitFn(fn, conf.rateLimit, fnName);
       this[fnName] = fn;
     });
