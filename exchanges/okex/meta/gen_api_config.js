@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 
 const RATIO = 1.1;
-const timeout = 1500;
+const timeout = 8500;
 const config = {};
 let rateLimit;
 //

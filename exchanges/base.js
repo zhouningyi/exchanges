@@ -77,7 +77,6 @@ class exchange extends Event {
     return path.join(__dirname, `./${this.name}/meta/${file}.json`);
   }
   saveConfig(json = {}, file) {
-    const { name } = this;
     const pth = this._getConifgPath(file);
     const str = JSON.stringify(json, null, 2);
     fs.writeFileSync(pth, str, 'utf8');

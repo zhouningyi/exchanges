@@ -29,10 +29,14 @@ class Exchange extends Base {
     this.url = URL;
     this.version = 'v1';
     this.name = 'okex';
+    this.init();
   }
   getSignature(params) {
     const qstr = `${Utils.getQueryString({ ...params, api_key: this.apiKey })}&secret_key=${this.apiSecret}`;
     return md5(qstr).toUpperCase();
+  }
+  init() {
+    // saveConfig;
   }
   async tick(o = {}) {
     checkKey(o, 'pair');

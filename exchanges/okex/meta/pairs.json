@@ -1,0 +1,2477 @@
+{
+  "BCH-BTC": {
+    "pair": "BCH-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 1e-8
+  },
+  "LTC-BTC": {
+    "pair": "LTC-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "ETH-BTC": {
+    "pair": "ETH-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "ETC-BTC": {
+    "pair": "ETC-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "ETH-USDT": {
+    "pair": "ETH-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "BTC-USDT": {
+    "pair": "BTC-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 1e-8
+  },
+  "BT2-BTC": {
+    "pair": "BT2-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "ETC-ETH": {
+    "pair": "ETC-ETH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "BTG-BTC": {
+    "pair": "BTG-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "LTC-USDT": {
+    "pair": "LTC-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "ETC-USDT": {
+    "pair": "ETC-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "BCH-USDT": {
+    "pair": "BCH-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 1e-8
+  },
+  "QTUM-BTC": {
+    "pair": "QTUM-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "QTUM-USDT": {
+    "pair": "QTUM-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "QTUM-ETH": {
+    "pair": "QTUM-ETH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "NEO-BTC": {
+    "pair": "NEO-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "GAS-BTC": {
+    "pair": "GAS-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "HSR-BTC": {
+    "pair": "HSR-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "NEO-ETH": {
+    "pair": "NEO-ETH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "GAS-ETH": {
+    "pair": "GAS-ETH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "HSR-ETH": {
+    "pair": "HSR-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "NEO-USDT": {
+    "pair": "NEO-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "GAS-USDT": {
+    "pair": "GAS-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "HSR-USDT": {
+    "pair": "HSR-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "DASH-BTC": {
+    "pair": "DASH-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "XRP-BTC": {
+    "pair": "XRP-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ZEC-BTC": {
+    "pair": "ZEC-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "DASH-ETH": {
+    "pair": "DASH-ETH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "XRP-ETH": {
+    "pair": "XRP-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ZEC-ETH": {
+    "pair": "ZEC-ETH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "DASH-USDT": {
+    "pair": "DASH-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "XRP-USDT": {
+    "pair": "XRP-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ZEC-USDT": {
+    "pair": "ZEC-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "IOTA-BTC": {
+    "pair": "IOTA-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "XUC-BTC": {
+    "pair": "XUC-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "IOTA-ETH": {
+    "pair": "IOTA-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "XUC-ETH": {
+    "pair": "XUC-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "IOTA-USDT": {
+    "pair": "IOTA-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "XUC-USDT": {
+    "pair": "XUC-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "EOS-BTC": {
+    "pair": "EOS-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "OMG-BTC": {
+    "pair": "OMG-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "EOS-ETH": {
+    "pair": "EOS-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "OMG-ETH": {
+    "pair": "OMG-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "EOS-USDT": {
+    "pair": "EOS-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "OMG-USDT": {
+    "pair": "OMG-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "ACT-BTC": {
+    "pair": "ACT-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BTM-BTC": {
+    "pair": "BTM-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ACT-ETH": {
+    "pair": "ACT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BTM-ETH": {
+    "pair": "BTM-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ACT-USDT": {
+    "pair": "ACT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BTM-USDT": {
+    "pair": "BTM-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BCD-BTC": {
+    "pair": "BCD-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "BCD-USDT": {
+    "pair": "BCD-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "STORJ-BTC": {
+    "pair": "STORJ-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SNT-BTC": {
+    "pair": "SNT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "STORJ-ETH": {
+    "pair": "STORJ-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SNT-ETH": {
+    "pair": "SNT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "STORJ-USDT": {
+    "pair": "STORJ-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SNT-USDT": {
+    "pair": "SNT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "PAY-BTC": {
+    "pair": "PAY-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DGD-BTC": {
+    "pair": "DGD-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "GNT-BTC": {
+    "pair": "GNT-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "PAY-ETH": {
+    "pair": "PAY-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DGD-ETH": {
+    "pair": "DGD-ETH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "GNT-ETH": {
+    "pair": "GNT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "PAY-USDT": {
+    "pair": "PAY-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DGD-USDT": {
+    "pair": "DGD-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "GNT-USDT": {
+    "pair": "GNT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LRC-BTC": {
+    "pair": "LRC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "NULS-BTC": {
+    "pair": "NULS-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "MCO-BTC": {
+    "pair": "MCO-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "LRC-ETH": {
+    "pair": "LRC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "NULS-ETH": {
+    "pair": "NULS-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "MCO-ETH": {
+    "pair": "MCO-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "LRC-USDT": {
+    "pair": "LRC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "NULS-USDT": {
+    "pair": "NULS-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "MCO-USDT": {
+    "pair": "MCO-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "BTG-USDT": {
+    "pair": "BTG-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "CMT-BTC": {
+    "pair": "CMT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ITC-BTC": {
+    "pair": "ITC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CMT-ETH": {
+    "pair": "CMT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ITC-ETH": {
+    "pair": "ITC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CMT-USDT": {
+    "pair": "CMT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ITC-USDT": {
+    "pair": "ITC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SBTC-BTC": {
+    "pair": "SBTC-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "PRA-BTC": {
+    "pair": "PRA-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SAN-BTC": {
+    "pair": "SAN-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "EDO-BTC": {
+    "pair": "EDO-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "AVT-BTC": {
+    "pair": "AVT-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "PRA-ETH": {
+    "pair": "PRA-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SAN-ETH": {
+    "pair": "SAN-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "EDO-ETH": {
+    "pair": "EDO-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "AVT-ETH": {
+    "pair": "AVT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "PRA-USDT": {
+    "pair": "PRA-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SAN-USDT": {
+    "pair": "SAN-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "EDO-USDT": {
+    "pair": "EDO-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "AVT-USDT": {
+    "pair": "AVT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LTC-BCH": {
+    "pair": "LTC-BCH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "LTC-ETH": {
+    "pair": "LTC-ETH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "ETC-BCH": {
+    "pair": "ETC-BCH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "BTG-BCH": {
+    "pair": "BTG-BCH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "AVT-BCH": {
+    "pair": "AVT-BCH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ACT-BCH": {
+    "pair": "ACT-BCH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CMT-BCH": {
+    "pair": "CMT-BCH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DGD-BCH": {
+    "pair": "DGD-BCH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "DASH-BCH": {
+    "pair": "DASH-BCH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "EOS-BCH": {
+    "pair": "EOS-BCH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "EDO-BCH": {
+    "pair": "EDO-BCH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "CTR-BTC": {
+    "pair": "CTR-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LINK-BTC": {
+    "pair": "LINK-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SALT-BTC": {
+    "pair": "SALT-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "1ST-BTC": {
+    "pair": "1ST-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "WTC-BTC": {
+    "pair": "WTC-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "SNGLS-BTC": {
+    "pair": "SNGLS-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SNM-BTC": {
+    "pair": "SNM-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ZRX-BTC": {
+    "pair": "ZRX-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BNT-BTC": {
+    "pair": "BNT-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "CVC-BTC": {
+    "pair": "CVC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CTR-ETH": {
+    "pair": "CTR-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LINK-ETH": {
+    "pair": "LINK-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SALT-ETH": {
+    "pair": "SALT-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "1ST-ETH": {
+    "pair": "1ST-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "WTC-ETH": {
+    "pair": "WTC-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "SNGLS-ETH": {
+    "pair": "SNGLS-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SNM-ETH": {
+    "pair": "SNM-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ZRX-ETH": {
+    "pair": "ZRX-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BNT-ETH": {
+    "pair": "BNT-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "CVC-ETH": {
+    "pair": "CVC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CTR-USDT": {
+    "pair": "CTR-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LINK-USDT": {
+    "pair": "LINK-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SALT-USDT": {
+    "pair": "SALT-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "1ST-USDT": {
+    "pair": "1ST-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "WTC-USDT": {
+    "pair": "WTC-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "SNGLS-USDT": {
+    "pair": "SNGLS-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SNM-USDT": {
+    "pair": "SNM-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ZRX-USDT": {
+    "pair": "ZRX-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BNT-USDT": {
+    "pair": "BNT-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "CVC-USDT": {
+    "pair": "CVC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BCD-BCH": {
+    "pair": "BCD-BCH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "SBTC-BCH": {
+    "pair": "SBTC-BCH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "BCX-BTC": {
+    "pair": "BCX-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "BCX-BCH": {
+    "pair": "BCX-BCH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "MANA-BTC": {
+    "pair": "MANA-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "RCN-BTC": {
+    "pair": "RCN-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MANA-ETH": {
+    "pair": "MANA-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MANA-USDT": {
+    "pair": "MANA-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "VEE-BTC": {
+    "pair": "VEE-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "VEE-ETH": {
+    "pair": "VEE-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "VEE-USDT": {
+    "pair": "VEE-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TNB-BTC": {
+    "pair": "TNB-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TNB-ETH": {
+    "pair": "TNB-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TNB-USDT": {
+    "pair": "TNB-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "AMM-BTC": {
+    "pair": "AMM-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "AMM-ETH": {
+    "pair": "AMM-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "AMM-USDT": {
+    "pair": "AMM-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "KNC-BTC": {
+    "pair": "KNC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "KNC-ETH": {
+    "pair": "KNC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "KNC-USDT": {
+    "pair": "KNC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DAT-ETH": {
+    "pair": "DAT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DAT-BTC": {
+    "pair": "DAT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DAT-USDT": {
+    "pair": "DAT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "GNX-BTC": {
+    "pair": "GNX-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "GNX-ETH": {
+    "pair": "GNX-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "GNX-USDT": {
+    "pair": "GNX-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ICX-BTC": {
+    "pair": "ICX-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "ICX-ETH": {
+    "pair": "ICX-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "ICX-USDT": {
+    "pair": "ICX-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "ARK-BTC": {
+    "pair": "ARK-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "ARK-ETH": {
+    "pair": "ARK-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "ARK-USDT": {
+    "pair": "ARK-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "YOYO-BTC": {
+    "pair": "YOYO-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "YOYO-ETH": {
+    "pair": "YOYO-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "YOYO-USDT": {
+    "pair": "YOYO-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "QVT-BTC": {
+    "pair": "QVT-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "QVT-ETH": {
+    "pair": "QVT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "QVT-USDT": {
+    "pair": "QVT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ELF-ETH": {
+    "pair": "ELF-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ELF-BTC": {
+    "pair": "ELF-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ELF-USDT": {
+    "pair": "ELF-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "AST-BTC": {
+    "pair": "AST-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "AST-ETH": {
+    "pair": "AST-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "AST-USDT": {
+    "pair": "AST-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SUB-BTC": {
+    "pair": "SUB-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SUB-ETH": {
+    "pair": "SUB-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SUB-USDT": {
+    "pair": "SUB-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DNT-BTC": {
+    "pair": "DNT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DNT-ETH": {
+    "pair": "DNT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DNT-USDT": {
+    "pair": "DNT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "FUN-BTC": {
+    "pair": "FUN-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "FUN-ETH": {
+    "pair": "FUN-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "FUN-USDT": {
+    "pair": "FUN-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ACE-BTC": {
+    "pair": "ACE-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ACE-ETH": {
+    "pair": "ACE-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ACE-USDT": {
+    "pair": "ACE-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TRX-BTC": {
+    "pair": "TRX-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TRX-ETH": {
+    "pair": "TRX-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TRX-USDT": {
+    "pair": "TRX-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "EVX-BTC": {
+    "pair": "EVX-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "EVX-ETH": {
+    "pair": "EVX-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "EVX-USDT": {
+    "pair": "EVX-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MDA-BTC": {
+    "pair": "MDA-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MDA-ETH": {
+    "pair": "MDA-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MDA-USDT": {
+    "pair": "MDA-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MTH-BTC": {
+    "pair": "MTH-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MTH-ETH": {
+    "pair": "MTH-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MTH-USDT": {
+    "pair": "MTH-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MTL-BTC": {
+    "pair": "MTL-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "MTL-ETH": {
+    "pair": "MTL-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "MTL-USDT": {
+    "pair": "MTL-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "XEM-BTC": {
+    "pair": "XEM-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "XEM-ETH": {
+    "pair": "XEM-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "XEM-USDT": {
+    "pair": "XEM-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ICN-BTC": {
+    "pair": "ICN-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ICN-ETH": {
+    "pair": "ICN-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ICN-USDT": {
+    "pair": "ICN-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ENG-BTC": {
+    "pair": "ENG-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "REQ-BTC": {
+    "pair": "REQ-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "OAX-BTC": {
+    "pair": "OAX-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DGB-BTC": {
+    "pair": "DGB-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "PPT-BTC": {
+    "pair": "PPT-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "DGB-ETH": {
+    "pair": "DGB-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DGB-USDT": {
+    "pair": "DGB-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "PPT-ETH": {
+    "pair": "PPT-ETH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "PPT-USDT": {
+    "pair": "PPT-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "OAX-ETH": {
+    "pair": "OAX-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "OAX-USDT": {
+    "pair": "OAX-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "REQ-ETH": {
+    "pair": "REQ-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "REQ-USDT": {
+    "pair": "REQ-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ENG-ETH": {
+    "pair": "ENG-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "ENG-USDT": {
+    "pair": "ENG-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "RCN-ETH": {
+    "pair": "RCN-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "RCN-USDT": {
+    "pair": "RCN-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SWFTC-BTC": {
+    "pair": "SWFTC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "SWFTC-ETH": {
+    "pair": "SWFTC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "SWFTC-USDT": {
+    "pair": "SWFTC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "RDN-BTC": {
+    "pair": "RDN-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "RDN-ETH": {
+    "pair": "RDN-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "RDN-USDT": {
+    "pair": "RDN-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "XMR-BTC": {
+    "pair": "XMR-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "XMR-ETH": {
+    "pair": "XMR-ETH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "XMR-USDT": {
+    "pair": "XMR-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "XLM-BTC": {
+    "pair": "XLM-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "XLM-ETH": {
+    "pair": "XLM-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "XLM-USDT": {
+    "pair": "XLM-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "KCASH-BTC": {
+    "pair": "KCASH-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "KCASH-ETH": {
+    "pair": "KCASH-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "KCASH-USDT": {
+    "pair": "KCASH-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MDT-BTC": {
+    "pair": "MDT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MDT-ETH": {
+    "pair": "MDT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MDT-USDT": {
+    "pair": "MDT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "NAS-BTC": {
+    "pair": "NAS-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "NAS-ETH": {
+    "pair": "NAS-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "NAS-USDT": {
+    "pair": "NAS-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "RNT-BTC": {
+    "pair": "RNT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "RNT-ETH": {
+    "pair": "RNT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "RNT-USDT": {
+    "pair": "RNT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "WRC-BTC": {
+    "pair": "WRC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "WRC-ETH": {
+    "pair": "WRC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "WRC-USDT": {
+    "pair": "WRC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "UKG-BTC": {
+    "pair": "UKG-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "UKG-ETH": {
+    "pair": "UKG-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "UKG-USDT": {
+    "pair": "UKG-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "UGC-BTC": {
+    "pair": "UGC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "UGC-ETH": {
+    "pair": "UGC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "UGC-USDT": {
+    "pair": "UGC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DPY-BTC": {
+    "pair": "DPY-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DPY-ETH": {
+    "pair": "DPY-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DPY-USDT": {
+    "pair": "DPY-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "READ-BTC": {
+    "pair": "READ-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "READ-ETH": {
+    "pair": "READ-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "READ-USDT": {
+    "pair": "READ-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SSC-BTC": {
+    "pair": "SSC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SSC-ETH": {
+    "pair": "SSC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SSC-USDT": {
+    "pair": "SSC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "AAC-BTC": {
+    "pair": "AAC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SMT-BTC": {
+    "pair": "SMT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "FAIR-BTC": {
+    "pair": "FAIR-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "AAC-ETH": {
+    "pair": "AAC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SMT-ETH": {
+    "pair": "SMT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "AAC-USDT": {
+    "pair": "AAC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SMT-USDT": {
+    "pair": "SMT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "FAIR-ETH": {
+    "pair": "FAIR-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "FAIR-USDT": {
+    "pair": "FAIR-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "UBTC-BTC": {
+    "pair": "UBTC-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "UBTC-ETH": {
+    "pair": "UBTC-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "UBTC-USDT": {
+    "pair": "UBTC-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "CAG-BTC": {
+    "pair": "CAG-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CAG-ETH": {
+    "pair": "CAG-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CAG-USDT": {
+    "pair": "CAG-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DNA-BTC": {
+    "pair": "DNA-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LEND-BTC": {
+    "pair": "LEND-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "LEND-ETH": {
+    "pair": "LEND-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DNA-ETH": {
+    "pair": "DNA-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LEND-USDT": {
+    "pair": "LEND-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DNA-USDT": {
+    "pair": "DNA-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "RCT-BTC": {
+    "pair": "RCT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "RCT-ETH": {
+    "pair": "RCT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "RCT-USDT": {
+    "pair": "RCT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "BCH-ETH": {
+    "pair": "BCH-ETH",
+    "min_trade_size": 0.001,
+    "quote_increment": 1e-8
+  },
+  "SHOW-BTC": {
+    "pair": "SHOW-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "SHOW-ETH": {
+    "pair": "SHOW-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "SHOW-USDT": {
+    "pair": "SHOW-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "VIB-BTC": {
+    "pair": "VIB-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "VIB-ETH": {
+    "pair": "VIB-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "VIB-USDT": {
+    "pair": "VIB-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MOT-BTC": {
+    "pair": "MOT-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MOT-ETH": {
+    "pair": "MOT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MOT-USDT": {
+    "pair": "MOT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "UTK-BTC": {
+    "pair": "UTK-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "UTK-ETH": {
+    "pair": "UTK-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "UTK-USDT": {
+    "pair": "UTK-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MAG-BTC": {
+    "pair": "MAG-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "MAG-ETH": {
+    "pair": "MAG-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "MAG-USDT": {
+    "pair": "MAG-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "TOPC-BTC": {
+    "pair": "TOPC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TOPC-ETH": {
+    "pair": "TOPC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "BRD-BTC": {
+    "pair": "BRD-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "TOPC-USDT": {
+    "pair": "TOPC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "QUN-BTC": {
+    "pair": "QUN-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "BRD-ETH": {
+    "pair": "BRD-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "QUN-ETH": {
+    "pair": "QUN-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "QUN-USDT": {
+    "pair": "QUN-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "BRD-USDT": {
+    "pair": "BRD-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "VIU-BTC": {
+    "pair": "VIU-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "VIU-ETH": {
+    "pair": "VIU-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "OST-BTC": {
+    "pair": "OST-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "VIU-USDT": {
+    "pair": "VIU-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "OST-ETH": {
+    "pair": "OST-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "OST-USDT": {
+    "pair": "OST-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "AIDOC-BTC": {
+    "pair": "AIDOC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "AIDOC-ETH": {
+    "pair": "AIDOC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "AIDOC-USDT": {
+    "pair": "AIDOC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "INT-BTC": {
+    "pair": "INT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "LA-BTC": {
+    "pair": "LA-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LA-ETH": {
+    "pair": "LA-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "LA-USDT": {
+    "pair": "LA-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "INT-ETH": {
+    "pair": "INT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "INT-USDT": {
+    "pair": "INT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "IPC-BTC": {
+    "pair": "IPC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "IPC-ETH": {
+    "pair": "IPC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "IPC-USDT": {
+    "pair": "IPC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "NGC-BTC": {
+    "pair": "NGC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "NGC-ETH": {
+    "pair": "NGC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "NGC-USDT": {
+    "pair": "NGC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "TIO-BTC": {
+    "pair": "TIO-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "TIO-ETH": {
+    "pair": "TIO-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "TIO-USDT": {
+    "pair": "TIO-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "IOST-BTC": {
+    "pair": "IOST-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "IOST-ETH": {
+    "pair": "IOST-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "IOST-USDT": {
+    "pair": "IOST-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "POE-BTC": {
+    "pair": "POE-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "POE-ETH": {
+    "pair": "POE-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "POE-USDT": {
+    "pair": "POE-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MOF-BTC": {
+    "pair": "MOF-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "YEE-BTC": {
+    "pair": "YEE-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "MOF-ETH": {
+    "pair": "MOF-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "YEE-ETH": {
+    "pair": "YEE-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "YEE-USDT": {
+    "pair": "YEE-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "MOF-USDT": {
+    "pair": "MOF-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "INS-BTC": {
+    "pair": "INS-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "INS-ETH": {
+    "pair": "INS-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "INS-USDT": {
+    "pair": "INS-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "TCT-BTC": {
+    "pair": "TCT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TCT-ETH": {
+    "pair": "TCT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "TCT-USDT": {
+    "pair": "TCT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ATL-BTC": {
+    "pair": "ATL-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ATL-ETH": {
+    "pair": "ATL-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ATL-USDT": {
+    "pair": "ATL-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "THETA-BTC": {
+    "pair": "THETA-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "THETA-ETH": {
+    "pair": "THETA-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "LEV-BTC": {
+    "pair": "LEV-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "THETA-USDT": {
+    "pair": "THETA-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "LEV-ETH": {
+    "pair": "LEV-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "LEV-USDT": {
+    "pair": "LEV-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "STC-BTC": {
+    "pair": "STC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SPF-BTC": {
+    "pair": "SPF-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "STC-ETH": {
+    "pair": "STC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SPF-ETH": {
+    "pair": "SPF-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SPF-USDT": {
+    "pair": "SPF-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "STC-USDT": {
+    "pair": "STC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "REF-BTC": {
+    "pair": "REF-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "REF-ETH": {
+    "pair": "REF-ETH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "REF-USDT": {
+    "pair": "REF-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "SNC-BTC": {
+    "pair": "SNC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SNC-ETH": {
+    "pair": "SNC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "SNC-USDT": {
+    "pair": "SNC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "PST-BTC": {
+    "pair": "PST-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "PST-ETH": {
+    "pair": "PST-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "PST-USDT": {
+    "pair": "PST-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CAN-BTC": {
+    "pair": "CAN-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "CAN-ETH": {
+    "pair": "CAN-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "CAN-USDT": {
+    "pair": "CAN-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "HOT-BTC": {
+    "pair": "HOT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "MKR-BTC": {
+    "pair": "MKR-BTC",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "MKR-ETH": {
+    "pair": "MKR-ETH",
+    "min_trade_size": 0.001,
+    "quote_increment": 0.000001
+  },
+  "MKR-USDT": {
+    "pair": "MKR-USDT",
+    "min_trade_size": 0.001,
+    "quote_increment": 1e-8
+  },
+  "HOT-ETH": {
+    "pair": "HOT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "KEY-BTC": {
+    "pair": "KEY-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "HOT-USDT": {
+    "pair": "HOT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "KEY-ETH": {
+    "pair": "KEY-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "KEY-USDT": {
+    "pair": "KEY-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "LIGHT-BTC": {
+    "pair": "LIGHT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 1
+  },
+  "LIGHT-ETH": {
+    "pair": "LIGHT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 1
+  },
+  "LIGHT-USDT": {
+    "pair": "LIGHT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 1
+  },
+  "TRUE-BTC": {
+    "pair": "TRUE-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "TRUE-ETH": {
+    "pair": "TRUE-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "TRUE-USDT": {
+    "pair": "TRUE-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "OF-BTC": {
+    "pair": "OF-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "OF-ETH": {
+    "pair": "OF-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "OF-USDT": {
+    "pair": "OF-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "SOC-BTC": {
+    "pair": "SOC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SOC-ETH": {
+    "pair": "SOC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "SOC-USDT": {
+    "pair": "SOC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "WBTC-BTC": {
+    "pair": "WBTC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "DENT-BTC": {
+    "pair": "DENT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "DENT-ETH": {
+    "pair": "DENT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "DENT-USDT": {
+    "pair": "DENT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "ZEN-BTC": {
+    "pair": "ZEN-BTC",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "ZEN-ETH": {
+    "pair": "ZEN-ETH",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "ZEN-USDT": {
+    "pair": "ZEN-USDT",
+    "min_trade_size": 0.01,
+    "quote_increment": 0.00001
+  },
+  "HMC-BTC": {
+    "pair": "HMC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "HMC-ETH": {
+    "pair": "HMC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "HMC-USDT": {
+    "pair": "HMC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ZIP-BTC": {
+    "pair": "ZIP-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 1
+  },
+  "ZIP-ETH": {
+    "pair": "ZIP-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 1
+  },
+  "ZIP-USDT": {
+    "pair": "ZIP-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 1
+  },
+  "NANO-BTC": {
+    "pair": "NANO-BTC",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "NANO-ETH": {
+    "pair": "NANO-ETH",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "NANO-USDT": {
+    "pair": "NANO-USDT",
+    "min_trade_size": 0.1,
+    "quote_increment": 0.0001
+  },
+  "CIC-BTC": {
+    "pair": "CIC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "CIC-ETH": {
+    "pair": "CIC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "CIC-USDT": {
+    "pair": "CIC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "GTO-BTC": {
+    "pair": "GTO-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "GTO-ETH": {
+    "pair": "GTO-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "GTO-USDT": {
+    "pair": "GTO-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "CHAT-BTC": {
+    "pair": "CHAT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "CHAT-ETH": {
+    "pair": "CHAT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "CHAT-USDT": {
+    "pair": "CHAT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "INSUR-BTC": {
+    "pair": "INSUR-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "INSUR-ETH": {
+    "pair": "INSUR-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "INSUR-USDT": {
+    "pair": "INSUR-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "CBT-BTC": {
+    "pair": "CBT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "CBT-ETH": {
+    "pair": "CBT-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "CBT-USDT": {
+    "pair": "CBT-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "R-BTC": {
+    "pair": "R-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "R-ETH": {
+    "pair": "R-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "R-USDT": {
+    "pair": "R-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "UCT-BTC": {
+    "pair": "UCT-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "UCT-ETH": {
+    "pair": "UCT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "UCT-USDT": {
+    "pair": "UCT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BEC-BTC": {
+    "pair": "BEC-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BEC-ETH": {
+    "pair": "BEC-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BEC-USDT": {
+    "pair": "BEC-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MITH-BTC": {
+    "pair": "MITH-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MITH-ETH": {
+    "pair": "MITH-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "MITH-USDT": {
+    "pair": "MITH-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ABT-BTC": {
+    "pair": "ABT-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ABT-ETH": {
+    "pair": "ABT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ABT-USDT": {
+    "pair": "ABT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BKX-BTC": {
+    "pair": "BKX-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BKX-ETH": {
+    "pair": "BKX-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "BKX-USDT": {
+    "pair": "BKX-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "GTC-BTC": {
+    "pair": "GTC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "GTC-ETH": {
+    "pair": "GTC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "GTC-USDT": {
+    "pair": "GTC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "AUTO-BTC": {
+    "pair": "AUTO-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "AUTO-ETH": {
+    "pair": "AUTO-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "AUTO-USDT": {
+    "pair": "AUTO-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "GSC-BTC": {
+    "pair": "GSC-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "GSC-ETH": {
+    "pair": "GSC-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "GSC-USDT": {
+    "pair": "GSC-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "RFR-BTC": {
+    "pair": "RFR-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "RFR-ETH": {
+    "pair": "RFR-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "RFR-USDT": {
+    "pair": "RFR-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "TRIO-BTC": {
+    "pair": "TRIO-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "TRIO-ETH": {
+    "pair": "TRIO-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "TRIO-USDT": {
+    "pair": "TRIO-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "TRA-BTC": {
+    "pair": "TRA-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "TRA-ETH": {
+    "pair": "TRA-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "TRA-USDT": {
+    "pair": "TRA-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "REN-BTC": {
+    "pair": "REN-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "REN-ETH": {
+    "pair": "REN-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "REN-USDT": {
+    "pair": "REN-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "WFEE-BTC": {
+    "pair": "WFEE-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "WFEE-ETH": {
+    "pair": "WFEE-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "WFEE-USDT": {
+    "pair": "WFEE-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.1
+  },
+  "DADI-BTC": {
+    "pair": "DADI-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DADI-ETH": {
+    "pair": "DADI-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "DADI-USDT": {
+    "pair": "DADI-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ENJ-BTC": {
+    "pair": "ENJ-BTC",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ENJ-ETH": {
+    "pair": "ENJ-ETH",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ENJ-USDT": {
+    "pair": "ENJ-USDT",
+    "min_trade_size": 10,
+    "quote_increment": 0.01
+  },
+  "ONT-BTC": {
+    "pair": "ONT-BTC",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ONT-ETH": {
+    "pair": "ONT-ETH",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  },
+  "ONT-USDT": {
+    "pair": "ONT-USDT",
+    "min_trade_size": 1,
+    "quote_increment": 0.001
+  }
+}

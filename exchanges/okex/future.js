@@ -112,9 +112,7 @@ class Exchange extends Spot {
   // }
 
   async futureBalances(o = {}) {
-    console.log('futureBalances start');
     let ds = await this.post('future_userinfo', o, true);
-    console.log('futureBalances end');
     ds = kUtils.formatFutureBalances(ds);
     return ds;
   }
