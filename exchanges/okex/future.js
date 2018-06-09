@@ -157,7 +157,6 @@ class Exchange extends Spot {
     checkKey(o, ['pair', 'contract_type', 'lever_rate', 'side', 'direction', 'type']);
     const opt = kUtils.formatFutureOrderO(o);
     const ds = await this.post('future_trade', opt, true);
-    console.log(ds, 'futureOrder...');
     if (ds) {
       const res = {
         success: ds ? ds.result : false,

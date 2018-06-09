@@ -102,9 +102,8 @@ class Exchange extends Base {
     return kUtils.formatAllOrders(ds);
   }
   async balances(o = {}) {
-    let ds = await this.post('userinfo', o, true);
-    ds = kUtils.formatBalances(ds);
-    return ds;
+    const ds = await this.post('userinfo', o, true);
+    return kUtils.formatBalances(ds);
   }
   async allBalances() {
     const tasks = [this.balances(), this.futureBalances()];

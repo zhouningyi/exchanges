@@ -102,21 +102,22 @@ class exchange extends Event {
     return { ...defaultConfig, ...config };
   }
   genRateLimitFn(fn, t = 100, fnName) {
-    const lockName = `rate_limit_${fnName}`;
-    return async (a, b, c, d) => {
+    const timeName = `rate_limit_${fnName}`;
+    return async function f(a, b, c, d) {
       let ds = false;
-      if (this.isLock(lockName)) {
+      if (this[timeName] && new Date() - this[timeName] < t) {
         await delay(t);
-        this.cancelLock(lockName);
+        const ds = await f.bind(this)(a, b, c, d);
+        return ds;
       }
-      this.addLock(lockName);
+      this[timeName] = new Date();
       try {
         ds = await fn(a, b, c, d);
       } catch (e) {
         this.warn(`${fnName} error`, e);
       }
       return ds;
-    };
+    }.bind(this);
   }
   wrap(config = {}, o = {}) {
     const { isPrint = false } = o;
@@ -130,6 +131,12 @@ class exchange extends Event {
       this[fnName] = fn;
     });
     return true;
+  }
+  test() {
+    console.log('test');
+  }
+  throwError(e) {
+    throw new Error(e);
   }
 }
 
