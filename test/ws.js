@@ -11,11 +11,14 @@ const wsList = [
   //   params: {},
   //   name: 'tick数据...'
   // },
-  // {
-  //   fn: 'wsFutureTicks',
-  //   params: {},
-  //   name: '期货tick数据...'
-  // },
+  {
+    fn: 'wsFutureTicks',
+    params: {
+      contract_type: ['this_week', 'quarter', 'next_week'],
+      pairs: ['EOS-USDT']
+    },
+    name: '期货tick数据...'
+  },
   // {
   //   fn: 'wsBalance',
   //   params: {},

@@ -21,9 +21,16 @@ function _parse(v) {
 
 function createWsChanel(genChanel) {
   return (pairs, o) => {
-    const ds = _.map(pairs, (pair) => {
+    const ds = [];
+    _.forEach(pairs, (pair) => {
       const channel = genChanel(pair, o);
-      return { event: 'addChannel', channel };
+      if (Array.isArray(channel)){
+        _.forEach(channel, (chan) => {
+          ds.push({ event: 'addChannel', channel: chan });
+        });
+      } else if (typeof channel === 'string') {
+        ds.push({ event: 'addChannel', channel });
+      }
     });
     return JSON.stringify(ds);
   };

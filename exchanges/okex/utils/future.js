@@ -101,7 +101,13 @@ function formatWsFutureTick(ds) {
 //
 const createWsChanelFutureTick = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
-  return `ok_sub_future${pair}_ticker_${o.contract_type}`;
+  const { contract_type } = o;
+  if (Array.isArray(contract_type)) {
+    return _.map(contract_type, (ctype) => {
+      return `ok_sub_future${pair}_ticker_${ctype}`;
+    });
+  }
+  return `ok_sub_future${pair}_ticker_${contract_type}`;
 });
 
 const createWsChanelFutureKline = createWsChanel((pair, o) => {
@@ -148,7 +154,14 @@ function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
 }
 const createWsFutureDepth = createWsChanel((pair, o) => {
   pair = formatPair(pair, true);
-  return `ok_sub_future${pair}_depth_${o.contract_type}_${o.size}`;
+  const { contract_type } = o;
+  if (typeof contract_type === 'string') {
+    return `ok_sub_future${pair}_depth_${o.contract_type}_${o.size}`;
+  } else if (Array.isArray(contract_type)) {
+    return _.map(contract_type, (ctype) => {
+      return `ok_sub_future${pair}_depth_${ctype}_${o.size}`;
+    });
+  }
 });
 
 // depth
