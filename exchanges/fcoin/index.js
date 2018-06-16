@@ -213,10 +213,14 @@ class Exchange extends Base {
     return this._isWsReady;
   }
   // ws接口
-  async wsTicks(o, cb) {
-    const pairs = await this.pairs();
-    const args = _.map(pairs, (o) => {
-      const symbol = tUtils.pair2symbol(o.pair);
+  async wsTicks(o = {}, cb) {
+    let pairs = o.pairs;
+    if (!pairs) {
+      pairs = await this.pairs();
+      pairs = _.map(pairs, o => o.pair);
+    }
+    const args = _.map(pairs, (pair) => {
+      const symbol = tUtils.pair2symbol(pair);
       return `ticker.${symbol}`;
     });
     const sendMessage = ws => ws.send(JSON.stringify({ cmd: 'sub', args, id: 'tick' }));
