@@ -6,17 +6,10 @@ const config = require('./../config');
 const Utils = require('./utils');
 
 const wsList = [
-  // {
-  //   fn: 'wsTicks',
-  //   params: {},
-  //   name: 'tick数据...'
-  // },
   {
     fn: 'wsTicks',
-    params: {
-      // pair: 'FT-ETH'
-    },
-    name: 'tick数据（单个pair）...'
+    params: {},
+    name: 'tick数据...'
   },
   // {
   //   fn: 'wsFutureTicks',
