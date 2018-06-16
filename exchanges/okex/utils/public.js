@@ -4,12 +4,12 @@ const config = require('./../config');
 
 const subscribe = Utils.ws.genSubscribe(config.WS_BASE);
 
-function formatPair(pair, isReverse = false) {
+function pair2symbol(pair, isReverse = false) {
   if (!isReverse) return pair.replace('-', '_').toLowerCase();
   return pair.split('-').reverse().join('_').toLowerCase();
 }
 
-function deFormatPair(symbol, isFuture = false) {
+function symbol2pair(symbol, isFuture = false) {
   let ss = symbol.split('_');
   if (isFuture) ss = ss.reverse();
   return ss.join('-').toUpperCase();
@@ -81,14 +81,14 @@ function formatWsResult(_format) {
 
 function extactPairFromFutureChannel(channel, str) {  // usd_btc_kline_quarter_1min
   const symbol = channel.replace('ok_sub_future', '').split(str)[0];
-  return deFormatPair(symbol, true);
+  return symbol2pair(symbol, true);
 }
 
 function extactPairFromSpotChannel(channel, str) {
   const symbol = channel.replace('ok_sub_spot_', '').split(str)[0];
   // console.log(channel, symbol, 'symbol');
   // process.exit();
-  return deFormatPair(symbol, false);
+  return symbol2pair(symbol, false);
 }
 
 const code2OrderStatus = {
@@ -102,8 +102,8 @@ const orderStatus2Code = _.invert(code2OrderStatus);
 
 module.exports = {
   formatInterval,
-  deFormatPair,
-  formatPair,
+  symbol2pair,
+  pair2symbol,
   intervalMap,
   _parse,
   code2OrderStatus,

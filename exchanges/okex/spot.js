@@ -157,7 +157,7 @@ class Exchange extends Base {
     params = _.cloneDeep(params);
     if (!params.symbol) {
       params = Utils.replace(params, { pair: 'symbol' });
-      if (params.symbol) params.symbol = kUtils.formatPair(params.symbol);
+      if (params.symbol) params.symbol = kUtils.pair2symbol(params.symbol);
     }
     delete params.pair;
     const signedParams = {
@@ -168,8 +168,13 @@ class Exchange extends Base {
       } : {})
     };
     const qstr = Utils.getQueryString(signedParams);
-    let url = `${URL}/${this.version}/${endpoint}.do`;
-    if (method === 'GET') url += `?${qstr}`;
+    let url;
+    if (endpoint.startsWith('http')) {
+      url = endpoint;
+    } else {
+      url = `${URL}/${this.version}/${endpoint}.do`;
+    }
+    if (method === 'GET' && qstr) url += `?${qstr}`;
     const cType = 'application/x-www-form-urlencoded';
     const o = {
       uri: url,
@@ -213,6 +218,12 @@ class Exchange extends Base {
       // }
     }
     return body.data || body || false;
+  }
+  async pairs(o = {}) {
+    const url = 'https://www.okex.com/v2/spot/markets/products';
+    let ds = await this.get(url);
+    ds = kUtils.pair2symbol(ds);
+    return ds;
   }
   _getPairs(filter, pairs) {
     if (pairs) return pairs;

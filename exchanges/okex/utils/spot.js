@@ -1,14 +1,15 @@
 const _ = require('lodash');
 const Utils = require('./../../../utils');
-const md5 = require('md5');
+const publicUtils = require('./public');
+// const md5 = require('md5');
 
 const {
-  deFormatPair,
+  symbol2pair,
   parseOrderType,
   createWsChanel,
   code2OrderStatus,
   orderStatus2Code,
-  formatPair,
+  pair2symbol,
   _parse,
   formatInterval,
   extactPairFromSpotChannel,
@@ -118,7 +119,7 @@ function formatOrderO(o) {
   if (type && type.toLowerCase() === 'market') okexType += '_market';
   const extra = (price && type !== 'MARKET') ? { price } : {};
   return {
-    symbol: formatPair(pair),
+    symbol: pair2symbol(pair),
     type: okexType,
     amount,
     ...extra
@@ -129,7 +130,7 @@ function formatOrderO(o) {
 function formatCancelOrderO(o = {}) {
   let { order_id } = o;
   if (Array.isArray(order_id)) order_id = order_id.join(',');
-  const symbol = formatPair(o.pair);
+  const symbol = pair2symbol(o.pair);
   return { order_id, symbol };
 }
 function formatCancelOrder(ds) {
@@ -206,19 +207,19 @@ function formatAllOrders(ds) {
       order_main_id: d.order_id,
       order_id: d.orders_id,
       status: code2OrderStatus[d.status],
-      pair: deFormatPair(d.symbol),
+      pair: symbol2pair(d.symbol),
       ...parseOrderType(d.type)
     };
   });
 }
 
 const createSpotChanelBalance = createWsChanel((pair) => {
-  const symbol = formatPair(pair, false);
+  const symbol = pair2symbol(pair, false);
   return `ok_sub_spot_${symbol}_balance`;
 });
 
 const createSpotChanelTick = createWsChanel((pair) => {
-  const symbol = formatPair(pair, false);
+  const symbol = pair2symbol(pair, false);
   return `ok_sub_spot_${symbol}_ticker`;
 });
 
@@ -263,12 +264,12 @@ function formatWsTick(ds) {
 
 function _parseWsDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_spot_', '').split('_depth');
-  const pair = deFormatPair(ds[0], false);
+  const pair = symbol2pair(ds[0], false);
   return { pair };
 }
 
 const createSpotChanelDepth = createWsChanel((pair, o) => {
-  const symbol = formatPair(pair, false);
+  const symbol = pair2symbol(pair, false);
   return `ok_sub_spot_${symbol}_depth_${o.size}`;
 });
 
@@ -299,8 +300,19 @@ function formatWsDepth(ds) {
 // }
 
 
+function formatPairs(ds) {
+  return _.map(ds, (d) => {
+    return {
+      ...d,
+      pair: publicUtils.symbol2pair(d.symbol)
+    };
+  });
+}
+
+
 module.exports = {
-  formatPair,
+  pair2symbol,
+  formatPairs,
   formatTick,
   formatDepth,
   formatOrderBook,

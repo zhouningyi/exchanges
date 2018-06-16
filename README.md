@@ -29,7 +29,7 @@
 | 已经完成的订单 | finishOrders | | |  ||| ✅ | | |  |
 | 测试连接 | ping | 无 | | |✅||  |  |  |  |
 | 服务器时间 | time | 无 | | |✅||  |  |  |  |
-| 交易对信息(偏静态) | pairs |  | | |✅||  |  |  |  |
+| 交易对信息(偏静态) | pairs |  | | |✅|| ✅ |  |  |  |
 | 深度信息 | depth(futureDepth) | pair | | |✅ limit 可选  5, 10, 20, 50, 100|| ✅ |  |  |  |
 | 合约账户信息（全仓） | futurePosition | pair, contract_type | | ||| ✅ |  |  |  |
 |  |  |  | | |||  |  |  |  |

@@ -139,7 +139,8 @@ class Exchange extends Base {
     params = tUtils.formatPair(params);
     let url = `https://${REST_URL}/${this.version}/${endpoint}`;
     if (method === 'GET') {
-      url = `${url}?${Utils.getQueryString(params)}`;
+      const qstr = Utils.getQueryString(params);
+      if (qstr) url = `${url}?${qstr}`;
     } else if (method === 'POST') {
     }
     const headers = isSign ? this._getHeader(url, method, params) : {};

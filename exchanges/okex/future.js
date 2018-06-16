@@ -74,7 +74,7 @@ class Exchange extends Spot {
     this.createWs({ timeInterval: 300, chanelString, name: 'wsFutureTicks' })(kUtils.formatWsFutureTick, cb, reconnect);
   }
   wsFutureKlines(o = {}, cb) {
-    const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
+    const symbols = o.pair ? [kUtils.pair2symbol(o.pair, true)] : FUTURE_PAIRS;
     const { contract_type = 'quarter', interval = '1m' } = o;
     const options = { contract_type, interval };
     const chanelString = kUtils.createWsChanelFutureKline(symbols, { contract_type, interval });
@@ -86,7 +86,7 @@ class Exchange extends Spot {
     this.wsFutureKlines(o, cb);
   }
   wsFutureDepth(o = {}, cb) {
-    const symbols = o.pair ? [kUtils.formatPair(o.pair, true)] : FUTURE_PAIRS;
+    const symbols = o.pair ? [kUtils.pair2symbol(o.pair, true)] : FUTURE_PAIRS;
     const defaultO = {
       size: 50,
     };
@@ -132,7 +132,7 @@ class Exchange extends Spot {
     };
     checkKey(o, ['pair', 'contract_type']);
     const opt = { ...defaultO, ...o, order_id: '-1' };
-    opt.symbol = kUtils.formatPair(o.pair).replace('usdt', 'usd');
+    opt.symbol = kUtils.pair2symbol(o.pair).replace('usdt', 'usd');
     const ds = await this.post('future_order_info', opt, true, true);
     const res = kUtils.formatFutureOrderInfo(ds, o, false);
     return res;
@@ -246,7 +246,7 @@ class Exchange extends Spot {
     checkKey(o, reqs);
     const opt = _.pick(o, ['order_id', 'contract_type']);
     if (Array.isArray(opt.order_id)) opt.order_id = opt.order_id.join(',');
-    opt.symbol = kUtils.formatPair(o.pair).replace('usdt', 'usd');
+    opt.symbol = kUtils.pair2symbol(o.pair).replace('usdt', 'usd');
     const ds = await this.post('future_orders_info', opt, true);
     const res = kUtils.formatFutureOrderInfo(ds, o);
     this._updateUnfinishFutureOrders(res);

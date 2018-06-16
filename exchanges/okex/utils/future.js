@@ -7,12 +7,12 @@ const error = require('./../errors');
 const { checkKey } = Utils;
 
 const {
-  deFormatPair,
+  symbol2pair,
   formatWsResult,
   createWsChanel,
   code2OrderStatus,
   orderStatus2Code,
-  formatPair,
+  pair2symbol,
   _parse,
   formatInterval,
 } = require('./public');
@@ -100,7 +100,7 @@ function formatWsFutureTick(ds) {
 
 //
 const createWsChanelFutureTick = createWsChanel((pair, o) => {
-  pair = formatPair(pair, true);
+  pair = pair2symbol(pair, true);
   const { contract_type } = o;
   if (Array.isArray(contract_type)) {
     return _.map(contract_type, (ctype) => {
@@ -111,7 +111,7 @@ const createWsChanelFutureTick = createWsChanel((pair, o) => {
 });
 
 const createWsChanelFutureKline = createWsChanel((pair, o) => {
-  pair = formatPair(pair, true);
+  pair = pair2symbol(pair, true);
   const interval = formatInterval(o.interval);
   return `ok_sub_future${pair}_kline_${o.contract_type}_${interval}`;
 });
@@ -122,7 +122,7 @@ const createWsChanelFutureKline = createWsChanel((pair, o) => {
 
 function _parseWsFutureChannel(channel) {  // usd_btc_kline_quarter_1min
   const symbol = channel.replace('ok_sub_future', '').split('_kline_')[0];
-  return deFormatPair(symbol, true);
+  return symbol2pair(symbol, true);
 }
 
 const formatWsFutureKline = formatWsResult((kline, o) => {
@@ -148,12 +148,12 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
 //
 function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_future', '').split('_depth_');
-  const pair = deFormatPair((ds[0] || '').replace('usd', 'usdt'), true);
+  const pair = symbol2pair((ds[0] || '').replace('usd', 'usdt'), true);
   const contract_type = ds[1];
   return { contract_type, pair };
 }
 const createWsFutureDepth = createWsChanel((pair, o) => {
-  pair = formatPair(pair, true);
+  pair = pair2symbol(pair, true);
   const { contract_type } = o;
   if (typeof contract_type === 'string') {
     return `ok_sub_future${pair}_depth_${o.contract_type}_${o.size}`;
