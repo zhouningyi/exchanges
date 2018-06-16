@@ -14,6 +14,7 @@
     "ask_price": "FLOAT",
     "exchange": ["STRING", 10],
     "contract_id": ["STRING", 20],
+    "contract_type": ["STRING", 10],
     "hold_amount": "FLOAT",
     "volume_24": "FLOAT"
   }

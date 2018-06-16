@@ -12,13 +12,20 @@ const wsList = [
   //   name: 'tick数据...'
   // },
   {
-    fn: 'wsFutureTicks',
+    fn: 'wsTicks',
     params: {
-      contract_type: ['this_week', 'quarter', 'next_week'],
-      pairs: ['EOS-USDT']
+      // pair: 'FT-ETH'
     },
-    name: '期货tick数据...'
+    name: 'tick数据（单个pair）...'
   },
+  // {
+  //   fn: 'wsFutureTicks',
+  //   params: {
+  //     contract_type: ['this_week', 'quarter', 'next_week'],
+  //     pairs: ['EOS-USDT']
+  //   },
+  //   name: '期货tick数据...'
+  // },
   // {
   //   fn: 'wsBalance',
   //   params: {},
@@ -52,12 +59,12 @@ const wsList = [
   //   },
   //   name: '深度图'
   // },
-  {
-    fn: 'wsFutureBalances',
-    params: {
-    },
-    name: 'ws的余额'
-  },
+  // {
+  //   fn: 'wsFutureBalances',
+  //   params: {
+  //   },
+  //   name: 'ws的余额'
+  // },
 ];
 
 function testOneExchangeWs(exName, list) {
@@ -70,5 +77,5 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-testOneExchangeWs('okex', wsList);
+testOneExchangeWs('fcoin', wsList);
 

@@ -24,6 +24,7 @@ function genSubscribe(stream) {
     //
     let ws;
     try {
+      console.log(stream + endpoint, 'stream + endpoint');
       ws = new WebSocket(stream + endpoint, options);
     } catch (e) {
       console.log(e);
@@ -46,6 +47,7 @@ function genSubscribe(stream) {
     if (endpoint) ws.endpoint = endpoint;
     ws.isAlive = false;
     ws.on('open', () => {
+      console.log('open');
       if (willLink) willLink(ws);
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });

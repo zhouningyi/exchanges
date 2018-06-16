@@ -74,7 +74,7 @@ class exchange extends Event {
   }
   // 保存配置
   _getConifgPath(file, ext = 'json') {
-    return path.join(__dirname, `./${this.name}/meta/${file}.json`);
+    return path.join(__dirname, `./${this.name}/meta/${file}.${ext}`);
   }
   saveConfig(json = {}, file) {
     const pth = this._getConifgPath(file);

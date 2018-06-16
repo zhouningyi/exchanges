@@ -24,7 +24,7 @@ function createWsChanel(genChanel) {
     const ds = [];
     _.forEach(pairs, (pair) => {
       const channel = genChanel(pair, o);
-      if (Array.isArray(channel)){
+      if (Array.isArray(channel)) {
         _.forEach(channel, (chan) => {
           ds.push({ event: 'addChannel', channel: chan });
         });

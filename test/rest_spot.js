@@ -1,19 +1,32 @@
 const { testRest } = require('./utils');
 
-const exchanges = ['huobi'];
+const exchanges = ['fcoin'];
 // , 'okex'. 'hitbtc' 'bittrex'
 
 const tasks = [
   // {
+  //   fn: 'time',
+  //   params: {},
+  //   name: '服务器时间'
+  // },
+  // {
   //   fn: 'order',
   //   params: {
-  //     pair: 'OKB-BTC',
-  //     amount: 2,
-  //     // price: 7155,
+  //     pair: 'FT-ETH',
+  //     amount: 5,
+  //     price: 0.0013132,
   //     side: 'BUY',
-  //     type: 'MARKET'
+  //     type: 'LIMIT'
   //   },
   //   name: '交易'
+  // },
+  // {
+  //   fn: 'orders',
+  //   params: {
+  //     pair: 'FT-ETH',
+  //     status: 'FINISH'
+  //   },
+  //   name: '所有的订单'
   // },
   // {
   //   fn: 'fastOrder',
@@ -26,13 +39,13 @@ const tasks = [
   //   },
   //   name: '交易'
   // },
-  // {
-  //   fn: 'cancelAllOrders',
-  //   params: {
-  //     pair: 'OKB-USDT'
-  //   },
-  //   name: '取消正在执行中的订单'
-  // },
+  {
+    fn: 'cancelAllOrders',
+    params: {
+      pair: 'FT-ETH'
+    },
+    name: '取消正在执行中的订单'
+  },
   // {
   //   fn: 'activeOrders',
   //   params: {
@@ -59,9 +72,7 @@ const tasks = [
   // {
   //   fn: 'cancelOrder',
   //   params: {
-  //     pair: 'ETH-BTC',
-  //     side: 'BUY',
-  //     order_id: '5ab781719dda152895660f43'
+  //     order_id: 'EwvjhigbJglUigKrh1dEenSlflQ4zVhOQSHR92WY77o='
   //   },
   //   name: '取消交易'
   // },
@@ -75,7 +86,11 @@ const tasks = [
   //   params: {},
   //   name: '币信息'
   // },
-
+  // {
+  //   fn: 'tick',
+  //   params: { pair: 'ETH-USDT' },
+  //   name: 'tick数据'
+  // },
   // {
   //   fn: 'ticks',
   //   params: { pair: 'OKB-USDT' },
@@ -87,14 +102,12 @@ const tasks = [
   //   params: {},
   //   name: 'accounts'
   // },
-
-  {
-    fn: 'balances',
-    params: {
-      type: 'otc'
-    },
-    name: '账户余额'
-  },
+  // {
+  //   fn: 'balances',
+  //   params: {
+  //   },
+  //   name: '账户余额'
+  // },
   // {
   //   fn: 'futureBalances',
   //   params: {},

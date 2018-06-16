@@ -36,7 +36,8 @@ class Exchange extends Base {
     return tUtils.testOrder(o);
   }
   async time() {
-    return await this.get('time');
+    const d = await this.get('time');
+    return d ? { time: d.serverTime } : null;
   }
   async kline(o) {
     checkKey(o, ['pair']);
