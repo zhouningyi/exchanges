@@ -14,6 +14,15 @@ const defaultOptions = {
   timeout: 10000,
 };
 
+function isEmptyObject(o) {
+  if (!o) return true;
+  let bol = true;
+  _.forEach(o, () => {
+    bol = false;
+  });
+  return bol;
+}
+
 const isProxy = !!argv.proxy;
 
 class exchange extends Event {
@@ -77,6 +86,7 @@ class exchange extends Event {
     return path.join(__dirname, `./${this.name}/meta/${file}.${ext}`);
   }
   saveConfig(json = {}, file) {
+    if (isEmptyObject(json)) return this.print(`输入为空，无法写入文件${file}...`);
     const pth = this._getConifgPath(file);
     const str = JSON.stringify(json, null, 2);
     fs.writeFileSync(pth, str, 'utf8');
@@ -90,7 +100,10 @@ class exchange extends Event {
   async candlestick(o) { // 与kline意义一致
     return await this.kline(o);
   }
-
+  calcCost(o = {}) {
+    console.log(`${this.name}没有独立实现calcCost`);
+    process.exit();
+  }
   // 函数包装
   _getWrapConfig(config = {}) {
     let defaultConfig;
