@@ -86,8 +86,6 @@ function extactPairFromFutureChannel(channel, str) {  // usd_btc_kline_quarter_1
 
 function extactPairFromSpotChannel(channel, str) {
   const symbol = channel.replace('ok_sub_spot_', '').split(str)[0];
-  // console.log(channel, symbol, 'symbol');
-  // process.exit();
   return symbol2pair(symbol, false);
 }
 

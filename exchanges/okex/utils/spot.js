@@ -299,7 +299,6 @@ function formatWsDepth(ds) {
 //   return ds;
 // }
 
-
 function formatPairs(ds) {
   return _.map(ds, (d) => {
     return {
