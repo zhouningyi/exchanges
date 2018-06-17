@@ -8,6 +8,7 @@ function pair2symbol(pair) {
 }
 function symbol2pair(symbol) {
   const info = PAIRS[symbol];
+  if (!info) console.log(PAIRS, symbol);
   return info.pair;
 }
 function formatPair(o = {}) {
