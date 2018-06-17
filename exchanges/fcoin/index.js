@@ -234,6 +234,11 @@ class Exchange extends Base {
     };
     this.initWs('ticker', sendMessage, filter, callback);
   }
+  //
+  calcCost(o = {}) {
+    checkKey(o, ['amount']);
+    return 0.001 * o.amount;
+  }
 }
 
 module.exports = Exchange;
