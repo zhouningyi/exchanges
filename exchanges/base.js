@@ -148,6 +148,22 @@ class exchange extends Event {
   throwError(e) {
     throw new Error(e);
   }
+  intervalTask(fn, interval) {
+    fn = fn.bind(this);
+    return async function f() {
+      try {
+        await fn();
+      } catch (e) {
+        console.log(e);
+      }
+      try {
+        await delay(interval);
+      } catch (e) {
+        console.log(e);
+      }
+      process.nextTick(f);
+    };
+  }
 }
 
 module.exports = exchange;

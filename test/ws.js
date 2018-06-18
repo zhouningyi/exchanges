@@ -23,8 +23,16 @@ const wsList = [
   // },
   {
     fn: 'wsBalance',
-    params: {},
+    params: {
+      interval: 4000
+    },
     name: '余额数据'
+  },
+  {
+    fn: 'wsOrder',
+    params: {
+    },
+    name: '登录'
   },
   // {
   //   fn: 'wsFutureKlines',

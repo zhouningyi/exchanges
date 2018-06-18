@@ -256,7 +256,7 @@ class Exchange extends Base {
     chanelString = chanelString && typeof chanelString === 'object' ? JSON.stringify(chanelString) : chanelString;
     if (login) {
       chanelString = JSON.parse(chanelString);
-      chanelString.parameters = { api_key: this.apiKey, sign: this.getSignature({}) };
+      chanelString.parameters = this._getLoginWsParams({});
       chanelString = JSON.stringify(chanelString);
     }
     ws.send(chanelString);
@@ -300,6 +300,18 @@ class Exchange extends Base {
       cb
     });
   }
+  _getLoginWsParams(params = {}) {
+    return {
+      api_key: this.apiKey,
+      sign: this.getSignature(params)
+    };
+  }
+  getLoginChanelString(o = {}, cb) {
+    return {
+      event: 'login',
+      parameters: this._getLoginWsParams({})
+    };
+  }
   wsDepth(o = {}, cb) {
     const defaultO = { size: 20 };
     o = { ...defaultO, ...o };
@@ -318,10 +330,46 @@ class Exchange extends Base {
       cb
     });
   }
-  updateWsBalance() {
-    this.ws.send({ event: 'addChannel', channel: 'ok_spot_userinfo' });
-  }
   wsBalance(o = {}, cb) {
+    this.wsReqBalance(o, cb);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      const { channel } = line;
+      return channel.startsWith('ok_sub_spot_') && channel.endsWith('_balance');
+    };
+
+    this.createWs({
+      login: true,
+      chanelString: this.getLoginChanelString(),
+      name: 'wsBalance',
+      validate,
+      formater: kUtils.formatWsBalance,
+      cb
+    });
+  }
+  wsOrder(o = {}, cb) {
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      const { channel } = line;
+      return channel.startsWith('ok_sub_spot_') && channel.endsWith('_order');
+    };
+
+    this.createWs({
+      login: true,
+      chanelString: this.getLoginChanelString(),
+      name: 'wsOrder',
+      validate,
+      formater: kUtils.formatWsOrder,
+      cb
+    });
+  }
+  // 主动请求balance信息
+  wsReqBalance(o = {}, cb) {
+    // if (o.interval) this.intervalTask(this.updateWsBalance, o.interval)();
     const chanelString = { event: 'addChannel', channel: 'ok_spot_userinfo' }; // kUtils.createSpotChanelBalance(coins);, id: 'xxx'
     const validate = (ds) => {
       if (!ds) return false;
@@ -337,8 +385,6 @@ class Exchange extends Base {
       formater: kUtils.formatWsBalance,
       cb
     });
-    // const reconnect = () => this.wsBalance(o, cb);
-    // this.createWs({ chanelString, name: 'wsBalance', login: true }, true)(kUtils.formatWsBalance, cb, reconnect);
   }
   //
   calcCost(o = {}) {
@@ -347,9 +393,7 @@ class Exchange extends Base {
     const outs = { BTC: true, ETH: true, USDT: true };
     source = source.toUpperCase();
     target = target.toUpperCase();
-    if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) {
-      return 0;
-    }
+    if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
     return 0.002 * amount;
   }
 }

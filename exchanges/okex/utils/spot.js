@@ -225,17 +225,33 @@ const createSpotChanelTick = createWsChanel((pair) => {
 
 function formatWsBalance(ds) {
   if (!ds) return null;
-  const funds = _.get(ds, '0.data.info.funds');
+  const funds = _.get(ds, '0.data.info.funds') || _.get(ds, '0.data.info');
   const { freezed, free, borrow } = funds;
   const res = {};
   _.forEach(free, (balance, k) => {
-    const borrow_balance = _parse(borrow[k]);
     const locked_balance = _parse(freezed[k]);
     balance = _parse(balance);
     const coin = k.toUpperCase();
-    res[coin] = { coin, borrow_balance, locked_balance, balance };
+    const line = { coin, locked_balance, balance };
+    res[coin] = line;
+    if (borrow) line.borrow_balance = _parse(borrow[k]);
   });
   return res;
+}
+
+function formatWsOrder(ds) {
+  return _.map(ds, (d) => {
+    d = d.data;
+    return {
+      order_id: d.orderId,
+      pair: symbol2pair(d.symbol),
+      status: code2OrderStatus[d.status],
+      amount: _parse(d.tradeAmount),
+      deal_amount: _parse(d.completedTradeAmount),
+      time: new Date(_parse(d.createdDate)),
+      price: _parse(d.averagePrice) || _parse(d.tradeUnitPrice)
+    };
+  });
 }
 
 function formatWsTick(ds) {
@@ -330,6 +346,7 @@ module.exports = {
   createSpotChanelDepth,
   createSpotChanelTick,
   formatWsBalance,
+  formatWsOrder,
   formatWsDepth,
   formatWsTick,
 };

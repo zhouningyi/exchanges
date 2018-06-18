@@ -45,7 +45,6 @@ class WS extends Event {
   addHooks(ws, o = {}) {
     const { pingInterval = 1000 } = o;
     ws.tryPing = (noop) => {
-      console.log('tryPing...');
       try {
         ws.ping(noop);
       } catch (e) {
@@ -88,8 +87,9 @@ class WS extends Event {
   query() {
   }
   send(msg) {
+    if (!msg) return;
     if (!this.isReady()) setTimeout(() => this.send(msg), 100);
-    console.log('send....');
+    if (typeof msg === 'object') msg = JSON.stringify(msg);
     this.ws.send(msg);
   }
   _onCallback(ds) {
