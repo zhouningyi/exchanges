@@ -220,7 +220,6 @@ function formatActiveOrders(ds) {
 function updatePairs(pairs) {
   _.forEach(pairs, (d) => {
     const { pair, symbol, filters } = d;
-    // console.log(filters, 'filters...');
     pairMap[symbol] = pair;
     pairInfo[symbol] = {
       ...d,

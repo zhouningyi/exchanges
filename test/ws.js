@@ -6,11 +6,13 @@ const config = require('./../config');
 const Utils = require('./utils');
 
 const wsList = [
-  {
-    fn: 'wsTicks',
-    params: {},
-    name: 'tick数据...'
-  },
+  // {
+  //   fn: 'wsTicks',
+  //   params: {
+  //     pairs: ['ETH-BTC']
+  //   },
+  //   name: 'tick数据...'
+  // },
   // {
   //   fn: 'wsFutureTicks',
   //   params: {
@@ -19,11 +21,11 @@ const wsList = [
   //   },
   //   name: '期货tick数据...'
   // },
-  // {
-  //   fn: 'wsBalance',
-  //   params: {},
-  //   name: '期货余额数据'
-  // },
+  {
+    fn: 'wsBalance',
+    params: {},
+    name: '余额数据'
+  },
   // {
   //   fn: 'wsFutureKlines',
   //   params: {
@@ -47,7 +49,7 @@ const wsList = [
   // {
   //   fn: 'wsDepth',
   //   params: {
-  //     contract_type: 'quarter',
+  //     // contract_type: 'quarter',
   //     pairs: ['BTC-USDT', 'EOS-USDT']
   //   },
   //   name: '深度图'
@@ -70,5 +72,5 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-testOneExchangeWs('fcoin', wsList);
+testOneExchangeWs('okex', wsList);
 

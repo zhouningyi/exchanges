@@ -70,9 +70,16 @@ function formatBalance(ds) {
   return ds;
 }
 
+function toFixed(v, n) {
+  return v.toFixed(n);
+}
+
 function formatOrderO(o) {
   o.side = o.side.toLowerCase();
   o.type = o.type.toLowerCase();
+  const symbol = pair2symbol(o.pair);
+  const demical = PAIRS[symbol].amount_decimal;
+  o.amount = toFixed(o.amount, demical);
   return o;
 }
 

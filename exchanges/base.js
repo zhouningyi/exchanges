@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { delay } = Utils;
+const isProxy = !!argv.proxy;
 
 const defaultOptions = {
   timeout: 10000,
@@ -17,13 +18,9 @@ const defaultOptions = {
 function isEmptyObject(o) {
   if (!o) return true;
   let bol = true;
-  _.forEach(o, () => {
-    bol = false;
-  });
+  _.forEach(o, () => (bol = false));
   return bol;
 }
-
-const isProxy = !!argv.proxy;
 
 class exchange extends Event {
   constructor(config = {}, options = {}) {

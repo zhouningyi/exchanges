@@ -137,7 +137,6 @@ async function test(exName, pair, side = 'BUY', amount = 0.001) {
   let balanceAfter = await ex.balances();
   balanceAfter = getRefBalance(balanceAfter, pair);
 
-
   //
   diff(balanceBefore, balanceAfter, pair, side, price, exName);
   print('取消未成交的资金...');

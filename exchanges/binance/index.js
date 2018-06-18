@@ -177,7 +177,6 @@ class Exchange extends Base {
     subscribe('!ticker@arr', (data = {}) => {
       data = data.data;
       if (!data) return console.log(`${'wsTicks'}数据为空....`);
-      process.exit();
       data = tUtils.formatTicksWS(data);
       cb(data);
     }, { proxy });
