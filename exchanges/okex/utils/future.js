@@ -149,7 +149,7 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
 function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_future', '').split('_depth_');
   const pair = symbol2pair((ds[0] || '').replace('usd', 'usdt'), true);
-  const contract_type = ds[1];
+  const contract_type = ds[1].split('_')[0];
   return { contract_type, pair };
 }
 const createWsFutureDepth = createWsChanel((pair, o) => {

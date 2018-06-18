@@ -116,6 +116,7 @@ class Exchange extends Base {
     let [balances, futureBalances] = Promise.all(tasks);
     balances = _.keyBy(balances, 'coin');
     futureBalances = _.keyBy(futureBalances, 'coin');
+    return { balances, futureBalances };
   }
   // 交易
   async order(o = {}) {
@@ -237,57 +238,119 @@ class Exchange extends Base {
     if (filter) pairs = _.filter(pairs, filter);
     return _.map(pairs, d => d.pair);
   }
-  createWs(o = {}, isSign = false) {
-    let { timeInterval, chanelString, options: opt, name } = o;
-    if (isSign) {
-      const parameters = { api_key: this.apiKey, sign: this.getSignature({}) };
-      chanelString = _.map(chanelString, (c) => {
-        c.parameters = parameters;
-        return c;
-      });
-    }
+  _getCoins(filter) {
+    const pairs = this._getPairs(filter);
+    const coins = {};
+    _.forEach(pairs, (pair) => {
+      const [left, right] = pair.split('-');
+      coins[left] = true;
+      coins[right] = true;
+    });
+    return _.keys(coins);
+  }
+  createWs(o = {}) {
+    let { chanelString, validate, formater, cb, login = false } = o;
+    if (!this.ws) this.ws = Utils.ws.genWs(WS_BASE, { proxy: this.proxy });
+    const { ws } = this;
+    if (!ws.isReady()) return setTimeout(() => this.createWs(o, cb), 200);
     chanelString = chanelString && typeof chanelString === 'object' ? JSON.stringify(chanelString) : chanelString;
-    return (formatData, cb, reconnect) => {
-      let data = {};
-      const cbf = _.throttle(() => {
-        const res = _.values(data);
-        if (res.length) {
-          cb(res);
-          data = {};
-        }
-      }, timeInterval);
-      //
-      const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString), reconnect };
-      kUtils.subscribe('', (ds) => {
-        if (ds && ds.error_code) {
-          const str = `${error.getErrorFromCode(ds.error_code)} | [ws] ${name}`;
-          throw new Error(str);
-        }
-        data = merge(data, formatData(ds, opt || {}));
-        cbf();
-      }, options);
+    if (login) {
+      chanelString = JSON.parse(chanelString);
+      chanelString.parameters = { api_key: this.apiKey, sign: this.getSignature({}) };
+      chanelString = JSON.stringify(chanelString);
+    }
+    ws.send(chanelString);
+    const callback = this.genWsDataCallBack(cb, formater, o);
+    ws.onData(validate, callback);
+  }
+  genWsDataCallBack(cb, formater) {
+    const timeInterval = 100;
+    let data = {};
+    const cbf = _.throttle(() => {
+      const res = _.values(data);
+      if (res.length) {
+        cb(res);
+        data = {};
+      }
+    }, timeInterval);
+    return (ds) => {
+      if (ds && ds.error_code) {
+        const str = `${error.getErrorFromCode(ds.error_code)} | [ws] ${name}`;
+        throw new Error(str);
+      }
+      ds = formater(ds);
+      data = merge(data, ds);// opt ||
+      cbf();
     };
   }
   // ws接口
   wsTicks(o = {}, cb) {
     const pairs = this._getPairs(o.filter, o.pairs);
-    const chanelString = kUtils.createSpotChanelTick(pairs);
-    const reconnect = () => this.wsTicks(o, cb);
-    this.createWs({ chanelString, name: 'wsTicks' })(kUtils.formatWsTick, cb, reconnect);
-  }
-  wsBalance(o = {}, cb) {
-    const pairs = this._getPairs(o.filter);
-    const chanelString = kUtils.createSpotChanelBalance(pairs);
-    const reconnect = () => this.wsBalance(o, cb);
-    this.createWs({ chanelString, name: 'wsBalance' })(kUtils.formatWsBalance, cb, reconnect);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_spot_') && line.channel.endsWith('_ticker');
+    };
+    this.createWs({
+      chanelString: kUtils.createSpotChanelTick(pairs),
+      name: 'wsTicks',
+      validate,
+      formater: kUtils.formatWsTick,
+      cb
+    });
   }
   wsDepth(o = {}, cb) {
     const defaultO = { size: 20 };
     o = { ...defaultO, ...o };
     const pairs = this._getPairs(o.filter, o.pairs);
-    const chanelString = kUtils.createSpotChanelDepth(pairs, o);
-    const reconnect = () => this.wsDepth(o, cb);
-    this.createWs({ chanelString, name: 'wsDepth' })(kUtils.formatWsDepth, cb, reconnect);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_spot_') && line.channel.search('_depth_') !== -1;
+    };
+    this.createWs({
+      chanelString: kUtils.createSpotChanelDepth(pairs, o),
+      name: 'wsDepth',
+      validate,
+      formater: kUtils.formatWsDepth,
+      cb
+    });
+  }
+  updateWsBalance() {
+    this.ws.send({ event: 'addChannel', channel: 'ok_spot_userinfo' });
+  }
+  wsBalance(o = {}, cb) {
+    const chanelString = { event: 'addChannel', channel: 'ok_spot_userinfo' }; // kUtils.createSpotChanelBalance(coins);, id: 'xxx'
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel === ('ok_spot_userinfo');
+    };
+    this.createWs({
+      login: true,
+      chanelString,
+      name: 'wsBalance',
+      validate,
+      formater: kUtils.formatWsBalance,
+      cb
+    });
+    // const reconnect = () => this.wsBalance(o, cb);
+    // this.createWs({ chanelString, name: 'wsBalance', login: true }, true)(kUtils.formatWsBalance, cb, reconnect);
+  }
+  //
+  calcCost(o = {}) {
+    checkKey(o, ['source', 'target', 'amount']);
+    let { source, target, amount } = o;
+    const outs = { BTC: true, ETH: true, USDT: true };
+    source = source.toUpperCase();
+    target = target.toUpperCase();
+    if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) {
+      return 0;
+    }
+    return 0.002 * amount;
   }
 }
 

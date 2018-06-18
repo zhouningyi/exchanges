@@ -70,10 +70,24 @@ class Exchange extends Spot {
     const { contract_type = 'quarter' } = o;
     const pairs = o.pairs || FUTURE_PAIRS;
     const chanelString = kUtils.createWsChanelFutureTick(pairs, { contract_type });
-    const reconnect = () => this.wsFutureTicks(o, cb);
-    this.createWs({ timeInterval: 300, chanelString, name: 'wsFutureTicks' })(kUtils.formatWsFutureTick, cb, reconnect);
+
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_future') && line.channel.search('_ticker_') !== -1;
+    };
+    this.createWs({
+      chanelString,
+      name: 'wsFutureTicks',
+      validate,
+      formater: kUtils.formatWsFutureTick,
+      cb
+    });
   }
   wsFutureKlines(o = {}, cb) {
+    console.log('wsFutureKlines todo');
+    process.exit();
     const symbols = o.pair ? [kUtils.pair2symbol(o.pair, true)] : FUTURE_PAIRS;
     const { contract_type = 'quarter', interval = '1m' } = o;
     const options = { contract_type, interval };
@@ -95,9 +109,20 @@ class Exchange extends Spot {
     const { contract_type, size } = o;
     const opt = { contract_type, size };
     const chanelString = kUtils.createWsFutureDepth(symbols, opt);
-    const options = { contract_type };
-    const reconnect = () => this.wsFutureDepth(o, cb);
-    this.createWs({ timeInterval: 300, chanelString, options, name: 'wsFutureDepth' })(kUtils.formatWsFutureDepth, cb, reconnect);
+
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_future') && line.channel.search('_depth_') !== -1;
+    };
+    this.createWs({
+      chanelString,
+      name: 'wsFutureDepth',
+      validate,
+      formater: kUtils.formatWsFutureDepth,
+      cb
+    });
   }
 
   wsFutureBalances(o = {}, cb) {

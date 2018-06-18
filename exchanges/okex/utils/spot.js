@@ -224,18 +224,18 @@ const createSpotChanelTick = createWsChanel((pair) => {
 });
 
 function formatWsBalance(ds) {
-  console.log('formatWsBalance 还有问题');
-  process.exit();
-  ds = _.map(ds, (d) => {
-    const { data, channel } = d;
-    const pair = extactPairFromSpotChannel(channel, '_balance');
-    if (!data) return;
-    const { info } = data;
-    if (!info) return;
-    const { free: balance, freezed: balanceLocked } = info;
-    return { pair, balance, balanceLocked };
-  }).filter(d => d);
-  return _.keyBy(ds, 'coin');
+  if (!ds) return null;
+  const funds = _.get(ds, '0.data.info.funds');
+  const { freezed, free, borrow } = funds;
+  const res = {};
+  _.forEach(free, (balance, k) => {
+    const borrow_balance = _parse(borrow[k]);
+    const locked_balance = _parse(freezed[k]);
+    balance = _parse(balance);
+    const coin = k.toUpperCase();
+    res[coin] = { coin, borrow_balance, locked_balance, balance };
+  });
+  return res;
 }
 
 function formatWsTick(ds) {
