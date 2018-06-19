@@ -8,13 +8,14 @@ const Base = require('./../base');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
 const request = require('./../../utils/request');
-const { exchangePairs } = require('./../data');
+// const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE } = require('./config');
-
+const ALL_PAIRS = require('./meta/pairs.json');
 //
 const { checkKey } = Utils;
 //
-const ALL_PAIRS = exchangePairs.okex;
+
+
 function mergeArray(data, d) {
   return data.concat(data, d);
 }
@@ -35,8 +36,11 @@ class Exchange extends Base {
     const qstr = `${Utils.getQueryString({ ...params, api_key: this.apiKey })}&secret_key=${this.apiSecret}`;
     return md5(qstr).toUpperCase();
   }
-  init() {
+  async init() {
     // saveConfig;
+    const pairs = await this.pairs();
+    const pairO = _.keyBy(pairs, 'pair');
+    this.saveConfig(pairO, 'pairs');
   }
   async tick(o = {}) {
     checkKey(o, 'pair');
