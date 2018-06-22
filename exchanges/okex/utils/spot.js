@@ -133,7 +133,7 @@ function formatCancelOrderO(o = {}) {
   const symbol = pair2symbol(o.pair);
   return { order_id, symbol };
 }
-function formatCancelOrder(ds) {
+function formatCancelOrder(ds, o = {}) {
   const { success, error, result, order_id } = ds;
   if (result) {
     return {
@@ -224,6 +224,7 @@ const createSpotChanelTick = createWsChanel((pair) => {
 });
 
 function formatWsBalance(ds) {
+  console.log(ds);
   if (!ds) return null;
   const funds = _.get(ds, '0.data.info.funds') || _.get(ds, '0.data.info');
   const { freezed, free, borrow } = funds;

@@ -145,14 +145,11 @@ class Exchange extends Base {
     checkKey(o, ['order_id', 'pair']);
     const { order_id } = o;
     if (Array.isArray(order_id) && order_id.length === 0) {
-      return {
-        success: [],
-        error: []
-      };
+      return [];
     }
     const opt = kUtils.formatCancelOrderO(o);
     const ds = await this.post('cancel_order', opt, true);
-    return kUtils.formatCancelOrder(ds);
+    return kUtils.formatCancelOrder(ds, o);
   }
   async orderBook(o = {}) {
     const ds = await this.get('trades', o, true, true);
@@ -268,7 +265,7 @@ class Exchange extends Base {
     ws.onData(validate, callback);
   }
   genWsDataCallBack(cb, formater) {
-    const timeInterval = 100;
+    const timeInterval = 50;
     let data = {};
     const cbf = _.throttle(() => {
       const res = _.values(data);
@@ -379,7 +376,7 @@ class Exchange extends Base {
       if (!ds) return false;
       const line = ds[0];
       if (!line || line.channel === 'addChannel') return;
-      return line.channel === ('ok_spot_userinfo');
+      return line.channel === 'ok_spot_userinfo';
     };
     this.createWs({
       login: true,

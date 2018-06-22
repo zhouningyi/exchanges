@@ -1,7 +1,7 @@
 const { testRest } = require('./utils');
 
-const exchanges = ['fcoin'];
-// , 'okex'. 'hitbtc' 'bittrex'
+const exchanges = ['okex'];
+// , 'okex'. 'hitbtc' 'bittrex'， fcoin
 
 const tasks = [
   // {
@@ -12,9 +12,9 @@ const tasks = [
   // {
   //   fn: 'order',
   //   params: {
-  //     pair: 'FT-ETH',
-  //     amount: 5,
-  //     price: 0.0013132,
+  //     pair: 'IOTA-BTC',
+  //     amount: 1,
+  //     price: 0.0001,
   //     side: 'BUY',
   //     type: 'LIMIT'
   //   },
@@ -39,13 +39,13 @@ const tasks = [
   //   },
   //   name: '交易'
   // },
-  {
-    fn: 'cancelAllOrders',
-    params: {
-      pair: 'FT-ETH'
-    },
-    name: '取消正在执行中的订单'
-  },
+  // {
+  //   fn: 'cancelAllOrders',
+  //   params: {
+  //     pair: 'FT-ETH'
+  //   },
+  //   name: '取消正在执行中的订单'
+  // },
   // {
   //   fn: 'activeOrders',
   //   params: {
@@ -72,7 +72,8 @@ const tasks = [
   // {
   //   fn: 'cancelOrder',
   //   params: {
-  //     order_id: 'EwvjhigbJglUigKrh1dEenSlflQ4zVhOQSHR92WY77o='
+  //     order_id: '101102451',
+  //     pair: 'IOTA-BTC'
   //   },
   //   name: '取消交易'
   // },

@@ -76,5 +76,17 @@
     "price_decimal": 4,
     "amount_decimal": 2,
     "symbol": "btmusdt"
+  },
+  "aeeth": {
+    "pair": "AE-ETH",
+    "price_decimal": 6,
+    "amount_decimal": 2,
+    "symbol": "aeeth"
+  },
+  "zrxeth": {
+    "pair": "ZRX-ETH",
+    "price_decimal": 6,
+    "amount_decimal": 2,
+    "symbol": "zrxeth"
   }
 }

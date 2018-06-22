@@ -125,17 +125,57 @@ class Exchange extends Spot {
     });
   }
 
-  wsFutureBalances(o = {}, cb) {
-    const chanelString = [{ event: 'login', channel: 'ok_sub_futureusd_userinfo' }];
-    const reconnect = () => this.wsFutureBalances(o, cb);
-    this.createWs({ timeInterval: 300, chanelString, name: 'wsFutureBalances' }, true)(kUtils.formatWsFutureBalances, cb, reconnect);
-  }
-  // wsFuturePosition(o = {}, cb) {
-  //   const chanelString = [{ event: 'login', channel: 'ok_sub_futureusd_positions' }];
-  //   const reconnect = () => this.wsFuturePosition(o, cb);
-  //   this.createWs({ timeInterval: 300, chanelString, name: 'wsFuturePosition' }, true)(kUtils.formatWsFuturePosition, cb, reconnect);
-  // }
+  wsFuturePosition(o = {}, cb) {
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel === ('ok_sub_futureusd_positions');
+    };
 
+    this.createWs({
+      login: true,
+      chanelString: this.getLoginChanelString(),
+      name: 'wsFuturePosition',
+      validate,
+      formater: kUtils.formatWsFuturePosition,
+      cb
+    });
+  }
+  wsFutureBalance(o = {}, cb) {
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel === ('ok_sub_futureusd_userinfo');
+    };
+
+    this.createWs({
+      login: true,
+      chanelString: this.getLoginChanelString(),
+      name: 'wsFutureBalance',
+      validate,
+      formater: kUtils.formatWsFutureBalances,
+      cb
+    });
+  }
+  wsFutureOrder(o = {}, cb) {
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel === ('ok_sub_futureusd_trades');
+    };
+
+    this.createWs({
+      login: true,
+      chanelString: this.getLoginChanelString(),
+      name: 'wsFutureOrder',
+      validate,
+      formater: kUtils.formatWsFutureOrder,
+      cb
+    });
+  }
   async futureBalances(o = {}) {
     let ds = await this.post('future_userinfo', o, true);
     ds = kUtils.formatFutureBalances(ds);
@@ -149,7 +189,7 @@ class Exchange extends Spot {
     const success = !!(ds && ds.result);
     return { success };
   }
-  async unfinishedFutureOrderInfo(o = {}) {
+  async unfinishedFutureOrderInfo(o = {}) { // keep_deposit
     const defaultO = {
       status: '1',
       current_page: 0,
@@ -184,8 +224,9 @@ class Exchange extends Spot {
     const ds = await this.post('future_trade', opt, true);
     if (ds) {
       const res = {
-        success: ds ? ds.result : false,
         order_id: ds.order_id,
+        success: ds.result,
+        status: 'UNFINISH',
         time: new Date(),
         ...o
       };

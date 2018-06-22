@@ -7,6 +7,7 @@
       "unique": true
     },
     "contract_name": ["STRING", 20],
+    "contract_type":  ["STRING", 10],
     "lever_rate": "FLOAT",
     "amount": "INTEGER",
     "deal_amount": "FLOAT",

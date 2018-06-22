@@ -22,18 +22,39 @@ const wsList = [
   //   name: '期货tick数据...'
   // },
   {
-    fn: 'wsBalance',
+    fn: 'wsFutureBalance',
     params: {
       interval: 4000
     },
-    name: '余额数据'
+    name: ''
   },
   {
-    fn: 'wsOrder',
+    fn: 'wsFutureOrder',
     params: {
+      interval: 4000
     },
-    name: '登录'
+    name: ''
   },
+  {
+    fn: 'wsFuturePosition',
+    params: {
+      interval: 4000
+    },
+    name: ''
+  },
+  // {
+  //   fn: 'wsBalance',
+  //   params: {
+  //     interval: 4000
+  //   },
+  //   name: '余额数据'
+  // },
+  // {
+  //   fn: 'wsOrder',
+  //   params: {
+  //   },
+  //   name: '登录'
+  // },
   // {
   //   fn: 'wsFutureKlines',
   //   params: {
@@ -75,7 +96,7 @@ function testOneExchangeWs(exName, list) {
   _.forEach(list, (o) => {
     const { fn, params } = o;
     ex[fn](params, (ds) => {
-      console.log(ds, 'ds test...');
+      console.log(ds, fn);
     });
   });
 }

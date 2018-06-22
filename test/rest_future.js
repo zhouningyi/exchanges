@@ -3,17 +3,6 @@ const { testRest } = require('./utils');
 const exchanges = ['okex'];// , 'okex'. 'hitbtc', 'bittrex'
 const tasks = [
   // {
-  //   fn: 'order',
-  //   params: {
-  //     pair: 'BTC-USDT',
-  //     amount: 0.0012,
-  //     price: 7155,
-  //     side: 'BUY',
-  //     type: 'MARKET'
-  //   },
-  //   name: '交易'
-  // },
-  // {
   //   fn: 'fastOrder',
   //   params: {
   //     pair: 'ETH-BTC',
@@ -91,20 +80,20 @@ const tasks = [
 //   params: { source: 'future', target: 'spot', coin: 'BTC', amount: 0.0019 },
 //   name: '移动资金'
 // },
-  // {
-  //   fn: 'futureOrder',
-  //   params: {
-  //     pair: 'BTC-USDT',
-  //     contract_type: 'quarter',
-  //     lever_rate: 10,
-  //     side: 'BUY',
-  //     direction: 'up',
-  //     amount: 1,
-  //     type: 'LIMIT',
-  //     price: 7498,
-  //   },
-  //   name: '购买期货'
-  // },
+  {
+    fn: 'futureOrder',
+    params: {
+      pair: 'EOS-USDT',
+      contract_type: 'quarter',
+      lever_rate: 10,
+      side: 'BUY',
+      direction: 'up',
+      amount: 1,
+      type: 'LIMIT',
+      price: 7.2,
+    },
+    name: '购买期货'
+  },
   // {
   //   fn: 'futureOrder',
   //   params: {
@@ -142,15 +131,15 @@ const tasks = [
   //   },
   //   name: '所有的订单'
   // },
-  {
-    fn: 'cancelFutureOrder',
-    params: {
-      order_id: ['804573827181568'],
-      contract_type: 'quarter',
-      pair: 'LTC-USDT',
-    },
-    name: '清空期货'
-  },
+  // {
+  //   fn: 'cancelFutureOrder',
+  //   params: {
+  //     order_id: ['975917330351104'],
+  //     contract_type: 'quarter',
+  //     pair: 'EOS-USDT',
+  //   },
+  //   name: '清空期货'
+  // },
   // {
   //   fn: 'futureDepth',
   //   params: {
@@ -178,17 +167,17 @@ const tasks = [
   //   },
   //   name: '期货资金'
   // },
-  {
-    fn: 'unfinishedFutureOrderInfo',
-    params: {
-      pair: 'LTC-USDT',
-      status: '1',
-      contract_type: 'quarter',
-      current_page: 0,
-      page_length: 100
-    },
-    name: '未完成期货订单'
-  },
+  // {
+  //   fn: 'unfinishedFutureOrderInfo',
+  //   params: {
+  //     pair: 'LTC-USDT',
+  //     status: '1',
+  //     contract_type: 'quarter',
+  //     current_page: 0,
+  //     page_length: 100
+  //   },
+  //   name: '未完成期货订单'
+  // },
 
   // {
   //   fn: 'futurePosition',
