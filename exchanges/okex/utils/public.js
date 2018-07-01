@@ -98,14 +98,31 @@ const code2OrderStatus = {
 };
 const orderStatus2Code = _.invert(code2OrderStatus);
 
+const code2FutureOrderStatus = {
+  1: 'UNFINISH',
+  2: 'SUCCESS'
+};
+
+const futureOrderStatus2Code = _.invert(code2FutureOrderStatus);
+
+function pair2coin(pair) {
+  return pair.split('-')[0].toUpperCase();
+}
+function coin2pair(coin) {
+  return (`${coin}-USDT`).toUpperCase();
+}
 module.exports = {
   formatInterval,
   symbol2pair,
   pair2symbol,
+  pair2coin,
+  coin2pair,
   intervalMap,
   _parse,
   code2OrderStatus,
   orderStatus2Code,
+  code2FutureOrderStatus,
+  futureOrderStatus2Code,
   //
   subscribe,
   extactPairFromFutureChannel,

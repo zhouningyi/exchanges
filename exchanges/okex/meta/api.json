@@ -10,9 +10,9 @@
     "retry": 0
   },
   "cancelOrder": {
-    "timeout": 3000,
+    "timeout": 9000,
     "rateLimit": 110,
-    "retry": 3
+    "retry": 2
   },
   "futureBalances": {
     "timeout": 3000,
@@ -39,9 +39,19 @@
     "rateLimit": 366,
     "retry": 3
   },
-  "cancelFutureOrder": {
+  "allFutureOrders": {
     "timeout": 3000,
-    "rateLimit": 550,
+    "rateLimit": 366,
     "retry": 3
+  },
+  "allOrders": {
+    "timeout": 3000,
+    "rateLimit": 366,
+    "retry": 3
+  },
+  "cancelFutureOrder": {
+    "timeout": 9000,
+    "rateLimit": 550,
+    "retry": 2
   }
 }

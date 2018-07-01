@@ -12,8 +12,12 @@ const {
   createWsChanel,
   code2OrderStatus,
   orderStatus2Code,
+  futureOrderStatus2Code,
+  code2FutureOrderStatus,
   pair2symbol,
   _parse,
+  pair2coin,
+  coin2pair,
   formatInterval,
 } = require('./public');
 
@@ -186,7 +190,6 @@ function formatWsFutureBalances(ds) {
       coin,
       time: new Date(),
       ...line,
-      account_rights: line.balance + line.profit_real
     };
   });
   ds = _.keyBy(ds, (d) => {
@@ -262,7 +265,6 @@ function formatWsFutureDepth(ds) {
   }).filter(d => d);
   return res;
 }
-
 
 // move Balance
 const moveType2code = {
@@ -352,23 +354,57 @@ function formatFutureOrderO(o) {
   return opt;
 }
 
+function formatFutureOrderInfoO(o = {}) {
+  const opt = _.cloneDeep(o);
+  if (Array.isArray(o.order_id)) opt.order_id = o.order_id.join(',');
+  return opt;
+}
 
+function formatAllFutureOrdersO(o) {
+  o.status = futureOrderStatus2Code[o.status];
+  if (Array.isArray(o.order_id)) o.order_id = o.order_id.join(',');
+  return o;
+}
+function getContractTypeFromContractName(contract_name, coin) {
+  const tstr = contract_name.replace(coin, '');
+  const month = tstr.substring(0, 2);
+  const date = tstr.substring(2, 4);
+  const now = new Date();
+  const year = now.getFullYear();
+  let t = getT(year, month, date);
+  let dt = t - now;
+  if (dt < 0) {
+    t = getT(year, month, date);
+    dt = t - now;
+  }
+  if (dt > d14) return 'quarter';
+  if (dt > d7) return 'next_week';
+  return 'this_week';
+}
+function getT(year, month, date) {
+  return new Date(`${year}-${month}-${date}`);
+}
 function formatFutureOrderInfo(ds, o, isFlat = true) {
   if (!ds) return null;
   const { orders } = ds;
   if (!orders) return null;
   let res = _.map(orders, (d) => {
+    let { contract_name, contract_type } = d;
+    const { pair } = o;
+    const coin = pair2coin(pair);
+    contract_type = contract_type || getContractTypeFromContractName(contract_name, coin);
     return {
       order_id: `${d.orderid || d.order_id}`, // ////
       lever_rate: d.lever_rate,
-      contract_name: d.contract_name,
+      contract_type,
+      contract_name,
       amount: d.amount || d.deal_amount,
       deal_amount: d.deal_amount,
-      price: d.price || d.price_avg,
+      price: d.price_avg || d.price,
       status: code2OrderStatus[d.status],
       fee: d.fee,
       time: new Date(d.create_date),
-      pair: o.pair,
+      pair,
       ...(reverseTypeMap[d.type])
     };
   });
@@ -379,9 +415,14 @@ function formatFutureOrderInfo(ds, o, isFlat = true) {
 function formatWsFutureOrder(ds) {
   if (!ds) return null;
   return _.map(ds, ({ data: d }) => {
+    const { contract_name } = d;
+    const coin = contract_name.substring(0, 3);
+    const pair = `${coin}-USDT`;
     return {
       order_id: `${d.orderid}`,
+      pair,
       lever_rate: d.lever_rate,
+      contract_name,
       contract_type: d.contract_type,
       amount: d.amount,
       deal_amount: d.deal_amount,
@@ -452,6 +493,7 @@ module.exports = {
   formatFutureBalances,
   formatMoveBalanceO,
   formatFutureOrderO,
+  formatFutureOrderInfoO,
   formatFutureOrderInfo,
   formatFutureAllOrdersO,
   formatFutureAllOrders,
@@ -459,6 +501,7 @@ module.exports = {
   formatBatchFutureOrder,
   formatFuturePosition,
   formatWsFutureOrder,
+  formatAllFutureOrdersO,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,

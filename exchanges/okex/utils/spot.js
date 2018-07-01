@@ -151,7 +151,6 @@ function formatCancelOrder(ds, o = {}) {
       error: null
     };
   } else if (success || error) {
-    console.log(success, error);
     return {
       success: success.split(','),
       error: error.split(',')
@@ -160,7 +159,9 @@ function formatCancelOrder(ds, o = {}) {
 }
 
 function formatOrderResult(ds, o = {}) {
-  if (ds && ds.order_id) return { order_id: ds.order_id, time: new Date(), ...o };
+  if (ds && ds.order_id) {
+    return { order_id: ds.order_id, status: 'UNFINISH', time: new Date(), ...o };
+  }
   throw ds;
 }
 //
@@ -172,13 +173,14 @@ function formatOrderInfo(ds, o) {
   let res = _.map(orders, (d) => {
     const { type: tp } = d;
     let [side, type] = tp.split('_').map(d => d.toUpperCase());
+    side = side.split('_')[0];
     type = type || 'LIMIT';
     return {
       exchange: 'okex',
       order_id: `${d.orders_id}`,
       order_main_id: `${d.order_id}`,
       amount: d.deal_amount,
-      price: d.avg_price,
+      price: d.avg_price || d.price,
       status: code2OrderStatus[d.status],
       side,
       type,
@@ -200,12 +202,13 @@ function formatAllOrders(ds) {
   return _.map(ds.orders, (d) => {
     return {
       exchange: 'okex',
-      amount: d.amount,
-      price: d.price || null,
+      amount: d.amount || d.deal_amount,
+      price: d.avg_price || d.price,
       time: new Date(d.create_date),
       deal_amount: d.deal_amount,
       order_main_id: d.order_id,
       order_id: d.orders_id,
+      side: d.type.toUpperCase(),
       status: code2OrderStatus[d.status],
       pair: symbol2pair(d.symbol),
       ...parseOrderType(d.type)
@@ -224,9 +227,9 @@ const createSpotChanelTick = createWsChanel((pair) => {
 });
 
 function formatWsBalance(ds) {
-  console.log(ds);
   if (!ds) return null;
   const funds = _.get(ds, '0.data.info.funds') || _.get(ds, '0.data.info');
+  if (!funds) return;
   const { freezed, free, borrow } = funds;
   const res = {};
   _.forEach(free, (balance, k) => {
@@ -239,12 +242,16 @@ function formatWsBalance(ds) {
   });
   return res;
 }
-
 function formatWsOrder(ds) {
   return _.map(ds, (d) => {
     d = d.data;
+    const { tradeType } = d;
+    const side = tradeType.split('_')[0].toUpperCase();
+    // const type = d.price ? 'LIMIT' : 'MARKET';
     return {
       order_id: d.orderId,
+      side,
+      // type,
       pair: symbol2pair(d.symbol),
       status: code2OrderStatus[d.status],
       amount: _parse(d.tradeAmount),

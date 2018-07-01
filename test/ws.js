@@ -42,13 +42,13 @@ const wsList = [
     },
     name: ''
   },
-  // {
-  //   fn: 'wsBalance',
-  //   params: {
-  //     interval: 4000
-  //   },
-  //   name: '余额数据'
-  // },
+  {
+    fn: 'wsBalance',
+    params: {
+      interval: 4000
+    },
+    name: '余额数据'
+  },
   // {
   //   fn: 'wsOrder',
   //   params: {

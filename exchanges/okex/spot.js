@@ -89,19 +89,19 @@ class Exchange extends Base {
     ds = kUtils.formatOrderInfo(ds, o);
     return ds;
   }
-  async activeOrders(o = {}) {
+  async unfinishOrders(o = {}) {
     checkKey(o, ['pair']);
     const ds = await this.allOrders({ ...o, status: 'UNFINISH' });
     return ds;
   }
-  async finishOrders(o = {}) {
+  async successOrders(o = {}) {
     checkKey(o, ['pair']);
     const ds = await this.allOrders({ ...o, status: 'SUCCESS' });
     return ds;
   }
   async allOrders(o = {}) { // 近2天来的order
     const defaultO = {
-      page_length: 2000,
+      page_length: 1000,
       current_page: 0,
       status: 'UNFINISH'
     };
@@ -144,9 +144,7 @@ class Exchange extends Base {
   async cancelOrder(o = {}) {
     checkKey(o, ['order_id', 'pair']);
     const { order_id } = o;
-    if (Array.isArray(order_id) && order_id.length === 0) {
-      return [];
-    }
+    if (Array.isArray(order_id) && order_id.length === 0) return [];
     const opt = kUtils.formatCancelOrderO(o);
     const ds = await this.post('cancel_order', opt, true);
     return kUtils.formatCancelOrder(ds, o);
@@ -162,6 +160,7 @@ class Exchange extends Base {
     return kUtils.formatOrderInfo(ds, o);
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
+    params = Utils.cleanObjectNull(params);
     params = _.cloneDeep(params);
     if (!params.symbol) {
       params = Utils.replace(params, { pair: 'symbol' });
@@ -228,10 +227,15 @@ class Exchange extends Base {
     return body.data || body || false;
   }
   async pairs(o = {}) {
-    const url = 'https://www.okex.com/v2/spot/markets/products';
-    let ds = await this.get(url);
-    ds = kUtils.formatPairs(ds);
-    return ds;
+    try {
+      const url = 'https://www.okex.com/v2/spot/markets/products';
+      let ds = await this.get(url);
+      if (ds.code === '404') return ALL_PAIRS;
+      ds = kUtils.formatPairs(ds);
+      return ds;
+    } catch (e) {
+      return ALL_PAIRS;
+    }
   }
   _getPairs(filter, pairs) {
     if (pairs) return pairs;
@@ -279,6 +283,7 @@ class Exchange extends Base {
         const str = `${error.getErrorFromCode(ds.error_code)} | [ws] ${name}`;
         throw new Error(str);
       }
+      // if (ds[0] && ds[0].channel.indexOf('ticker') === -1) console.log('\n\n\n', ds, '\n\n\n');
       ds = formater(ds);
       data = merge(data, ds);// opt ||
       cbf();
@@ -332,7 +337,7 @@ class Exchange extends Base {
     });
   }
   wsBalance(o = {}, cb) {
-    this.wsReqBalance(o, cb);
+    this._wsReqBalance(o, cb);
     const validate = (ds) => {
       if (!ds) return false;
       const line = ds[0];
@@ -368,8 +373,48 @@ class Exchange extends Base {
       cb
     });
   }
+  // async wsReqOrders(o) {
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       this._wsReqOrders(o, resolve);
+  //     } catch (e) {
+  //       reject(e);
+  //     }
+  //   });
+  // }
+  // _wsReqOrders(o = {}, cb) {
+  //   checkKey(o, ['pair']);
+  //   const symbol = o.pair.replace('-USDT', 'usd').toLowerCase();
+  //   const chanelString = [{ event: 'addChannel', channel: 'ok_btcusd_trades' }];
+  //   const validate = (ds) => {
+  //     if (!ds) return false;
+  //     const line = ds[0];
+  //     if (!line || line.channel === 'addChannel') return;
+  //     const { channel } = line;
+  //     return channel === 'ok_btcusd_trades';
+  //   };
+  //   this.createWs({
+  //     login: true,
+  //     chanelString,
+  //     name: 'wsReqOrders',
+  //     validate,
+  //     formater: kUtils.formatWsOrder,
+  //     cb
+  //   });
+  // }
   // 主动请求balance信息
-  wsReqBalance(o = {}, cb) {
+  async wsReqBalance(o = {}) {
+    return new Promise((resolve, reject) => {
+      try {
+        this._wsReqBalance(o, (balances) => {
+          resolve(balances);
+        });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+  _wsReqBalance(o = {}, cb) {
     // if (o.interval) this.intervalTask(this.updateWsBalance, o.interval)();
     const chanelString = { event: 'addChannel', channel: 'ok_spot_userinfo' }; // kUtils.createSpotChanelBalance(coins);, id: 'xxx'
     const validate = (ds) => {
@@ -381,7 +426,7 @@ class Exchange extends Base {
     this.createWs({
       login: true,
       chanelString,
-      name: 'wsBalance',
+      name: 'wsReqBalance',
       validate,
       formater: kUtils.formatWsBalance,
       cb
@@ -397,6 +442,10 @@ class Exchange extends Base {
     if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
     return 0.002 * amount;
   }
+  // calcCostFuture(o = {}) {
+  //   checkKey(o, ['coin', 'side', 'amount']);
+  //   const { coin, amount, side = 'BUY' } = o;
+  // }
 }
 
 module.exports = Exchange;

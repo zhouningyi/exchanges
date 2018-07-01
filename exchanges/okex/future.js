@@ -15,7 +15,7 @@ const FUTURE_PAIRS = require('./meta/future_pairs.json');
 class Exchange extends Spot {
   constructor(o, options) {
     super(o, options);
-    this.unfinishFutureOrders = {};
+    this.__unfinishFutureOrders = {};
   }
   // 市场类
   async futureTick(o = {}) {
@@ -164,7 +164,7 @@ class Exchange extends Spot {
       if (!ds) return false;
       const line = ds[0];
       if (!line || line.channel === 'addChannel') return;
-      return line.channel === ('ok_sub_futureusd_trades');
+      return line.channel === 'ok_sub_futureusd_trades';
     };
 
     this.createWs({
@@ -189,19 +189,6 @@ class Exchange extends Spot {
     const success = !!(ds && ds.result);
     return { success };
   }
-  async unfinishedFutureOrderInfo(o = {}) { // keep_deposit
-    const defaultO = {
-      status: '1',
-      current_page: 0,
-      page_length: 100
-    };
-    checkKey(o, ['pair', 'contract_type']);
-    const opt = { ...defaultO, ...o, order_id: '-1' };
-    opt.symbol = kUtils.pair2symbol(o.pair).replace('usdt', 'usd');
-    const ds = await this.post('future_order_info', opt, true, true);
-    const res = kUtils.formatFutureOrderInfo(ds, o, false);
-    return res;
-  }
   // 市场上的交易历史
   // async futureOrderHistory(o = {}) {
   //   console.log('to do');
@@ -213,16 +200,16 @@ class Exchange extends Spot {
     if (!d) return;
     const { status } = d;
     if (!status) { //
-      this.unfinishFutureOrders[d.order_id] = d;
+      this.__unfinishFutureOrders[d.order_id] = d;
     } else if (status === 'FINISH') {
-      delete this.unfinishFutureOrders[d.order_id];
+      delete this.__unfinishFutureOrders[d.order_id];
     }
   }
   async futureOrder(o = {}) {
     checkKey(o, ['pair', 'contract_type', 'lever_rate', 'side', 'direction', 'type']);
     const opt = kUtils.formatFutureOrderO(o);
     const ds = await this.post('future_trade', opt, true);
-    if (ds) {
+    if (ds && ds.order_id) {
       const res = {
         order_id: ds.order_id,
         success: ds.result,
@@ -244,20 +231,41 @@ class Exchange extends Spot {
     return res;
   }
   async cancelFutureOrder(o = {}) {
-    const defaultO = {
-    };
+    const defaultO = {};
     const reqs = ['order_id', 'pair', 'contract_type'];
     checkKey(o, reqs);
     let opt = _.pick(o, reqs);
     if (Array.isArray(opt.order_id)) opt.order_id = opt.order_id.join(',');
     opt = { ...defaultO, ...opt };
     const ds = await this.post('future_cancel', opt, true) || {};
-    const res = { success: ds.result, order_id: ds.order_id };
-    if (res.success) delete this.unfinishFutureOrders[res.order_id];
-    return res;
+    return this._genCancelFutureResult(ds);
+  }
+  _genCancelFutureResult(ds) {
+    const exist = d => d && d.order_id;
+    const { result, order_id, success, error } = ds;
+    if (order_id) {
+      if (result === true) {
+        delete this.__unfinishFutureOrders[order_id];
+        return [{ order_id, status: 'CANCEL', result: true }];
+      } else {
+        return [{ order_id, result: false }];
+      }
+    } else {
+      const errors = _.map(error.split(','), (str) => {
+        if (!str) return null;
+        const ids = str.split(':');
+        const [id] = ids;
+        return { order_id: id, status: 'UNKNOWN', result: false };
+      }).filter(exist);
+      const sucesses = _.map(success.split(','), (id) => {
+        delete this.__unfinishFutureOrders[id];
+        return { order_id: id, status: 'CANCEL', result: true };
+      }).filter(exist);
+      return errors.concat(sucesses);
+    }
   }
   async cancelAllFutureOrders() {
-    let unfinishs = this.unfinishFutureOrders;
+    let unfinishs = this.__unfinishFutureOrders;
     if (!_.values(unfinishs).length) return { success: true, message: 'no order to cancel' };
     const reqs = ['pair', 'order_id', 'contract_type'];
     unfinishs = _.map(unfinishs, d => _.pick(d, reqs));
@@ -268,7 +276,7 @@ class Exchange extends Spot {
         const o = {
           pair, contract_type, order_id: _.map(ds, d => d.order_id)
         };
-        return this._cancelAllFutureOrders(o);
+        return this.cancelFutureOrders(o);
       });
     });
     tasks = _.flatten(tasks);
@@ -286,7 +294,7 @@ class Exchange extends Spot {
       error: _.keys(res.error)
     };
   }
-  async _cancelAllFutureOrders(o = {}) {
+  async cancelFutureOrders(o = {}) {
     const reqs = ['pair', 'contract_type', 'order_id'];
     checkKey(o, reqs);
     const opt = _.pick(o, reqs);
@@ -303,22 +311,61 @@ class Exchange extends Spot {
       success = _.keyBy(ds.success.split(','), d => d);
     }
     _.forEach(success, (suc_id) => {
-      delete this.unfinishFutureOrders[suc_id];
+      delete this.__unfinishFutureOrders[suc_id];
     });
     return { success, error };
   }
-  async futureOrderInfo(o = {}) {
-    const reqs = ['pair', 'order_id', 'contract_type'];
-    checkKey(o, reqs);
-    const opt = _.pick(o, ['order_id', 'contract_type']);
-    if (Array.isArray(opt.order_id)) opt.order_id = opt.order_id.join(',');
+  async unfinishedFutureOrderInfo(o = {}) { // keep_deposit
+    const defaultO = {
+      status: null,
+      current_page: 0,
+      page_length: 100
+    };
+    checkKey(o, ['pair', 'contract_type']);
+    o = { ...defaultO, ...o, order_id: '-1' };
     opt.symbol = kUtils.pair2symbol(o.pair).replace('usdt', 'usd');
+    const opt = kUtils.formatFutureOrderInfoO();
+    const ds = await this.post('future_order_info', opt, true, true);
+    const res = kUtils.formatFutureOrderInfo(ds, o, false);
+    return res;
+  }
+  async successFutureOrders(o = {}) {
+    checkKey(o, ['pair']);
+    const ds = await this.allFutureOrders({ ...o, status: 'SUCCESS' });
+    return ds;
+  }
+  async unfinishFutureOrders(o = {}) {
+    checkKey(o, ['pair']);
+    const ds = await this.allFutureOrders({ ...o, status: 'UNFINISH' });
+    return ds;
+  }
+  async allFutureOrders(o = {}) { // 近2天来的order
+    checkKey(o, ['pair', 'status']);
+    const defaultO = {
+      page_length: 1000,
+      current_page: 0,
+      order_id: -1,
+    };
+    const opt = kUtils.formatAllFutureOrdersO({ ...defaultO, ...o });
+    let ds = await this.post('future_order_info', opt, true);
+    ds = kUtils.formatFutureOrderInfo(ds, o, false);
+    return ds;
+  }
+  async futureOrderInfo(o = {}) {
+    const reqs = ['pair', 'contract_type'];
+    checkKey(o, reqs);
+    const defaultO = {
+      current_page: 0,
+      order_id: '-1'
+    };
+    o = { ...defaultO, ...(_.pick(o, ['order_id', 'pair', 'contract_type'])) };
+    const opt = kUtils.formatFutureOrderInfoO(o);
     const ds = await this.post('future_orders_info', opt, true);
     const res = kUtils.formatFutureOrderInfo(ds, o);
     this._updateUnfinishFutureOrders(res);
     return res;
   }
-  async futureAllOrders(o = {}) {
+  async futurePublicOrders(o = {}) {
     const defaultO = {
       page_length: 2000,
       current_page: 0,

@@ -54,7 +54,7 @@ const tasks = [
   //   name: '正在执行中的订单'
   // },
   // {
-  //   fn: 'finishOrders',
+  //   fn: 'successOrders',
   //   params: {
   //     pair: 'OKB-USDT'
   //   },
@@ -63,9 +63,9 @@ const tasks = [
   // {
   //   fn: 'orderInfo',
   //   params: {
-  //     pair: 'OKB-BTC',
-  //     order_id: '11931810',
-  //     side: 'SELL'
+  //     pair: 'BTC-USDT',
+  //     order_id: '747671618',
+  //     // side: 'SELL'
   //   },
   //   name: '交易'
   // },
@@ -130,11 +130,11 @@ const tasks = [
 //   params: { pair: 'ETH-BTC' },
 //   name: 'orderBook数据'
 // },
-  // {
-  //   fn: 'unfinishedOrderInfo',
-  //   params: { pair: 'OKB-USDT' },
-  //   name: 'orderBook未成交的订单'
-  // },
+  {
+    fn: 'unfinishedOrderInfo',
+    params: { pair: 'ETH-USDT' },
+    name: 'orderBook未成交的订单'
+  },
 
 ];
 

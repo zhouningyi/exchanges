@@ -80,31 +80,40 @@ const tasks = [
 //   params: { source: 'future', target: 'spot', coin: 'BTC', amount: 0.0019 },
 //   name: '移动资金'
 // },
-  {
-    fn: 'futureOrder',
-    params: {
-      pair: 'EOS-USDT',
-      contract_type: 'quarter',
-      lever_rate: 10,
-      side: 'BUY',
-      direction: 'up',
-      amount: 1,
-      type: 'LIMIT',
-      price: 7.2,
-    },
-    name: '购买期货'
-  },
   // {
   //   fn: 'futureOrder',
   //   params: {
-  //     pair: 'BTC-USDT',
+  //     pair: 'EOS-USDT',
   //     contract_type: 'quarter',
   //     lever_rate: 10,
   //     side: 'BUY',
   //     direction: 'up',
   //     amount: 1,
   //     type: 'LIMIT',
-  //     price: 7498,
+  //     price: 7.2,
+  //   },
+  //   name: '购买期货'
+  // },
+  // {
+  //   fn: 'successFutureOrders',
+  //   params: {
+  //     pair: 'EOS-USDT',
+  //     contract_type: 'quarter',
+  //     status: 'SUCCESS'
+  //   },
+  //   name: '所有期货订单'
+  // },
+  // {
+  //   fn: 'futureOrder',
+  //   params: {
+  //     pair: 'BCH-USDT',
+  //     contract_type: 'quarter',
+  //     lever_rate: 10,
+  //     side: 'BUY',
+  //     direction: 'up',
+  //     amount: 1,
+  //     type: 'LIMIT',
+  //     price: 732.500,
   //   },
   //   name: '购买期货'
   // },
@@ -179,14 +188,14 @@ const tasks = [
   //   name: '未完成期货订单'
   // },
 
-  // {
-  //   fn: 'futurePosition',
-  //   params: {
-  //     contract_type: 'quarter',
-  //     pair: 'EOS-USDT'
-  //   },
-  //   name: '期货仓位'
-  // }
+  {
+    fn: 'futurePosition',
+    params: {
+      contract_type: 'quarter',
+      pair: 'EOS-USDT'
+    },
+    name: '期货仓位'
+  }
 ];
 
 testRest(exchanges, tasks);

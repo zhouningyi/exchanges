@@ -52,7 +52,7 @@ class WS extends Event {
       }
     };
     ws.on('open', () => {
-      console.log('open...');
+      console.log('ws open...');
       this._isReady = true;
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
@@ -65,6 +65,7 @@ class WS extends Event {
     ws.on('error', (e) => {
       console.log(e, 'error');
       this._isReady = false;
+      process.exit();
       return this.restart();
     });
     ws.on('close', (e) => {

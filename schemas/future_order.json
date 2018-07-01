@@ -21,7 +21,7 @@
       "type": ["STRING", 12],
       "comment": "MARKET / LIMIT"
     },
-    "status":["STRING", 8],
+    "status":["STRING", 10],
     "pair": ["STRING", 12],
     "time": "DATE"
   }
