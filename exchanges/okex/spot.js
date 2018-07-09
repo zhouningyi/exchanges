@@ -254,10 +254,10 @@ class Exchange extends Base {
     return _.keys(coins);
   }
   createWs(o = {}) {
-    let { chanelString, validate, formater, cb, login = false } = o;
+    let { chanelString, validate, formater, cb, login = false, interval } = o;
     if (!this.ws) this.ws = Utils.ws.genWs(WS_BASE, { proxy: this.proxy });
     const { ws } = this;
-    if (!ws.isReady()) return setTimeout(() => this.createWs(o, cb), 200);
+    if (!ws.isReady()) return setTimeout(() => this.createWs(o, cb), 20);
     chanelString = chanelString && typeof chanelString === 'object' ? JSON.stringify(chanelString) : chanelString;
     if (login) {
       chanelString = JSON.parse(chanelString);
@@ -265,6 +265,11 @@ class Exchange extends Base {
       chanelString = JSON.stringify(chanelString);
     }
     ws.send(chanelString);
+    if (interval) {
+      (this.intervalTask(() => {
+        ws.send(chanelString);
+      }, interval))();
+    }
     const callback = this.genWsDataCallBack(cb, formater, o);
     ws.onData(validate, callback);
   }
@@ -303,6 +308,35 @@ class Exchange extends Base {
       name: 'wsTicks',
       validate,
       formater: kUtils.formatWsTick,
+      interval: o.interval,
+      cb
+    });
+  }
+  wsTicks1(o = {}, cb) {
+    const pairs = this._getPairs(o.filter, o.pairs);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_spot_') && line.channel.endsWith('_ticker');
+    };
+    const channelString =
+
+    pairs.map((pair) => {
+      return {
+        event: 'addChannel',
+        parameters: {
+          binary: '1',
+          type: 'all_ticker_3s'
+        }
+      };
+    });
+    this.createWs({
+      chanelString: kUtils.createSpotChanelTick(pairs),
+      name: 'wsTicks',
+      validate,
+      formater: kUtils.formatWsTick,
+      interval: o.interval,
       cb
     });
   }
@@ -319,7 +353,7 @@ class Exchange extends Base {
     };
   }
   wsDepth(o = {}, cb) {
-    const defaultO = { size: 20 };
+    const defaultO = { size: 5 };
     o = { ...defaultO, ...o };
     const pairs = this._getPairs(o.filter, o.pairs);
     const validate = (ds) => {

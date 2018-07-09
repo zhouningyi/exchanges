@@ -9,7 +9,8 @@ const wsList = [
   // {
   //   fn: 'wsTicks',
   //   params: {
-  //     pairs: ['ETH-BTC']
+  //     // interval: 1000,
+  //     pairs: ['EOS-USDT']
   //   },
   //   name: 'tick数据...'
   // },
@@ -21,34 +22,34 @@ const wsList = [
   //   },
   //   name: '期货tick数据...'
   // },
-  {
-    fn: 'wsFutureBalance',
-    params: {
-      interval: 4000
-    },
-    name: ''
-  },
-  {
-    fn: 'wsFutureOrder',
-    params: {
-      interval: 4000
-    },
-    name: ''
-  },
-  {
-    fn: 'wsFuturePosition',
-    params: {
-      interval: 4000
-    },
-    name: ''
-  },
-  {
-    fn: 'wsBalance',
-    params: {
-      interval: 4000
-    },
-    name: '余额数据'
-  },
+  // {
+  //   fn: 'wsFutureBalance',
+  //   params: {
+  //     interval: 4000
+  //   },
+  //   name: ''
+  // },
+  // {
+  //   fn: 'wsFutureOrder',
+  //   params: {
+  //     interval: 4000
+  //   },
+  //   name: ''
+  // },
+  // {
+  //   fn: 'wsFuturePosition',
+  //   params: {
+  //     interval: 4000
+  //   },
+  //   name: ''
+  // },
+  // {
+  //   fn: 'wsBalance',
+  //   params: {
+  //     interval: 4000
+  //   },
+  //   name: '余额数据'
+  // },
   // {
   //   fn: 'wsOrder',
   //   params: {
@@ -75,14 +76,14 @@ const wsList = [
   //   },
   //   name: '期货深度图'
   // },
-  // {
-  //   fn: 'wsDepth',
-  //   params: {
-  //     // contract_type: 'quarter',
-  //     pairs: ['BTC-USDT', 'EOS-USDT']
-  //   },
-  //   name: '深度图'
-  // },
+  {
+    fn: 'wsDepth',
+    params: {
+      contract_type: 'quarter',
+      pairs: ['EOS-USDT']// 'BTC-USDT',
+    },
+    name: '深度图'
+  },
   // {
   //   fn: 'wsFutureBalances',
   //   params: {
