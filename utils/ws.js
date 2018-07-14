@@ -49,6 +49,7 @@ class WS extends Event {
         ws.ping(noop);
       } catch (e) {
         console.log(e, 'ping error');
+        process.exit();
       }
     };
     ws.on('open', () => {
