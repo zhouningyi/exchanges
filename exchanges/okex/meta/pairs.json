@@ -1,6 +1,7 @@
 {
   "BTC-USDT": {
     "baseCurrency": 0,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -26,6 +27,7 @@
   },
   "LTC-USDT": {
     "baseCurrency": 1,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -51,6 +53,7 @@
   },
   "ETH-USDT": {
     "baseCurrency": 2,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -76,8 +79,9 @@
   },
   "OKB-USDT": {
     "baseCurrency": 184,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
-    "collect": 0,
+    "collect": 1,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
     "listDisplay": 0,
@@ -101,6 +105,7 @@
   },
   "ETC-USDT": {
     "baseCurrency": 4,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -126,6 +131,7 @@
   },
   "BCH-USDT": {
     "baseCurrency": 5,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -151,6 +157,7 @@
   },
   "1ST-USDT": {
     "baseCurrency": 53,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -176,6 +183,7 @@
   },
   "AAC-USDT": {
     "baseCurrency": 124,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -201,6 +209,7 @@
   },
   "ABT-USDT": {
     "baseCurrency": 190,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -226,6 +235,7 @@
   },
   "ACE-USDT": {
     "baseCurrency": 85,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -251,6 +261,7 @@
   },
   "ACT-USDT": {
     "baseCurrency": 23,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -276,6 +287,7 @@
   },
   "AE-USDT": {
     "baseCurrency": 216,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528704600000,
     "collect": 0,
     "continuousSwitchTime": 1528705200000,
@@ -301,6 +313,7 @@
   },
   "AIDOC-USDT": {
     "baseCurrency": 126,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -326,6 +339,7 @@
   },
   "AMM-USDT": {
     "baseCurrency": 55,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -351,6 +365,7 @@
   },
   "ARK-USDT": {
     "baseCurrency": 69,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -376,6 +391,7 @@
   },
   "AST-USDT": {
     "baseCurrency": 59,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -401,6 +417,7 @@
   },
   "ATL-USDT": {
     "baseCurrency": 144,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -426,6 +443,7 @@
   },
   "AUTO-USDT": {
     "baseCurrency": 187,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -451,6 +469,7 @@
   },
   "AVT-USDT": {
     "baseCurrency": 42,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -476,6 +495,7 @@
   },
   "BCD-USDT": {
     "baseCurrency": 28,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -501,6 +521,7 @@
   },
   "BCN-USDT": {
     "baseCurrency": 232,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530778200000,
     "collect": 0,
     "continuousSwitchTime": 1530778800000,
@@ -526,6 +547,7 @@
   },
   "BEC-USDT": {
     "baseCurrency": 189,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525775400000,
     "collect": 0,
     "continuousSwitchTime": 1525776000000,
@@ -551,6 +573,7 @@
   },
   "BKX-USDT": {
     "baseCurrency": 186,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -576,6 +599,7 @@
   },
   "BNT-USDT": {
     "baseCurrency": 52,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -601,6 +625,7 @@
   },
   "BRD-USDT": {
     "baseCurrency": 113,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -626,6 +651,7 @@
   },
   "BTG-USDT": {
     "baseCurrency": 10,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -651,6 +677,7 @@
   },
   "BTM-USDT": {
     "baseCurrency": 25,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -676,6 +703,7 @@
   },
   "CAG-USDT": {
     "baseCurrency": 106,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -701,6 +729,7 @@
   },
   "CAI-USDT": {
     "baseCurrency": 219,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528186200000,
     "collect": 0,
     "continuousSwitchTime": 1528186800000,
@@ -726,6 +755,7 @@
   },
   "CAN-USDT": {
     "baseCurrency": 140,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -751,6 +781,7 @@
   },
   "CBT-USDT": {
     "baseCurrency": 166,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -776,8 +807,9 @@
   },
   "CHAT-USDT": {
     "baseCurrency": 161,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
-    "collect": 0,
+    "collect": 1,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
     "listDisplay": 0,
@@ -801,6 +833,7 @@
   },
   "CIC-USDT": {
     "baseCurrency": 173,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -826,6 +859,7 @@
   },
   "CMT-USDT": {
     "baseCurrency": 30,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -851,6 +885,7 @@
   },
   "CTXC-USDT": {
     "baseCurrency": 215,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525249200000,
     "collect": 0,
     "continuousSwitchTime": 1525249800000,
@@ -876,6 +911,7 @@
   },
   "CVC-USDT": {
     "baseCurrency": 54,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -901,6 +937,7 @@
   },
   "CVT-USDT": {
     "baseCurrency": 228,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530173400000,
     "collect": 0,
     "continuousSwitchTime": 1530174000000,
@@ -926,6 +963,7 @@
   },
   "DADI-USDT": {
     "baseCurrency": 196,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -951,6 +989,7 @@
   },
   "DASH-USDT": {
     "baseCurrency": 17,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -976,6 +1015,7 @@
   },
   "DAT-USDT": {
     "baseCurrency": 65,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1001,6 +1041,7 @@
   },
   "DCR-USDT": {
     "baseCurrency": 220,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -1026,6 +1067,7 @@
   },
   "DENT-USDT": {
     "baseCurrency": 102,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1051,6 +1093,7 @@
   },
   "DGB-USDT": {
     "baseCurrency": 90,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1076,6 +1119,7 @@
   },
   "DGD-USDT": {
     "baseCurrency": 37,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1101,6 +1145,7 @@
   },
   "DNA-USDT": {
     "baseCurrency": 107,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1126,6 +1171,7 @@
   },
   "DNT-USDT": {
     "baseCurrency": 61,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1151,6 +1197,7 @@
   },
   "DPY-USDT": {
     "baseCurrency": 99,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1176,6 +1223,7 @@
   },
   "EDO-USDT": {
     "baseCurrency": 41,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1201,6 +1249,7 @@
   },
   "EGT-USDT": {
     "baseCurrency": 229,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530519000000,
     "collect": 0,
     "continuousSwitchTime": 1530519600000,
@@ -1226,6 +1275,7 @@
   },
   "ELF-USDT": {
     "baseCurrency": 57,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1251,6 +1301,7 @@
   },
   "ENG-USDT": {
     "baseCurrency": 76,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1276,6 +1327,7 @@
   },
   "ENJ-USDT": {
     "baseCurrency": 165,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1301,6 +1353,7 @@
   },
   "EOS-USDT": {
     "baseCurrency": 20,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1326,6 +1379,7 @@
   },
   "EVX-USDT": {
     "baseCurrency": 70,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1351,6 +1405,7 @@
   },
   "FAIR-USDT": {
     "baseCurrency": 128,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1376,6 +1431,7 @@
   },
   "FUN-USDT": {
     "baseCurrency": 62,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1401,6 +1457,7 @@
   },
   "GAS-USDT": {
     "baseCurrency": 14,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1426,6 +1483,7 @@
   },
   "GNT-USDT": {
     "baseCurrency": 38,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1451,6 +1509,7 @@
   },
   "GNX-USDT": {
     "baseCurrency": 34,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1476,6 +1535,7 @@
   },
   "GSC-USDT": {
     "baseCurrency": 199,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1501,6 +1561,7 @@
   },
   "GTC-USDT": {
     "baseCurrency": 154,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1526,6 +1587,7 @@
   },
   "GTO-USDT": {
     "baseCurrency": 159,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1551,6 +1613,7 @@
   },
   "HMC-USDT": {
     "baseCurrency": 163,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1576,6 +1639,7 @@
   },
   "HOT-USDT": {
     "baseCurrency": 150,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1599,8 +1663,35 @@
     "tradingMode": 3,
     "pair": "HOT-USDT"
   },
+  "HPB-USDT": {
+    "baseCurrency": 238,
+    "brokerId": 0,
+    "callNoCancelSwitchTime": 1531815000000,
+    "collect": 0,
+    "continuousSwitchTime": 1531815600000,
+    "isMarginOpen": false,
+    "listDisplay": 0,
+    "marginRiskPreRatio": 0,
+    "marginRiskRatio": 0,
+    "marketFrom": 715,
+    "maxMarginLeverage": 0,
+    "maxPriceDigit": 4,
+    "maxSizeDigit": 8,
+    "mergeTypes": "0.0001,0.01,1",
+    "minTradeSize": 1,
+    "online": 1,
+    "productId": 615,
+    "quoteCurrency": 7,
+    "quoteIncrement": "0.0001",
+    "quotePrecision": 4,
+    "sort": 30000,
+    "symbol": "hpb_usdt",
+    "tradingMode": 3,
+    "pair": "HPB-USDT"
+  },
   "HSR-USDT": {
     "baseCurrency": 16,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1626,6 +1717,7 @@
   },
   "ICN-USDT": {
     "baseCurrency": 77,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1651,6 +1743,7 @@
   },
   "ICX-USDT": {
     "baseCurrency": 84,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1676,6 +1769,7 @@
   },
   "INS-USDT": {
     "baseCurrency": 96,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1701,6 +1795,7 @@
   },
   "INSUR-USDT": {
     "baseCurrency": 181,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1726,6 +1821,7 @@
   },
   "INT-USDT": {
     "baseCurrency": 132,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1751,8 +1847,9 @@
   },
   "IOST-USDT": {
     "baseCurrency": 141,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
-    "collect": 0,
+    "collect": 1,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
     "listDisplay": 0,
@@ -1776,6 +1873,7 @@
   },
   "IOTA-USDT": {
     "baseCurrency": 24,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1801,6 +1899,7 @@
   },
   "IPC-USDT": {
     "baseCurrency": 133,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1826,6 +1925,7 @@
   },
   "ITC-USDT": {
     "baseCurrency": 35,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1851,6 +1951,7 @@
   },
   "KAN-USDT": {
     "baseCurrency": 224,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528791000000,
     "collect": 0,
     "continuousSwitchTime": 1528791600000,
@@ -1876,6 +1977,7 @@
   },
   "KCASH-USDT": {
     "baseCurrency": 104,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1901,6 +2003,7 @@
   },
   "KEY-USDT": {
     "baseCurrency": 167,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1926,6 +2029,7 @@
   },
   "KNC-USDT": {
     "baseCurrency": 46,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1951,6 +2055,7 @@
   },
   "LA-USDT": {
     "baseCurrency": 114,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -1976,6 +2081,7 @@
   },
   "LBA-USDT": {
     "baseCurrency": 218,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1527495000000,
     "collect": 0,
     "continuousSwitchTime": 1527495600000,
@@ -2001,6 +2107,7 @@
   },
   "LEND-USDT": {
     "baseCurrency": 108,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2026,6 +2133,7 @@
   },
   "LET-USDT": {
     "baseCurrency": 244,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1531210200000,
     "collect": 0,
     "continuousSwitchTime": 1531210800000,
@@ -2037,7 +2145,7 @@
     "maxMarginLeverage": 0,
     "maxPriceDigit": 5,
     "maxSizeDigit": 8,
-    "mergeTypes": "0.0001,0.01,1",
+    "mergeTypes": "0.00001,0.01,1",
     "minTradeSize": 1,
     "online": 1,
     "productId": 607,
@@ -2051,6 +2159,7 @@
   },
   "LEV-USDT": {
     "baseCurrency": 146,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2076,11 +2185,12 @@
   },
   "LIGHT-USDT": {
     "baseCurrency": 158,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
-    "listDisplay": 1,
+    "listDisplay": 0,
     "marginRiskPreRatio": 0,
     "marginRiskRatio": 0,
     "marketFrom": 523,
@@ -2101,6 +2211,7 @@
   },
   "LINK-USDT": {
     "baseCurrency": 44,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2126,6 +2237,7 @@
   },
   "LRC-USDT": {
     "baseCurrency": 31,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2151,6 +2263,7 @@
   },
   "LSK-USDT": {
     "baseCurrency": 221,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528099800000,
     "collect": 0,
     "continuousSwitchTime": 1528100400000,
@@ -2176,6 +2289,7 @@
   },
   "MAG-USDT": {
     "baseCurrency": 129,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2201,6 +2315,7 @@
   },
   "MANA-USDT": {
     "baseCurrency": 80,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2226,6 +2341,7 @@
   },
   "MCO-USDT": {
     "baseCurrency": 39,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2251,6 +2367,7 @@
   },
   "MDA-USDT": {
     "baseCurrency": 71,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2276,6 +2393,7 @@
   },
   "MDT-USDT": {
     "baseCurrency": 95,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2301,6 +2419,7 @@
   },
   "MITH-USDT": {
     "baseCurrency": 188,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2326,6 +2445,7 @@
   },
   "MKR-USDT": {
     "baseCurrency": 152,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2351,6 +2471,7 @@
   },
   "MOF-USDT": {
     "baseCurrency": 136,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2376,6 +2497,7 @@
   },
   "MOT-USDT": {
     "baseCurrency": 109,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2401,6 +2523,7 @@
   },
   "MTH-USDT": {
     "baseCurrency": 72,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2426,6 +2549,7 @@
   },
   "MTL-USDT": {
     "baseCurrency": 73,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2451,6 +2575,7 @@
   },
   "MVP-USDT": {
     "baseCurrency": 226,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529395800000,
     "collect": 0,
     "continuousSwitchTime": 1529396400000,
@@ -2476,6 +2601,7 @@
   },
   "NANO-USDT": {
     "baseCurrency": 155,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2501,6 +2627,7 @@
   },
   "NAS-USDT": {
     "baseCurrency": 117,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2526,6 +2653,7 @@
   },
   "NEO-USDT": {
     "baseCurrency": 13,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2551,6 +2679,7 @@
   },
   "NGC-USDT": {
     "baseCurrency": 101,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2576,6 +2705,7 @@
   },
   "NULS-USDT": {
     "baseCurrency": 32,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2601,6 +2731,7 @@
   },
   "OAX-USDT": {
     "baseCurrency": 74,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2626,6 +2757,7 @@
   },
   "OF-USDT": {
     "baseCurrency": 168,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2651,6 +2783,7 @@
   },
   "OK06ETT-USDT": {
     "baseCurrency": 222,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528171800000,
     "collect": 0,
     "continuousSwitchTime": 1528172400000,
@@ -2676,6 +2809,7 @@
   },
   "OMG-USDT": {
     "baseCurrency": 18,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2701,6 +2835,7 @@
   },
   "ONT-USDT": {
     "baseCurrency": 206,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2726,6 +2861,7 @@
   },
   "ORS-USDT": {
     "baseCurrency": 230,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529395800000,
     "collect": 0,
     "continuousSwitchTime": 1529396400000,
@@ -2751,6 +2887,7 @@
   },
   "OST-USDT": {
     "baseCurrency": 103,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2776,6 +2913,7 @@
   },
   "PAY-USDT": {
     "baseCurrency": 36,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2801,6 +2939,7 @@
   },
   "POE-USDT": {
     "baseCurrency": 135,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2826,6 +2965,7 @@
   },
   "PPT-USDT": {
     "baseCurrency": 87,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2851,6 +2991,7 @@
   },
   "PRA-USDT": {
     "baseCurrency": 58,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2876,6 +3017,7 @@
   },
   "PST-USDT": {
     "baseCurrency": 151,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2901,6 +3043,7 @@
   },
   "QTUM-USDT": {
     "baseCurrency": 12,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2926,6 +3069,7 @@
   },
   "QUN-USDT": {
     "baseCurrency": 131,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2951,6 +3095,7 @@
   },
   "QVT-USDT": {
     "baseCurrency": 33,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -2976,6 +3121,7 @@
   },
   "R-USDT": {
     "baseCurrency": 185,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3001,6 +3147,7 @@
   },
   "RCN-USDT": {
     "baseCurrency": 79,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3026,6 +3173,7 @@
   },
   "RCT-USDT": {
     "baseCurrency": 127,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3051,6 +3199,7 @@
   },
   "RDN-USDT": {
     "baseCurrency": 94,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3076,6 +3225,7 @@
   },
   "READ-USDT": {
     "baseCurrency": 116,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3101,6 +3251,7 @@
   },
   "REF-USDT": {
     "baseCurrency": 147,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3126,6 +3277,7 @@
   },
   "REN-USDT": {
     "baseCurrency": 194,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3151,6 +3303,7 @@
   },
   "REQ-USDT": {
     "baseCurrency": 75,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3176,6 +3329,7 @@
   },
   "RFR-USDT": {
     "baseCurrency": 193,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3201,6 +3355,7 @@
   },
   "RNT-USDT": {
     "baseCurrency": 118,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3226,6 +3381,7 @@
   },
   "SALT-USDT": {
     "baseCurrency": 45,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3251,6 +3407,7 @@
   },
   "SAN-USDT": {
     "baseCurrency": 40,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3276,6 +3433,7 @@
   },
   "SC-USDT": {
     "baseCurrency": 142,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528704600000,
     "collect": 0,
     "continuousSwitchTime": 1528705200000,
@@ -3301,6 +3459,7 @@
   },
   "SHOW-USDT": {
     "baseCurrency": 125,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3310,14 +3469,14 @@
     "marginRiskRatio": 0,
     "marketFrom": 421,
     "maxMarginLeverage": 0,
-    "maxPriceDigit": 4,
+    "maxPriceDigit": 6,
     "maxSizeDigit": 1,
-    "mergeTypes": "0.0001,0.01,1",
+    "mergeTypes": "0.000001,0.01,1",
     "minTradeSize": 10,
     "online": 1,
     "productId": 321,
     "quoteCurrency": 7,
-    "quoteIncrement": "0.0001",
+    "quoteIncrement": "0.000001",
     "quotePrecision": 2,
     "sort": 31190,
     "symbol": "show_usdt",
@@ -3326,6 +3485,7 @@
   },
   "SMT-USDT": {
     "baseCurrency": 121,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3351,6 +3511,7 @@
   },
   "SNC-USDT": {
     "baseCurrency": 153,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3376,6 +3537,7 @@
   },
   "SNGLS-USDT": {
     "baseCurrency": 48,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3401,6 +3563,7 @@
   },
   "SNM-USDT": {
     "baseCurrency": 49,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3426,6 +3589,7 @@
   },
   "SNT-USDT": {
     "baseCurrency": 27,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3451,8 +3615,9 @@
   },
   "SOC-USDT": {
     "baseCurrency": 164,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
-    "collect": 0,
+    "collect": 1,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
     "listDisplay": 1,
@@ -3476,6 +3641,7 @@
   },
   "SPF-USDT": {
     "baseCurrency": 148,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3501,6 +3667,7 @@
   },
   "SSC-USDT": {
     "baseCurrency": 123,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3526,6 +3693,7 @@
   },
   "STC-USDT": {
     "baseCurrency": 137,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3551,6 +3719,7 @@
   },
   "STORJ-USDT": {
     "baseCurrency": 26,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3576,6 +3745,7 @@
   },
   "SUB-USDT": {
     "baseCurrency": 60,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3601,6 +3771,7 @@
   },
   "SWFTC-USDT": {
     "baseCurrency": 93,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3626,6 +3797,7 @@
   },
   "TCT-USDT": {
     "baseCurrency": 145,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3651,6 +3823,7 @@
   },
   "THETA-USDT": {
     "baseCurrency": 138,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3676,6 +3849,7 @@
   },
   "TIO-USDT": {
     "baseCurrency": 105,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3701,6 +3875,7 @@
   },
   "TNB-USDT": {
     "baseCurrency": 78,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3726,6 +3901,7 @@
   },
   "TOPC-USDT": {
     "baseCurrency": 130,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3751,6 +3927,7 @@
   },
   "TRA-USDT": {
     "baseCurrency": 203,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3776,6 +3953,7 @@
   },
   "TRIO-USDT": {
     "baseCurrency": 202,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3801,6 +3979,7 @@
   },
   "TRUE-USDT": {
     "baseCurrency": 157,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3826,6 +4005,7 @@
   },
   "TRX-USDT": {
     "baseCurrency": 86,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3851,6 +4031,7 @@
   },
   "UBTC-USDT": {
     "baseCurrency": 120,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3876,6 +4057,7 @@
   },
   "UCT-USDT": {
     "baseCurrency": 180,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3901,6 +4083,7 @@
   },
   "UGC-USDT": {
     "baseCurrency": 98,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3926,6 +4109,7 @@
   },
   "UKG-USDT": {
     "baseCurrency": 100,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3951,6 +4135,7 @@
   },
   "UTK-USDT": {
     "baseCurrency": 111,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -3976,6 +4161,7 @@
   },
   "VEE-USDT": {
     "baseCurrency": 29,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4001,6 +4187,7 @@
   },
   "VIB-USDT": {
     "baseCurrency": 51,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4026,6 +4213,7 @@
   },
   "VIU-USDT": {
     "baseCurrency": 112,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4051,6 +4239,7 @@
   },
   "WAVES-USDT": {
     "baseCurrency": 231,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -4076,6 +4265,7 @@
   },
   "WFEE-USDT": {
     "baseCurrency": 191,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4087,7 +4277,7 @@
     "maxMarginLeverage": 0,
     "maxPriceDigit": 6,
     "maxSizeDigit": 1,
-    "mergeTypes": "0.000001,0.01,1",
+    "mergeTypes": "0.000001,0.0001,0.01,1",
     "minTradeSize": 10,
     "online": 1,
     "productId": 505,
@@ -4101,6 +4291,7 @@
   },
   "WIN-USDT": {
     "baseCurrency": 225,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528877400000,
     "collect": 0,
     "continuousSwitchTime": 1528878000000,
@@ -4126,6 +4317,7 @@
   },
   "WRC-USDT": {
     "baseCurrency": 97,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4151,6 +4343,7 @@
   },
   "WTC-USDT": {
     "baseCurrency": 47,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4176,6 +4369,7 @@
   },
   "XAS-USDT": {
     "baseCurrency": 234,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530087000000,
     "collect": 0,
     "continuousSwitchTime": 1530087600000,
@@ -4201,6 +4395,7 @@
   },
   "XEM-USDT": {
     "baseCurrency": 22,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4226,6 +4421,7 @@
   },
   "XLM-USDT": {
     "baseCurrency": 68,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4251,6 +4447,7 @@
   },
   "XMR-USDT": {
     "baseCurrency": 21,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4276,6 +4473,7 @@
   },
   "XRP-USDT": {
     "baseCurrency": 15,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4301,6 +4499,7 @@
   },
   "XUC-USDT": {
     "baseCurrency": 19,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4326,8 +4525,9 @@
   },
   "YEE-USDT": {
     "baseCurrency": 139,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
-    "collect": 0,
+    "collect": 1,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
     "listDisplay": 0,
@@ -4351,8 +4551,9 @@
   },
   "YOU-USDT": {
     "baseCurrency": 217,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1526890200000,
-    "collect": 0,
+    "collect": 1,
     "continuousSwitchTime": 1526890800000,
     "isMarginOpen": false,
     "listDisplay": 0,
@@ -4376,6 +4577,7 @@
   },
   "YOYO-USDT": {
     "baseCurrency": 56,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4401,6 +4603,7 @@
   },
   "ZEC-USDT": {
     "baseCurrency": 11,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4426,6 +4629,7 @@
   },
   "ZEN-USDT": {
     "baseCurrency": 122,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4451,6 +4655,7 @@
   },
   "ZIL-USDT": {
     "baseCurrency": 204,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525853400000,
     "collect": 0,
     "continuousSwitchTime": 1525854000000,
@@ -4476,6 +4681,7 @@
   },
   "ZIP-USDT": {
     "baseCurrency": 174,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4501,6 +4707,7 @@
   },
   "ZRX-USDT": {
     "baseCurrency": 50,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4526,6 +4733,7 @@
   },
   "LTC-BTC": {
     "baseCurrency": 1,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4551,6 +4759,7 @@
   },
   "ETH-BTC": {
     "baseCurrency": 2,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4576,6 +4785,7 @@
   },
   "OKB-BTC": {
     "baseCurrency": 184,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4601,6 +4811,7 @@
   },
   "ETC-BTC": {
     "baseCurrency": 4,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4626,6 +4837,7 @@
   },
   "BCH-BTC": {
     "baseCurrency": 5,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4651,6 +4863,7 @@
   },
   "1ST-BTC": {
     "baseCurrency": 53,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4676,6 +4889,7 @@
   },
   "AAC-BTC": {
     "baseCurrency": 124,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4701,6 +4915,7 @@
   },
   "ABT-BTC": {
     "baseCurrency": 190,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4726,6 +4941,7 @@
   },
   "ACE-BTC": {
     "baseCurrency": 85,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4751,6 +4967,7 @@
   },
   "ACT-BTC": {
     "baseCurrency": 23,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4776,6 +4993,7 @@
   },
   "AE-BTC": {
     "baseCurrency": 216,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528704600000,
     "collect": 0,
     "continuousSwitchTime": 1528705200000,
@@ -4801,6 +5019,7 @@
   },
   "AIDOC-BTC": {
     "baseCurrency": 126,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4826,6 +5045,7 @@
   },
   "AMM-BTC": {
     "baseCurrency": 55,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4851,6 +5071,7 @@
   },
   "ARDR-BTC": {
     "baseCurrency": 170,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530000600000,
     "collect": 0,
     "continuousSwitchTime": 1530001200000,
@@ -4876,6 +5097,7 @@
   },
   "ARK-BTC": {
     "baseCurrency": 69,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4901,6 +5123,7 @@
   },
   "AST-BTC": {
     "baseCurrency": 59,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4926,6 +5149,7 @@
   },
   "ATL-BTC": {
     "baseCurrency": 144,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4951,6 +5175,7 @@
   },
   "AUTO-BTC": {
     "baseCurrency": 187,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -4976,6 +5201,7 @@
   },
   "AVT-BTC": {
     "baseCurrency": 42,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5001,6 +5227,7 @@
   },
   "BCD-BTC": {
     "baseCurrency": 28,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5026,6 +5253,7 @@
   },
   "BCN-BTC": {
     "baseCurrency": 232,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530778200000,
     "collect": 0,
     "continuousSwitchTime": 1530778800000,
@@ -5051,6 +5279,7 @@
   },
   "BCX-BTC": {
     "baseCurrency": 82,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5076,6 +5305,7 @@
   },
   "BEC-BTC": {
     "baseCurrency": 189,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525775400000,
     "collect": 0,
     "continuousSwitchTime": 1525776000000,
@@ -5101,6 +5331,7 @@
   },
   "BKX-BTC": {
     "baseCurrency": 186,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5126,6 +5357,7 @@
   },
   "BNT-BTC": {
     "baseCurrency": 52,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5151,6 +5383,7 @@
   },
   "BRD-BTC": {
     "baseCurrency": 113,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5176,6 +5409,7 @@
   },
   "BT2-BTC": {
     "baseCurrency": 9,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5201,6 +5435,7 @@
   },
   "BTG-BTC": {
     "baseCurrency": 10,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5226,6 +5461,7 @@
   },
   "BTM-BTC": {
     "baseCurrency": 25,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5251,6 +5487,7 @@
   },
   "CAG-BTC": {
     "baseCurrency": 106,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5276,6 +5513,7 @@
   },
   "CAI-BTC": {
     "baseCurrency": 219,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528186200000,
     "collect": 0,
     "continuousSwitchTime": 1528186800000,
@@ -5301,6 +5539,7 @@
   },
   "CAN-BTC": {
     "baseCurrency": 140,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5326,6 +5565,7 @@
   },
   "CBT-BTC": {
     "baseCurrency": 166,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5351,6 +5591,7 @@
   },
   "CHAT-BTC": {
     "baseCurrency": 161,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5376,6 +5617,7 @@
   },
   "CIC-BTC": {
     "baseCurrency": 173,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5399,8 +5641,35 @@
     "tradingMode": 3,
     "pair": "CIC-BTC"
   },
+  "CIT-BTC": {
+    "baseCurrency": 243,
+    "brokerId": 0,
+    "callNoCancelSwitchTime": 1531728600000,
+    "collect": 0,
+    "continuousSwitchTime": 1531729200000,
+    "isMarginOpen": false,
+    "listDisplay": 0,
+    "marginRiskPreRatio": 0,
+    "marginRiskRatio": 0,
+    "marketFrom": 711,
+    "maxMarginLeverage": 0,
+    "maxPriceDigit": 8,
+    "maxSizeDigit": 8,
+    "mergeTypes": "0.00000001,0.000001,0.0001,0.01",
+    "minTradeSize": 1,
+    "online": 1,
+    "productId": 611,
+    "quoteCurrency": 0,
+    "quoteIncrement": "0.00000001",
+    "quotePrecision": 4,
+    "sort": 10000,
+    "symbol": "cit_btc",
+    "tradingMode": 3,
+    "pair": "CIT-BTC"
+  },
   "CMT-BTC": {
     "baseCurrency": 30,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5426,6 +5695,7 @@
   },
   "CTXC-BTC": {
     "baseCurrency": 215,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525249200000,
     "collect": 0,
     "continuousSwitchTime": 1525249800000,
@@ -5451,6 +5721,7 @@
   },
   "CVC-BTC": {
     "baseCurrency": 54,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5476,6 +5747,7 @@
   },
   "CVT-BTC": {
     "baseCurrency": 228,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530173400000,
     "collect": 0,
     "continuousSwitchTime": 1530174000000,
@@ -5501,6 +5773,7 @@
   },
   "DADI-BTC": {
     "baseCurrency": 196,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5526,6 +5799,7 @@
   },
   "DASH-BTC": {
     "baseCurrency": 17,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5551,6 +5825,7 @@
   },
   "DAT-BTC": {
     "baseCurrency": 65,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5576,6 +5851,7 @@
   },
   "DCR-BTC": {
     "baseCurrency": 220,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -5601,6 +5877,7 @@
   },
   "DENT-BTC": {
     "baseCurrency": 102,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5626,6 +5903,7 @@
   },
   "DGB-BTC": {
     "baseCurrency": 90,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5651,6 +5929,7 @@
   },
   "DGD-BTC": {
     "baseCurrency": 37,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5676,6 +5955,7 @@
   },
   "DNA-BTC": {
     "baseCurrency": 107,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5701,6 +5981,7 @@
   },
   "DNT-BTC": {
     "baseCurrency": 61,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5726,6 +6007,7 @@
   },
   "DPY-BTC": {
     "baseCurrency": 99,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5751,6 +6033,7 @@
   },
   "EDO-BTC": {
     "baseCurrency": 41,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5776,6 +6059,7 @@
   },
   "EGT-BTC": {
     "baseCurrency": 229,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530519000000,
     "collect": 0,
     "continuousSwitchTime": 1530519600000,
@@ -5801,6 +6085,7 @@
   },
   "ELF-BTC": {
     "baseCurrency": 57,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5826,6 +6111,7 @@
   },
   "ENG-BTC": {
     "baseCurrency": 76,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5851,6 +6137,7 @@
   },
   "ENJ-BTC": {
     "baseCurrency": 165,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5876,6 +6163,7 @@
   },
   "EOS-BTC": {
     "baseCurrency": 20,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5901,6 +6189,7 @@
   },
   "EVX-BTC": {
     "baseCurrency": 70,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5926,6 +6215,7 @@
   },
   "FAIR-BTC": {
     "baseCurrency": 128,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5951,6 +6241,7 @@
   },
   "FUN-BTC": {
     "baseCurrency": 62,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -5976,6 +6267,7 @@
   },
   "GAS-BTC": {
     "baseCurrency": 14,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6001,6 +6293,7 @@
   },
   "GNT-BTC": {
     "baseCurrency": 38,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6026,6 +6319,7 @@
   },
   "GNX-BTC": {
     "baseCurrency": 34,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6051,6 +6345,7 @@
   },
   "GSC-BTC": {
     "baseCurrency": 199,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6076,6 +6371,7 @@
   },
   "GTC-BTC": {
     "baseCurrency": 154,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6101,6 +6397,7 @@
   },
   "GTO-BTC": {
     "baseCurrency": 159,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6126,6 +6423,7 @@
   },
   "HMC-BTC": {
     "baseCurrency": 163,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6151,6 +6449,7 @@
   },
   "HOT-BTC": {
     "baseCurrency": 150,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6174,8 +6473,35 @@
     "tradingMode": 3,
     "pair": "HOT-BTC"
   },
+  "HPB-BTC": {
+    "baseCurrency": 238,
+    "brokerId": 0,
+    "callNoCancelSwitchTime": 1531815000000,
+    "collect": 0,
+    "continuousSwitchTime": 1531815600000,
+    "isMarginOpen": false,
+    "listDisplay": 0,
+    "marginRiskPreRatio": 0,
+    "marginRiskRatio": 0,
+    "marketFrom": 713,
+    "maxMarginLeverage": 0,
+    "maxPriceDigit": 8,
+    "maxSizeDigit": 8,
+    "mergeTypes": "0.00000001,0.000001,0.0001,0.01",
+    "minTradeSize": 1,
+    "online": 1,
+    "productId": 613,
+    "quoteCurrency": 0,
+    "quoteIncrement": "0.00000001",
+    "quotePrecision": 4,
+    "sort": 10000,
+    "symbol": "hpb_btc",
+    "tradingMode": 3,
+    "pair": "HPB-BTC"
+  },
   "HSR-BTC": {
     "baseCurrency": 16,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6201,6 +6527,7 @@
   },
   "ICN-BTC": {
     "baseCurrency": 77,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6226,6 +6553,7 @@
   },
   "ICX-BTC": {
     "baseCurrency": 84,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6251,6 +6579,7 @@
   },
   "INS-BTC": {
     "baseCurrency": 96,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6276,6 +6605,7 @@
   },
   "INSUR-BTC": {
     "baseCurrency": 181,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6301,6 +6631,7 @@
   },
   "INT-BTC": {
     "baseCurrency": 132,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6326,6 +6657,7 @@
   },
   "IOST-BTC": {
     "baseCurrency": 141,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6351,6 +6683,7 @@
   },
   "IOTA-BTC": {
     "baseCurrency": 24,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6376,6 +6709,7 @@
   },
   "IPC-BTC": {
     "baseCurrency": 133,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6401,6 +6735,7 @@
   },
   "ITC-BTC": {
     "baseCurrency": 35,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6426,6 +6761,7 @@
   },
   "KAN-BTC": {
     "baseCurrency": 224,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528791000000,
     "collect": 0,
     "continuousSwitchTime": 1528791600000,
@@ -6451,6 +6787,7 @@
   },
   "KCASH-BTC": {
     "baseCurrency": 104,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6476,6 +6813,7 @@
   },
   "KEY-BTC": {
     "baseCurrency": 167,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6501,6 +6839,7 @@
   },
   "KNC-BTC": {
     "baseCurrency": 46,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6526,6 +6865,7 @@
   },
   "LA-BTC": {
     "baseCurrency": 114,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6551,6 +6891,7 @@
   },
   "LBA-BTC": {
     "baseCurrency": 218,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1527495000000,
     "collect": 0,
     "continuousSwitchTime": 1527495600000,
@@ -6576,6 +6917,7 @@
   },
   "LEND-BTC": {
     "baseCurrency": 108,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6601,6 +6943,7 @@
   },
   "LET-BTC": {
     "baseCurrency": 244,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1531210200000,
     "collect": 0,
     "continuousSwitchTime": 1531210800000,
@@ -6626,6 +6969,7 @@
   },
   "LEV-BTC": {
     "baseCurrency": 146,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6651,11 +6995,12 @@
   },
   "LIGHT-BTC": {
     "baseCurrency": 158,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
-    "listDisplay": 1,
+    "listDisplay": 0,
     "marginRiskPreRatio": 0,
     "marginRiskRatio": 0,
     "marketFrom": 521,
@@ -6676,6 +7021,7 @@
   },
   "LINK-BTC": {
     "baseCurrency": 44,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6701,6 +7047,7 @@
   },
   "LRC-BTC": {
     "baseCurrency": 31,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6726,6 +7073,7 @@
   },
   "LSK-BTC": {
     "baseCurrency": 221,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528099800000,
     "collect": 0,
     "continuousSwitchTime": 1528100400000,
@@ -6751,6 +7099,7 @@
   },
   "MAG-BTC": {
     "baseCurrency": 129,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6776,6 +7125,7 @@
   },
   "MANA-BTC": {
     "baseCurrency": 80,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6801,6 +7151,7 @@
   },
   "MCO-BTC": {
     "baseCurrency": 39,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6826,6 +7177,7 @@
   },
   "MDA-BTC": {
     "baseCurrency": 71,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6851,6 +7203,7 @@
   },
   "MDT-BTC": {
     "baseCurrency": 95,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6876,6 +7229,7 @@
   },
   "MITH-BTC": {
     "baseCurrency": 188,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6901,6 +7255,7 @@
   },
   "MKR-BTC": {
     "baseCurrency": 152,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6926,6 +7281,7 @@
   },
   "MOF-BTC": {
     "baseCurrency": 136,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6951,6 +7307,7 @@
   },
   "MOT-BTC": {
     "baseCurrency": 109,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -6976,6 +7333,7 @@
   },
   "MTH-BTC": {
     "baseCurrency": 72,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7001,6 +7359,7 @@
   },
   "MTL-BTC": {
     "baseCurrency": 73,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7026,6 +7385,7 @@
   },
   "MVP-BTC": {
     "baseCurrency": 226,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529395800000,
     "collect": 0,
     "continuousSwitchTime": 1529396400000,
@@ -7051,6 +7411,7 @@
   },
   "NANO-BTC": {
     "baseCurrency": 155,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7076,6 +7437,7 @@
   },
   "NAS-BTC": {
     "baseCurrency": 117,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7101,6 +7463,7 @@
   },
   "NEO-BTC": {
     "baseCurrency": 13,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7126,6 +7489,7 @@
   },
   "NGC-BTC": {
     "baseCurrency": 101,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7151,6 +7515,7 @@
   },
   "NULS-BTC": {
     "baseCurrency": 32,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7176,6 +7541,7 @@
   },
   "NXT-BTC": {
     "baseCurrency": 169,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530000600000,
     "collect": 0,
     "continuousSwitchTime": 1530001200000,
@@ -7201,6 +7567,7 @@
   },
   "OAX-BTC": {
     "baseCurrency": 74,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7226,6 +7593,7 @@
   },
   "OF-BTC": {
     "baseCurrency": 168,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7251,6 +7619,7 @@
   },
   "OMG-BTC": {
     "baseCurrency": 18,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7276,6 +7645,7 @@
   },
   "ONT-BTC": {
     "baseCurrency": 206,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7301,6 +7671,7 @@
   },
   "ORS-BTC": {
     "baseCurrency": 230,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529395800000,
     "collect": 0,
     "continuousSwitchTime": 1529396400000,
@@ -7326,6 +7697,7 @@
   },
   "OST-BTC": {
     "baseCurrency": 103,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7351,6 +7723,7 @@
   },
   "PAY-BTC": {
     "baseCurrency": 36,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7376,6 +7749,7 @@
   },
   "POE-BTC": {
     "baseCurrency": 135,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7401,6 +7775,7 @@
   },
   "PPT-BTC": {
     "baseCurrency": 87,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7426,6 +7801,7 @@
   },
   "PRA-BTC": {
     "baseCurrency": 58,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7451,6 +7827,7 @@
   },
   "PST-BTC": {
     "baseCurrency": 151,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7476,6 +7853,7 @@
   },
   "QTUM-BTC": {
     "baseCurrency": 12,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7501,6 +7879,7 @@
   },
   "QUN-BTC": {
     "baseCurrency": 131,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7526,6 +7905,7 @@
   },
   "QVT-BTC": {
     "baseCurrency": 33,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7551,6 +7931,7 @@
   },
   "R-BTC": {
     "baseCurrency": 185,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7576,6 +7957,7 @@
   },
   "RCN-BTC": {
     "baseCurrency": 79,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7601,6 +7983,7 @@
   },
   "RCT-BTC": {
     "baseCurrency": 127,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7626,6 +8009,7 @@
   },
   "RDN-BTC": {
     "baseCurrency": 94,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7651,6 +8035,7 @@
   },
   "READ-BTC": {
     "baseCurrency": 116,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7676,6 +8061,7 @@
   },
   "REF-BTC": {
     "baseCurrency": 147,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7701,6 +8087,7 @@
   },
   "REN-BTC": {
     "baseCurrency": 194,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7726,6 +8113,7 @@
   },
   "REQ-BTC": {
     "baseCurrency": 75,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7751,6 +8139,7 @@
   },
   "RFR-BTC": {
     "baseCurrency": 193,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7776,6 +8165,7 @@
   },
   "RNT-BTC": {
     "baseCurrency": 118,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7801,6 +8191,7 @@
   },
   "SALT-BTC": {
     "baseCurrency": 45,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7826,6 +8217,7 @@
   },
   "SAN-BTC": {
     "baseCurrency": 40,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7851,6 +8243,7 @@
   },
   "SBTC-BTC": {
     "baseCurrency": 63,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7876,6 +8269,7 @@
   },
   "SC-BTC": {
     "baseCurrency": 142,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528704600000,
     "collect": 0,
     "continuousSwitchTime": 1528705200000,
@@ -7901,6 +8295,7 @@
   },
   "SHOW-BTC": {
     "baseCurrency": 125,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7910,14 +8305,14 @@
     "marginRiskRatio": 0,
     "marketFrom": 419,
     "maxMarginLeverage": 0,
-    "maxPriceDigit": 8,
+    "maxPriceDigit": 10,
     "maxSizeDigit": 1,
-    "mergeTypes": "0.00000001,0.000001,0.0001,0.01",
+    "mergeTypes": "0.0000000001,0.000001,0.0001,0.01",
     "minTradeSize": 10,
     "online": 1,
     "productId": 319,
     "quoteCurrency": 0,
-    "quoteIncrement": "0.00000001",
+    "quoteIncrement": "0.0000000001",
     "quotePrecision": 4,
     "sort": 11190,
     "symbol": "show_btc",
@@ -7926,6 +8321,7 @@
   },
   "SNC-BTC": {
     "baseCurrency": 153,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7951,6 +8347,7 @@
   },
   "SNGLS-BTC": {
     "baseCurrency": 48,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -7976,6 +8373,7 @@
   },
   "SNM-BTC": {
     "baseCurrency": 49,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8001,6 +8399,7 @@
   },
   "SNT-BTC": {
     "baseCurrency": 27,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8026,6 +8425,7 @@
   },
   "SOC-BTC": {
     "baseCurrency": 164,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8051,6 +8451,7 @@
   },
   "SPF-BTC": {
     "baseCurrency": 148,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8076,6 +8477,7 @@
   },
   "SSC-BTC": {
     "baseCurrency": 123,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8101,6 +8503,7 @@
   },
   "STC-BTC": {
     "baseCurrency": 137,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8126,6 +8529,7 @@
   },
   "STORJ-BTC": {
     "baseCurrency": 26,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8151,6 +8555,7 @@
   },
   "SUB-BTC": {
     "baseCurrency": 60,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8176,6 +8581,7 @@
   },
   "SWFTC-BTC": {
     "baseCurrency": 93,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8201,6 +8607,7 @@
   },
   "TCT-BTC": {
     "baseCurrency": 145,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8226,6 +8633,7 @@
   },
   "THETA-BTC": {
     "baseCurrency": 138,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8251,6 +8659,7 @@
   },
   "TIO-BTC": {
     "baseCurrency": 105,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8276,6 +8685,7 @@
   },
   "TNB-BTC": {
     "baseCurrency": 78,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8301,6 +8711,7 @@
   },
   "TOPC-BTC": {
     "baseCurrency": 130,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8326,6 +8737,7 @@
   },
   "TRA-BTC": {
     "baseCurrency": 203,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8351,6 +8763,7 @@
   },
   "TRIO-BTC": {
     "baseCurrency": 202,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8376,6 +8789,7 @@
   },
   "TRUE-BTC": {
     "baseCurrency": 157,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8401,6 +8815,7 @@
   },
   "TRX-BTC": {
     "baseCurrency": 86,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8426,6 +8841,7 @@
   },
   "UBTC-BTC": {
     "baseCurrency": 120,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8451,6 +8867,7 @@
   },
   "UCT-BTC": {
     "baseCurrency": 180,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8476,6 +8893,7 @@
   },
   "UGC-BTC": {
     "baseCurrency": 98,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8501,6 +8919,7 @@
   },
   "UKG-BTC": {
     "baseCurrency": 100,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8526,6 +8945,7 @@
   },
   "UTK-BTC": {
     "baseCurrency": 111,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8551,6 +8971,7 @@
   },
   "VEE-BTC": {
     "baseCurrency": 29,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8576,6 +8997,7 @@
   },
   "VIB-BTC": {
     "baseCurrency": 51,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8601,6 +9023,7 @@
   },
   "VIU-BTC": {
     "baseCurrency": 112,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8626,6 +9049,7 @@
   },
   "WAVES-BTC": {
     "baseCurrency": 231,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -8651,6 +9075,7 @@
   },
   "WBTC-BTC": {
     "baseCurrency": 172,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8676,6 +9101,7 @@
   },
   "WFEE-BTC": {
     "baseCurrency": 191,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8701,6 +9127,7 @@
   },
   "WIN-BTC": {
     "baseCurrency": 225,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528877400000,
     "collect": 0,
     "continuousSwitchTime": 1528878000000,
@@ -8726,6 +9153,7 @@
   },
   "WRC-BTC": {
     "baseCurrency": 97,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8751,6 +9179,7 @@
   },
   "WTC-BTC": {
     "baseCurrency": 47,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8776,6 +9205,7 @@
   },
   "XAS-BTC": {
     "baseCurrency": 234,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530087000000,
     "collect": 0,
     "continuousSwitchTime": 1530087600000,
@@ -8801,6 +9231,7 @@
   },
   "XEM-BTC": {
     "baseCurrency": 22,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8826,6 +9257,7 @@
   },
   "XLM-BTC": {
     "baseCurrency": 68,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8851,6 +9283,7 @@
   },
   "XMR-BTC": {
     "baseCurrency": 21,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8876,6 +9309,7 @@
   },
   "XRP-BTC": {
     "baseCurrency": 15,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8901,6 +9335,7 @@
   },
   "XUC-BTC": {
     "baseCurrency": 19,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8926,6 +9361,7 @@
   },
   "YEE-BTC": {
     "baseCurrency": 139,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -8951,6 +9387,7 @@
   },
   "YOU-BTC": {
     "baseCurrency": 217,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1526890200000,
     "collect": 0,
     "continuousSwitchTime": 1526890800000,
@@ -8976,6 +9413,7 @@
   },
   "YOYO-BTC": {
     "baseCurrency": 56,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9001,6 +9439,7 @@
   },
   "ZCO-BTC": {
     "baseCurrency": 235,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530519000000,
     "collect": 0,
     "continuousSwitchTime": 1530519600000,
@@ -9026,6 +9465,7 @@
   },
   "ZEC-BTC": {
     "baseCurrency": 11,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9051,6 +9491,7 @@
   },
   "ZEN-BTC": {
     "baseCurrency": 122,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9076,6 +9517,7 @@
   },
   "ZIL-BTC": {
     "baseCurrency": 204,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525853400000,
     "collect": 0,
     "continuousSwitchTime": 1525854000000,
@@ -9101,6 +9543,7 @@
   },
   "ZIP-BTC": {
     "baseCurrency": 174,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9126,6 +9569,7 @@
   },
   "ZRX-BTC": {
     "baseCurrency": 50,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9151,6 +9595,7 @@
   },
   "LTC-ETH": {
     "baseCurrency": 1,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9176,6 +9621,7 @@
   },
   "OKB-ETH": {
     "baseCurrency": 184,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9201,6 +9647,7 @@
   },
   "ETC-ETH": {
     "baseCurrency": 4,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9226,6 +9673,7 @@
   },
   "BCH-ETH": {
     "baseCurrency": 5,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9251,6 +9699,7 @@
   },
   "1ST-ETH": {
     "baseCurrency": 53,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9276,6 +9725,7 @@
   },
   "AAC-ETH": {
     "baseCurrency": 124,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9301,6 +9751,7 @@
   },
   "ABT-ETH": {
     "baseCurrency": 190,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9326,6 +9777,7 @@
   },
   "ACE-ETH": {
     "baseCurrency": 85,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9351,6 +9803,7 @@
   },
   "ACT-ETH": {
     "baseCurrency": 23,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9376,6 +9829,7 @@
   },
   "AE-ETH": {
     "baseCurrency": 216,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528704600000,
     "collect": 0,
     "continuousSwitchTime": 1528705200000,
@@ -9401,6 +9855,7 @@
   },
   "AIDOC-ETH": {
     "baseCurrency": 126,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9426,6 +9881,7 @@
   },
   "AMM-ETH": {
     "baseCurrency": 55,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9451,6 +9907,7 @@
   },
   "ARK-ETH": {
     "baseCurrency": 69,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9476,6 +9933,7 @@
   },
   "AST-ETH": {
     "baseCurrency": 59,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9501,6 +9959,7 @@
   },
   "ATL-ETH": {
     "baseCurrency": 144,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9526,6 +9985,7 @@
   },
   "AUTO-ETH": {
     "baseCurrency": 187,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9551,6 +10011,7 @@
   },
   "AVT-ETH": {
     "baseCurrency": 42,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9576,6 +10037,7 @@
   },
   "BEC-ETH": {
     "baseCurrency": 189,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525775400000,
     "collect": 0,
     "continuousSwitchTime": 1525776000000,
@@ -9601,6 +10063,7 @@
   },
   "BKX-ETH": {
     "baseCurrency": 186,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9626,6 +10089,7 @@
   },
   "BNT-ETH": {
     "baseCurrency": 52,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9651,6 +10115,7 @@
   },
   "BRD-ETH": {
     "baseCurrency": 113,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9676,6 +10141,7 @@
   },
   "BTM-ETH": {
     "baseCurrency": 25,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9701,6 +10167,7 @@
   },
   "CAG-ETH": {
     "baseCurrency": 106,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9726,6 +10193,7 @@
   },
   "CAI-ETH": {
     "baseCurrency": 219,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528186200000,
     "collect": 0,
     "continuousSwitchTime": 1528186800000,
@@ -9751,6 +10219,7 @@
   },
   "CAN-ETH": {
     "baseCurrency": 140,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9776,6 +10245,7 @@
   },
   "CBT-ETH": {
     "baseCurrency": 166,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9801,6 +10271,7 @@
   },
   "CHAT-ETH": {
     "baseCurrency": 161,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9826,6 +10297,7 @@
   },
   "CIC-ETH": {
     "baseCurrency": 173,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9849,8 +10321,35 @@
     "tradingMode": 3,
     "pair": "CIC-ETH"
   },
+  "CIT-ETH": {
+    "baseCurrency": 243,
+    "brokerId": 0,
+    "callNoCancelSwitchTime": 1531728600000,
+    "collect": 0,
+    "continuousSwitchTime": 1531729200000,
+    "isMarginOpen": false,
+    "listDisplay": 0,
+    "marginRiskPreRatio": 0,
+    "marginRiskRatio": 0,
+    "marketFrom": 712,
+    "maxMarginLeverage": 0,
+    "maxPriceDigit": 8,
+    "maxSizeDigit": 8,
+    "mergeTypes": "0.00000001,0.000001,0.0001,0.01",
+    "minTradeSize": 1,
+    "online": 1,
+    "productId": 612,
+    "quoteCurrency": 2,
+    "quoteIncrement": "0.00000001",
+    "quotePrecision": 4,
+    "sort": 20000,
+    "symbol": "cit_eth",
+    "tradingMode": 3,
+    "pair": "CIT-ETH"
+  },
   "CMT-ETH": {
     "baseCurrency": 30,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9876,6 +10375,7 @@
   },
   "CTXC-ETH": {
     "baseCurrency": 215,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525249200000,
     "collect": 0,
     "continuousSwitchTime": 1525249800000,
@@ -9901,6 +10401,7 @@
   },
   "CVC-ETH": {
     "baseCurrency": 54,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9926,6 +10427,7 @@
   },
   "CVT-ETH": {
     "baseCurrency": 228,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530173400000,
     "collect": 0,
     "continuousSwitchTime": 1530174000000,
@@ -9951,6 +10453,7 @@
   },
   "DADI-ETH": {
     "baseCurrency": 196,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -9976,6 +10479,7 @@
   },
   "DASH-ETH": {
     "baseCurrency": 17,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10001,6 +10505,7 @@
   },
   "DAT-ETH": {
     "baseCurrency": 65,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10026,6 +10531,7 @@
   },
   "DCR-ETH": {
     "baseCurrency": 220,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -10051,6 +10557,7 @@
   },
   "DENT-ETH": {
     "baseCurrency": 102,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10076,6 +10583,7 @@
   },
   "DGB-ETH": {
     "baseCurrency": 90,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10101,6 +10609,7 @@
   },
   "DGD-ETH": {
     "baseCurrency": 37,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10126,6 +10635,7 @@
   },
   "DNA-ETH": {
     "baseCurrency": 107,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10151,6 +10661,7 @@
   },
   "DNT-ETH": {
     "baseCurrency": 61,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10176,6 +10687,7 @@
   },
   "DPY-ETH": {
     "baseCurrency": 99,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10201,6 +10713,7 @@
   },
   "EDO-ETH": {
     "baseCurrency": 41,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10226,6 +10739,7 @@
   },
   "EGT-ETH": {
     "baseCurrency": 229,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530519000000,
     "collect": 0,
     "continuousSwitchTime": 1530519600000,
@@ -10251,6 +10765,7 @@
   },
   "ELF-ETH": {
     "baseCurrency": 57,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10276,6 +10791,7 @@
   },
   "ENG-ETH": {
     "baseCurrency": 76,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10301,6 +10817,7 @@
   },
   "ENJ-ETH": {
     "baseCurrency": 165,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10326,6 +10843,7 @@
   },
   "EOS-ETH": {
     "baseCurrency": 20,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10351,6 +10869,7 @@
   },
   "EVX-ETH": {
     "baseCurrency": 70,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10376,6 +10895,7 @@
   },
   "FAIR-ETH": {
     "baseCurrency": 128,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10401,6 +10921,7 @@
   },
   "FUN-ETH": {
     "baseCurrency": 62,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10426,6 +10947,7 @@
   },
   "GAS-ETH": {
     "baseCurrency": 14,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10451,6 +10973,7 @@
   },
   "GNT-ETH": {
     "baseCurrency": 38,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10476,6 +10999,7 @@
   },
   "GNX-ETH": {
     "baseCurrency": 34,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10501,6 +11025,7 @@
   },
   "GSC-ETH": {
     "baseCurrency": 199,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10526,6 +11051,7 @@
   },
   "GTC-ETH": {
     "baseCurrency": 154,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10551,6 +11077,7 @@
   },
   "GTO-ETH": {
     "baseCurrency": 159,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10576,6 +11103,7 @@
   },
   "HMC-ETH": {
     "baseCurrency": 163,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10601,6 +11129,7 @@
   },
   "HOT-ETH": {
     "baseCurrency": 150,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10624,8 +11153,35 @@
     "tradingMode": 3,
     "pair": "HOT-ETH"
   },
+  "HPB-ETH": {
+    "baseCurrency": 238,
+    "brokerId": 0,
+    "callNoCancelSwitchTime": 1531815000000,
+    "collect": 0,
+    "continuousSwitchTime": 1531815600000,
+    "isMarginOpen": false,
+    "listDisplay": 0,
+    "marginRiskPreRatio": 0,
+    "marginRiskRatio": 0,
+    "marketFrom": 714,
+    "maxMarginLeverage": 0,
+    "maxPriceDigit": 8,
+    "maxSizeDigit": 8,
+    "mergeTypes": "0.00000001,0.000001,0.0001,0.01",
+    "minTradeSize": 1,
+    "online": 1,
+    "productId": 614,
+    "quoteCurrency": 2,
+    "quoteIncrement": "0.00000001",
+    "quotePrecision": 4,
+    "sort": 20000,
+    "symbol": "hpb_eth",
+    "tradingMode": 3,
+    "pair": "HPB-ETH"
+  },
   "HSR-ETH": {
     "baseCurrency": 16,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10651,6 +11207,7 @@
   },
   "ICN-ETH": {
     "baseCurrency": 77,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10676,6 +11233,7 @@
   },
   "ICX-ETH": {
     "baseCurrency": 84,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10701,6 +11259,7 @@
   },
   "INS-ETH": {
     "baseCurrency": 96,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10726,6 +11285,7 @@
   },
   "INSUR-ETH": {
     "baseCurrency": 181,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10751,6 +11311,7 @@
   },
   "INT-ETH": {
     "baseCurrency": 132,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10776,6 +11337,7 @@
   },
   "IOST-ETH": {
     "baseCurrency": 141,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10801,6 +11363,7 @@
   },
   "IOTA-ETH": {
     "baseCurrency": 24,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10826,6 +11389,7 @@
   },
   "IPC-ETH": {
     "baseCurrency": 133,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10851,6 +11415,7 @@
   },
   "ITC-ETH": {
     "baseCurrency": 35,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10876,6 +11441,7 @@
   },
   "KAN-ETH": {
     "baseCurrency": 224,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528791000000,
     "collect": 0,
     "continuousSwitchTime": 1528791600000,
@@ -10901,6 +11467,7 @@
   },
   "KCASH-ETH": {
     "baseCurrency": 104,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10926,6 +11493,7 @@
   },
   "KEY-ETH": {
     "baseCurrency": 167,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10951,6 +11519,7 @@
   },
   "KNC-ETH": {
     "baseCurrency": 46,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -10976,6 +11545,7 @@
   },
   "LA-ETH": {
     "baseCurrency": 114,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11001,6 +11571,7 @@
   },
   "LBA-ETH": {
     "baseCurrency": 218,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1527495000000,
     "collect": 0,
     "continuousSwitchTime": 1527495600000,
@@ -11026,6 +11597,7 @@
   },
   "LEND-ETH": {
     "baseCurrency": 108,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11051,6 +11623,7 @@
   },
   "LET-ETH": {
     "baseCurrency": 244,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1531210200000,
     "collect": 0,
     "continuousSwitchTime": 1531210800000,
@@ -11076,6 +11649,7 @@
   },
   "LEV-ETH": {
     "baseCurrency": 146,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11101,11 +11675,12 @@
   },
   "LIGHT-ETH": {
     "baseCurrency": 158,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
     "isMarginOpen": false,
-    "listDisplay": 1,
+    "listDisplay": 0,
     "marginRiskPreRatio": 0,
     "marginRiskRatio": 0,
     "marketFrom": 522,
@@ -11126,6 +11701,7 @@
   },
   "LINK-ETH": {
     "baseCurrency": 44,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11151,6 +11727,7 @@
   },
   "LRC-ETH": {
     "baseCurrency": 31,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11176,6 +11753,7 @@
   },
   "LSK-ETH": {
     "baseCurrency": 221,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528099800000,
     "collect": 0,
     "continuousSwitchTime": 1528100400000,
@@ -11201,6 +11779,7 @@
   },
   "MAG-ETH": {
     "baseCurrency": 129,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11226,6 +11805,7 @@
   },
   "MANA-ETH": {
     "baseCurrency": 80,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11251,6 +11831,7 @@
   },
   "MCO-ETH": {
     "baseCurrency": 39,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11276,6 +11857,7 @@
   },
   "MDA-ETH": {
     "baseCurrency": 71,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11301,6 +11883,7 @@
   },
   "MDT-ETH": {
     "baseCurrency": 95,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11326,6 +11909,7 @@
   },
   "MITH-ETH": {
     "baseCurrency": 188,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11351,6 +11935,7 @@
   },
   "MKR-ETH": {
     "baseCurrency": 152,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11376,6 +11961,7 @@
   },
   "MOF-ETH": {
     "baseCurrency": 136,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11401,6 +11987,7 @@
   },
   "MOT-ETH": {
     "baseCurrency": 109,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11426,6 +12013,7 @@
   },
   "MTH-ETH": {
     "baseCurrency": 72,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11451,6 +12039,7 @@
   },
   "MTL-ETH": {
     "baseCurrency": 73,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11476,6 +12065,7 @@
   },
   "MVP-ETH": {
     "baseCurrency": 226,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529395800000,
     "collect": 0,
     "continuousSwitchTime": 1529396400000,
@@ -11501,6 +12091,7 @@
   },
   "NANO-ETH": {
     "baseCurrency": 155,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11526,6 +12117,7 @@
   },
   "NAS-ETH": {
     "baseCurrency": 117,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11551,6 +12143,7 @@
   },
   "NEO-ETH": {
     "baseCurrency": 13,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11576,6 +12169,7 @@
   },
   "NGC-ETH": {
     "baseCurrency": 101,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11601,6 +12195,7 @@
   },
   "NULS-ETH": {
     "baseCurrency": 32,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11626,6 +12221,7 @@
   },
   "OAX-ETH": {
     "baseCurrency": 74,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11651,6 +12247,7 @@
   },
   "OF-ETH": {
     "baseCurrency": 168,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11676,6 +12273,7 @@
   },
   "OMG-ETH": {
     "baseCurrency": 18,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11701,6 +12299,7 @@
   },
   "ONT-ETH": {
     "baseCurrency": 206,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11726,6 +12325,7 @@
   },
   "ORS-ETH": {
     "baseCurrency": 230,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529395800000,
     "collect": 0,
     "continuousSwitchTime": 1529396400000,
@@ -11751,6 +12351,7 @@
   },
   "OST-ETH": {
     "baseCurrency": 103,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11776,6 +12377,7 @@
   },
   "PAY-ETH": {
     "baseCurrency": 36,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11801,6 +12403,7 @@
   },
   "POE-ETH": {
     "baseCurrency": 135,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11826,6 +12429,7 @@
   },
   "PPT-ETH": {
     "baseCurrency": 87,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11851,6 +12455,7 @@
   },
   "PRA-ETH": {
     "baseCurrency": 58,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11876,6 +12481,7 @@
   },
   "PST-ETH": {
     "baseCurrency": 151,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11901,6 +12507,7 @@
   },
   "QTUM-ETH": {
     "baseCurrency": 12,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11926,6 +12533,7 @@
   },
   "QUN-ETH": {
     "baseCurrency": 131,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11951,6 +12559,7 @@
   },
   "QVT-ETH": {
     "baseCurrency": 33,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -11976,6 +12585,7 @@
   },
   "R-ETH": {
     "baseCurrency": 185,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12001,6 +12611,7 @@
   },
   "RCN-ETH": {
     "baseCurrency": 79,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12026,6 +12637,7 @@
   },
   "RCT-ETH": {
     "baseCurrency": 127,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12051,6 +12663,7 @@
   },
   "RDN-ETH": {
     "baseCurrency": 94,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12076,6 +12689,7 @@
   },
   "READ-ETH": {
     "baseCurrency": 116,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12101,6 +12715,7 @@
   },
   "REF-ETH": {
     "baseCurrency": 147,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12126,6 +12741,7 @@
   },
   "REN-ETH": {
     "baseCurrency": 194,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12151,6 +12767,7 @@
   },
   "REQ-ETH": {
     "baseCurrency": 75,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12176,6 +12793,7 @@
   },
   "RFR-ETH": {
     "baseCurrency": 193,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12201,6 +12819,7 @@
   },
   "RNT-ETH": {
     "baseCurrency": 118,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12226,6 +12845,7 @@
   },
   "SALT-ETH": {
     "baseCurrency": 45,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12251,6 +12871,7 @@
   },
   "SAN-ETH": {
     "baseCurrency": 40,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12276,6 +12897,7 @@
   },
   "SC-ETH": {
     "baseCurrency": 142,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528704600000,
     "collect": 0,
     "continuousSwitchTime": 1528705200000,
@@ -12301,6 +12923,7 @@
   },
   "SHOW-ETH": {
     "baseCurrency": 125,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12310,14 +12933,14 @@
     "marginRiskRatio": 0,
     "marketFrom": 420,
     "maxMarginLeverage": 0,
-    "maxPriceDigit": 8,
+    "maxPriceDigit": 10,
     "maxSizeDigit": 1,
-    "mergeTypes": "0.00000001,0.000001,0.0001,0.01",
+    "mergeTypes": "0.0000000001,0.000001,0.0001,0.01",
     "minTradeSize": 10,
     "online": 1,
     "productId": 320,
     "quoteCurrency": 2,
-    "quoteIncrement": "0.00000001",
+    "quoteIncrement": "0.0000000001",
     "quotePrecision": 4,
     "sort": 21190,
     "symbol": "show_eth",
@@ -12326,6 +12949,7 @@
   },
   "SNC-ETH": {
     "baseCurrency": 153,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12351,6 +12975,7 @@
   },
   "SNGLS-ETH": {
     "baseCurrency": 48,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12376,6 +13001,7 @@
   },
   "SNM-ETH": {
     "baseCurrency": 49,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12401,6 +13027,7 @@
   },
   "SNT-ETH": {
     "baseCurrency": 27,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12426,6 +13053,7 @@
   },
   "SOC-ETH": {
     "baseCurrency": 164,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12451,6 +13079,7 @@
   },
   "SPF-ETH": {
     "baseCurrency": 148,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12476,6 +13105,7 @@
   },
   "SSC-ETH": {
     "baseCurrency": 123,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12501,6 +13131,7 @@
   },
   "STC-ETH": {
     "baseCurrency": 137,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12526,6 +13157,7 @@
   },
   "STORJ-ETH": {
     "baseCurrency": 26,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12551,6 +13183,7 @@
   },
   "SUB-ETH": {
     "baseCurrency": 60,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12576,6 +13209,7 @@
   },
   "SWFTC-ETH": {
     "baseCurrency": 93,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12601,6 +13235,7 @@
   },
   "TCT-ETH": {
     "baseCurrency": 145,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12626,6 +13261,7 @@
   },
   "THETA-ETH": {
     "baseCurrency": 138,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12651,6 +13287,7 @@
   },
   "TIO-ETH": {
     "baseCurrency": 105,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12676,6 +13313,7 @@
   },
   "TNB-ETH": {
     "baseCurrency": 78,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12701,6 +13339,7 @@
   },
   "TOPC-ETH": {
     "baseCurrency": 130,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12726,6 +13365,7 @@
   },
   "TRA-ETH": {
     "baseCurrency": 203,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12751,6 +13391,7 @@
   },
   "TRIO-ETH": {
     "baseCurrency": 202,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12776,6 +13417,7 @@
   },
   "TRUE-ETH": {
     "baseCurrency": 157,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12801,6 +13443,7 @@
   },
   "TRX-ETH": {
     "baseCurrency": 86,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12826,6 +13469,7 @@
   },
   "UBTC-ETH": {
     "baseCurrency": 120,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12851,6 +13495,7 @@
   },
   "UCT-ETH": {
     "baseCurrency": 180,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12876,6 +13521,7 @@
   },
   "UGC-ETH": {
     "baseCurrency": 98,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12901,6 +13547,7 @@
   },
   "UKG-ETH": {
     "baseCurrency": 100,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12926,6 +13573,7 @@
   },
   "UTK-ETH": {
     "baseCurrency": 111,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12951,6 +13599,7 @@
   },
   "VEE-ETH": {
     "baseCurrency": 29,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -12976,6 +13625,7 @@
   },
   "VIB-ETH": {
     "baseCurrency": 51,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13001,6 +13651,7 @@
   },
   "VIU-ETH": {
     "baseCurrency": 112,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13026,6 +13677,7 @@
   },
   "WAVES-ETH": {
     "baseCurrency": 231,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -13051,6 +13703,7 @@
   },
   "WFEE-ETH": {
     "baseCurrency": 191,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13076,6 +13729,7 @@
   },
   "WIN-ETH": {
     "baseCurrency": 225,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528877400000,
     "collect": 0,
     "continuousSwitchTime": 1528878000000,
@@ -13101,6 +13755,7 @@
   },
   "WRC-ETH": {
     "baseCurrency": 97,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13126,6 +13781,7 @@
   },
   "WTC-ETH": {
     "baseCurrency": 47,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13151,6 +13807,7 @@
   },
   "XAS-ETH": {
     "baseCurrency": 234,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530087000000,
     "collect": 0,
     "continuousSwitchTime": 1530087600000,
@@ -13176,6 +13833,7 @@
   },
   "XEM-ETH": {
     "baseCurrency": 22,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13201,6 +13859,7 @@
   },
   "XLM-ETH": {
     "baseCurrency": 68,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13226,6 +13885,7 @@
   },
   "XMR-ETH": {
     "baseCurrency": 21,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13251,6 +13911,7 @@
   },
   "XRP-ETH": {
     "baseCurrency": 15,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13276,6 +13937,7 @@
   },
   "XUC-ETH": {
     "baseCurrency": 19,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13301,6 +13963,7 @@
   },
   "YEE-ETH": {
     "baseCurrency": 139,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13326,6 +13989,7 @@
   },
   "YOU-ETH": {
     "baseCurrency": 217,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1526890200000,
     "collect": 0,
     "continuousSwitchTime": 1526890800000,
@@ -13351,6 +14015,7 @@
   },
   "YOYO-ETH": {
     "baseCurrency": 56,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13376,6 +14041,7 @@
   },
   "ZCO-ETH": {
     "baseCurrency": 235,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530519000000,
     "collect": 0,
     "continuousSwitchTime": 1530519600000,
@@ -13401,6 +14067,7 @@
   },
   "ZEC-ETH": {
     "baseCurrency": 11,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13426,6 +14093,7 @@
   },
   "ZEN-ETH": {
     "baseCurrency": 122,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13451,6 +14119,7 @@
   },
   "ZIL-ETH": {
     "baseCurrency": 204,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1525853400000,
     "collect": 0,
     "continuousSwitchTime": 1525854000000,
@@ -13476,6 +14145,7 @@
   },
   "ZIP-ETH": {
     "baseCurrency": 174,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13501,6 +14171,7 @@
   },
   "ZRX-ETH": {
     "baseCurrency": 50,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -13526,6 +14197,7 @@
   },
   "LTC-OKB": {
     "baseCurrency": 1,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -13551,6 +14223,7 @@
   },
   "ETC-OKB": {
     "baseCurrency": 4,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -13576,6 +14249,7 @@
   },
   "BCH-OKB": {
     "baseCurrency": 5,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -13601,6 +14275,7 @@
   },
   "AE-OKB": {
     "baseCurrency": 216,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528445400000,
     "collect": 0,
     "continuousSwitchTime": 1528446000000,
@@ -13626,6 +14301,7 @@
   },
   "BCN-OKB": {
     "baseCurrency": 232,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530778200000,
     "collect": 0,
     "continuousSwitchTime": 1530778800000,
@@ -13651,6 +14327,7 @@
   },
   "CAI-OKB": {
     "baseCurrency": 219,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1527754200000,
     "collect": 0,
     "continuousSwitchTime": 1527754800000,
@@ -13676,6 +14353,7 @@
   },
   "CIT-OKB": {
     "baseCurrency": 243,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1531210200000,
     "collect": 0,
     "continuousSwitchTime": 1531210800000,
@@ -13701,6 +14379,7 @@
   },
   "CVT-OKB": {
     "baseCurrency": 228,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529655000000,
     "collect": 0,
     "continuousSwitchTime": 1529655600000,
@@ -13726,6 +14405,7 @@
   },
   "DASH-OKB": {
     "baseCurrency": 17,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -13751,6 +14431,7 @@
   },
   "DCR-OKB": {
     "baseCurrency": 220,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -13776,6 +14457,7 @@
   },
   "EGT-OKB": {
     "baseCurrency": 229,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530087000000,
     "collect": 0,
     "continuousSwitchTime": 1530087600000,
@@ -13801,6 +14483,7 @@
   },
   "EOS-OKB": {
     "baseCurrency": 20,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -13826,6 +14509,7 @@
   },
   "HPB-OKB": {
     "baseCurrency": 238,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1531383000000,
     "collect": 0,
     "continuousSwitchTime": 1531383600000,
@@ -13851,6 +14535,7 @@
   },
   "IOTA-OKB": {
     "baseCurrency": 24,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -13876,6 +14561,7 @@
   },
   "KAN-OKB": {
     "baseCurrency": 224,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528445400000,
     "collect": 0,
     "continuousSwitchTime": 1528446000000,
@@ -13901,6 +14587,7 @@
   },
   "LBA-OKB": {
     "baseCurrency": 218,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1527149400000,
     "collect": 0,
     "continuousSwitchTime": 1527150000000,
@@ -13926,6 +14613,7 @@
   },
   "LET-OKB": {
     "baseCurrency": 244,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530778200000,
     "collect": 0,
     "continuousSwitchTime": 1530778800000,
@@ -13951,6 +14639,7 @@
   },
   "MVP-OKB": {
     "baseCurrency": 226,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528963800000,
     "collect": 0,
     "continuousSwitchTime": 1528964400000,
@@ -13976,6 +14665,7 @@
   },
   "NAS-OKB": {
     "baseCurrency": 117,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529568600000,
     "collect": 0,
     "continuousSwitchTime": 1529569200000,
@@ -14001,6 +14691,7 @@
   },
   "NEO-OKB": {
     "baseCurrency": 13,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -14026,6 +14717,7 @@
   },
   "ORS-OKB": {
     "baseCurrency": 230,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528963800000,
     "collect": 0,
     "continuousSwitchTime": 1528964400000,
@@ -14051,6 +14743,7 @@
   },
   "QTUM-OKB": {
     "baseCurrency": 12,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -14076,6 +14769,7 @@
   },
   "SC-OKB": {
     "baseCurrency": 142,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528445400000,
     "collect": 0,
     "continuousSwitchTime": 1528446000000,
@@ -14099,8 +14793,35 @@
     "tradingMode": 3,
     "pair": "SC-OKB"
   },
+  "SDA-OKB": {
+    "baseCurrency": 236,
+    "brokerId": 0,
+    "callNoCancelSwitchTime": 1531901400000,
+    "collect": 0,
+    "continuousSwitchTime": 1531902001000,
+    "isMarginOpen": false,
+    "listDisplay": 0,
+    "marginRiskPreRatio": 0,
+    "marginRiskRatio": 0,
+    "marketFrom": 716,
+    "maxMarginLeverage": 0,
+    "maxPriceDigit": 4,
+    "maxSizeDigit": 8,
+    "mergeTypes": "0.0001,0.01,1",
+    "minTradeSize": 1,
+    "online": 1,
+    "productId": 616,
+    "quoteCurrency": 184,
+    "quoteIncrement": "0.0001",
+    "quotePrecision": 4,
+    "sort": 30000,
+    "symbol": "sda_okb",
+    "tradingMode": 3,
+    "pair": "SDA-OKB"
+  },
   "WAVES-OKB": {
     "baseCurrency": 231,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529050200000,
     "collect": 0,
     "continuousSwitchTime": 1529050800000,
@@ -14126,6 +14847,7 @@
   },
   "WIN-OKB": {
     "baseCurrency": 225,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1528445400000,
     "collect": 0,
     "continuousSwitchTime": 1528446000000,
@@ -14151,6 +14873,7 @@
   },
   "XAS-OKB": {
     "baseCurrency": 234,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1529568600000,
     "collect": 0,
     "continuousSwitchTime": 1529569200000,
@@ -14176,6 +14899,7 @@
   },
   "XRP-OKB": {
     "baseCurrency": 15,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -14201,6 +14925,7 @@
   },
   "YOU-OKB": {
     "baseCurrency": 217,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1526371800000,
     "collect": 0,
     "continuousSwitchTime": 1526372400000,
@@ -14226,6 +14951,7 @@
   },
   "ZCO-OKB": {
     "baseCurrency": 235,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1530000600000,
     "collect": 0,
     "continuousSwitchTime": 1530001200000,
@@ -14251,6 +14977,7 @@
   },
   "ZEC-OKB": {
     "baseCurrency": 11,
+    "brokerId": 0,
     "callNoCancelSwitchTime": 1524885000000,
     "collect": 0,
     "continuousSwitchTime": 1524885600000,
@@ -14276,6 +15003,7 @@
   },
   "TESTA-TESTB": {
     "baseCurrency": 1000,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},
@@ -14301,6 +15029,7 @@
   },
   "TESTC-TESTB": {
     "baseCurrency": 1002,
+    "brokerId": 0,
     "callNoCancelSwitchTime": {},
     "collect": 0,
     "continuousSwitchTime": {},

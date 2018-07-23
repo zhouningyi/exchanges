@@ -103,12 +103,12 @@ const tasks = [
   //   params: {},
   //   name: 'accounts'
   // },
-  // {
-  //   fn: 'balances',
-  //   params: {
-  //   },
-  //   name: '账户余额'
-  // },
+  {
+    fn: 'balances',
+    params: {
+    },
+    name: '账户余额'
+  },
   // {
   //   fn: 'futureBalances',
   //   params: {},
@@ -130,12 +130,18 @@ const tasks = [
 //   params: { pair: 'ETH-BTC' },
 //   name: 'orderBook数据'
 // },
-  {
-    fn: 'unfinishedOrderInfo',
-    params: { pair: 'ETH-USDT' },
-    name: 'orderBook未成交的订单'
-  },
-
+  // {
+  //   fn: 'unfinishedOrderInfo',
+  //   params: { pair: 'ETH-USDT' },
+  //   name: 'orderBook未成交的订单'
+  // },
+  // {
+  //   fn: 'allOrders',
+  //   params: {
+  //     pair: 'BCH-USDT',
+  //   },
+  //   name: 'allOrders'
+  // },
 ];
 
 

@@ -10,6 +10,8 @@
     "time": "DATE",
     "volume_24": "FLOAT",
     "ask_price": "FLOAT",
+    "ask_volume": "FLOAT",
+    "bid_volume": "FLOAT",
     "bid_price": "FLOAT",
     "last_price": "FLOAT",
     "exchange": ["STRING", 10]

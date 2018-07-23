@@ -15,7 +15,6 @@ const ALL_PAIRS = require('./meta/pairs.json');
 const { checkKey } = Utils;
 //
 
-
 function mergeArray(data, d) {
   return data.concat(data, d);
 }
@@ -201,16 +200,19 @@ class Exchange extends Base {
       // console.log(body);
     } catch (e) {
       if (e) console.log(e.message);
-      return;
+      return false;
     }
     if (!body) {
-      throw `${endpoint}: body 返回为空...`;
+      console.log(`${endpoint}: body 返回为空...`);
+      return false;
     }
     if (body.code === 500) {
-      throw `${endpoint}: 服务拒绝...`;
+      console.log(`${endpoint}: 服务拒绝...`);
+      return false;
     }
     if (body.code === -1) {
-      throw `${endpoint}: ${body.msg}`;
+      console.log(`${endpoint}: ${body.msg}`);
+      return false;
     }
     if (body.error_code) {
       // if (body.error_code === 20015) {
@@ -220,8 +222,8 @@ class Exchange extends Base {
       //     status: 'FINISHED'
       //   };
       // } else {
-      console.log('error...', endpoint, params);
-      throw (`${error.getErrorFromCode(body.error_code)} | ${endpoint}`);
+      console.log(`${error.getErrorFromCode(body.error_code)} | ${endpoint}`, endpoint, params);
+      return false;
       // }
     }
     return body.data || body || false;
