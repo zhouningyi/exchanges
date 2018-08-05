@@ -1,6 +1,6 @@
 const { testRest } = require('./utils');
 
-const exchanges = ['okex'];
+const exchanges = ['coinall'];
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin
 
 const tasks = [
@@ -10,15 +10,33 @@ const tasks = [
   //   name: '服务器时间'
   // },
   // {
+  //   fn: 'moveBalance',
+  //   params: {
+  //     coin: 'USDT',
+  //     amount: 1,
+  //     source: 'wallet',
+  //     target: 'spot'
+  //   },
+  //   name: '资金移动'
+  // },
+  // {
   //   fn: 'order',
   //   params: {
-  //     pair: 'IOTA-BTC',
-  //     amount: 1,
-  //     price: 0.0001,
+  //     pair: 'OKB-USDT',
+  //     amount: 2,
+  //     price: 2.1,
   //     side: 'BUY',
   //     type: 'LIMIT'
   //   },
   //   name: '交易'
+  // },
+  // {
+  //   fn: 'cancelOrder',
+  //   params: {
+  //     order_id: '557894119',
+  //     pair: 'OKB-USDT',
+  //   },
+  //   name: '取消交易'
   // },
   // {
   //   fn: 'orders',
@@ -70,14 +88,6 @@ const tasks = [
   //   name: '交易'
   // },
   // {
-  //   fn: 'cancelOrder',
-  //   params: {
-  //     order_id: '101102451',
-  //     pair: 'IOTA-BTC'
-  //   },
-  //   name: '取消交易'
-  // },
-  // {
   //   fn: 'pairs',
   //   params: {},
   //   name: '交易对信息'
@@ -103,12 +113,20 @@ const tasks = [
   //   params: {},
   //   name: 'accounts'
   // },
-  {
-    fn: 'balances',
-    params: {
-    },
-    name: '账户余额'
-  },
+  // {
+  //   fn: 'balances',
+  //   params: {
+  //     pair: 'USDT'
+  //   },
+  //   name: '账户余额'
+  // },
+  // {
+  //   fn: 'wallet',
+  //   params: {
+  //     pair: 'USDT'
+  //   },
+  //   name: '钱包'
+  // },
   // {
   //   fn: 'futureBalances',
   //   params: {},
@@ -146,3 +164,4 @@ const tasks = [
 
 
 testRest(exchanges, tasks);
+setTimeout(() => null, 1000000);

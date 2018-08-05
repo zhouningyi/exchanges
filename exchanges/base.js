@@ -25,9 +25,10 @@ function isEmptyObject(o) {
 class exchange extends Event {
   constructor(config = {}, options = {}) {
     super();
-    const { apiKey, apiSecret, unique_id, otc_id, spot_id } = config;
+    const { apiKey, apiSecret, passphrase, unique_id, otc_id, spot_id } = config;
     this.config = config;
     this.options = deepmerge(defaultOptions, options);
+    this.passphrase = passphrase;
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
     this.otc_id = otc_id;
