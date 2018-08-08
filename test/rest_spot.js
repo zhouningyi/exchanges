@@ -30,14 +30,14 @@ const tasks = [
   //   },
   //   name: '交易'
   // },
-  // {
-  //   fn: 'cancelOrder',
-  //   params: {
-  //     order_id: '557894119',
-  //     pair: 'OKB-USDT',
-  //   },
-  //   name: '取消交易'
-  // },
+  {
+    fn: 'cancelOrder',
+    params: {
+      order_id: '558309493',
+      pair: 'OKB-USDT',
+    },
+    name: '取消交易'
+  },
   // {
   //   fn: 'orders',
   //   params: {
@@ -60,7 +60,7 @@ const tasks = [
   // {
   //   fn: 'cancelAllOrders',
   //   params: {
-  //     pair: 'FT-ETH'
+  //     pair: 'OKB-USDT'
   //   },
   //   name: '取消正在执行中的订单'
   // },

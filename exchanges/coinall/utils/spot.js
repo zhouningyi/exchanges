@@ -73,19 +73,36 @@ function formatOrderO(o = {}) {
   };
 }
 
-function formatOrder(o, status) {
+function formatOrder(o, opt, status) {
   publicUtils.errorDetect(o);
-  if (o.order_id) {
-    return {
-      order_id: `${o.order_id}`,
-      order_main_id: o.client_oid,
-      status,
-      time: new Date()
-    };
+  const { order_id, client_oid } = o;
+  const time = new Date();
+  const oidtype = typeof order_id;
+  if (order_id) {
+    if (oidtype === 'string' || oidtype === 'number') {
+      return {
+        pair: opt.pair,
+        order_id,
+        status,
+        order_main_id: client_oid,
+        amount: opt.amount,
+        price: opt.price,
+        type: opt.type,
+        time
+      };
+    } else if (Array.isArray(order_id)) {
+      return _.map(order_id, (oid) => {
+        return {
+          order_id: oid,
+          order_main_id: client_oid,
+          status,
+          time
+        };
+      });
+    }
   }
   throw new Error('order not success...');
 }
-
 
 const moveBalanceMap = {
   // future: 1,
@@ -103,6 +120,45 @@ function formatMoveBalanceO(o = {}) {
   };
 }
 
+function formatUnfinishOrder(ds) {
+  return _.map(ds, (d) => {
+    const res = {
+      order_id: `${d.order_id}`,
+      pair: d.product_id,
+      price: _parse(d.price),
+      side: d.side.toUpperCase(),
+      type: d.type.toUpperCase(),
+      time: new Date(d.created_at),
+      amount: _parse(d.size),
+      deal_amount: _parse(d.executed_value),
+      status: 'UNFINISH',
+    };
+    return res;
+  });
+}
+
+const statusMap = {
+  filled: 'SUCCESS',
+  part_filled: 'PARTIAL',
+  open: 'UNFINISH',
+  canceling: 'CANCELLING',
+  canceled: 'CANCEL'
+};
+function formatOrderInfo(d, o) {
+  publicUtils.errorDetect(d);
+  const status = statusMap[d.status];
+  if (!status) console.log(d.status, 'status...');
+  return {
+    pair: d.product_id.toUpperCase(),
+    order_id: `${d.order_id}`,
+    time: new Date(d.created_at),
+    deal_amount: _parse(d.filled_size),
+    side: d.side.toUpperCase(),
+    amount: _parse(d.size),
+    status,
+    type: d.type.toUpperCase()
+  };
+}
 module.exports = {
   formatCoin,
   formatTick,
@@ -111,5 +167,7 @@ module.exports = {
   // order
   formatOrderO,
   formatOrder,
-  formatMoveBalanceO
+  formatMoveBalanceO,
+  formatUnfinishOrder,
+  formatOrderInfo
 };

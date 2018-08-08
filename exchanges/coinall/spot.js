@@ -39,7 +39,6 @@ class Exchange extends Base {
     const paramStr = method === 'GET' ? Utils.getQueryString(params) : JSON.stringify(params);
     const sign = method === 'GET' ? '?' : '';
     const totalStr = [`${time}${method}/api/${endpoint}`, paramStr].filter(d => d).join(sign);// paramStr
-    console.log(totalStr, 'totalStr..');
     return crypto.createHmac('sha256', this.apiSecret).update(totalStr).digest('base64');// .toString('base64');
   }
   async coins() {
@@ -47,20 +46,32 @@ class Exchange extends Base {
     return kUtils.formatCoin(ds);
   }
   async tick(o = {}) {
-    const ds = await this.get('spot/v3/products/ticker', {});
+    const { pair } = o;
+    let ds;
+    if (pair) {
+      ds = await this.get(`spot/v3/products/${pair}/ticker`, {});
+    } else {
+      ds = await this.get('spot/v3/products/ticker', {});
+    }
+    if (!Array.isArray(ds)) ds = [ds];
     return kUtils.formatTick(ds, o.pair);
   }
   async kline(o = {}) {
-  }
-  async ticks(o = {}) {
   }
   async depth(o = {}) {
   }
   // 交易状态
   async orderInfo(o = {}) {
+    checkKey(o, ['order_id']);
+    const { order_id, pair } = o;
+    const opt = { product_id: pair };
+    const info = await this.get(`spot/v3/orders/${order_id}`, opt);
+    return kUtils.formatOrderInfo(info, opt);
   }
   async unfinishOrders(o = {}) {
     checkKey(o, ['pair']);
+    const ds = await this.get('spot/v3/orders_pending');
+    return kUtils.formatUnfinishOrder(ds);
   }
   async successOrders(o = {}) {
     checkKey(o, ['pair']);
@@ -91,16 +102,21 @@ class Exchange extends Base {
     checkKey(o, ['pair', 'side', 'type', 'amount']);
     const opt = kUtils.formatOrderO(o);
     const ds = await this.post('spot/v3/orders', opt);
-    const res = kUtils.formatOrder(ds, 'UNFINISH');
+    const res = kUtils.formatOrder(ds, o, 'UNFINISH');
     return res;
   }
   async cancelOrder(o = {}) {
     checkKey(o, ['order_id', 'pair']);
     const { order_id, pair } = o;
     const ds = await this.delete(`spot/v3/orders/${order_id}`, { product_id: pair });
-    return kUtils.formatOrder(ds, 'CANCEL');
+    return kUtils.formatOrder(ds, o, 'CANCEL');
   }
-  async unfinishedOrderInfo(o = {}) {
+  async cancelAllOrders(o = {}) {
+    checkKey(o, ['pair']);
+    const { pair } = o;
+    const ds = await this.delete('spot/v3/orders', { product_id: pair });
+    const res = kUtils.formatOrder(ds, 'CANCEL');
+    return res;
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
     params = Utils.cleanObjectNull(params);
@@ -129,7 +145,7 @@ class Exchange extends Base {
       ...(method === 'GET' ? {} : { body: JSON.stringify(params) })
     };
     let body;
-    console.log(o, '..9..');
+    // console.log(o, '..9..');
     try {
       body = await request(o);
       // console.log(body, 'body...');
@@ -160,9 +176,7 @@ class Exchange extends Base {
   async moveBalance(o = {}) {
     checkKey(o, ['source', 'target', 'amount', 'coin']);
     const opt = kUtils.formatMoveBalanceO(o);
-    console.log(opt, 'opt...');
     const ds = await this.post('account/v3/transfer', opt, true);
-    console.log(ds, 'ds...');
     return ds;
   }
   //
