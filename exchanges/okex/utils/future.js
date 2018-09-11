@@ -138,8 +138,13 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
 function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_future', '').split('_depth_');
   const pair = symbol2pair((ds[0] || '').replace('usd', 'usdt'), true);
-  const contract_type = ds[1].split('_')[0];
-  return { contract_type, pair };
+  const cs = ds[1].split('_');
+  cs.pop();
+  const contract_type = cs.join('_');
+  // console.log(channel, contract_type, 'channel...channel...');
+  // process.exit();
+  const future_id = `${pair}_${contract_type}`;
+  return { contract_type, pair, future_id };
 }
 const createWsFutureDepth = createWsChanel((pair, o) => {
   pair = pair2symbol(pair, true);
@@ -247,7 +252,7 @@ function formatWsFuturePosition(ds) {
   return _.flatten(ds);
 }
 
-function formatWsFutureDepth(ds) {
+function formatWsFutureDepth(ds, o) {
   const res = {};
   _.forEach(ds, (d) => {
     const { data, channel } = d;

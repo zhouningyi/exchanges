@@ -1,7 +1,8 @@
 const { testRest } = require('./utils');
 
-const exchanges = ['coinall'];
-// , 'okex'. 'hitbtc' 'bittrex'， fcoin
+const exchanges = ['bikicoin'];
+// Bikicoin
+// , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
 const tasks = [
   // {
@@ -22,27 +23,26 @@ const tasks = [
   // {
   //   fn: 'order',
   //   params: {
-  //     pair: 'OKB-USDT',
-  //     amount: 2,
-  //     price: 2.1,
+  //     pair: 'ETH-USDT',
+  //     amount: 0.001,
+  //     price: 100,
   //     side: 'BUY',
   //     type: 'LIMIT'
   //   },
   //   name: '交易'
   // },
-  {
-    fn: 'cancelOrder',
-    params: {
-      order_id: '558309493',
-      pair: 'OKB-USDT',
-    },
-    name: '取消交易'
-  },
+  // {
+  //   fn: 'cancelOrder',
+  //   params: {
+  //     order_id: '2318947',
+  //     pair: 'ETH-USDT',
+  //   },
+  //   name: '取消交易'
+  // },
   // {
   //   fn: 'orders',
   //   params: {
-  //     pair: 'FT-ETH',
-  //     status: 'FINISH'
+  //     pair: 'ETH-USDT',
   //   },
   //   name: '所有的订单'
   // },
@@ -60,14 +60,14 @@ const tasks = [
   // {
   //   fn: 'cancelAllOrders',
   //   params: {
-  //     pair: 'OKB-USDT'
+  //     pair: 'ETH-USDT'
   //   },
   //   name: '取消正在执行中的订单'
   // },
   // {
   //   fn: 'activeOrders',
   //   params: {
-  //     pair: 'OKB-USDT'
+  //     pair: 'ETH-USDT'
   //   },
   //   name: '正在执行中的订单'
   // },
@@ -103,6 +103,11 @@ const tasks = [
   //   name: 'tick数据'
   // },
   // {
+  //   fn: 'funding',
+  //   params: {},
+  //   name: 'bitmex 互换资费'
+  // },
+  // {
   //   fn: 'ticks',
   //   params: { pair: 'OKB-USDT' },
   //   name: 'ticks数据'
@@ -116,7 +121,7 @@ const tasks = [
   // {
   //   fn: 'balances',
   //   params: {
-  //     pair: 'USDT'
+  //     // pair: 'USDT'
   //   },
   //   name: '账户余额'
   // },
@@ -134,7 +139,7 @@ const tasks = [
   // },
   // {
   //   fn: 'depth',
-  //   params: { pair: 'ETH-BTC' },
+  //   params: { pair: 'ETH-BTC', size: 5 },
   //   name: '深度'
   // },
 
@@ -161,7 +166,6 @@ const tasks = [
   //   name: 'allOrders'
   // },
 ];
-
 
 testRest(exchanges, tasks);
 setTimeout(() => null, 1000000);

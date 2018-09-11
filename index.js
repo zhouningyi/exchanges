@@ -7,11 +7,15 @@ const Hitbtc = require('./exchanges/hitbtc');
 const Bittrex = require('./exchanges/bittrex');
 const Fcoin = require('./exchanges/fcoin');
 const Coinall = require('./exchanges/coinall');
+const Bitmex = require('./exchanges/bitmex');
+const Bikicoin = require('./exchanges/bikicoin');
 
 module.exports = {
+  Bikicoin,
   Binance,
   Coinall,
   Kucoin,
+  Bitmex,
   Huobi,
   Okex,
   Fcoin,

@@ -15,10 +15,7 @@ async function extrude(ex, exName, d) {
     let dstr = '';
     if (ds) {
       dstr = `数组长度: ${ds.length}`;
-    }
-    //
-    if (ds) {
-      console.log(JSON.stringify(ds, null, 2));
+      console.log(JSON.stringify(ds, null, 2), 'res');
       ds = (typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
     }
     console.log(dstr, `${space}${exName}.${str}${space}`);
@@ -31,6 +28,7 @@ async function extrude(ex, exName, d) {
   const ds = await fn.bind(ex)(d.params);
   print(ds, d.name);
 }
+
 
 function upperFirst(d) {
   const str = d[0].toUpperCase();
@@ -52,6 +50,7 @@ function validate(ex) {
 
 async function testOneExchange(exName, tasks) {
   const ex = getExchange(exName);
+  console.log(`测试交易所【${exName}】...`);
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
     console.log(`测试任务${i}: ${task.fn}(${task.name})`);
@@ -62,7 +61,6 @@ async function testOneExchange(exName, tasks) {
 async function testRest(exNames, tasks) {
   for (let i = 0; i < exNames.length; i++) {
     const exName = exNames[i];
-    console.log(`测试交易所【${exName}】...`);
     await testOneExchange(exName, tasks);
   }
 }

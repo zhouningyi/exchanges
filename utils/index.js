@@ -32,6 +32,10 @@ function checkKey(o, vs) {
   } else if (isNull(o[vs])) _handelNull(vs);
 }
 
+function parse(v) {
+  return parseFloat(v, 10);
+}
+
 module.exports = {
-  ...base, ...morph, ...Console, ...fn, unique, getQueryString, checkKey, ws
+  ...base, ...morph, ...Console, ...fn, unique, getQueryString, checkKey, ws, parse
 };

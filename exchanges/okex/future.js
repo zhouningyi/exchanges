@@ -66,6 +66,30 @@ class Exchange extends Spot {
     const ds = kUtils.formatFuturePosition(info, o);
     return ds;
   }
+  wsFutureDepth(o = {}, cb) {
+    const symbols = o.pair ? [kUtils.pair2symbol(o.pair, true)] : FUTURE_PAIRS;
+    const defaultO = {
+      size: 50,
+    };
+    o = { ...defaultO, ...o };
+    checkKey(o, ['contract_type']);
+    const { contract_type, size } = o;
+    const opt = { contract_type, size };
+    const chanelString = kUtils.createWsFutureDepth(symbols, opt);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_future') && line.channel.search('_depth_') !== -1;
+    };
+    this.createWs({
+      chanelString,
+      name: 'wsFutureDepth',
+      validate,
+      formater: d => kUtils.formatWsFutureDepth(d, o),
+      cb
+    });
+  }
   wsFutureTicks(o = {}, cb) {
     const { contract_type = 'quarter' } = o;
     const pairs = o.pairs || FUTURE_PAIRS;
@@ -98,31 +122,6 @@ class Exchange extends Spot {
   wsFutureKline(o = {}, cb) {
     checkKey(o, ['pair']);
     this.wsFutureKlines(o, cb);
-  }
-  wsFutureDepth(o = {}, cb) {
-    const symbols = o.pair ? [kUtils.pair2symbol(o.pair, true)] : FUTURE_PAIRS;
-    const defaultO = {
-      size: 50,
-    };
-    o = { ...defaultO, ...o };
-    checkKey(o, ['contract_type']);
-    const { contract_type, size } = o;
-    const opt = { contract_type, size };
-    const chanelString = kUtils.createWsFutureDepth(symbols, opt);
-
-    const validate = (ds) => {
-      if (!ds) return false;
-      const line = ds[0];
-      if (!line || line.channel === 'addChannel') return;
-      return line.channel.startsWith('ok_sub_future') && line.channel.search('_depth_') !== -1;
-    };
-    this.createWs({
-      chanelString,
-      name: 'wsFutureDepth',
-      validate,
-      formater: kUtils.formatWsFutureDepth,
-      cb
-    });
   }
 
   wsFuturePosition(o = {}, cb) {

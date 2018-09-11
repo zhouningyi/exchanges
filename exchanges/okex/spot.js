@@ -1,6 +1,6 @@
 // const Utils = require('./utils');
-const deepmerge = require('deepmerge');
-const crypto = require('crypto');
+// const deepmerge = require('deepmerge');
+// const crypto = require('crypto');
 const md5 = require('md5');
 const _ = require('lodash');
 const error = require('./errors');
@@ -297,6 +297,25 @@ class Exchange extends Base {
     };
   }
   // ws接口
+  wsDepth(o = {}, cb) {
+    const defaultO = { size: 5 };
+    o = { ...defaultO, ...o };
+    const pairs = this._getPairs(o.filter, o.pairs);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_spot_') && line.channel.search('_depth_') !== -1;
+    };
+    this.createWs({
+      chanelString: kUtils.createSpotChanelDepth(pairs, o),
+      name: 'wsDepth',
+      validate,
+      formater: kUtils.formatWsDepth,
+      cb
+    });
+  }
+
   wsTicks(o = {}, cb) {
     const pairs = this._getPairs(o.filter, o.pairs);
     const validate = (ds) => {
@@ -353,24 +372,6 @@ class Exchange extends Base {
       event: 'login',
       parameters: this._getLoginWsParams({})
     };
-  }
-  wsDepth(o = {}, cb) {
-    const defaultO = { size: 5 };
-    o = { ...defaultO, ...o };
-    const pairs = this._getPairs(o.filter, o.pairs);
-    const validate = (ds) => {
-      if (!ds) return false;
-      const line = ds[0];
-      if (!line || line.channel === 'addChannel') return;
-      return line.channel.startsWith('ok_sub_spot_') && line.channel.search('_depth_') !== -1;
-    };
-    this.createWs({
-      chanelString: kUtils.createSpotChanelDepth(pairs, o),
-      name: 'wsDepth',
-      validate,
-      formater: kUtils.formatWsDepth,
-      cb
-    });
   }
   wsBalance(o = {}, cb) {
     this._wsReqBalance(o, cb);
