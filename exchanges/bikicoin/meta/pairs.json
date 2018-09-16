@@ -132,12 +132,6 @@
     "pair": "HT-ETH"
   },
   {
-    "symbol": "wfeeusdt",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "WFEE-USDT"
-  },
-  {
     "symbol": "tytusdt",
     "quote_asset_precision": 12,
     "base_asset_precision": 4,
@@ -274,5 +268,17 @@
     "quote_asset_precision": 12,
     "base_asset_precision": 4,
     "pair": "BZKY-USDT"
+  },
+  {
+    "symbol": "wiotusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "WIOT-USDT"
+  },
+  {
+    "symbol": "wfeeusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "WFEE-USDT"
   }
 ]

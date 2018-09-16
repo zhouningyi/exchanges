@@ -45,8 +45,7 @@ class Exchange extends Base {
     // 市场
   async ticks(o = {}) {
     const ds = await this.get(`api/${this.version}/tickers`, o);
-    // const ds = await this.get('tickers', o);
-    return tUtils.formatTicks(ds);
+    return tUtils.formatTicks(ds, o);
   }
   async depth(o = {}) {
     const defaultO = { size: 5 };
@@ -65,8 +64,14 @@ class Exchange extends Base {
   async order(o) {
     checkKey(o, ['pair', 'type', 'side']);
     const opt = tUtils.formatOrderO(o);
-    const ds = await this.post('exchange-open-api/open/api/create_order', opt, true);
+    const ds = await this.post(`${PRIVATE_API}/create_order`, opt, true);
     return tUtils.formatOrder(ds, o);
+  }
+  async orderInfo(o) {
+    checkKey(o, ['pair', 'order_id']);
+    const opt = tUtils.formatOrderInfoO(o);
+    const ds = await this.get(`${PRIVATE_API}/order_info`, opt, true);
+    return tUtils.formatOrderInfo(ds, o);
   }
   async balances(o = {}) {
     const ds = await this.get(`${PRIVATE_API}/user/account`, {}, true, true);
@@ -74,11 +79,18 @@ class Exchange extends Base {
   }
   async orders(o) {
     checkKey(o, ['pair']);
-    const defaultO = { page: 0, pageSize: 100 };
+    const defaultO = { page: 1, pageSize: 60 };
     o = { ...defaultO, ...o };
     const opt = tUtils.formatOrdersO(o);
-    const ds = await this.get(`${PRIVATE_API}/all_order`, opt, true);
+    const ds = await this.get(`${PRIVATE_API}/all_order`, opt, true) || {};
     return tUtils.formatOrders(ds, o);
+  }
+  async trades(o = {}) {
+    checkKey(o, ['pair']);
+    const defaultO = { page: 1, pageSize: 60 };
+    o = { ...defaultO, ...o };
+    const opt = tUtils.formatTradesO(o);
+    // const ds = await this.get(`${PRIVATE_API}/all_trade`, opt, true) || {};
   }
   async cancelOrder(o) {
     checkKey(o, ['order_id', 'pair']);
@@ -136,7 +148,6 @@ class Exchange extends Base {
       },
       ...(method === 'POST' ? { form: params } : {})
     };
-    // console.log(o);
     //
     let body;
     try {
@@ -153,12 +164,13 @@ class Exchange extends Base {
     const { error, msg, code } = body;
     if (code && code !== '0') {
       Utils.print(msg, 'gray');
+      // console.log(endpoint, params, body);
       throw msg;
     }
     if (error) throw error;
     return body.data || body;
   }
-  //
+
   //
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);

@@ -21,11 +21,18 @@ const tasks = [
   //   name: '资金移动'
   // },
   // {
+  //   fn: 'trades',
+  //   params: {
+  //     pair: 'WFEE-USDT',
+  //   },
+  //   name: 'trades 交易历史'
+  // },
+  // {
   //   fn: 'order',
   //   params: {
-  //     pair: 'ETH-USDT',
-  //     amount: 0.001,
-  //     price: 100,
+  //     pair: 'WFEE-USDT',
+  //     amount: 200.212113333322212,
+  //     price: '0.00026',
   //     side: 'BUY',
   //     type: 'LIMIT'
   //   },
@@ -42,7 +49,7 @@ const tasks = [
   // {
   //   fn: 'orders',
   //   params: {
-  //     pair: 'ETH-USDT',
+  //     pair: 'WIOT-USDT',
   //   },
   //   name: '所有的订单'
   // },
@@ -78,15 +85,14 @@ const tasks = [
   //   },
   //   name: '已经完成的订单'
   // },
-  // {
-  //   fn: 'orderInfo',
-  //   params: {
-  //     pair: 'BTC-USDT',
-  //     order_id: '747671618',
-  //     // side: 'SELL'
-  //   },
-  //   name: '交易'
-  // },
+  {
+    fn: 'orderInfo',
+    params: {
+      pair: 'WFEE-USDT',
+      order_id: '44527',
+    },
+    name: '交易'
+  },
   // {
   //   fn: 'pairs',
   //   params: {},

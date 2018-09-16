@@ -120,13 +120,20 @@ const reverseTradeTypeMap = {
   2: 'MARKET'
 };
 
+function _fixVol(vol, pair) {
+  const symbol = pair2symbol(pair);
+  const info = symbolMap[symbol];
+  const { base_asset_precision } = info;
+  return vol.toFixed(base_asset_precision);
+}
+
 function formatOrderO(o = {}) {
   const type = o.type.toLowerCase();
   return {
     symbol: pair2symbol(o.pair),
     type: tradeTypeMap[type],
-    volume: o.amount,
-    price: o.price,
+    volume: _fixVol(o.amount, o.pair),
+    price: o.price.toFixed(8),
     side: o.side
   };
 }
@@ -144,6 +151,10 @@ function formatOrder(ds, o) {
   };
 }
 //
+
+function formatTradesO(o = {}) {
+  return _formatO(o);
+}
 function formatOrdersO(o) {
   return _formatO(o);
 }
@@ -163,7 +174,7 @@ const reverseStatusMap = {
   4: 'CANCEL'
 };
 
-function formatOrders(res, o) {
+function formatOrders(res = {}, o = {}) {
   const { orderList } = res;
   const { pair } = o;
   return _.map(orderList, (l) => {
@@ -182,6 +193,7 @@ function formatOrders(res, o) {
     };
   });
 }
+
 // cancel order
 function formatCancelOrderO(o) {
   return _formatO(o);
@@ -216,10 +228,30 @@ function formatActiveOrders(ds, o) {
 function formatCancelAllOrdersO(o) {
   return _formatO(o);
 }
-function formatCancelAllOrders(ds, o) {
+function formatCancelAllOrders(ds = {}, o = {}) {
   const { msg } = ds;
   if (msg === 'suc') return [];
   return false;
+}
+
+// orderInfo
+function formatOrderInfoO(o = {}) {
+  return _formatO(o);
+}
+function formatOrderInfo(ds, o = {}) {
+  if (!ds) return false;
+  const d = ds.order_info;
+  return {
+    pair: o.pair,
+    order_id: `${d.id}`,
+    status: reverseStatusMap[d.status],
+    time: new Date(d.created_at),
+    side: d.side,
+    price: parse(d.price),
+    type: reverseTradeTypeMap[d.type],
+    deal_amount: parse(d.deal_volume),
+    amount: parse(d.volume),
+  };
 }
 module.exports = {
   formatPairs,
@@ -227,6 +259,7 @@ module.exports = {
   formatDepthO,
   formatDepth,
   formatBalances,
+  formatTradesO,
   formatOrderO,
   formatOrder,
   formatOrdersO,
@@ -237,6 +270,8 @@ module.exports = {
   formatActiveOrders,
   formatCancelAllOrdersO,
   formatCancelAllOrders,
+  formatOrderInfoO,
+  formatOrderInfo,
   //
   formatPair,
   symbol2pair,

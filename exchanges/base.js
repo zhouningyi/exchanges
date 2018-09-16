@@ -12,7 +12,7 @@ const { delay } = Utils;
 const isProxy = !!argv.proxy;
 
 const defaultOptions = {
-  timeout: 10000,
+  timeout: 20000,
 };
 
 function isEmptyObject(o) {
