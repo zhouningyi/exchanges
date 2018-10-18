@@ -1,0 +1,20 @@
+{
+  "name": "withdraw",
+  "desc": "提币、冲币",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 50],
+      "unique": true,
+      "index": true
+    },
+    "time": "DATE",
+    "coin":  ["STRING", 12],
+    "source": ["STRING", 30],
+    "target": ["STRING", 30],
+    "txid": ["STRING", 80],
+    "tag": ["STRING", 80],
+    "payment_id": ["STRING", 80],
+    "fee": ["STRING", 40],
+    "amount": "FLOAT"
+  }
+}
