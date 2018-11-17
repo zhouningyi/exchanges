@@ -8,12 +8,22 @@ const argv = require('optimist').argv;
 const fs = require('fs');
 const path = require('path');
 
-const { delay } = Utils;
+const { delay, checkKey } = Utils;
 const isProxy = !!argv.proxy;
+
+_.templateSettings.interpolate = /{([\s\S]+?)}/g;
 
 const defaultOptions = {
   timeout: 20000,
 };
+
+function _upperFirst(str) {
+  return str[0].toUpperCase() + str.substring(1);
+}
+
+function stringify(o) {
+  return JSON.stringify(o, null, 2);
+}
 
 function isEmptyObject(o) {
   if (!o) return true;
@@ -21,6 +31,7 @@ function isEmptyObject(o) {
   _.forEach(o, () => (bol = false));
   return bol;
 }
+
 
 class exchange extends Event {
   constructor(config = {}, options = {}) {
@@ -86,7 +97,7 @@ class exchange extends Event {
   saveConfig(json = {}, file) {
     if (isEmptyObject(json)) return this.print(`输入为空，无法写入文件${file}...`);
     const pth = this._getConifgPath(file);
-    const str = JSON.stringify(json, null, 2);
+    const str = stringify(json);
     fs.writeFileSync(pth, str, 'utf8');
   }
   readConfig(file) {
@@ -163,6 +174,70 @@ class exchange extends Event {
         console.log(e);
       }
       process.nextTick(f);
+    };
+  }
+  loadFnFromConfig(confs) {
+    _.forEach(confs, (conf, key) => this.loadFn(conf, key));
+  }
+  getEndPoint(endpoint, endpointParams, params) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
+    if (!endpointParams || !endpointParams.length) return endpoint;
+    endpoint = _.template(endpoint)(params);
+    _.forEach(endpointParams, (k) => {
+      delete params[k];
+    });
+    return endpoint;
+  }
+  addDt2Res(res, dt) {
+    if (!res) return res;
+    if (Array.isArray(res)) {
+      _.forEach(res, (l) => {
+        l.resp_time = dt;
+      });
+    } else if (typeof res === 'object') {
+      res.resp_time = dt;
+    }
+    return res;
+  }
+  loadFn(conf = {}, key) {
+    const UtilsInst = this.utils || this.Utils;
+    if (!UtilsInst) Utils.warnExit(`${this.name}: this.Utils缺失`);
+    checkKey(conf, ['endpoint', 'name', 'name_cn']);
+    let { name = key, notNull: checkKeyO, endpoint, sign = false, endpointParams } = conf;
+    const formatOFn = UtilsInst[`${key}O`];
+    if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}O()不存在`);
+    const formatFn = UtilsInst[key];
+    if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}()不存在`);
+    const method = (conf.method || 'get').toLowerCase();
+    const defaultOptions = conf.defaultOptions || {};
+    this[name] = async (o) => {
+      try {
+        o = Object.assign({}, defaultOptions, o);
+        if (checkKeyO) checkKey(o, checkKeyO);
+        // 顺序不要调换
+        let opt = formatOFn ? _.cloneDeep(formatOFn(o)) : _.cloneDeep(o);
+        endpoint = this.getEndPoint(endpoint, endpointParams, opt);
+        const strO = `输入options: ${stringify(opt)}`;
+        Utils.print(strO, 'blue');
+        opt = Utils.cleanObjectNull(opt);
+        const str1 = `opt: ${stringify(opt)}`;
+        Utils.print(str1, 'gray');
+        const str2 = `endpoint: ${endpoint}`;
+        Utils.print(str2, 'gray');
+        const tStart = new Date();
+        const ds = await this[method](endpoint, opt, sign);
+        const dt = new Date() - tStart;
+        if (UtilsInst.getError && ds) {
+          const error = UtilsInst.getError(ds);
+          if (error) this.throwError(error);
+        }
+        if (!ds) return this.throwError('返回为空...');
+        const res = formatFn ? formatFn(ds, o) : ds;
+        this.addDt2Res(res, dt);
+        return res;
+      } catch (e) {
+        console.log(e);
+        return false;
+      }
     };
   }
 }
