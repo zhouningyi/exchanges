@@ -3,12 +3,33 @@ const WebSocket = require('ws');
 const url = require('url');
 const _ = require('lodash');
 const HttpsProxyAgent = require('https-proxy-agent');
+const pako = require('pako');
 
 const Event = require('bcore/event');
 
 function noop() {}
 
 const loopInterval = 4000;
+
+function processWsData(data) {
+  if (data instanceof String) {
+    try {
+      data = JSON.parse(data);
+    } catch (e) {
+      console.log(e, 'String parse json error');
+    }
+    return data;
+  } else {
+    try {
+      data = pako.inflateRaw(data, { to: 'string' });
+      data = JSON.parse(data);
+      return data;
+    } catch (e) {
+      console.log(e, 'pako parse error');
+    }
+  }
+  return false;
+}
 
 function loop(fn, time) {
   fn();
@@ -76,7 +97,8 @@ class WS extends Event {
     });
     ws.on('message', (data) => {
       try {
-        if (typeof data === 'string') data = JSON.parse(data);
+        data = processWsData(data);
+        // if (typeof data === 'string') data = JSON.parse(data);
         this._onCallback(data, ws);
       } catch (error) {
         console.log(`ws Parse json error: ${error.message}`);

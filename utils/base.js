@@ -16,4 +16,8 @@ function cleanObjectNull(o, isDeleteNull = false) {
   return o;
 }
 
-module.exports = { delay, cleanObjectNull };
+function live() {
+  setTimeout(() => {}, 100000000);
+}
+
+module.exports = { delay, cleanObjectNull, live };
