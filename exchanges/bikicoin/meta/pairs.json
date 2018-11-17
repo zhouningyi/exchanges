@@ -12,40 +12,10 @@
     "pair": "BTC-USDT"
   },
   {
-    "symbol": "alieth",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "ALI-ETH"
-  },
-  {
-    "symbol": "letbtc",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "LET-BTC"
-  },
-  {
-    "symbol": "etueth",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "ETU-ETH"
-  },
-  {
     "symbol": "ethbtc",
     "quote_asset_precision": 10,
     "base_asset_precision": 4,
     "pair": "ETH-BTC"
-  },
-  {
-    "symbol": "leteth",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "LET-ETH"
-  },
-  {
-    "symbol": "tytbtc",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "TYT-BTC"
   },
   {
     "symbol": "ethusdt",
@@ -82,12 +52,6 @@
     "quote_asset_precision": 8,
     "base_asset_precision": 4,
     "pair": "ETC-USDT"
-  },
-  {
-    "symbol": "tyteth",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "TYT-ETH"
   },
   {
     "symbol": "ltcbtc",
@@ -136,6 +100,12 @@
     "quote_asset_precision": 12,
     "base_asset_precision": 4,
     "pair": "TYT-USDT"
+  },
+  {
+    "symbol": "tydusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "TYD-USDT"
   },
   {
     "symbol": "sntbtc",
@@ -246,18 +216,6 @@
     "pair": "BIX-ETH"
   },
   {
-    "symbol": "wfeebtc",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "WFEE-BTC"
-  },
-  {
-    "symbol": "wfeeeth",
-    "quote_asset_precision": 12,
-    "base_asset_precision": 4,
-    "pair": "WFEE-ETH"
-  },
-  {
     "symbol": "bzjusdt",
     "quote_asset_precision": 12,
     "base_asset_precision": 4,
@@ -276,9 +234,51 @@
     "pair": "WIOT-USDT"
   },
   {
+    "symbol": "acarusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ACAR-USDT"
+  },
+  {
+    "symbol": "eeceth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "EEC-ETH"
+  },
+  {
+    "symbol": "alieth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ALI-ETH"
+  },
+  {
+    "symbol": "letbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "LET-BTC"
+  },
+  {
+    "symbol": "leteth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "LET-ETH"
+  },
+  {
+    "symbol": "etueth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ETU-ETH"
+  },
+  {
     "symbol": "wfeeusdt",
     "quote_asset_precision": 12,
     "base_asset_precision": 4,
     "pair": "WFEE-USDT"
+  },
+  {
+    "symbol": "fousdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "FO-USDT"
   }
 ]

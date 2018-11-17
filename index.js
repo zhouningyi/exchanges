@@ -1,5 +1,7 @@
 
 const Okex = require('./exchanges/okex');
+
+const OkexV3 = require('./exchanges/okex.v3');
 const Huobi = require('./exchanges/huobi');
 const Binance = require('./exchanges/binance');
 const Kucoin = require('./exchanges/kucoin');
@@ -17,6 +19,7 @@ module.exports = {
   Kucoin,
   Bitmex,
   Huobi,
+  OkexV3,
   Okex,
   Fcoin,
   // binance: Binance,
