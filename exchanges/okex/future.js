@@ -66,6 +66,9 @@ class Exchange extends Spot {
     const ds = kUtils.formatFuturePosition(info, o);
     return ds;
   }
+  wsFutureIndex(o = {}, cb) {
+    const symbols = o.pair ? [kUtils.pair2symbol(o.pair, true)] : FUTURE_PAIRS;
+  }
   wsFutureDepth(o = {}, cb) {
     const symbols = o.pair ? [kUtils.pair2symbol(o.pair, true)] : FUTURE_PAIRS;
     const defaultO = {

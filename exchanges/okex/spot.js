@@ -11,6 +11,7 @@ const request = require('./../../utils/request');
 // const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE } = require('./config');
 const ALL_PAIRS = require('./meta/pairs.json');
+const okConfig = require('./meta/api');
 //
 const { checkKey } = Utils;
 //
@@ -36,6 +37,7 @@ class Exchange extends Base {
     return md5(qstr).toUpperCase();
   }
   async init() {
+    // this.loadFnFromConfig(okConfig);
     // saveConfig;
     const pairs = await this.pairs();
     const pairO = _.keyBy(pairs, 'pair');
