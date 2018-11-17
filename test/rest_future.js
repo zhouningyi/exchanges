@@ -1,6 +1,6 @@
-const { testRest } = require('./utils');
+const { testRest, live } = require('./utils');
 
-const exchanges = ['okex'];// , 'okex'. 'hitbtc', 'bittrex'
+const exchanges = ['okexV3'];// , 'okex'. 'hitbtc', 'bittrex'
 const tasks = [
   // {
   //   fn: 'fastOrder',
@@ -13,6 +13,9 @@ const tasks = [
   //   },
   //   name: '交易'
   // },
+    // {
+    //   fn: 'unfinishFutureOrders'
+    // }
   // {
   //   fn: 'cancelAllOrders',
   //   params: {},
@@ -103,20 +106,21 @@ const tasks = [
   //   },
   //   name: '所有期货订单'
   // },
-  // {
-  //   fn: 'futureOrder',
-  //   params: {
-  //     pair: 'BCH-USDT',
-  //     contract_type: 'quarter',
-  //     lever_rate: 10,
-  //     side: 'BUY',
-  //     direction: 'up',
-  //     amount: 1,
-  //     type: 'LIMIT',
-  //     price: 732.500,
-  //   },
-  //   name: '购买期货'
-  // },
+  {
+    fn: 'futureOrder',
+    params: {
+      client_oid: 'xx',
+      pair: 'ETH-USDT',
+      contract_type: 'quarter',
+      lever_rate: 10,
+      side: 'BUY',
+      direction: 'up',
+      amount: 1,
+      type: 'LIMIT',
+      price: 100,
+    },
+    name: '购买期货'
+  },
   // {
   //   fn: 'futureOrderInfo',
   //   params: {
@@ -187,15 +191,43 @@ const tasks = [
   //   },
   //   name: '未完成期货订单'
   // },
+  // {
+  //   fn: 'futureLedger',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     limit: 21,
+  //     from: 1
+  //   }
+  // },
+  // [
+  //   {
+  //     "pair": "EOS-USDT",
+  //     "unique_id": "EOS-USDT_quarter",
+  //     "contract_type": "quarter",
+  //     "time": "2018-09-14T13:27:14.000Z",
+  //     "buy_amount": 0,
+  //     "buy_available": 0,
+  //     "buy_price_avg": 0,
+  //     "buy_price_cost": 0,
+  //     "buy_profit_real": 296.70025018,
+  //     "contract_id": 201812280200054,
+  //     "lever_rate": 20,
+  //     "sell_amount": 351,
+  //     "sell_available": 351,
+  //     "sell_price_avg": 5.44317002,
+  //     "sell_price_cost": 5.58204008,
+  //     "sell_profit_real": 296.70025018
+  //   }
 
-  {
-    fn: 'futurePosition',
-    params: {
-      contract_type: 'quarter',
-      pair: 'EOS-USDT'
-    },
-    name: '期货仓位'
-  }
+  // {
+  //   fn: 'futurePosition',
+  //   params: {
+  //     contract_type: 'quarter',
+  //     pair: 'EOS-USDT'
+  //   },
+  //   name: '期货仓位'
+  // }
 ];
 
 testRest(exchanges, tasks);
+live();

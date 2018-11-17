@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const Utils = require('./../utils');
 //
 const config = require('./../config');
 const Exchanges = require('./../index');
@@ -15,10 +16,10 @@ async function extrude(ex, exName, d) {
     let dstr = '';
     if (ds) {
       dstr = `数组长度: ${ds.length}`;
-      console.log(JSON.stringify(ds, null, 2), 'res');
+      Utils.print(JSON.stringify(ds, null, 2), 'green');
       ds = (typeof ds === 'object') ? JSON.stringify(ds, null, 2).substring(0, 400) : '无返回...';
     }
-    console.log(dstr, `${space}${exName}.${str}${space}`);
+    console.log(dstr, `${space}${exName}.${d.fn}(${str})${space}`);
   }
   const fn = ex[d.fn];
   if (!fn) {
@@ -53,7 +54,9 @@ async function testOneExchange(exName, tasks) {
   console.log(`测试交易所【${exName}】...`);
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
-    console.log(`测试任务${i}: ${task.fn}(${task.name})`);
+    const { name } = task;
+    const ext = name ? `(${name})` : '';
+    Utils.print(`测试: ${task.fn}${ext}(opt)`, 'yellow');
     await extrude(ex, exName, task);
   }
 }
@@ -65,7 +68,10 @@ async function testRest(exNames, tasks) {
   }
 }
 
+function live() {
+  setTimeout(() => null, 1000000);
+}
 
 module.exports = {
-  extrude, getAppKey, upperFirst, getExchange, validate, testRest
+  extrude, getAppKey, upperFirst, getExchange, validate, testRest, live
 };

@@ -29,6 +29,12 @@ const wsList = [
   //   },
   //   name: ''
   // },
+  {
+    fn: 'wsFutureIndex',
+    params: {
+    },
+    name: '合约指数'
+  },
   // {
   //   fn: 'wsFutureOrder',
   //   params: {
@@ -76,14 +82,14 @@ const wsList = [
   //   },
   //   name: '期货深度图'
   // },
-  {
-    fn: 'wsDepth',
-    params: {
-      contract_type: 'quarter',
-      pairs: ['EOS-USDT']// 'BTC-USDT',
-    },
-    name: '深度图'
-  },
+  // {
+  //   fn: 'wsDepth',
+  //   params: {
+  //     contract_type: 'quarter',
+  //     pairs: ['EOS-USDT']// 'BTC-USDT',
+  //   },
+  //   name: '深度图'
+  // },
   // {
   //   fn: 'wsFutureBalances',
   //   params: {
@@ -102,5 +108,6 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-testOneExchangeWs('okex', wsList);
+console.log('okexV3..');
+testOneExchangeWs('okexV3', wsList);
 
