@@ -221,7 +221,7 @@ class exchange extends Event {
         opt = Utils.cleanObjectNull(opt);
         const str1 = `opt: ${stringify(opt)}`;
         Utils.print(str1, 'gray');
-        const str2 = `endpoint: ${endpoint}`;
+        const str2 = `${method}: ${endpoint}`;
         Utils.print(str2, 'gray');
         const tStart = new Date();
         const ds = await this[method](endpoint, opt, sign);

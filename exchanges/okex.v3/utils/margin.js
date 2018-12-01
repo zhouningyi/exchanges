@@ -1,9 +1,9 @@
 
 const _ = require('lodash');
-const md5 = require('md5');
+// const md5 = require('md5');
 //
 const Utils = require('./../../../utils');
-const { orderStatusMap } = require('./public');
+const { orderStatusMap, formatOrder, orderO } = require('./public');
 
 const reverseOrderStatusMap = _.invert(orderStatusMap);
 const { checkKey } = Utils;
@@ -168,36 +168,12 @@ function repay(d) {
 
 // 下单
 function marginOrderO(o) {
-  const { type } = o;
-  let opt = {
-    margin_trading: 2, //
-    type: o.type.toLowerCase(),
-    side: o.side.toLowerCase(),
-    instrument_id: o.instrument_id,
-  };
-  if (type.toUpperCase() === 'LIMIT') {
-    checkKey(o, ['price', 'amount']);
-    opt = {
-      ...opt,
-      price: o.price,
-      size: o.amount
-    };
-  } else {
-    // checkKey(o, ['price', 'amount']);
-    console.log('市价单还没做...');
-    process.exit();
-  }
+  const opt = { ...orderO, margin_trading: 2 };
   return opt;
 }
 function marginOrder(d, o) {
   if (!d) return false;
-  return {
-    client_oid: d.client_oid,
-    order_id: d.order_id,
-    success: o.result,
-    status: 'UNFINISH',
-    ...o
-  };
+  return formatOrder(d, o);
 }
 
 function cancelMarginOrderO(o = {}) {
@@ -240,24 +216,10 @@ function marginOrdersO(o = {}) {
   };
 }
 
-function _formatOrder(d) {
-  return {
-    time: new Date(d.created_at || d.timestamp),
-    instrument_id: d.instrument_id,
-    side: d.side.toUpperCase(),
-    order_id: d.order_id,
-    deal_amoumt: _parse(d.filled_size),
-    pair: d.product_id,
-    amount: _parse(d.size),
-    type: d.type.toUpperCase(),
-    status: orderStatusMap[d.status],
-    price: _parse(d.price),
-  };
-}
 
 function _marginOrders(d, o) {
   return {
-    ..._formatOrder(d),
+    ...formatOrder(d),
     ...o
   };
 }
@@ -269,7 +231,7 @@ function unfinishMarginOrdersO(o = {}) {
 }
 
 function unfinishMarginOrders(ds, o) {
-  return _.map(ds, _formatOrder);
+  return _.map(ds, d => formatOrder(d, o));
 }
 
 // function successMarginOrders() {
@@ -285,7 +247,7 @@ function marginOrderInfoO(o = {}) {
 }
 
 function marginOrderInfo(line, o) {
-  return { ..._formatOrder(line), ...o };
+  return { ...formatOrder(line), ...o };
 }
 
 module.exports = {

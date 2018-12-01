@@ -9,19 +9,18 @@ const wsList = [
   // {
   //   fn: 'wsTicks',
   //   params: {
-  //     // interval: 1000,
   //     pairs: ['EOS-USDT']
   //   },
-  //   name: 'tick数据...'
+  //   name: 'wsTicks'
   // },
-  // {
-  //   fn: 'wsFutureTicks',
-  //   params: {
-  //     contract_type: ['this_week', 'quarter', 'next_week'],
-  //     pairs: ['EOS-USDT']
-  //   },
-  //   name: '期货tick数据...'
-  // },
+  {
+    fn: 'wsFutureTicks',
+    params: {
+      contract_type: 'quarter', // / ['this_week', 'quarter', 'next_week'],
+      pairs: ['BTC-USDT']
+    },
+    name: '期货tick数据...'
+  },
   // {
   //   fn: 'wsFutureBalance',
   //   params: {
@@ -29,12 +28,15 @@ const wsList = [
   //   },
   //   name: ''
   // },
-  {
-    fn: 'wsFutureIndex',
-    params: {
-    },
-    name: '合约指数'
-  },
+  // {
+  //   fn: 'wsFutureIndex',
+  //   params: {
+  //     pairs: [
+  //       'EOS-USDT'
+  //     ]
+  //   },
+  //   name: '合约指数'
+  // },
   // {
   //   fn: 'wsFutureOrder',
   //   params: {
@@ -57,11 +59,27 @@ const wsList = [
   //   name: '余额数据'
   // },
   // {
+  //   fn: 'wsReqBalance',
+  //   params: {
+  //   },
+  //   name: '余额数据'
+  // },
+
+
+  // {
+  //   fn: 'wsReqOrders',
+  //   params: {
+  //     pairs: ['EOS-USDT']
+  //   },
+  // },
+
+  // {
   //   fn: 'wsOrder',
   //   params: {
   //   },
   //   name: '登录'
   // },
+
   // {
   //   fn: 'wsFutureKlines',
   //   params: {
@@ -78,7 +96,8 @@ const wsList = [
   // {
   //   fn: 'wsFutureDepth',
   //   params: {
-  //     contract_type: 'quarter'
+  //     contract_type: 'quarter',
+  //     pairs: ['EOS-USDT']
   //   },
   //   name: '期货深度图'
   // },

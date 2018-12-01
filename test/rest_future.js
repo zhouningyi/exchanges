@@ -13,9 +13,7 @@ const tasks = [
   //   },
   //   name: '交易'
   // },
-    // {
-    //   fn: 'unfinishFutureOrders'
-    // }
+
   // {
   //   fn: 'cancelAllOrders',
   //   params: {},
@@ -84,6 +82,9 @@ const tasks = [
 //   name: '移动资金'
 // },
   // {
+  //   fn: 'futurePairs'
+  // },
+  // {
   //   fn: 'futureOrder',
   //   params: {
   //     pair: 'EOS-USDT',
@@ -97,59 +98,119 @@ const tasks = [
   //   },
   //   name: '购买期货'
   // },
+
+  // {
+  //   fn: 'futureOrders',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     contract_type: 'next_week',
+  //     status: 'UNFINISH'
+  //   },
+  //   name: '所有期货订单'
+  // },
+  // {
+  //   fn: 'unfinishFutureOrders',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     contract_type: 'next_week'
+  //   }
+  // },
   // {
   //   fn: 'successFutureOrders',
   //   params: {
   //     pair: 'EOS-USDT',
   //     contract_type: 'quarter',
-  //     status: 'SUCCESS'
   //   },
-  //   name: '所有期货订单'
+  //   name: '所有完成的期货订单'
   // },
-  {
-    fn: 'futureOrder',
-    params: {
-      client_oid: 'xx',
-      pair: 'ETH-USDT',
-      contract_type: 'quarter',
-      lever_rate: 10,
-      side: 'BUY',
-      direction: 'up',
-      amount: 1,
-      type: 'LIMIT',
-      price: 100,
-    },
-    name: '购买期货'
-  },
+  // {
+  //   fn: 'futureOrder',
+  //   params: {
+  //     client_oid: 'xx',
+  //     pair: 'ETH-USDT',
+  //     contract_type: 'next_week',
+  //     lever_rate: 20,
+  //     side: 'BUY',
+  //     direction: 'up',
+  //     amount: 1,
+  //     type: 'LIMIT',
+  //     price: 100,
+  //   },
+  //   name: '购买期货'
+  // },
+  // {
+  //   fn: 'futureIndex',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     contract_type: 'next_week'
+  //   }
+  // },
+  // {
+  //   fn: 'futureLiquidation',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     contract_type: 'quarter',
+  //     status: 'UNFINISH'
+  //   }
+  // },
+  // {
+  //   fn: 'futureTotalAmount',
+  //   params: {
+  //     pair: 'BTC-USDT',
+  //     contract_type: 'this_week',
+  //   }
+  // },
+  // {
+  //   fn: 'futureTotalHoldAmount',
+  //   params: {
+  //     pair: 'BTC-USDT',
+  //     contract_type: 'quarter',
+  //   }
+  // },
+  // {
+  //   fn: 'futureLimitPrice',
+  //   params: {
+  //     pair: 'EOS-USDT',
+  //     contract_type: 'quarter',
+  //   }
+  // },
+  // {
+  //   fn: 'futureTicks',
+  //   params: {}
+  // },
+
+  // {
+  //   fn: 'futureTick',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     contract_type: 'quarter'
+  //   }
+  // },
+
   // {
   //   fn: 'futureOrderInfo',
   //   params: {
-  //     order_id: '596402338479104',
+  //     order_id: '1818257805743104',
   //     contract_type: 'quarter',
-  //     pair: 'BTC-USDT',
+  //     pair: 'ETH-USDT',
   //   },
   //   name: '期货订单查询'
   // },
   // {
   //   fn: 'cancelAllFutureOrders',
   //   params: {
+  //     pair: 'ETH-USDT',
+  //     contract_type: 'next_week',
+  //     order_ids: [1818257805743104, 1818306041693184, 1818279985226752]
   //   },
   //   name: '撤销所有的订单'
   // },
   // {
-  //   fn: 'futureAllOrders',
-  //   params: {
-  //     contract_type: 'quarter',
-  //     pair: 'BTC-USDT',
-  //   },
-  //   name: '所有的订单'
-  // },
-  // {
   //   fn: 'cancelFutureOrder',
   //   params: {
-  //     order_id: ['975917330351104'],
-  //     contract_type: 'quarter',
-  //     pair: 'EOS-USDT',
+  //     order_id: '1818307157179392',
+  //     contract_type: 'next_week',
+  //     pair: 'ETH-USDT',
   //   },
   //   name: '清空期货'
   // },
@@ -174,12 +235,12 @@ const tasks = [
   //   },
   //   name: '批量下单'
   // },
-  // {
-  //   fn: 'futureBalances',
-  //   params: {
-  //   },
-  //   name: '期货资金'
-  // },
+  {
+    fn: 'futureBalances',
+    params: {
+    },
+    name: '期货资金'
+  },
   // {
   //   fn: 'unfinishedFutureOrderInfo',
   //   params: {

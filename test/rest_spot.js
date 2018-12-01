@@ -63,13 +63,13 @@ const tasks = [
   //     order_id: '1776996762192896',
   //   }
   // },
-  {
-    fn: 'cancelAllMarginOrders',
-    params: {
-      instrument_id: 'ETH-USDT',
-      order_ids: ['1776998403941376', '1777001486755840']
-    }
-  },
+  // {
+  //   fn: 'cancelAllMarginOrders',
+  //   params: {
+  //     instrument_id: 'ETH-USDT',
+  //     order_ids: ['1776998403941376', '1777001486755840']
+  //   }
+  // },
   // {
   //   fn: 'unfinishMarginOrders',
   //   params: {
@@ -88,6 +88,13 @@ const tasks = [
   //   params: {
   //   },
   //   name: '提币记录'
+  // },
+  // {
+  //   fn: 'spotLedger',
+  //   params: {
+  //     coin: 'BTC',
+  //     limit: 21,
+  //   }
   // },
   // {
   //   fn: 'marginOrders',
@@ -113,9 +120,9 @@ const tasks = [
   // {
   //   fn: 'order',
   //   params: {
-  //     pair: 'WFEE-USDT',
-  //     amount: 200.212113333322212,
-  //     price: '0.00026',
+  //     pair: 'ETH-USDT',
+  //     amount: 0.1,
+  //     price: '100',
   //     side: 'BUY',
   //     type: 'LIMIT'
   //   },
@@ -124,17 +131,10 @@ const tasks = [
   // {
   //   fn: 'cancelOrder',
   //   params: {
-  //     order_id: '2318947',
+  //     order_id: '1821919279130624',
   //     pair: 'ETH-USDT',
   //   },
   //   name: '取消交易'
-  // // },
-  // {
-  //   fn: 'orders',
-  //   params: {
-  //     pair: 'ETH-USDT',
-  //   },
-  //   name: '所有的订单'
   // },
 
 
@@ -149,13 +149,7 @@ const tasks = [
   //   },
   //   name: '交易'
   // },
-  // {
-  //   fn: 'cancelAllOrders',
-  //   params: {
-  //     pair: 'ETH-USDT'
-  //   },
-  //   name: '取消正在执行中的订单'
-  // },
+
   // {
   //   fn: 'activeOrders',
   //   params: {
@@ -169,14 +163,6 @@ const tasks = [
   //     pair: 'OKB-USDT'
   //   },
   //   name: '已经完成的订单'
-  // },
-  // {
-  //   fn: 'orderInfo',
-  //   params: {
-  //     pair: 'WFEE-USDT',
-  //     order_id: '44527',
-  //   },
-  //   name: '交易'
   // },
   // {
   //   fn: 'pairs',
@@ -235,11 +221,11 @@ const tasks = [
   //   },
   //   name: '钱包'
   // },
-  // {
-  //   fn: 'futureBalances',
-  //   params: {},
-  //   name: '合约(全仓)余额'
-  // },
+  {
+    fn: 'futureBalances',
+    params: {},
+    name: '合约(全仓)余额'
+  },
   // {
   //   fn: 'depth',
   //   params: { pair: 'ETH-BTC', size: 5 },
@@ -268,6 +254,46 @@ const tasks = [
   //   },
   //   name: 'allOrders'
   // },
+  // {
+  //   fn: 'unfinishOrders',
+  //   params: {
+  //     // pair: 'ETH-USDT'
+  //     limit: 3
+  //   }
+  // },
+  // {
+  //   fn: 'cancelAllOrders',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     order_ids: [1821901508649984]
+  //   },
+  //   name: '批量取消正在执行中的订单'
+  // },
+  // {
+  //   fn: 'orderInfo',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     order_id: '1821901508649984',
+  //   },
+  //   name: '交易'
+  // },
+  // {
+  //   fn: 'orders',
+  //   params: {
+  //     pair: 'ETH-USDT',
+  //     status: 'SUCCESS',
+  //     limit: 1
+  //   },
+  //   name: '所有的订单'
+  // },
+  // {
+  //   fn: 'orderDetail',
+  //   params: {
+  //     order_id: '1823534205716480',
+  //     pair: 'ETH-USDT'
+  //   },
+  // },
+
 ];
 
 testRest(exchanges, tasks);

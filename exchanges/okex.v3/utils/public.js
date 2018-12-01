@@ -7,16 +7,16 @@ const config = require('./../config');
 const { checkKey } = Utils;
 // const subscribe = Utils.ws.genSubscribe(config.WS_BASE);
 
-// function pair2symbol(pair, isReverse = false) {
-//   if (!isReverse) return pair.replace('-', '_').toLowerCase();
-//   return pair.split('-').reverse().join('_').toLowerCase();
-// }
+function pair2symbol(pair, isReverse = false) {
+  if (!isReverse) return pair.replace('-', '_').toLowerCase();
+  return pair.split('-').reverse().join('_').toLowerCase();
+}
 
-// function symbol2pair(symbol, isFuture = false) {
-//   let ss = symbol.split('_');
-//   if (isFuture) ss = ss.reverse();
-//   return ss.join('-').toUpperCase();
-// }
+function symbol2pair(symbol, isFuture = false) {
+  let ss = symbol.split('_');
+  if (isFuture) ss = ss.reverse();
+  return ss.join('-').toUpperCase();
+}
 
 // function _parse(v) {
 //   return parseFloat(v, 10);
@@ -220,15 +220,27 @@ function ledgerO(o) {
   return opt;
 }
 
-function _formatLedger(d) {
+const execTypeMap = {
+  T: 'TAKER',
+  M: 'MAKER'
+};
+function _formatLedger(d, o = {}) {
+  const amount = d.size || d.amount;
   return {
+    ...o,
     unique_id: d.ledger_id,
     ledger_id: d.ledger_id,
+    instrument_id: d.instrument_id,
+    exec_type: execTypeMap[d.exec_type],
+    price: d.price !== undefined ? _parse(d.price) : undefined,
     coin: d.currency,
-    type: d.typeName,
-    amount: d.amount,
-    fee: d.fee,
-    balance: d.balance,
+    type: d.typeName || d.type,
+    amount: amount !== undefined ? _parse(amount) : undefined,
+    fee: d.fee !== undefined ? _parse(d.fee) : undefined,
+    balance: d.balance !== undefined ? _parse(d.balance) : undefined,
+    pair: _.get(d, 'details.product_id') || d.product_id,
+    order_id: _.get(d, 'details.order_id'),
+    side: d.side ? d.side.toUpperCase() : undefined,
     // source: accountTypeMapInvert[d.from],
     // target: accountTypeMapInvert[d.to],
     time: new Date(d.timestamp)
@@ -270,8 +282,66 @@ const orderStatusMap = {
   canceled: 'CANCEL'
 };
 
+const reverseOrderStatusMap = _.invert(orderStatusMap);
+
+function formatOrder(d, o) {
+  const t = d.created_at || d.timestamp;
+  const { from, to, limit, ...rest } = o;
+  return {
+    time: t ? new Date(t) : new Date(),
+    instrument_id: d.instrument_id,
+    side: (d.side || o.side || '').toUpperCase(),
+    client_oid: d.client_oid,
+    order_id: d.order_id,
+    notional: d.notional,
+    filled_notional: d.filled_notional,
+    success: o.result,
+    pair: d.product_id,
+    amount: _parse(d.size),
+    filled_amount: _parse(d.executed_value),
+    type: (d.type || o.type || '').toUpperCase(),
+    status: orderStatusMap[d.status] || 'UNFINISH',
+    price: _parse(d.price),
+    ...rest
+  };
+}
+
+function orderO(o) {
+  const { type } = o;
+  let opt = {
+    margin_trading: 1, //
+    type: o.type.toLowerCase(),
+    side: o.side.toLowerCase(),
+    instrument_id: o.instrument_id || o.pair,
+    client_oid: o.client_oid
+  };
+  if (type.toUpperCase() === 'LIMIT') {
+    checkKey(o, ['price', 'amount']);
+    opt = {
+      ...opt,
+      instrument_id: o.pair,
+      price: o.price,
+      size: o.amount
+    };
+  } else {
+    // checkKey(o, ['price', 'amount']);
+    console.log('市价单还没做...');
+    process.exit();
+  }
+  return opt;
+}
+
+const base = {
+  WS_BASE: 'wss://real.okex.com:10440/websocket/okexapi'
+};
+
 module.exports = {
+  base,
+  symbol2pair,
+  pair2symbol,
+  formatOrder,
   orderStatusMap,
+  reverseOrderStatusMap,
   accountTypeMap,
   ledgerMap,
   coins,
@@ -284,5 +354,6 @@ module.exports = {
   withdrawHistory,
   ledgerO,
   ledger,
-
+  orderO,
+  formatLedger: _formatLedger,
 };

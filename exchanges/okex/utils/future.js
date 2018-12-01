@@ -481,7 +481,6 @@ function formatBatchFutureOrder(ds, o) {
   return _.map(ds.order_info, (order) => {
     if (order.error_code) {
       const msg = error.getErrorFromCode(order.error_code);
-      console.log(msg);
       return null;
     }
     const line = { ...o, success: true, order_id: order.order_id };

@@ -22,10 +22,9 @@ function processWsData(data) {
   } else {
     try {
       data = pako.inflateRaw(data, { to: 'string' });
-      data = JSON.parse(data);
-      return data;
+      return JSON.parse(data);
     } catch (e) {
-      console.log(e, 'pako parse error');
+      console.log(e, 'pako parse error...');
     }
   }
   return false;
@@ -82,7 +81,7 @@ class WS extends Event {
       // console.log('pong');
     });
     ws.on('ping', () => {
-      // console.log('ping');
+      console.log('ping');
     });
     ws.on('error', (e) => {
       console.log(e, 'error');
@@ -98,6 +97,7 @@ class WS extends Event {
     ws.on('message', (data) => {
       try {
         data = processWsData(data);
+        // console.log(data, 'data');
         // if (typeof data === 'string') data = JSON.parse(data);
         this._onCallback(data, ws);
       } catch (error) {
@@ -108,13 +108,10 @@ class WS extends Event {
       }, loopInterval);
     });
   }
-  query() {
-  }
   send(msg) {
     if (!msg) return;
     if (!this.isReady()) setTimeout(() => this.send(msg), 100);
     if (typeof msg === 'object') msg = JSON.stringify(msg);
-    console.log(msg, 'msg');
     this.ws.send(msg);
   }
   _onCallback(ds) {
@@ -127,7 +124,7 @@ class WS extends Event {
   }
   genCallback(validate, cb) {
     return (ds) => {
-      if (validate(ds)) return true && cb(ds);
+      if (validate && validate(ds)) return cb(ds);
       return false;
     };
   }
@@ -210,5 +207,5 @@ function genSubscribe(stream) {
 
 module.exports = {
   genSubscribe,
-  genWs
+  genWs,
 };

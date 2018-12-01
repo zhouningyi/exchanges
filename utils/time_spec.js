@@ -2,16 +2,15 @@
 const time = require('./time');
 const base = require('./base');
 
-
 function main() {
   const now = new Date();
   console.log(`今天是星期${time.getWeekDay()}`);
   const pre5 = time.prevWeek(now, 5, 1);
   const prevWeek5 = time.getTimeString(pre5, 'day');
-  console.log(`今天的上周五是${prevWeek5}`);
+  console.log(`本周的上周五是${prevWeek5}`);
   const pre51 = time.prevWeek(now - time.DAY * 2, 5, 1);
   const prevWeek51 = time.getTimeString(pre51, 'day');
-  console.log(`前天的上周五是${prevWeek51}`);
+  console.log(`前天所在周的上周五是${prevWeek51}`);
   //
   const next5 = time.prevWeek(now, 5, -1);
   const nextWeek5 = time.getTimeString(next5, 'day');
@@ -44,7 +43,9 @@ function main() {
   console.log(`当前的次周->当周换仓日是${thisNsettleDayMove}`);
   const thisTsettleDay = time.getFutureSettlementDay(now, 'this_week');
   console.log(`当前的当周交割日是${thisTsettleDay}`);
+
+  //
+  base.live();
 }
 
-main();
-base.live();
+module.exports = main;
