@@ -1,0 +1,92 @@
+{
+  "btcusdt": {
+    "pair": "BTC-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "btcusdt"
+  },
+  "ethusdt": {
+    "pair": "ETH-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "ethusdt"
+  },
+  "bchusdt": {
+    "pair": "BCH-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "bchusdt"
+  },
+  "ltcusdt": {
+    "pair": "LTC-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "ltcusdt"
+  },
+  "ftusdt": {
+    "pair": "FT-USDT",
+    "price_decimal": 6,
+    "amount_decimal": 2,
+    "symbol": "ftusdt"
+  },
+  "fteth": {
+    "pair": "FT-ETH",
+    "price_decimal": 8,
+    "amount_decimal": 2,
+    "symbol": "fteth"
+  },
+  "zipeth": {
+    "pair": "ZIP-ETH",
+    "price_decimal": 8,
+    "amount_decimal": 2,
+    "symbol": "zipeth"
+  },
+  "etcusdt": {
+    "pair": "ETC-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "etcusdt"
+  },
+  "ftbtc": {
+    "pair": "FT-BTC",
+    "price_decimal": 8,
+    "amount_decimal": 2,
+    "symbol": "ftbtc"
+  },
+  "icxeth": {
+    "pair": "ICX-ETH",
+    "price_decimal": 6,
+    "amount_decimal": 4,
+    "symbol": "icxeth"
+  },
+  "omgeth": {
+    "pair": "OMG-ETH",
+    "price_decimal": 6,
+    "amount_decimal": 4,
+    "symbol": "omgeth"
+  },
+  "zileth": {
+    "pair": "ZIL-ETH",
+    "price_decimal": 8,
+    "amount_decimal": 2,
+    "symbol": "zileth"
+  },
+  "btmusdt": {
+    "pair": "BTM-USDT",
+    "price_decimal": 4,
+    "amount_decimal": 2,
+    "symbol": "btmusdt"
+  },
+  "aeeth": {
+    "pair": "AE-ETH",
+    "price_decimal": 6,
+    "amount_decimal": 2,
+    "symbol": "aeeth"
+  },
+  "zrxeth": {
+    "pair": "ZRX-ETH",
+    "price_decimal": 6,
+    "amount_decimal": 2,
+    "symbol": "zrxeth"
+  }
+}

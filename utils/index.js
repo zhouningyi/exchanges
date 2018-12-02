@@ -7,6 +7,7 @@ const Console = require('./console');
 const ws = require('./ws');
 const fn = require('./fn');
 const base = require('./base');
+const time = require('./time');
 
 function getQueryString(params, isEncode = false) {
   params = _.map(params, (value, key) => ({ value, key }));
@@ -32,6 +33,29 @@ function checkKey(o, vs) {
   } else if (isNull(o[vs])) _handelNull(vs);
 }
 
+function parse(v) {
+  return parseFloat(v, 10);
+}
+
+function throwError(e) {
+  throw new Error(e);
+}
+
+function _parse(v) {
+  return parseFloat(v, 10);
+}
+
 module.exports = {
-  ...base, ...morph, ...Console, ...fn, unique, getQueryString, checkKey, ws
+  ...base,
+  ...morph,
+  ...Console,
+  ...fn,
+  ...time,
+  unique,
+  getQueryString,
+  checkKey,
+  ws,
+  parse,
+  throwError,
+  _parse
 };

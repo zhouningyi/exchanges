@@ -1,14 +1,15 @@
 const _ = require('lodash');
 const Utils = require('./../../../utils');
-const md5 = require('md5');
+const publicUtils = require('./public');
+// const md5 = require('md5');
 
 const {
-  deFormatPair,
+  symbol2pair,
   parseOrderType,
   createWsChanel,
   code2OrderStatus,
   orderStatus2Code,
-  formatPair,
+  pair2symbol,
   _parse,
   formatInterval,
   extactPairFromSpotChannel,
@@ -118,7 +119,7 @@ function formatOrderO(o) {
   if (type && type.toLowerCase() === 'market') okexType += '_market';
   const extra = (price && type !== 'MARKET') ? { price } : {};
   return {
-    symbol: formatPair(pair),
+    symbol: pair2symbol(pair),
     type: okexType,
     amount,
     ...extra
@@ -129,10 +130,10 @@ function formatOrderO(o) {
 function formatCancelOrderO(o = {}) {
   let { order_id } = o;
   if (Array.isArray(order_id)) order_id = order_id.join(',');
-  const symbol = formatPair(o.pair);
+  const symbol = pair2symbol(o.pair);
   return { order_id, symbol };
 }
-function formatCancelOrder(ds) {
+function formatCancelOrder(ds, o = {}) {
   const { success, error, result, order_id } = ds;
   if (result) {
     return {
@@ -150,7 +151,6 @@ function formatCancelOrder(ds) {
       error: null
     };
   } else if (success || error) {
-    console.log(success, error);
     return {
       success: success.split(','),
       error: error.split(',')
@@ -159,7 +159,9 @@ function formatCancelOrder(ds) {
 }
 
 function formatOrderResult(ds, o = {}) {
-  if (ds && ds.order_id) return { order_id: ds.order_id, time: new Date(), ...o };
+  if (ds && ds.order_id) {
+    return { order_id: ds.order_id, status: 'UNFINISH', time: new Date(), ...o };
+  }
   throw ds;
 }
 //
@@ -171,13 +173,14 @@ function formatOrderInfo(ds, o) {
   let res = _.map(orders, (d) => {
     const { type: tp } = d;
     let [side, type] = tp.split('_').map(d => d.toUpperCase());
+    side = side.split('_')[0];
     type = type || 'LIMIT';
     return {
       exchange: 'okex',
       order_id: `${d.orders_id}`,
       order_main_id: `${d.order_id}`,
       amount: d.deal_amount,
-      price: d.avg_price,
+      price: d.avg_price || d.price,
       status: code2OrderStatus[d.status],
       side,
       type,
@@ -199,42 +202,64 @@ function formatAllOrders(ds) {
   return _.map(ds.orders, (d) => {
     return {
       exchange: 'okex',
-      amount: d.amount,
-      price: d.price || null,
+      amount: d.amount || d.deal_amount,
+      price: d.avg_price || d.price,
       time: new Date(d.create_date),
       deal_amount: d.deal_amount,
       order_main_id: d.order_id,
       order_id: d.orders_id,
+      side: d.type.toUpperCase(),
       status: code2OrderStatus[d.status],
-      pair: deFormatPair(d.symbol),
+      pair: symbol2pair(d.symbol),
       ...parseOrderType(d.type)
     };
   });
 }
 
 const createSpotChanelBalance = createWsChanel((pair) => {
-  const symbol = formatPair(pair, false);
+  const symbol = pair2symbol(pair, false);
   return `ok_sub_spot_${symbol}_balance`;
 });
 
 const createSpotChanelTick = createWsChanel((pair) => {
-  const symbol = formatPair(pair, false);
+  const symbol = pair2symbol(pair, false);
   return `ok_sub_spot_${symbol}_ticker`;
 });
 
 function formatWsBalance(ds) {
-  console.log('formatWsBalance 还有问题');
-  process.exit();
-  ds = _.map(ds, (d) => {
-    const { data, channel } = d;
-    const pair = extactPairFromSpotChannel(channel, '_balance');
-    if (!data) return;
-    const { info } = data;
-    if (!info) return;
-    const { free: balance, freezed: balanceLocked } = info;
-    return { pair, balance, balanceLocked };
-  }).filter(d => d);
-  return _.keyBy(ds, 'coin');
+  if (!ds) return null;
+  const funds = _.get(ds, '0.data.info.funds') || _.get(ds, '0.data.info');
+  if (!funds) return;
+  const { freezed, free, borrow } = funds;
+  const res = {};
+  _.forEach(free, (balance, k) => {
+    const locked_balance = _parse(freezed[k]);
+    balance = _parse(balance);
+    const coin = k.toUpperCase();
+    const line = { coin, locked_balance, balance };
+    res[coin] = line;
+    if (borrow) line.borrow_balance = _parse(borrow[k]);
+  });
+  return res;
+}
+function formatWsOrder(ds) {
+  return _.map(ds, (d) => {
+    d = d.data;
+    const { tradeType } = d;
+    const side = tradeType.split('_')[0].toUpperCase();
+    // const type = d.price ? 'LIMIT' : 'MARKET';
+    return {
+      order_id: d.orderId,
+      side,
+      // type,
+      pair: symbol2pair(d.symbol),
+      status: code2OrderStatus[d.status],
+      amount: _parse(d.tradeAmount),
+      deal_amount: _parse(d.completedTradeAmount),
+      time: new Date(_parse(d.createdDate)),
+      price: _parse(d.averagePrice) || _parse(d.tradeUnitPrice)
+    };
+  });
 }
 
 function formatWsTick(ds) {
@@ -263,12 +288,12 @@ function formatWsTick(ds) {
 
 function _parseWsDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_spot_', '').split('_depth');
-  const pair = deFormatPair(ds[0], false);
+  const pair = symbol2pair(ds[0], false);
   return { pair };
 }
 
 const createSpotChanelDepth = createWsChanel((pair, o) => {
-  const symbol = formatPair(pair, false);
+  const symbol = pair2symbol(pair, false);
   return `ok_sub_spot_${symbol}_depth_${o.size}`;
 });
 
@@ -298,9 +323,19 @@ function formatWsDepth(ds) {
 //   return ds;
 // }
 
+function formatPairs(ds) {
+  return _.map(ds, (d) => {
+    return {
+      ...d,
+      pair: publicUtils.symbol2pair(d.symbol)
+    };
+  });
+}
+
 
 module.exports = {
-  formatPair,
+  pair2symbol,
+  formatPairs,
   formatTick,
   formatDepth,
   formatOrderBook,
@@ -319,6 +354,7 @@ module.exports = {
   createSpotChanelDepth,
   createSpotChanelTick,
   formatWsBalance,
+  formatWsOrder,
   formatWsDepth,
   formatWsTick,
 };

@@ -58,13 +58,17 @@ function print(str, color = 'gray') {
   Utils.print(str, color);
 }
 
-function diff(balances1, balances2, pair, side, price) { // lastPrice
+function diff(balances1, balances2, pair, side, price, exName) { // lastPrice
   const { source, target } = getCoinTS(pair, side);
   const dSource = balances2[source].total_balance - balances1[source].total_balance;
   const dTarget = balances2[target].total_balance - balances1[target].total_balance;
 
   // console.log(free, 'free', dTargetBySource, 'dTargetBySource');
-  // const dBNB = balances2.BNB - balances1.BNB;// 币安的规则
+  if (exName === 'binance') {
+    const dBNB = balances2.BNB - balances1.BNB;// 币安的规则
+    console.log(dBNB, 'dBNB...');
+  }
+
   // const tradePrice = -dSource /  / dTarget * ;
   const free = side === 'BUY' ? price : 1 / price;
   const dTargetBySource = dTarget * free;
@@ -107,9 +111,11 @@ async function test(exName, pair, side = 'BUY', amount = 0.001) {
   console.log('计划价格', price);
   //
   const orderO = { price, amount, pair, side, type: 'LIMIT' };
+  console.log(orderO, 'orderO');
   const info = await ex.order(orderO);
   const { order_id } = info;
   // 交易
+  console.log('traded');
   const orderInfo = await ex.orderInfo({ order_id, pair });
   console.log(orderInfo, 'orderInfo');
   if (orderInfo) {
@@ -131,16 +137,13 @@ async function test(exName, pair, side = 'BUY', amount = 0.001) {
   let balanceAfter = await ex.balances();
   balanceAfter = getRefBalance(balanceAfter, pair);
 
-
   //
-  diff(balanceBefore, balanceAfter, pair, side, price);
+  diff(balanceBefore, balanceAfter, pair, side, price, exName);
   print('取消未成交的资金...');
   // await ex.cancelAllOrders();
-
-  //
   // let balanceFinal = await ex.balances();
   // balanceFinal = getRefBalance(balanceFinal, pair);
   // diff(balanceAfter, balanceFinal, pair, side, price);
 }
 
-test('okex', 'BTC-USDT', 'BUY', 0.002);
+test('okex', 'EOS-BTC', 'BUY', 0.2);

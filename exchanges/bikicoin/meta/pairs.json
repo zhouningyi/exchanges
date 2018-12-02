@@ -1,0 +1,284 @@
+[
+  {
+    "symbol": "bikiusdt",
+    "quote_asset_precision": 10,
+    "base_asset_precision": 4,
+    "pair": "BIKI-USDT"
+  },
+  {
+    "symbol": "btcusdt",
+    "quote_asset_precision": 8,
+    "base_asset_precision": 4,
+    "pair": "BTC-USDT"
+  },
+  {
+    "symbol": "ethbtc",
+    "quote_asset_precision": 10,
+    "base_asset_precision": 4,
+    "pair": "ETH-BTC"
+  },
+  {
+    "symbol": "ethusdt",
+    "quote_asset_precision": 8,
+    "base_asset_precision": 4,
+    "pair": "ETH-USDT"
+  },
+  {
+    "symbol": "ltcusdt",
+    "quote_asset_precision": 8,
+    "base_asset_precision": 4,
+    "pair": "LTC-USDT"
+  },
+  {
+    "symbol": "bchusdt",
+    "quote_asset_precision": 8,
+    "base_asset_precision": 4,
+    "pair": "BCH-USDT"
+  },
+  {
+    "symbol": "eosusdt",
+    "quote_asset_precision": 8,
+    "base_asset_precision": 4,
+    "pair": "EOS-USDT"
+  },
+  {
+    "symbol": "eosbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "EOS-BTC"
+  },
+  {
+    "symbol": "etcusdt",
+    "quote_asset_precision": 8,
+    "base_asset_precision": 4,
+    "pair": "ETC-USDT"
+  },
+  {
+    "symbol": "ltcbtc",
+    "quote_asset_precision": 10,
+    "base_asset_precision": 4,
+    "pair": "LTC-BTC"
+  },
+  {
+    "symbol": "etcbtc",
+    "quote_asset_precision": 10,
+    "base_asset_precision": 4,
+    "pair": "ETC-BTC"
+  },
+  {
+    "symbol": "eoseth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "EOS-ETH"
+  },
+  {
+    "symbol": "bchbtc",
+    "quote_asset_precision": 10,
+    "base_asset_precision": 4,
+    "pair": "BCH-BTC"
+  },
+  {
+    "symbol": "htusdt",
+    "quote_asset_precision": 8,
+    "base_asset_precision": 4,
+    "pair": "HT-USDT"
+  },
+  {
+    "symbol": "htbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "HT-BTC"
+  },
+  {
+    "symbol": "hteth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "HT-ETH"
+  },
+  {
+    "symbol": "tytusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "TYT-USDT"
+  },
+  {
+    "symbol": "tydusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "TYD-USDT"
+  },
+  {
+    "symbol": "sntbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "SNT-BTC"
+  },
+  {
+    "symbol": "iostbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "IOST-BTC"
+  },
+  {
+    "symbol": "iosteth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "IOST-ETH"
+  },
+  {
+    "symbol": "zilbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ZIL-BTC"
+  },
+  {
+    "symbol": "zileth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ZIL-ETH"
+  },
+  {
+    "symbol": "hitbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "HIT-BTC"
+  },
+  {
+    "symbol": "hiteth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "HIT-ETH"
+  },
+  {
+    "symbol": "blzbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "BLZ-BTC"
+  },
+  {
+    "symbol": "blzeth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "BLZ-ETH"
+  },
+  {
+    "symbol": "elfbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ELF-BTC"
+  },
+  {
+    "symbol": "elfeth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ELF-ETH"
+  },
+  {
+    "symbol": "thetabtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "THETA-BTC"
+  },
+  {
+    "symbol": "thetaeth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "THETA-ETH"
+  },
+  {
+    "symbol": "zrxbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ZRX-BTC"
+  },
+  {
+    "symbol": "zrxeth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ZRX-ETH"
+  },
+  {
+    "symbol": "bixbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "BIX-BTC"
+  },
+  {
+    "symbol": "snteth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "SNT-ETH"
+  },
+  {
+    "symbol": "bixeth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "BIX-ETH"
+  },
+  {
+    "symbol": "bzjusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "BZJ-USDT"
+  },
+  {
+    "symbol": "bzkyusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "BZKY-USDT"
+  },
+  {
+    "symbol": "wiotusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "WIOT-USDT"
+  },
+  {
+    "symbol": "acarusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ACAR-USDT"
+  },
+  {
+    "symbol": "eeceth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "EEC-ETH"
+  },
+  {
+    "symbol": "alieth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ALI-ETH"
+  },
+  {
+    "symbol": "letbtc",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "LET-BTC"
+  },
+  {
+    "symbol": "leteth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "LET-ETH"
+  },
+  {
+    "symbol": "etueth",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "ETU-ETH"
+  },
+  {
+    "symbol": "wfeeusdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "WFEE-USDT"
+  },
+  {
+    "symbol": "fousdt",
+    "quote_asset_precision": 12,
+    "base_asset_precision": 4,
+    "pair": "FO-USDT"
+  }
+]

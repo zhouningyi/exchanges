@@ -7,13 +7,17 @@ const error = require('./../errors');
 const { checkKey } = Utils;
 
 const {
-  deFormatPair,
+  symbol2pair,
   formatWsResult,
   createWsChanel,
   code2OrderStatus,
   orderStatus2Code,
-  formatPair,
+  futureOrderStatus2Code,
+  code2FutureOrderStatus,
+  pair2symbol,
   _parse,
+  pair2coin,
+  coin2pair,
   formatInterval,
 } = require('./public');
 
@@ -41,21 +45,6 @@ function formatFutureKline(ds, o) {
       close: _parse(d[4]),
       volume_amount: _parse(d[5]),
       volume_coin: _parse(d[6])
-    };
-  });
-}
-
-function formatFuturePosition(data = {}, o) {
-  const { holding, result } = data;
-  const { pair, contract_type } = o;
-  if (!result) return null;
-  return _.map(holding, (d) => {
-    return {
-      pair,
-      unique_id: `${pair}_${contract_type}`,
-      contract_type,
-      time: new Date(d.create_date),
-      ..._.pick(d, ['buy_amount', 'buy_available', 'buy_price_avg', 'buy_price_cost', 'buy_profit_real', 'contract_id', 'lever_rate', 'sell_amount', 'sell_available', 'sell_price_avg', 'sell_price_cost', 'sell_profit_real', 'force_liqu_price'])
     };
   });
 }
@@ -100,12 +89,18 @@ function formatWsFutureTick(ds) {
 
 //
 const createWsChanelFutureTick = createWsChanel((pair, o) => {
-  pair = formatPair(pair, true);
-  return `ok_sub_future${pair}_ticker_${o.contract_type}`;
+  pair = pair2symbol(pair, true);
+  const { contract_type } = o;
+  if (Array.isArray(contract_type)) {
+    return _.map(contract_type, (ctype) => {
+      return `ok_sub_future${pair}_ticker_${ctype}`;
+    });
+  }
+  return `ok_sub_future${pair}_ticker_${contract_type}`;
 });
 
 const createWsChanelFutureKline = createWsChanel((pair, o) => {
-  pair = formatPair(pair, true);
+  pair = pair2symbol(pair, true);
   const interval = formatInterval(o.interval);
   return `ok_sub_future${pair}_kline_${o.contract_type}_${interval}`;
 });
@@ -116,7 +111,7 @@ const createWsChanelFutureKline = createWsChanel((pair, o) => {
 
 function _parseWsFutureChannel(channel) {  // usd_btc_kline_quarter_1min
   const symbol = channel.replace('ok_sub_future', '').split('_kline_')[0];
-  return deFormatPair(symbol, true);
+  return symbol2pair(symbol, true);
 }
 
 const formatWsFutureKline = formatWsResult((kline, o) => {
@@ -142,13 +137,25 @@ const formatWsFutureKline = formatWsResult((kline, o) => {
 //
 function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_future', '').split('_depth_');
-  const pair = deFormatPair((ds[0] || '').replace('usd', 'usdt'), true);
-  const contract_type = ds[1];
-  return { contract_type, pair };
+  const pair = symbol2pair((ds[0] || '').replace('usd', 'usdt'), true);
+  const cs = ds[1].split('_');
+  cs.pop();
+  const contract_type = cs.join('_');
+  // console.log(channel, contract_type, 'channel...channel...');
+  // process.exit();
+  const future_id = `${pair}_${contract_type}`;
+  return { contract_type, pair, future_id };
 }
 const createWsFutureDepth = createWsChanel((pair, o) => {
-  pair = formatPair(pair, true);
-  return `ok_sub_future${pair}_depth_${o.contract_type}_${o.size}`;
+  pair = pair2symbol(pair, true);
+  const { contract_type } = o;
+  if (typeof contract_type === 'string') {
+    return `ok_sub_future${pair}_depth_${o.contract_type}_${o.size}`;
+  } else if (Array.isArray(contract_type)) {
+    return _.map(contract_type, (ctype) => {
+      return `ok_sub_future${pair}_depth_${ctype}_${o.size}`;
+    });
+  }
 });
 
 // depth
@@ -180,13 +187,14 @@ function formatFutureBalances(ds) {
 }
 
 function formatWsFutureBalances(ds) {
-  ds = _.filter(ds, d => d.channel === 'ok_sub_futureusd_userinfo');
   ds = _.map(ds, (d) => {
     d = d.data;
     const coin = d.symbol.replace('_usd', '').toUpperCase();
+    const line = _.pick(d, ['balance', 'profit_real', 'keep_deposit', 'account_rights']);
     return {
       coin,
-      ..._.pick(d, ['balance', 'profit_real', 'keep_deposit', 'account_rights'])
+      time: new Date(),
+      ...line,
     };
   });
   ds = _.keyBy(ds, (d) => {
@@ -195,45 +203,56 @@ function formatWsFutureBalances(ds) {
   return ds;
 }
 
-// [
-//   {
-//     "pair": "EOS-USDT",
-//     "unique_id": "EOS-USDT_quarter",
-//     "contract_type": "quarter",
-//     "time": "2018-04-24T00:39:07.000Z",
-//     "buy_amount": 0,
-//     "buy_available": 0,
-//     "buy_price_avg": 15.24020885,
-//     "buy_price_cost": 15.21894142,
-//     "buy_profit_real": 0,
-//     "contract_id": 201806290200057,
-//     "lever_rate": 20,
-//     "sell_amount": 0,
-//     "sell_available": 0,
-//     "sell_price_avg": 14.8593015,
-//     "sell_price_cost": 14.8593015,
-//     "sell_profit_real": 0
-//   }
-// ]
+function formatFuturePosition(data = {}, o) {
+  const { holding, result } = data;
+  const { pair, contract_type } = o;
+  if (!result) return null;
+  return _.map(holding, (d) => {
+    return {
+      pair,
+      unique_id: `${pair}_${contract_type}`,
+      contract_type,
+      time: new Date(d.create_date),
+      ..._.pick(d, ['buy_amount', 'buy_available', 'buy_price_avg', 'buy_price_cost', 'buy_profit_real', 'contract_id', 'lever_rate', 'sell_amount', 'sell_available', 'sell_price_avg', 'sell_price_cost', 'sell_profit_real', 'force_liqu_price'])
+    };
+  });
+}
 
-// function formatWsFuturePosition(ds){
-//   ds = _.filter(ds, d => d.channel === 'ok_sub_futureusd_positions');
-//   ds = _.map(ds, (d) => {
-//     d = d.data;
-//     const coin = d.symbol.replace('_usd', '').toUpperCase();
-//     const pair = `${coin}-USDT`;
-//     const { positions } = d;
-//     console.log(positions, 'positions');
-//     const sell = _.filter(positions, p => p.balance.position === 1);
-//     return {
-//       pair,
-//       unique_id: `${pair}_${contract_type}`,
-//       ..._.pick(sell, ['balance', 'profit_real', 'keep_deposit', 'account_rights'])
-//     };
-//   });
-// }
+const d7 = 7 * 24 * 3600 * 1000;
+const d14 = d7 * 2;
+function getContractType(contract_id) {
+  if (!contract_id) return null;
+  contract_id = `${contract_id}`;
+  const year = contract_id.substring(0, 4);
+  const month = contract_id.substring(4, 6);
+  const day = contract_id.substring(6, 8);
+  const tstr = `${year}-${month}-${day}`;
+  const dt = new Date(tstr) - new Date();
+  if (dt > d14) return 'quarter';
+  if (dt > d7) return 'next_week';
+  return 'this_week';
+}
+function formatWsFuturePosition(ds) {
+  ds = _.map(ds, (d) => {
+    d = d.data;
+    const { positions, symbol } = d;
+    const pair = symbol.replace('_usd', '-USDT').toUpperCase();
+    const buy = _.filter(positions, p => p.position === 1)[0];
+    const sell = _.filter(positions, p => p.position === 2)[0];
+    const { contract_id } = sell;
+    const contract_type = getContractType(contract_id);
+    return {
+      unique_id: `${pair}_${contract_type}`,
+      pair,
+      contract_type,
+      buy_amount: buy.hold_amount,
+      sell_amount: sell.hold_amount
+    };
+  });
+  return _.flatten(ds);
+}
 
-function formatWsFutureDepth(ds) {
+function formatWsFutureDepth(ds, o) {
   const res = {};
   _.forEach(ds, (d) => {
     const { data, channel } = d;
@@ -251,7 +270,6 @@ function formatWsFutureDepth(ds) {
   }).filter(d => d);
   return res;
 }
-
 
 // move Balance
 const moveType2code = {
@@ -341,27 +359,85 @@ function formatFutureOrderO(o) {
   return opt;
 }
 
+function formatFutureOrderInfoO(o = {}) {
+  const opt = _.cloneDeep(o);
+  if (Array.isArray(o.order_id)) opt.order_id = o.order_id.join(',');
+  return opt;
+}
 
+function formatAllFutureOrdersO(o) {
+  o.status = futureOrderStatus2Code[o.status];
+  if (Array.isArray(o.order_id)) o.order_id = o.order_id.join(',');
+  return o;
+}
+function getContractTypeFromContractName(contract_name, coin) {
+  const tstr = contract_name.replace(coin, '');
+  const month = tstr.substring(0, 2);
+  const date = tstr.substring(2, 4);
+  const now = new Date();
+  const year = now.getFullYear();
+  let t = getT(year, month, date);
+  let dt = t - now;
+  if (dt < 0) {
+    t = getT(year, month, date);
+    dt = t - now;
+  }
+  if (dt > d14) return 'quarter';
+  if (dt > d7) return 'next_week';
+  return 'this_week';
+}
+function getT(year, month, date) {
+  return new Date(`${year}-${month}-${date}`);
+}
 function formatFutureOrderInfo(ds, o, isFlat = true) {
   if (!ds) return null;
   const { orders } = ds;
   if (!orders) return null;
   let res = _.map(orders, (d) => {
+    let { contract_name, contract_type } = d;
+    const { pair } = o;
+    const coin = pair2coin(pair);
+    contract_type = contract_type || getContractTypeFromContractName(contract_name, coin);
     return {
-      order_id: `${d.order_id}`,
-      contract_name: d.contract_name,
-      amount: d.deal_amount,
-      price: d.price || d.price_avg,
-      status: code2OrderStatus[d.status],
+      order_id: `${d.orderid || d.order_id}`, // ////
       lever_rate: d.lever_rate,
+      contract_type,
+      contract_name,
+      amount: d.amount || d.deal_amount,
+      deal_amount: d.deal_amount,
+      price: d.price_avg || d.price,
+      status: code2OrderStatus[d.status],
       fee: d.fee,
       time: new Date(d.create_date),
-      pair: o.pair,
+      pair,
       ...(reverseTypeMap[d.type])
     };
   });
   if (isFlat && Array.isArray(res) && res.length === 1) res = res[0];
   return res;
+}
+
+function formatWsFutureOrder(ds) {
+  if (!ds) return null;
+  return _.map(ds, ({ data: d }) => {
+    const { contract_name } = d;
+    const coin = contract_name.substring(0, 3);
+    const pair = `${coin}-USDT`;
+    return {
+      order_id: `${d.orderid}`,
+      pair,
+      lever_rate: d.lever_rate,
+      contract_name,
+      contract_type: d.contract_type,
+      amount: d.amount,
+      deal_amount: d.deal_amount,
+      price: d.price,
+      fee: d.fee,
+      time: new Date(d.create_date),
+      status: code2OrderStatus[d.status],
+      ...(reverseTypeMap[d.type])
+    };
+  });
 }
 
 function formatFutureAllOrdersO(o) {
@@ -405,7 +481,6 @@ function formatBatchFutureOrder(ds, o) {
   return _.map(ds.order_info, (order) => {
     if (order.error_code) {
       const msg = error.getErrorFromCode(order.error_code);
-      console.log(msg);
       return null;
     }
     const line = { ...o, success: true, order_id: order.order_id };
@@ -422,19 +497,22 @@ module.exports = {
   formatFutureBalances,
   formatMoveBalanceO,
   formatFutureOrderO,
+  formatFutureOrderInfoO,
   formatFutureOrderInfo,
   formatFutureAllOrdersO,
   formatFutureAllOrders,
   formatBatchFutureOrderO,
   formatBatchFutureOrder,
   formatFuturePosition,
+  formatWsFutureOrder,
+  formatAllFutureOrdersO,
   // ws
   createWsChanelFutureKline,
   createWsChanelFutureTick,
   createWsFutureDepth,
   formatWsFutureDepth,
   formatWsFutureBalances,
-  // formatWsFuturePosition,
+  formatWsFuturePosition,
   //
   formatWsFutureKline,
   formatWsFutureTick,

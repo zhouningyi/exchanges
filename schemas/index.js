@@ -12,7 +12,6 @@ const order = require('./order.json');
 const tick = require('./tick.json');
 const tick_history = require('./tick_history.json');
 
-
 module.exports = {
   future_blance,
   future_order,

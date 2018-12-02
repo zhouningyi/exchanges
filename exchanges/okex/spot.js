@@ -1,6 +1,6 @@
 // const Utils = require('./utils');
-const deepmerge = require('deepmerge');
-const crypto = require('crypto');
+// const deepmerge = require('deepmerge');
+// const crypto = require('crypto');
 const md5 = require('md5');
 const _ = require('lodash');
 const error = require('./errors');
@@ -8,13 +8,14 @@ const Base = require('./../base');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
 const request = require('./../../utils/request');
-const { exchangePairs } = require('./../data');
+// const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE } = require('./config');
-
+const ALL_PAIRS = require('./meta/pairs.json');
+const okConfig = require('./meta/api');
 //
 const { checkKey } = Utils;
 //
-const ALL_PAIRS = exchangePairs.okex;
+
 function mergeArray(data, d) {
   return data.concat(data, d);
 }
@@ -29,10 +30,18 @@ class Exchange extends Base {
     this.url = URL;
     this.version = 'v1';
     this.name = 'okex';
+    this.init();
   }
   getSignature(params) {
     const qstr = `${Utils.getQueryString({ ...params, api_key: this.apiKey })}&secret_key=${this.apiSecret}`;
     return md5(qstr).toUpperCase();
+  }
+  async init() {
+    // this.loadFnFromConfig(okConfig);
+    // saveConfig;
+    const pairs = await this.pairs();
+    const pairO = _.keyBy(pairs, 'pair');
+    this.saveConfig(pairO, 'pairs');
   }
   async tick(o = {}) {
     checkKey(o, 'pair');
@@ -64,30 +73,36 @@ class Exchange extends Base {
   }
   // 交易状态
   async orderInfo(o = {}) {
-    checkKey(o, ['order_id', 'pair', 'type']);
+    checkKey(o, ['order_id', 'pair']);
     let { order_id, pair, type } = o;
-    type = {
-      UNFINISH: 0,
-      FINISH: 1
-    }[type];
-    if (Array.isArray(order_id)) order_id = order_id.join(',');
-    let ds = await this.post('orders_info', { order_id, pair, type }, true);
+    let ds;
+    if (Array.isArray(order_id)) {
+      checkKey(o, ['type']);
+      type = {
+        UNFINISH: 0,
+        FINISH: 1
+      }[type];
+      order_id = order_id.join(',');
+      ds = await this.post('orders_info', { order_id, pair, type }, true);
+    } else {
+      ds = await this.post('order_info', { order_id, pair }, true);
+    }
     ds = kUtils.formatOrderInfo(ds, o);
     return ds;
   }
-  async activeOrders(o = {}) {
+  async unfinishOrders(o = {}) {
     checkKey(o, ['pair']);
     const ds = await this.allOrders({ ...o, status: 'UNFINISH' });
     return ds;
   }
-  async finishOrders(o = {}) {
+  async successOrders(o = {}) {
     checkKey(o, ['pair']);
     const ds = await this.allOrders({ ...o, status: 'SUCCESS' });
     return ds;
   }
   async allOrders(o = {}) { // 近2天来的order
     const defaultO = {
-      page_length: 2000,
+      page_length: 1000,
       current_page: 0,
       status: 'UNFINISH'
     };
@@ -98,15 +113,15 @@ class Exchange extends Base {
     return kUtils.formatAllOrders(ds);
   }
   async balances(o = {}) {
-    let ds = await this.post('userinfo', o, true);
-    ds = kUtils.formatBalances(ds);
-    return ds;
+    const ds = await this.post('userinfo', o, true);
+    return kUtils.formatBalances(ds);
   }
   async allBalances() {
     const tasks = [this.balances(), this.futureBalances()];
     let [balances, futureBalances] = Promise.all(tasks);
     balances = _.keyBy(balances, 'coin');
     futureBalances = _.keyBy(futureBalances, 'coin');
+    return { balances, futureBalances };
   }
   // 交易
   async order(o = {}) {
@@ -130,15 +145,10 @@ class Exchange extends Base {
   async cancelOrder(o = {}) {
     checkKey(o, ['order_id', 'pair']);
     const { order_id } = o;
-    if (Array.isArray(order_id) && order_id.length === 0) {
-      return {
-        success: [],
-        error: []
-      };
-    }
+    if (Array.isArray(order_id) && order_id.length === 0) return [];
     const opt = kUtils.formatCancelOrderO(o);
     const ds = await this.post('cancel_order', opt, true);
-    return kUtils.formatCancelOrder(ds);
+    return kUtils.formatCancelOrder(ds, o);
   }
   async orderBook(o = {}) {
     const ds = await this.get('trades', o, true, true);
@@ -151,10 +161,11 @@ class Exchange extends Base {
     return kUtils.formatOrderInfo(ds, o);
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
+    params = Utils.cleanObjectNull(params);
     params = _.cloneDeep(params);
     if (!params.symbol) {
       params = Utils.replace(params, { pair: 'symbol' });
-      if (params.symbol) params.symbol = kUtils.formatPair(params.symbol);
+      if (params.symbol) params.symbol = kUtils.pair2symbol(params.symbol);
     }
     delete params.pair;
     const signedParams = {
@@ -165,8 +176,13 @@ class Exchange extends Base {
       } : {})
     };
     const qstr = Utils.getQueryString(signedParams);
-    let url = `${URL}/${this.version}/${endpoint}.do`;
-    if (method === 'GET') url += `?${qstr}`;
+    let url;
+    if (endpoint.startsWith('http')) {
+      url = endpoint;
+    } else {
+      url = `${URL}/${this.version}/${endpoint}.do`;
+    }
+    if (method === 'GET' && qstr) url += `?${qstr}`;
     const cType = 'application/x-www-form-urlencoded';
     const o = {
       uri: url,
@@ -186,16 +202,19 @@ class Exchange extends Base {
       // console.log(body);
     } catch (e) {
       if (e) console.log(e.message);
-      return;
+      return false;
     }
     if (!body) {
-      throw `${endpoint}: body 返回为空...`;
+      console.log(`${endpoint}: body 返回为空...`);
+      return false;
     }
     if (body.code === 500) {
-      throw `${endpoint}: 服务拒绝...`;
+      console.log(`${endpoint}: 服务拒绝...`);
+      return false;
     }
     if (body.code === -1) {
-      throw `${endpoint}: ${body.msg}`;
+      console.log(`${endpoint}: ${body.msg}`);
+      return false;
     }
     if (body.error_code) {
       // if (body.error_code === 20015) {
@@ -205,11 +224,22 @@ class Exchange extends Base {
       //     status: 'FINISHED'
       //   };
       // } else {
-      console.log('error...', endpoint, params);
-      throw (`${error.getErrorFromCode(body.error_code)} | ${endpoint}`);
+      console.log(`${error.getErrorFromCode(body.error_code)} | ${endpoint}`, endpoint, params);
+      return false;
       // }
     }
     return body.data || body || false;
+  }
+  async pairs(o = {}) {
+    try {
+      const url = 'https://www.okex.com/v2/spot/markets/products';
+      let ds = await this.get(url);
+      if (ds.code === '404') return ALL_PAIRS;
+      ds = kUtils.formatPairs(ds);
+      return ds;
+    } catch (e) {
+      return ALL_PAIRS;
+    }
   }
   _getPairs(filter, pairs) {
     if (pairs) return pairs;
@@ -217,58 +247,244 @@ class Exchange extends Base {
     if (filter) pairs = _.filter(pairs, filter);
     return _.map(pairs, d => d.pair);
   }
-  createWs(o = {}, isSign = false) {
-    let { timeInterval, chanelString, options: opt, name } = o;
-    if (isSign) {
-      const parameters = { api_key: this.apiKey, sign: this.getSignature({}) };
-      chanelString = _.map(chanelString, (c) => {
-        c.parameters = parameters;
-        return c;
-      });
-    }
+  _getCoins(filter) {
+    const pairs = this._getPairs(filter);
+    const coins = {};
+    _.forEach(pairs, (pair) => {
+      const [left, right] = pair.split('-');
+      coins[left] = true;
+      coins[right] = true;
+    });
+    return _.keys(coins);
+  }
+  createWs(o = {}) {
+    let { chanelString, validate, formater, cb, login = false, interval } = o;
+    if (!this.ws) this.ws = Utils.ws.genWs(WS_BASE, { proxy: this.proxy });
+    const { ws } = this;
+    if (!ws.isReady()) return setTimeout(() => this.createWs(o, cb), 20);
     chanelString = chanelString && typeof chanelString === 'object' ? JSON.stringify(chanelString) : chanelString;
-    return (formatData, cb, reconnect) => {
-      let data = {};
-      const cbf = _.throttle(() => {
-        const res = _.values(data);
-        if (res.length) {
-          cb(res);
-          data = {};
-        }
-      }, timeInterval);
-      //
-      const options = { proxy: this.proxy, willLink: ws => ws.send(chanelString), reconnect };
-      kUtils.subscribe('', (ds) => {
-        if (ds && ds.error_code) {
-          const str = `${error.getErrorFromCode(ds.error_code)} | [ws] ${name}`;
-          throw new Error(str);
-        }
-        data = merge(data, formatData(ds, opt || {}));
-        cbf();
-      }, options);
+    if (login) {
+      chanelString = JSON.parse(chanelString);
+      chanelString.parameters = this._getLoginWsParams({});
+      chanelString = JSON.stringify(chanelString);
+    }
+    ws.send(chanelString);
+    if (interval) {
+      (this.intervalTask(() => {
+        ws.send(chanelString);
+      }, interval))();
+    }
+    const callback = this.genWsDataCallBack(cb, formater, o);
+    ws.onData(validate, callback);
+  }
+  genWsDataCallBack(cb, formater) {
+    const timeInterval = 50;
+    let data = {};
+    const cbf = _.throttle(() => {
+      const res = _.values(data);
+      if (res.length) {
+        cb(res);
+        data = {};
+      }
+    }, timeInterval);
+    return (ds) => {
+      if (ds && ds.error_code) {
+        const str = `${error.getErrorFromCode(ds.error_code)} | [ws] ${name}`;
+        throw new Error(str);
+      }
+      // if (ds[0] && ds[0].channel.indexOf('ticker') === -1) console.log('\n\n\n', ds, '\n\n\n');
+      ds = formater(ds);
+      data = merge(data, ds);// opt ||
+      cbf();
     };
   }
   // ws接口
-  wsTicks(o = {}, cb) {
-    const pairs = this._getPairs(o.filter, o.pairs);
-    const chanelString = kUtils.createSpotChanelTick(pairs);
-    const reconnect = () => this.wsTicks(o, cb);
-    this.createWs({ chanelString, name: 'wsTicks' })(kUtils.formatWsTick, cb, reconnect);
-  }
-  wsBalance(o = {}, cb) {
-    const pairs = this._getPairs(o.filter);
-    const chanelString = kUtils.createSpotChanelBalance(pairs);
-    const reconnect = () => this.wsBalance(o, cb);
-    this.createWs({ chanelString, name: 'wsBalance' })(kUtils.formatWsBalance, cb, reconnect);
-  }
   wsDepth(o = {}, cb) {
-    const defaultO = { size: 20 };
+    const defaultO = { size: 5 };
     o = { ...defaultO, ...o };
     const pairs = this._getPairs(o.filter, o.pairs);
-    const chanelString = kUtils.createSpotChanelDepth(pairs, o);
-    const reconnect = () => this.wsDepth(o, cb);
-    this.createWs({ chanelString, name: 'wsDepth' })(kUtils.formatWsDepth, cb, reconnect);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_spot_') && line.channel.search('_depth_') !== -1;
+    };
+    this.createWs({
+      chanelString: kUtils.createSpotChanelDepth(pairs, o),
+      name: 'wsDepth',
+      validate,
+      formater: kUtils.formatWsDepth,
+      cb
+    });
   }
+
+  wsTicks(o = {}, cb) {
+    const pairs = this._getPairs(o.filter, o.pairs);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_spot_') && line.channel.endsWith('_ticker');
+    };
+    this.createWs({
+      chanelString: kUtils.createSpotChanelTick(pairs),
+      name: 'wsTicks',
+      validate,
+      formater: kUtils.formatWsTick,
+      interval: o.interval,
+      cb
+    });
+  }
+  wsTicks1(o = {}, cb) {
+    const pairs = this._getPairs(o.filter, o.pairs);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel.startsWith('ok_sub_spot_') && line.channel.endsWith('_ticker');
+    };
+    const channelString =
+
+    pairs.map((pair) => {
+      return {
+        event: 'addChannel',
+        parameters: {
+          binary: '1',
+          type: 'all_ticker_3s'
+        }
+      };
+    });
+    this.createWs({
+      chanelString: kUtils.createSpotChanelTick(pairs),
+      name: 'wsTicks',
+      validate,
+      formater: kUtils.formatWsTick,
+      interval: o.interval,
+      cb
+    });
+  }
+  _getLoginWsParams(params = {}) {
+    return {
+      api_key: this.apiKey,
+      sign: this.getSignature(params)
+    };
+  }
+  getLoginChanelString(o = {}, cb) {
+    return {
+      event: 'login',
+      parameters: this._getLoginWsParams({})
+    };
+  }
+  wsBalance(o = {}, cb) {
+    this._wsReqBalance(o, cb);
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      const { channel } = line;
+      return channel.startsWith('ok_sub_spot_') && channel.endsWith('_balance');
+    };
+
+    this.createWs({
+      login: true,
+      chanelString: this.getLoginChanelString(),
+      name: 'wsBalance',
+      validate,
+      formater: kUtils.formatWsBalance,
+      cb
+    });
+  }
+  wsOrder(o = {}, cb) {
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      const { channel } = line;
+      return channel.startsWith('ok_sub_spot_') && channel.endsWith('_order');
+    };
+
+    this.createWs({
+      login: true,
+      chanelString: this.getLoginChanelString(),
+      name: 'wsOrder',
+      validate,
+      formater: kUtils.formatWsOrder,
+      cb
+    });
+  }
+  // async wsReqOrders(o) {
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       this._wsReqOrders(o, resolve);
+  //     } catch (e) {
+  //       reject(e);
+  //     }
+  //   });
+  // }
+  // _wsReqOrders(o = {}, cb) {
+  //   checkKey(o, ['pair']);
+  //   const symbol = o.pair.replace('-USDT', 'usd').toLowerCase();
+  //   const chanelString = [{ event: 'addChannel', channel: 'ok_btcusd_trades' }];
+  //   const validate = (ds) => {
+  //     if (!ds) return false;
+  //     const line = ds[0];
+  //     if (!line || line.channel === 'addChannel') return;
+  //     const { channel } = line;
+  //     return channel === 'ok_btcusd_trades';
+  //   };
+  //   this.createWs({
+  //     login: true,
+  //     chanelString,
+  //     name: 'wsReqOrders',
+  //     validate,
+  //     formater: kUtils.formatWsOrder,
+  //     cb
+  //   });
+  // }
+  // 主动请求balance信息
+  async wsReqBalance(o = {}) {
+    return new Promise((resolve, reject) => {
+      try {
+        this._wsReqBalance(o, (balances) => {
+          resolve(balances);
+        });
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+  _wsReqBalance(o = {}, cb) {
+    // if (o.interval) this.intervalTask(this.updateWsBalance, o.interval)();
+    const chanelString = { event: 'addChannel', channel: 'ok_spot_userinfo' }; // kUtils.createSpotChanelBalance(coins);, id: 'xxx'
+    const validate = (ds) => {
+      if (!ds) return false;
+      const line = ds[0];
+      if (!line || line.channel === 'addChannel') return;
+      return line.channel === 'ok_spot_userinfo';
+    };
+    this.createWs({
+      login: true,
+      chanelString,
+      name: 'wsReqBalance',
+      validate,
+      formater: kUtils.formatWsBalance,
+      cb
+    });
+  }
+  //
+  calcCost(o = {}) {
+    checkKey(o, ['source', 'target', 'amount']);
+    let { source, target, amount } = o;
+    const outs = { BTC: true, ETH: true, USDT: true };
+    source = source.toUpperCase();
+    target = target.toUpperCase();
+    if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
+    return 0.002 * amount;
+  }
+  // calcCostFuture(o = {}) {
+  //   checkKey(o, ['coin', 'side', 'amount']);
+  //   const { coin, amount, side = 'BUY' } = o;
+  // }
 }
 
 module.exports = Exchange;

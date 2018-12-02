@@ -170,6 +170,7 @@ function formatTicksWS(ds) {
       ask_price: _parse(d.a),
       ask_volume: _parse(d.A),
       price_change: _parse(d.p),
+      volume_24: _parse(d.v),
       time: new Date(d.E)
     };
   }).filter(d => d);
@@ -222,7 +223,6 @@ function formatActiveOrders(ds) {
 function updatePairs(pairs) {
   _.forEach(pairs, (d) => {
     const { pair, symbol, filters } = d;
-    // console.log(filters, 'filters...');
     pairMap[symbol] = pair;
     pairInfo[symbol] = {
       ...d,

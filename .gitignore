@@ -9,3 +9,4 @@ dump
 build
 static/src/libs
 config
+.vscode

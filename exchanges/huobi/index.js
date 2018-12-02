@@ -183,7 +183,6 @@ class Exchange extends Base {
       qstr = payload; // [payload].join('&');// qstr,
     }
     const url = `https://${REST_URL}${endpoint}?${qstr}`;
-    console.log(url, 'url');
     const o = {
       timeout: options.timeout,
       uri: url,

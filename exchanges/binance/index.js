@@ -36,7 +36,8 @@ class Exchange extends Base {
     return tUtils.testOrder(o);
   }
   async time() {
-    return await this.get('time');
+    const d = await this.get('time');
+    return d ? { time: d.serverTime } : null;
   }
   async kline(o) {
     checkKey(o, ['pair']);
@@ -179,6 +180,11 @@ class Exchange extends Base {
       data = tUtils.formatTicksWS(data);
       cb(data);
     }, { proxy });
+  }
+  //
+  calcCost(o = {}) {
+    checkKey(o, ['source', 'target', 'amount']);
+    return o.amount * 0.0015;
   }
 }
 

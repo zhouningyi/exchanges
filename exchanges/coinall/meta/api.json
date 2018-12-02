@@ -1,0 +1,17 @@
+{
+  "order": {
+    "timeout": 5000,
+    "rateLimit": 110,
+    "retry": 0
+  },
+  "cancelOrder": {
+    "timeout": 15000,
+    "rateLimit": 110,
+    "retry": 2
+  },
+  "balances": {
+    "timeout": 5000,
+    "rateLimit": 366,
+    "retry": 3
+  }
+}

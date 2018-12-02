@@ -1,0 +1,15 @@
+{
+  "name": "order",
+  "desc": "order",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 50],
+      "unique": true
+    },
+    "name": {
+      "type": ["STRING", 20]
+    },
+    "deposit": "BOOLEAN",
+    "withdraw": "BOOLEAN"
+  }
+}

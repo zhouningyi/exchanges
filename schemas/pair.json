@@ -1,0 +1,19 @@
+{
+  "name": "pair",
+  "desc": "pair",
+  "columns": {
+    "pair": {
+      "type": ["STRING", 10],
+      "unique": true
+    },
+    "symbol": {
+      "type": ["STRING", 10]
+    },
+    "quote_asset_precision": {
+      "type": "INTEGER"
+    },
+    "base_asset_precision": {
+      "type": "INTEGER"
+    }
+  }
+}

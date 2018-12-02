@@ -22,6 +22,7 @@ function requestPromise(o) {
         reject();
       } catch (e) {
         Utils.print(url, 'red');
+        console.log(e);
         reject();
       }
     });

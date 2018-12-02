@@ -7,6 +7,7 @@
       "unique": true
     },
     "contract_name": ["STRING", 20],
+    "contract_type":  ["STRING", 10],
     "lever_rate": "FLOAT",
     "amount": "INTEGER",
     "deal_amount": "FLOAT",
@@ -20,7 +21,7 @@
       "type": ["STRING", 12],
       "comment": "MARKET / LIMIT"
     },
-    "status":["STRING", 8],
+    "status":["STRING", 10],
     "pair": ["STRING", 12],
     "time": "DATE"
   }
