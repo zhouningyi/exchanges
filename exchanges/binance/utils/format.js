@@ -17,16 +17,19 @@ function formatPair(params) {
   return params;
 }
 
-function formatKline(ds) {
+function formatKline(ds, o = {}) {
+  const { pair, interval } = o;
   if (!ds) return null;
   return _.map(ds, (d) => {
     return Utils.unique.kline({
+      interval,
+      pair,
       time: new Date(d[0]),
       open: parseFloat(d[1], 10),
       high: parseFloat(d[2], 10),
       low: parseFloat(d[3], 10),
       close: parseFloat(d[4], 10),
-      volume: parseFloat(d[5], 10),
+      amount: parseFloat(d[5], 10),
       quote_volume: parseFloat(d[7], 10),
       count: parseInt(d[8], 10),
       taker_buy_base_volume: parseInt(d[9], 10),
