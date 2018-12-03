@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const _ws = require('./_ws');
 const { symbol2pair } = require('./public');
+const { checkKey } = require('./../../../utils');
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -23,7 +24,7 @@ const futureIndex = {
   channel: (o = {}) => {
     const { pairs } = o;
     return _.map(pairs, (p) => {
-      const coin = p.replace('-USDT', '').toLowerCase();
+      const coin = p.replace('-USDT', '').replace('-USD', '').toLowerCase();
       const channel = `ok_sub_futureusd_${coin}_index`;
       return _getChannelStringObject(channel);
     });
@@ -37,7 +38,7 @@ const futureIndex = {
       const { data: d, channel } = line;
       if (channel) {
         const coin = channel.replace('ok_sub_futureusd_', '').replace('_index', '').toUpperCase();
-        const pair = `${coin.toUpperCase()}-USDT`;
+        const pair = `${coin.toUpperCase()}-USD`;
         return {
           pair,
           time: new Date(_parse(d.timestamp)),
@@ -68,7 +69,7 @@ const ticks = {
   formater: (res) => {
     return _.map(res, (line) => {
       const { data: d, channel } = line;
-      if (channel) { // ok_sub_spot_eos_usdt_ticker
+      if (channel) { // ok_sub_spot_eos_btc_ticker
         const pair = channel.replace('ok_sub_spot_', '').replace('_ticker', '').replace('_', '-').toUpperCase();
         const bid_price = _parse(d.buy);
         const ask_price = _parse(d.sell);
@@ -96,21 +97,31 @@ const ticks = {
 function _parseFutureTickChanel(channel) {
   const ds = channel.replace('ok_sub_future', '').split('_ticker_');
   return {
-    pair: (ds[0].split('_').reverse().join('-').replace('-USD', '-USDT')).toUpperCase(),
+    pair: (ds[0].split('_').reverse().join('-')).toUpperCase(),
     contract_type: ds[1]
   };
 }
 
 const futureTicks = {
   channel: (o = {}) => { // ok_sub_futureusd_X_ticker_Y
-    const defaultO = { contract_type: 'quarter' };
-    o = { ...defaultO, ...o };
-    const { pairs } = o;
-    return _.map(pairs, (p) => {
-      const coin = p.split('-')[0].toLowerCase();
-      const channel = `ok_sub_futureusd_${coin}_ticker_${o.contract_type}`;
-      return _getChannelStringObject(channel);
+    checkKey(o, ['contract_type']);
+    const { contract_type, pairs, size } = o;
+    const res = [];
+    _.forEach(pairs, (pair) => {
+      const coin = pair.split('-')[0].toLowerCase();
+      if (Array.isArray(contract_type)) {
+        _.forEach(contract_type, (c) => {
+          const channel = `ok_sub_futureusd_${coin}_ticker_${c}`;
+          const l = _getChannelStringObject(channel);
+          res.push(l);
+        });
+      } else {
+        const channel = `ok_sub_futureusd_${coin}_ticker_${contract_type}`;
+        const l = _getChannelStringObject(channel);
+        res.push(l);
+      }
     });
+    return res;
   },
   validate: (res) => {
     const channel = _.get(res, '0.channel');
@@ -162,7 +173,7 @@ const futurePosition = {
     const ds = _.map(res, (d) => {
       d = d.data;
       const { positions, symbol } = d;
-      const pair = symbol.replace('_usd', '-USDT').toUpperCase();
+      const pair = symbol.replace('_usd', '-USD').toUpperCase();
       const buy = _.filter(positions, p => p.position === 1)[0];
       const sell = _.filter(positions, p => p.position === 2)[0];
       const { contract_id } = sell;
@@ -236,7 +247,7 @@ const futureOrders = {
     return _.map(res, ({ data: d }) => {
       const { contract_name } = d;
       const coin = contract_name.substring(0, 3);
-      const pair = `${coin}-USDT`;
+      const pair = `${coin}-USD`;
       return {
         order_id: `${d.orderid}`,
         pair,
@@ -285,7 +296,7 @@ const orders = {
 //
 function _parseWsFutureDepthChannel(channel) {  // usd_btc_kline_quarter_1min
   const ds = channel.replace('ok_sub_future', '').split('_depth_');
-  const pair = symbol2pair((ds[0] || '').replace('usd', 'usdt'), true);
+  const pair = symbol2pair((ds[0] || ''), true);
   const cs = ds[1].split('_');
   cs.pop();
   const contract_type = cs.join('_');
@@ -305,16 +316,26 @@ function _formatFutureDepth(ds) {
   });
 }
 
-
 const futureDepth = {
   channel: (o = {}) => {
     const defaultO = { size: 5 };
+    checkKey(o, ['contract_type']);
     o = { ...defaultO, ...o };
     const { contract_type, pairs, size } = o;
-    return _.map(pairs, (pair) => {
+    const res = [];
+    _.forEach(pairs, (pair) => {
       pair = _pair2symbol(pair, true).replace('usdt', 'usd');
-      return _getChannelStringObject(`ok_sub_future${pair}_depth_${contract_type}_${size}`);
+      if (Array.isArray(contract_type)) {
+        _.forEach(contract_type, (c) => {
+          const l = _getChannelStringObject(`ok_sub_future${pair}_depth_${c}_${size}`);
+          res.push(l);
+        });
+      } else {
+        const l = _getChannelStringObject(`ok_sub_future${pair}_depth_${contract_type}_${size}`);
+        res.push(l);
+      }
     });
+    return res;
   },
   validate: (res) => {
     const channel = _.get(res, '0.channel');
@@ -365,7 +386,8 @@ const depth = {
     const { pairs } = o;
     return _.map(pairs, (pair) => {
       const symbol = _pair2symbol(pair, false);
-      return _getChannelStringObject(`ok_sub_spot_${symbol}_depth_${o.size}`);
+      const channel = `ok_sub_spot_${symbol}_depth_${o.size}`;
+      return _getChannelStringObject(channel);
     });
   },
   validate: (res) => {
@@ -410,7 +432,6 @@ const balance = {
       const total_balance = locked_balance + balance;
       const line = { coin, locked_balance, balance, total_balance };
       res[coin] = line;
-      // if (borrow) line.borrow_balance = _parse(borrow[k]);
     });
     return _.values(res);
   }
@@ -430,7 +451,7 @@ const reqOrders = {
   channel: (o = {}) => {
     const { pairs } = o;
     return _.map(pairs, (pair) => {
-      const symbol = pair.replace('-USDT', 'usd').toLowerCase();
+      const symbol = pair.replace('-USDT', 'usd').replace('-USD', 'usd').toLowerCase();
       return _getChannelStringObject(`ok_${symbol}_trades`);
     });
   },
@@ -439,7 +460,7 @@ const reqOrders = {
     return channel.startsWith('ok_') && channel.endsWith('_trades');
   },
   formater: (ds) => {
-    console.log(ds);
+    // console.log(ds);
     return ds;
   }
 

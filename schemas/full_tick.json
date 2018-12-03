@@ -1,0 +1,29 @@
+
+{
+  "name": "full_tick",
+  "desc": "full_tick",
+  "columns": {
+    "unique_id": { "type": ["STRING", 15],   "unique": true },
+    "coin":  {
+      "type": ["STRING", 5],
+      "index": true
+    },
+    "time": {  "type": "DATE", "index": true },
+    "quarter_bid_price": "FLOAT",
+    "quarter_bid_volumn": "FLOAT",
+    "quarter_ask_price": "FLOAT",
+    "quarter_ask_volumn": "FLOAT",
+    "this_week_bid_price": "FLOAT",
+    "this_week_bid_volumn": "FLOAT",
+    "this_week_ask_price": "FLOAT",
+    "this_week_ask_volumn": "FLOAT",
+    "next_week_bid_price": "FLOAT",
+    "next_week_bid_volumn": "FLOAT",
+    "next_week_ask_price": "FLOAT",
+    "next_week_ask_volumn": "FLOAT",
+    "index": "FLOAT",
+    "quarter_hold_amount": "INTEGER",
+    "this_week_hold_amount": "INTEGER",
+    "next_week_hold_amount": "INTEGER"
+  }
+}
