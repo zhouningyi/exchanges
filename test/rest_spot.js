@@ -5,6 +5,10 @@ const exchanges = ['okexV3']; // bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
 const tasks = [
+  {
+    fn: 'swapTicks',
+    name: '永续合约行情'
+  },
   // {
   //   fn: 'time',
   //   params: {},
@@ -221,11 +225,11 @@ const tasks = [
   //   },
   //   name: '钱包'
   // },
-  {
-    fn: 'futureBalances',
-    params: {},
-    name: '合约(全仓)余额'
-  },
+  // {
+  //   fn: 'futureBalances',
+  //   params: {},
+  //   name: '合约(全仓)余额'
+  // },
   // {
   //   fn: 'depth',
   //   params: { pair: 'ETH-BTC', size: 5 },
