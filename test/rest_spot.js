@@ -10,11 +10,6 @@ const tasks = [
     name: '永续合约行情'
   },
   // {
-  //   fn: 'swapTicks',
-  //   params: {},
-  //   name: '永续合约ticker'
-  // },
-  // {
   //   fn: 'time',
   //   params: {},
   //   name: '服务器时间'

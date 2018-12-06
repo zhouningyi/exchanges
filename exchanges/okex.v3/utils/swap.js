@@ -15,8 +15,8 @@ function _parse(v) {
   return parseFloat(v, 10);
 }
 
-function symbol2pair(symbol) {
-  return symbol.replace('_', '-');
+function inst2pair(symbol) {
+  return symbol.replace('-SWAP', '').replace('_', '-');
 }
 
 
@@ -24,7 +24,16 @@ function swapTicksO(o = {}) {
   return o;
 }
 function swapTicks(ds) {
-  console.log(ds);
+  return _.map(ds, (d) => {
+    const { instrument_id } = d;
+    const pair = inst2pair(instrument_id);
+    return {
+      instrument_id,
+      last_price: _parse(d.last),
+      time: new Date(d.timestamp),
+      pair,
+    };
+  });
 }
 
 module.exports = {
