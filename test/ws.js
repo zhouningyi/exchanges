@@ -13,14 +13,20 @@ const wsList = [
   //   },
   //   name: 'wsTicks'
   // },
-  {
-    fn: 'wsFutureTicks',
-    params: {
-      contract_type: 'quarter', // / ['this_week', 'quarter', 'next_week'],
-      pairs: ['BTC-USDT']
-    },
-    name: '期货tick数据...'
-  },
+  // {
+  //   fn: 'wsFutureTicks',
+  //   params: {
+  //     contract_type: 'quarter', // / ['this_week', 'quarter', 'next_week'],
+  //     pairs: ['BTC-USDT']
+  //   },
+  //   name: '期货tick数据...'
+  // },
+  // {
+  //   fn: 'wsSwapTicks',
+  //   params: {
+  //   },
+  //   name: '永续合约tick...'
+  // },
   // {
   //   fn: 'wsFutureBalance',
   //   params: {
