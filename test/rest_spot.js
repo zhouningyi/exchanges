@@ -6,6 +6,11 @@ const exchanges = ['okexV3']; // bikicoin
 
 const tasks = [
   // {
+  //   fn: 'swapTicks',
+  //   params: {},
+  //   name: '永续合约ticker'
+  // },
+  // {
   //   fn: 'time',
   //   params: {},
   //   name: '服务器时间'
@@ -186,11 +191,11 @@ const tasks = [
   //   params: {},
   //   name: '杠杆账户余额'
   // },
-  // {
-  //   fn: 'tick',
-  //   params: { pair: 'ETH-USDT' },
-  //   name: 'tick数据'
-  // },
+  {
+    fn: 'tick',
+    params: { pair: 'ETH-USDT' },
+    name: 'tick数据'
+  },
   // {
   //   fn: 'funding',
   //   params: {},

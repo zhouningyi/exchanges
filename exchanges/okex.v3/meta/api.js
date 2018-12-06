@@ -422,10 +422,17 @@ module.exports = {
     method: 'GET',
     name: 'futureLimitPrice',
     name_cn: '期货限价',
-    desc: '限价',
     endpoint: 'futures/v3/instruments/{instrument_id}/price_limit',
     endpointParams: ['instrument_id'],
     notNull: ['pair', 'contract_type'],
     rateLimit: 2000 / 20
-  }
+  },
+  //
+  swapTicks: {
+    method: 'GET',
+    name: 'swapTicks',
+    name_cn: '永续合约ticker',
+    endpoint: 'swap/v3/instruments/ticker',
+    rateLimit: 2000 / 20
+  },
 };

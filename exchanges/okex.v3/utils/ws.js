@@ -13,6 +13,10 @@ function _getChannelStringObject(channel) {
   return { event: 'addChannel', channel };
 }
 
+// function _getChannelStringObjectV3(){
+//   return { event: 'addChannel', channel };
+// }
+
 function _pair2symbol(pair, isReverse = false) {
   if (!isReverse) return pair.replace('-', '_').toLowerCase();
   return pair.split('-').reverse().join('_').toLowerCase();
@@ -467,6 +471,20 @@ const reqOrders = {
 };
 
 
+const swapTicks = {
+  channel: () => '{"op": "subscribe", "args": ["swap/ticker:BTC-USD-SWAP"]}',
+  validate: (res) => {
+    const channel = _.get(res, '0.channel');
+    console.log(channel, 'channel...');
+    return channel.startsWith('ok_') && channel.endsWith('_trades');
+  },
+  formater(ds) {
+    // console.log(ds);
+    return ds;
+  }
+};
+
+
 module.exports = {
   ..._ws,
   // spot
@@ -483,4 +501,6 @@ module.exports = {
   futureBalance,
   futureDepth,
   futurePosition,
+  // v3
+  swapTicks
 };

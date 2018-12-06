@@ -178,6 +178,17 @@ class Exchange extends Base {
     });
   }
 
+  wsSwapTicks(o = {}, cb) {
+    const fns = kUtils.ws.swapTicks;
+    this._addChanelV3({
+      isSign: true,
+      chanel: fns.channel(o),
+      validate: fns.validate,
+      formater: fns.formater,
+      cb
+    });
+  }
+
   // loadWsFnFromConfig() {
   // }
   // loadWsFn(conf) {
@@ -200,6 +211,19 @@ class Exchange extends Base {
         process.exit();
       }
     }
+  }
+  _addChanelV3(o = {}) {
+    const { ws } = this;
+    if (!ws || !ws.isReady()) return setTimeout(() => this._addChanel(o), 100);
+    const { chanel, validate, params = {}, formater, cb, isSign = false, interval } = o;
+    if (isSign) this.addLoginInfo(chanel, params);
+    ws.send(chanel);
+    if (interval) {
+      const f = this.intervalTask(() => ws.send(chanel), interval);
+      f();
+    }
+    const callback = this.genWsDataCallBack(cb, formater, o);
+    ws.onData(validate, callback);
   }
   _addChanel(o = {}) {
     const { ws } = this;
