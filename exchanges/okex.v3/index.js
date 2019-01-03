@@ -149,6 +149,7 @@ class Exchange extends Base {
     });
   }
   wsBalance(o = {}, cb) {
+    console.log('wsBalance....');
     const fns = kUtils.ws.balance;
     this._addChanel({
       chanel: this.getLoginChanelString(),

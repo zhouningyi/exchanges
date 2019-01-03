@@ -111,6 +111,15 @@ function pair2coin(pair) {
 function coin2pair(coin) {
   return (`${coin}-USDT`).toUpperCase();
 }
+const FUTURE_COINS = ['BTC', 'BCH', 'BSV', 'XRP', 'LTC', 'EOS', 'ETC', 'ETH', ''];
+
+const FUTURE_SPOT_PAIRS = FUTURE_COINS.map((coin) => {
+  return `${coin}-USDT`;
+});
+
+const FUTURE_PAIRS = FUTURE_COINS.map((coin) => {
+  return `${coin}-USD`;
+});
 module.exports = {
   formatInterval,
   symbol2pair,
@@ -123,6 +132,9 @@ module.exports = {
   orderStatus2Code,
   code2FutureOrderStatus,
   futureOrderStatus2Code,
+  FUTURE_COINS,
+  FUTURE_SPOT_PAIRS,
+  FUTURE_PAIRS,
   //
   subscribe,
   extactPairFromFutureChannel,
