@@ -16,51 +16,60 @@ const wsList = [
   // {
   //   fn: 'wsFutureTicks',
   //   params: {
-  //     contract_type: 'quarter', // / ['this_week', 'quarter', 'next_week'],
-  //     pairs: ['BTC-USDT']
+  //     contract_type: ['this_week', 'quarter', 'next_week'], // 'quarter',
+  //     pairs: ['BTC-USD']
   //   },
-  //   name: '期货tick数据...'
+  //   name: '期货tick数据111211...'
   // },
   // {
   //   fn: 'wsSwapTicks',
   //   params: {
+  //     pairs: ['BTC-USD', 'ETH-USD', 'EOS-USD']
   //   },
   //   name: '永续合约tick...'
   // },
   // {
-  //   fn: 'wsFutureBalance',
+  //   fn: 'wsSwapDepth',
   //   params: {
-  //     interval: 4000
+  //     pairs: ['BTC-USD']
   //   },
-  //   name: ''
+  //   name: '永续合约tick...'
   // },
+  {
+    fn: 'wsFutureBalance',
+    params: {
+      coins: ['EOS', 'ETH'],
+    },
+    name: 'wsFutureBalance'
+  },
   // {
   //   fn: 'wsFutureIndex',
   //   params: {
   //     pairs: [
-  //       'EOS-USDT'
+  //       'BTC-USD' // 'EOS-USD',
   //     ]
   //   },
   //   name: '合约指数'
   // },
   // {
-  //   fn: 'wsFutureOrder',
+  //   fn: 'wsFutureOrders',
   //   params: {
-  //     interval: 4000
+  //     pairs: ['BTC-USD'], contract_type: 'this_week'
   //   },
   //   name: ''
   // },
   // {
   //   fn: 'wsFuturePosition',
   //   params: {
-  //     interval: 4000
+  //     pairs: ['ETH-USD'],
+  //     contract_type: ['quarter']
   //   },
   //   name: ''
   // },
   // {
   //   fn: 'wsBalance',
   //   params: {
-  //     interval: 4000
+  //     coins: ['BTC', 'EOS', 'USDT']
   //   },
   //   name: '余额数据'
   // },
@@ -80,8 +89,9 @@ const wsList = [
   // },
 
   // {
-  //   fn: 'wsOrder',
+  //   fn: 'wsOrders',
   //   params: {
+  //     pairs: ['BTC-USDT']
   //   },
   //   name: '登录'
   // },
@@ -107,6 +117,16 @@ const wsList = [
   //   },
   //   name: '期货深度图'
   // },
+
+  // {
+  //   fn: 'wsFutureDepth',
+  //   params: {
+  //     contract_type: ['this_week', 'next_week', 'quarter'],
+  //     pairs: ['EOS-USDT']
+  //   },
+  //   name: '期货深度图'
+  // },
+
   // {
   //   fn: 'wsDepth',
   //   params: {
@@ -116,7 +136,7 @@ const wsList = [
   //   name: '深度图'
   // },
   // {
-  //   fn: 'wsFutureBalances',
+  //   fn: 'wsFutureBalance',
   //   params: {
   //   },
   //   name: 'ws的余额'

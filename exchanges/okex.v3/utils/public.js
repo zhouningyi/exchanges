@@ -279,12 +279,13 @@ const orderStatusMap = {
   part_filled: 'PARTIAL',
   open: 'UNFINISH',
   canceling: 'CANCELLING',
-  canceled: 'CANCEL'
+  canceled: 'CANCEL',
+  cancelled: 'CANCEL',
 };
 
 const reverseOrderStatusMap = _.invert(orderStatusMap);
 
-function formatOrder(d, o) {
+function formatOrder(d, o = {}) {
   const t = d.created_at || d.timestamp;
   const { from, to, limit, ...rest } = o;
   return {
@@ -296,9 +297,9 @@ function formatOrder(d, o) {
     notional: d.notional,
     filled_notional: d.filled_notional,
     success: o.result,
-    pair: d.product_id,
+    pair: d.product_id || d.instrument_id,
     amount: _parse(d.size),
-    filled_amount: _parse(d.executed_value),
+    filled_amount: _parse(d.executed_value || d.filled_size),
     type: (d.type || o.type || '').toUpperCase(),
     status: orderStatusMap[d.status] || 'UNFINISH',
     price: _parse(d.price),

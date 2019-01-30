@@ -15,23 +15,21 @@ function direct(d) {
 function _parse(v) {
   return parseFloat(v, 10);
 }
-
-
+function _wallet(d) {
+  return {
+    total_balance: _parse(d.balance),
+    locked_balance: _parse(d.hold),
+    balance: _parse(d.available),
+    coin: d.currency
+  };
+}
 function wallet(ds, o) {
-  let res = _.map(ds, (d) => {
-    return {
-      total_balance: _parse(d.balance),
-      locked_balance: _parse(d.hold),
-      balance: _parse(d.available),
-      coin: d.currency
-    };
-  });
+  let res = _.map(ds, _wallet);
   if (o.notNull) {
     res = _.filter(res, d => d.balance);
   }
   return res;
 }
-
 
 function balancesO(o = {}) {
   return o;
@@ -39,7 +37,9 @@ function balancesO(o = {}) {
 
 function balances(ds, o = {}) {
   const res = wallet(ds, o);
-  return res;
+  if (!o.coins) return res;
+  const coinMap = _.keyBy(o.coins, d => d);
+  return _.filter(res, d => d.coin in coinMap);
 }
 
 function spotLedgerO(o = {}) {
@@ -48,7 +48,6 @@ function spotLedgerO(o = {}) {
 
 function spotLedger(res, o = {}) {
   const { from, to, limit, ...rest } = o;
-  console.log(res, 'res...');
   return _.map(res, d => formatLedger(d, rest));
 }
 
@@ -123,14 +122,12 @@ function unfinishOrders(res, o) {
 }
 
 function orderInfoO(o = {}) {
-  console.log(o, 9999);
   return {
     instrument_id: o.pair,
     order_id: o.order_id
   };
 }
 function orderInfo(res, o) {
-  console.log(res, 'res...res...');
   return formatOrder(res, o);
 }
 
@@ -158,7 +155,32 @@ function pairs(res) {
   return _.map(res, _formatPair);
 }
 
+function _formatTick(l) {
+  return {
+    pair: l.instrument_id,
+    bid_price: _parse(l.best_bid),
+    ask_price: _parse(l.best_ask),
+    last_price: _parse(l.last),
+    time: new Date(l.timestamp),
+  };
+}
+
+// depth
+function _formatDepth(ds) {
+  return _.map(ds, (d) => {
+    return {
+      price: _parse(d[0]),
+      volume: _parse(d[1]),
+      count: _parse(d[2])
+    };
+  });
+}
+
 module.exports = {
+  formatTick: _formatTick,
+  formatDepth: _formatDepth,
+  formatOrder,
+  formatBalance: _wallet,
   wallet,
   pairsO: direct,
   pairs,

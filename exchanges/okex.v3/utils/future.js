@@ -12,11 +12,6 @@ const { checkKey, throwError } = Utils;
 
 const { _parse } = Utils;
 
-function future_id2pair(instrument_id) {
-  const arr = instrument_id.split('-');
-  return `${`${arr[0]}-${arr[1]}`}T`;
-}
-
 const d7 = 7 * 24 * 3600 * 1000;
 const d14 = d7 * 2;
 function future_id2contract_type(instrument_id) {
@@ -34,6 +29,7 @@ function future_id2contract_type(instrument_id) {
 }
 
 function _formatFuturePosition(line) {
+  if (!line || !line.margin_mode) return null;
   return {
     margin_mode: line.margin_mode,
     liquidation_price: _parse(line.liquidation_price),
@@ -54,6 +50,8 @@ function _formatFuturePosition(line) {
     pair: future_id2pair(line.instrument_id),
     contract_type: future_id2contract_type(line.instrument_id),
     lever_rate: _parse(line.leverage),
+    long_leverage: _parse(line.long_leverage),
+    short_leverage: _parse(line.short_leverage),
     time: line.created_at,
   };
 }
@@ -65,10 +63,10 @@ function futurePosition(ds) {
 }
 
 // /
-
 function _formatBalance(line, coin) {
   coin = coin.toUpperCase();
   return {
+    coin,
     pair: `${coin}-USDT`,
     margin_mode: line.margin_mode,
     account_rights: _parse(line.equity),
@@ -224,7 +222,9 @@ const futureStatusMap = {
 };
 
 function _formatFutureOrder(l, o) {
+  const info = getInfoFromInstrumentId(l.instrument_id);
   return {
+    ...info,
     instrument_id: l.instrument_id,
     amount: _parse(l.size),
     filled_amount: _parse(l.filled_qty),
@@ -288,13 +288,11 @@ function _futurePairs(line) {
   };
 }
 function futurePairs(res) {
-  console.log(res, 'res...');
   return _.map(res, _futurePairs);
 }
 
 // 期货指数
 function futureIndexO(o = {}) {
-  console.log('futureIndexO...futureIndexO...');
   const instrument_id = getCurFutureInstrumentId(o);
   return {
     instrument_id,
@@ -373,15 +371,23 @@ function future_id2pair(fid) {
   arr.pop();
   return `${arr.join('-')}T`;
 }
-// 行情
-function _formatTick(l, o) {
-  const { instrument_id } = l;
-  const contract_type = future_id2contract_type(instrument_id);
+
+function getInfoFromInstrumentId(instrument_id) {
   const pair = future_id2pair(instrument_id);
+  const contract_type = future_id2contract_type(instrument_id);
   return {
-    pair,
-    instrument_id,
+    id: `${pair}_${contract_type}`,
     contract_type,
+    pair,
+  };
+}
+// 行情
+function _formatTick(l, o = {}) {
+  const { instrument_id } = l;
+  const info = getInfoFromInstrumentId(instrument_id);
+  return {
+    ...info,
+    instrument_id,
     last_price: _parse(l.last),
     bid_price: _parse(l.best_bid),
     ask_price: _parse(l.best_ask),
@@ -389,6 +395,7 @@ function _formatTick(l, o) {
     ...o,
   };
 }
+
 function futureTicks(res, o) {
   return _.map(res, d => _formatTick(d, o));
 }
@@ -402,8 +409,53 @@ function futureTick(res, o) {
 }
 
 
+function _formatFutureDepth(ds) {
+  return _.map(ds, (d) => {
+    return {
+      price: _parse(d[0]),
+      volume_amount: _parse(d[1]),
+      liqui_amount: _parse(d[2]),
+      count: _parse(d[3])
+    };
+  });
+}
+
+// swap和future
+function formatFutureDepth(data, type = 'future') {
+  const res = {};
+  _.forEach(data, (d) => {
+    const { asks, bids, instrument_id, timestamp } = d;
+    let info;
+    if (type === 'future') {
+      info = getInfoFromInstrumentId(instrument_id);
+    } else if (type === 'swap') {
+      info = {
+        instrument_id,
+        id: instrument_id,
+        pair: instrument_id.replace('-SWAP', '')
+      };
+    }
+    res[`${info.id}`] = {
+      ...info,
+      exchange: 'okex',
+      time: new Date(timestamp),
+      bids: _formatFutureDepth(bids),
+      asks: _formatFutureDepth(asks)
+    };
+  }).filter(d => d);
+  return _.values(res);
+}
+
 const direct = d => d;
 module.exports = {
+  formatFutureDepth,
+  getInfoFromInstrumentId,
+  getFutureInstrumentId,
+  formatBalance: _formatBalance,
+  formatFuturePosition: _formatFuturePosition,
+  formatFutureOrder: _formatFutureOrder,
+  formatTick: _formatTick,
+  //
   futurePosition,
   futurePositionO: direct,
   futureBalancesO,

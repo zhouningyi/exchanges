@@ -36,6 +36,14 @@ function loop(fn, time) {
 }
 const onceLoop = _.once(loop);
 
+function checkError(l) {
+  const { event, message } = l;
+  if (event === 'error') {
+    console.log(`【error】: ${message}`);
+    process.exit();
+  }
+}
+
 class WS extends Event {
   constructor(stream, o) {
     super();
@@ -43,6 +51,7 @@ class WS extends Event {
     this.options = o;
     this._isReady = false;
     this.callbacks = [];
+    this.sendSequence = {};
     this.init();
   }
   async init() {
@@ -61,6 +70,14 @@ class WS extends Event {
   }
   restart() {
     this.init();
+  }
+  onLogin(cb) {
+    this.onLoginCb = cb;
+  }
+  checkLogin(data) {
+    if (data && data.event === 'login' && data.success) {
+      if (this.onLoginCb) this.onLoginCb();
+    }
   }
   addHooks(ws, o = {}) {
     const { pingInterval = 1000 } = o;
@@ -97,8 +114,9 @@ class WS extends Event {
     ws.on('message', (data) => {
       try {
         data = processWsData(data);
-        // console.log(data, 'data');
-        // if (typeof data === 'string') data = JSON.parse(data);
+        if (typeof data === 'string') data = JSON.parse(data);
+        checkError(data);
+        this.checkLogin(data);
         this._onCallback(data, ws);
       } catch (error) {
         console.log(`ws Parse json error: ${error.message}`);
@@ -111,8 +129,19 @@ class WS extends Event {
   send(msg) {
     if (!msg) return;
     if (!this.isReady()) setTimeout(() => this.send(msg), 100);
-    if (typeof msg === 'object') msg = JSON.stringify(msg);
-    this.ws.send(msg);
+    // console.log(msg, 'msg');
+    const { sendSequence } = this;
+    const args = (sendSequence[msg.op] || []).concat(msg.args);
+    _.set(sendSequence, msg.op, args);
+    setTimeout(this._send.bind(this), 100);
+  }
+  _send() {
+    const { sendSequence } = this;
+    if (!_.values(sendSequence).length) return;
+    _.forEach(sendSequence, (args, op) => {
+      this.ws.send(JSON.stringify({ op, args }));
+    });
+    this.sendSequence = {};
   }
   _onCallback(ds) {
     const { callbacks } = this;
@@ -123,8 +152,9 @@ class WS extends Event {
     });
   }
   genCallback(validate, cb) {
+    const validateF = typeof validate === 'function' ? validate : d => d.table === validate;
     return (ds) => {
-      if (validate && validate(ds)) return cb(ds);
+      if (validateF && validateF(ds)) return cb(ds);
       return false;
     };
   }
@@ -194,7 +224,6 @@ function genSubscribe(stream) {
         if (typeof data === 'string') data = JSON.parse(data);
         cb(data, ws);
       } catch (error) {
-        console.log(data);
         console.log(`ws Parse json error: ${error.message}`);
       }
       onceLoop(() => {

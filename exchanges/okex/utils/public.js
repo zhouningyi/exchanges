@@ -111,7 +111,8 @@ function pair2coin(pair) {
 function coin2pair(coin) {
   return (`${coin}-USDT`).toUpperCase();
 }
-const FUTURE_COINS = ['BTC', 'BCH', 'BSV', 'XRP', 'LTC', 'EOS', 'ETC', 'ETH', ''];
+
+const FUTURE_COINS = ['BTC', 'BCH', 'XRP', 'LTC', 'EOS', 'ETC', 'ETH'];
 
 const FUTURE_SPOT_PAIRS = FUTURE_COINS.map((coin) => {
   return `${coin}-USDT`;

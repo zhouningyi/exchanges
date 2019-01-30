@@ -23,20 +23,22 @@ function inst2pair(symbol) {
 function swapTicksO(o = {}) {
   return o;
 }
+function formatTick(d) {
+  const { instrument_id } = d;
+  const pair = inst2pair(instrument_id);
+  return {
+    instrument_id,
+    last_price: _parse(d.last),
+    time: new Date(d.timestamp),
+    pair,
+  };
+}
 function swapTicks(ds) {
-  return _.map(ds, (d) => {
-    const { instrument_id } = d;
-    const pair = inst2pair(instrument_id);
-    return {
-      instrument_id,
-      last_price: _parse(d.last),
-      time: new Date(d.timestamp),
-      pair,
-    };
-  });
+  return _.map(ds, formatTick);
 }
 
 module.exports = {
+  formatTick,
   swapTicksO,
   swapTicks
 };

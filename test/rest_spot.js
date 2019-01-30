@@ -5,10 +5,10 @@ const exchanges = ['okexV3']; // bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
 const tasks = [
-  {
-    fn: 'swapTicks',
-    name: '永续合约行情'
-  },
+  // {
+  //   fn: 'swapTicks',
+  //   name: '永续合约行情'
+  // },
   // {
   //   fn: 'time',
   //   params: {},
@@ -185,16 +185,16 @@ const tasks = [
   //   },
   //   name: '杠杆账户余额'
   // },
-  // {
-  //   fn: 'marginCoins',
-  //   params: {},
-  //   name: '杠杆账户余额'
-  // },
   {
-    fn: 'tick',
-    params: { pair: 'ETH-USDT' },
-    name: 'tick数据'
+    fn: 'marginCoins',
+    params: {},
+    name: '杠杆账户各币种信息'
   },
+  // {
+  //   fn: 'tick',
+  //   params: { pair: 'ETH-USDT' },
+  //   name: 'tick数据'
+  // },
   // {
   //   fn: 'funding',
   //   params: {},

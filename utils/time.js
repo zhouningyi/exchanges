@@ -57,24 +57,21 @@ function getTimeString(t, type = 'day') {
   return false;
 }
 
-
 //
 const SETTLE_TIME = '16:00:00';
-const SETTLEMENT_QUARTER_MONTHES = ['03-28', '06-28', '09-28', '12-28'];
+const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27'];
 function getSettlementTimes(t = new Date(), type = 'quarter') { // 今年4个季度以及明年三个季度
   t = fixTime(t);
-  const year = t.getFullYear();
   if (type === 'quarter') {
     return SETTLEMENT_QUARTER_MONTHES
          .map((v) => {
-           return new Date(`${year}-${v} ${SETTLE_TIME}`);
-         })
-         .concat([new Date(`${year + 1}-${SETTLEMENT_QUARTER_MONTHES[0]} ${SETTLE_TIME}`)]);
+           return new Date(`${v} ${SETTLE_TIME}`);
+         });
   } else if (type === 'this_week' || type === 'next_week') {
     return [prevWeek(t, 5, 0), prevWeek(t, 5, -1), prevWeek(t, 5, -2), prevWeek(t, 5, -3)]
            .map(t => new Date(`${getTimeString(t, 'day')} ${SETTLE_TIME}`));
   }
-  console.log('❌getSettlementDays type错误...');
+  console.log(type, '❌getSettlementDays type错误...');
 }
 // ✅
 function getFutureSettlementDay(t, type = 'quarter') {
@@ -101,6 +98,7 @@ function getFutureSettlementTime(t, type = 'quarter') {
     }
   }
   console.log('getQuarterFutureSettlementDay 出错');
+  process.exit();
   return null;
 }
 
