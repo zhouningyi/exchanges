@@ -81,8 +81,8 @@ module.exports = {
     endpoint: 'account/v3/withdrawal/history',
     sign: true,
   },
-  ledger: {
-    name: 'ledger',
+  walletLedger: {
+    name: 'walletLedger',
     name_cn: '流水',
     sign: true,
     endpoint: 'account/v3/ledger',

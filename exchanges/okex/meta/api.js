@@ -75,8 +75,8 @@ module.exports = {
     endpoint: 'account/v3/ledger',
     desc: '',
     notNull: [],
-    formatO: Utils.formatLedgerO,
-    format: Utils.formatLedger,
+    formatO: Utils.formatWalletLedgerO,
+    format: Utils.formatWalletLedger,
   },
   balances: {
     name: 'balances',
