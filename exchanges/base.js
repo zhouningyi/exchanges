@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { delay, checkKey } = Utils;
-const isProxy = !!argv.proxy;
+const isProxy = !!argv.proxy || !!process.env.PROXY;
 
 _.templateSettings.interpolate = /{([\s\S]+?)}/g;
 
