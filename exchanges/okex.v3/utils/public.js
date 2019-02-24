@@ -153,7 +153,6 @@ function moveBalanceO(o = {}) {
     return false;
   }
   const currency = coin;// .toLowerCase();
-  console.log(currency, 'amount');
   const opt = { from, to, currency, instrument_id, sub_account, amount };
   return opt;
 }
@@ -170,7 +169,6 @@ function moveBalance(res, o = {}) {
     error
   };
 }
-
 
 // 提币历史
 function withdrawHistoryO(o = {}) {
@@ -208,7 +206,7 @@ const ledgerMap = {
 
 const rLedgerMap = _.invert(ledgerMap);
 
-function ledgerO(o) {
+function walletLedgerO(o) {
   const defaultO = { limit: 100 };
   o = { ...defaultO, ...o };
   const opt = {
@@ -234,7 +232,7 @@ function _formatLedger(d, o = {}) {
     exec_type: execTypeMap[d.exec_type],
     price: d.price !== undefined ? _parse(d.price) : undefined,
     coin: d.currency,
-    type: d.typeName || d.type,
+    type: d.typeName || d.type || d.typename,
     amount: amount !== undefined ? _parse(amount) : undefined,
     fee: d.fee !== undefined ? _parse(d.fee) : undefined,
     balance: d.balance !== undefined ? _parse(d.balance) : undefined,
@@ -247,8 +245,38 @@ function _formatLedger(d, o = {}) {
   };
 }
 
-function ledger(ds, o = {}) {
-  return _.map(ds, _formatLedger);
+function parseTypeName(typeName){
+  if (typeName.indexOf('Get from activity') !==  -1)return { action_type: 'IN', reference_account_type: 'okex' };
+  if (typeName.indexOf('Deposit') !== -1) return { action_type: 'IN', reference_account_type: 'other_account' };
+  if (typeName.indexOf('withdrawal') !== -1) return { action_type: 'OUT', reference_account_type: 'other_account' };
+  if (typeName.indexOf('To: margin account') !== -1) return { action_type: 'OUT', reference_account_type: 'margin' };
+  if (typeName.indexOf('From: margin account') !== -1) return { action_type: 'IN', reference_account_type: 'margin' };
+  if (typeName.indexOf('To: C2C account') !== -1) return { action_type: 'OUT', reference_account_type: 'c2c' };
+  if (typeName.indexOf('From: C2C account') !== -1) return { action_type: 'IN', reference_account_type: 'c2c' };
+  if (typeName.indexOf('To: spot account') !== -1) return { action_type: 'OUT', reference_account_type: 'spot' };
+  if (typeName.indexOf('From: spot account') !== -1) return { action_type: 'IN', reference_account_type: 'spot' };
+  console.log(typeName, 'typeName......=>');
+  return {
+  };
+}
+
+function _formatWalletLedger(d, o={}){
+  return {
+    ...o,
+    unique_id: d.ledger_id,
+    ledger_id: d.ledger_id,
+    coin: d.currency,
+    account_type: 'wallet',
+    fee: _parse(d.fee),
+    time: new Date(d.timestamp),
+    amount: _parse(d.amount),
+    balance: _parse(d.balance),
+    ...parseTypeName(d.typename)
+  };
+}
+
+function walletLedger(ds, o = {}) {
+  return _.map(ds, _formatWalletLedger);
 }
 
 function _parse(v) {
@@ -353,8 +381,9 @@ module.exports = {
   moveBalance,
   withdrawHistoryO,
   withdrawHistory,
-  ledgerO,
-  ledger,
+  walletLedgerO,
+  walletLedger,
   orderO,
   formatLedger: _formatLedger,
+  formatWalletLedger: _formatWalletLedger
 };
