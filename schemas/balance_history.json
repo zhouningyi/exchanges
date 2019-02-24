@@ -3,13 +3,12 @@
   "desc": "balance_history",
   "columns": {
     "unique_id": {
-      "type": ["STRING", 20],
+      "type": ["STRING", 40],
       "unique": true,
       "index": true
     },
-    "coin":  ["STRING", 12],
-    "borrow_balance": "FLOAT",
-    "locked_balance": "FLOAT",
-    "balance": "FLOAT"
+    "time": "DATE",
+    "config": "JSONB",
+    "total_balance_usdt": "FLOAT"
   }
 }

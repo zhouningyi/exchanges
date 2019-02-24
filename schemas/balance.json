@@ -2,6 +2,9 @@
   "name": "balance",
   "desc": "balance",
   "columns": {
+    "api_key": {
+      "type": ["STRING", 12]
+    },
     "coin": {
       "type": ["STRING", 12],
       "unique": true,
@@ -9,6 +12,6 @@
     },
     "borrow_balance": "FLOAT",
     "locked_balance": "FLOAT",
-    "balance": "FLOAT"
+    "spot_balance": "FLOAT"
   }
 }

@@ -146,7 +146,6 @@ class Exchange extends Base {
       ...(method === 'GET' ? {} : { body: JSON.stringify(params) })
     };
     let body;
-    // console.log(o, '..9..');
     try {
       body = await request(o);
     } catch (e) {

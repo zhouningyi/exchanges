@@ -5,7 +5,7 @@ const md5 = require('md5');
 const error = require('./../errors');
 const { accountTypeMap } = require('./public');
 
-const { checkKey, throwError } = Utils;
+const { checkKey, throwError, cleanObjectNull } = Utils;
 
 
 // function
@@ -30,6 +30,8 @@ function future_id2contract_type(instrument_id) {
 
 function _formatFuturePosition(line) {
   if (!line || !line.margin_mode) return null;
+  const pair = future_id2pair(line.instrument_id);
+  const coin = pair.toUpperCase().split('-USD')[0];
   return {
     margin_mode: line.margin_mode,
     liquidation_price: _parse(line.liquidation_price),
@@ -47,7 +49,8 @@ function _formatFuturePosition(line) {
     sell_price_avg: _parse(line.short_avg_cost), // 多仓平均开仓价
     sell_settlement_price: _parse(line.short_settlement_price),
     instrument_id: line.instrument_id,
-    pair: future_id2pair(line.instrument_id),
+    pair,
+    coin,
     contract_type: future_id2contract_type(line.instrument_id),
     lever_rate: _parse(line.leverage),
     long_leverage: _parse(line.long_leverage),
@@ -65,7 +68,7 @@ function futurePosition(ds) {
 // /
 function _formatBalance(line, coin) {
   coin = coin.toUpperCase();
-  return {
+  return cleanObjectNull({
     coin,
     pair: `${coin}-USDT`,
     margin_mode: line.margin_mode,
@@ -75,7 +78,7 @@ function _formatBalance(line, coin) {
     profit_unreal: _parse(line.unrealized_pnl),
     margin: _parse(line.margin),
     balance: _parse(line.total_avail_balance), //	账户余额
-  };
+  });
 }
 
 function futureBalancesO(o = {}) {
@@ -85,6 +88,14 @@ function futureBalancesO(o = {}) {
 function futureBalances(ds) {
   const info = _.get(ds, 'info');
   return _.map(info, _formatBalance);
+}
+
+
+function futureBalanceO(o = {}) {
+  return o;
+}
+function futureBalance(d, o) {
+  return _formatBalance(d, o.coin);
 }
 
 function futureLedgerO(o = {}) {
@@ -460,6 +471,8 @@ module.exports = {
   futurePositionO: direct,
   futureBalancesO,
   futureBalances,
+  futureBalanceO,
+  futureBalance,
   futureLedgerO,
   futureLedger,
   futureOrderO,

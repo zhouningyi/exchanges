@@ -332,6 +332,14 @@ module.exports = {
     endpoint: 'futures/v3/accounts',
     notNull: []
   },
+  futureBalance: {
+    method: 'GET',
+    name: 'futureBalance',
+    name_cn: '期货账户余额(单币种)',
+    endpoint: 'futures/v3/accounts/{coin}',
+    endpointParams: ['coin'],
+    notNull: ['coin']
+  },
   futureLedger: {
     method: 'GET',
     name: 'futureLedger',

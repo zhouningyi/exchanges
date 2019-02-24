@@ -10,6 +10,7 @@ const full_tick = require('./full_tick.json');
 const future_tick_history = require('./future_tick_history.json');
 //
 const balance = require('./balance.json');
+const balance_history = require('./balance_history.json');
 const kline = require('./kline.json');
 const depth = require('./depth.json');
 const order = require('./order.json');
@@ -26,6 +27,7 @@ module.exports = {
   full_tick,
   future_tick_history,
   //
+  balance_history,
   balance,
   kline,
   tick,

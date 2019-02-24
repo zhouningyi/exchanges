@@ -1,5 +1,4 @@
-const Utils = require('./../utils');
-// const bUtils = require('./../../utils');
+const Utils = require('exchanges/utils');
 const Event = require('bcore/event');
 const _ = require('lodash');
 // const config = require('./../config');
@@ -181,6 +180,7 @@ class exchange extends Event {
   }
   getEndPoint(endpoint, endpointParams, params) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
     if (!endpointParams || !endpointParams.length) return endpoint;
+    // console.log(endpoint, params, 'endpointParams');
     endpoint = _.template(endpoint)(params);
     _.forEach(endpointParams, (k) => {
       delete params[k];
@@ -202,7 +202,7 @@ class exchange extends Event {
     const UtilsInst = this.utils || this.Utils;
     if (!UtilsInst) Utils.warnExit(`${this.name}: this.Utils缺失`);
     checkKey(conf, ['endpoint', 'name', 'name_cn']);
-    let { name = key, notNull: checkKeyO, endpoint, sign = false, endpointParams } = conf;
+    const { name = key, notNull: checkKeyO, endpoint, sign = false, endpointParams } = conf;
     const formatOFn = UtilsInst[`${key}O`];
     if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}O()不存在`);
     const formatFn = UtilsInst[key];
@@ -215,16 +215,16 @@ class exchange extends Event {
         if (checkKeyO) checkKey(o, checkKeyO);
         // 顺序不要调换
         let opt = formatOFn ? _.cloneDeep(formatOFn(o)) : _.cloneDeep(o);
-        endpoint = this.getEndPoint(endpoint, endpointParams, opt);
-        const strO = `输入options: ${stringify(opt)}`;
-        Utils.print(strO, 'blue');
+        const endpointCompile = this.getEndPoint(endpoint, endpointParams, opt);
+        // const strO = `输入options: ${stringify(opt)}`;
+        // Utils.print(strO, 'blue');
         opt = Utils.cleanObjectNull(opt);
-        const str1 = `opt: ${stringify(opt)}`;
-        Utils.print(str1, 'gray');
-        const str2 = `${method}: ${endpoint}`;
-        Utils.print(str2, 'gray');
+        // const str1 = `opt: ${stringify(opt)}`;
+        // Utils.print(str1, 'gray');
+        // const str2 = `${method}: ${endpointCompile}`;
+        // Utils.print(str2, 'gray');
         const tStart = new Date();
-        const ds = await this[method](endpoint, opt, sign);
+        const ds = await this[method](endpointCompile, opt, sign);
         const dt = new Date() - tStart;
         if (UtilsInst.getError && ds) {
           const error = UtilsInst.getError(ds);
