@@ -245,8 +245,8 @@ function _formatLedger(d, o = {}) {
   };
 }
 
-function parseTypeName(typeName){
-  if (typeName.indexOf('Get from activity') !==  -1)return { action_type: 'IN', reference_account_type: 'okex' };
+function parseTypeName(typeName) {
+  if (typeName.indexOf('Get from activity') !== -1) return { action_type: 'IN', reference_account_type: 'okex' };
   if (typeName.indexOf('Deposit') !== -1) return { action_type: 'IN', reference_account_type: 'other_account' };
   if (typeName.indexOf('withdrawal') !== -1) return { action_type: 'OUT', reference_account_type: 'other_account' };
   if (typeName.indexOf('To: margin account') !== -1) return { action_type: 'OUT', reference_account_type: 'margin' };
@@ -260,7 +260,7 @@ function parseTypeName(typeName){
   };
 }
 
-function _formatWalletLedger(d, o={}){
+function _formatWalletLedger(d, o = {}) {
   return {
     ...o,
     unique_id: d.ledger_id,

@@ -235,12 +235,12 @@ const tasks = [
   //   },
   //   name: '批量下单'
   // },
-  {
-    fn: 'futureBalances',
-    params: {
-    },
-    name: '期货资金'
-  },
+  // {
+  //   fn: 'futureBalances',
+  //   params: {
+  //   },
+  //   name: '期货资金'
+  // },
   // {
   //   fn: 'unfinishedFutureOrderInfo',
   //   params: {
@@ -287,7 +287,15 @@ const tasks = [
   //     pair: 'EOS-USDT'
   //   },
   //   name: '期货仓位'
-  // }
+  // },
+  {
+    fn: 'futurePosition',
+    params: {
+      contract_type: 'quarter',
+      pair: 'EOS-USDT'
+    },
+    name: '期货仓位'
+  }
 ];
 
 testRest(exchanges, tasks);

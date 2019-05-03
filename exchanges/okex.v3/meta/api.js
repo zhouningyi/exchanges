@@ -318,12 +318,28 @@ module.exports = {
     notNull: ['contract_type', 'pair'],
   },
   // 合约私有接口
+  futurePositions: {
+    method: 'GET',
+    name: 'futurePositions',
+    name_cn: '所有期货仓位',
+    endpoint: 'futures/v3/position',
+    notNull: []
+  },
+  lerverate: {
+    method: 'GET',
+    name: 'lerverate',
+    name_cn: '币种的杠杆数',
+    endpoint: 'futures/v3/accounts/{coin}/leverage',
+    endpointParams: ['coin'],
+    notNull: ['coin'],
+  },
   futurePosition: {
     method: 'GET',
     name: 'futurePosition',
-    name_cn: '期货仓位',
-    endpoint: 'futures/v3/position',
-    notNull: []
+    name_cn: '单个期货仓位',
+    endpointParams: ['instrument_id'],
+    endpoint: 'futures/v3/{instrument_id}/position',
+    notNull: ['contract_type', 'pair'],
   },
   futureBalances: {
     method: 'GET',

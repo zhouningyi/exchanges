@@ -55,15 +55,31 @@ function _formatFuturePosition(line) {
     lever_rate: _parse(line.leverage),
     long_leverage: _parse(line.long_leverage),
     short_leverage: _parse(line.short_leverage),
-    time: line.created_at,
+    updated_at: new Date(line.updated_at),
+    created_at: new Date(line.created_at),
+    time: new Date(),
   };
 }
 
-
-function futurePosition(ds) {
-  if (!ds || !ds.result) throwError('futurePosition 返回错误');
+function futurePositions(ds) {
+  if (!ds || !ds.result) throwError('futurePositions 返回错误');
   return _.map(_.flatten(ds.holding), _formatFuturePosition);
 }
+
+function futurePosition(ds) {
+  if (!ds || !ds.holding) throwError('futurePosition 返回错误');
+  const l = ds.holding[0];
+  const pps = {};
+  if (l.created_at.startsWith('1970')) pps.time = new Date();
+  return { ..._formatFuturePosition(l), ...pps };
+}
+function futurePositionO(o) {
+  const instrument_id = getCurFutureInstrumentId(o);
+  return {
+    instrument_id,
+  };
+}
+
 
 // /
 function _formatBalance(line, coin) {
@@ -76,8 +92,11 @@ function _formatBalance(line, coin) {
     margin_ratio: _parse(line.margin_ratio), // 保证金率
     profit_real: _parse(line.realized_pnl),
     profit_unreal: _parse(line.unrealized_pnl),
+    margin_locked: _parse(line.margin_for_unfilled),
+    margin_used: _parse(line.margin_frozen),
     margin: _parse(line.margin),
     balance: _parse(line.total_avail_balance), //	账户余额
+    time: new Date()
   });
 }
 
@@ -291,6 +310,7 @@ function _futurePairs(line) {
     instrument_id: line.instrument_id,
     contract_type,
     pair: `${line.underlying_index}-${line.quote_currency}`,
+    coin: line.underlying_index,
     tick_size: _parse(line.tick_size),
     contract_value: _parse(line.contract_val),
     open_date: line.listing,
@@ -415,6 +435,21 @@ function futureTickO(o = {}) {
   const instrument_id = getCurFutureInstrumentId(o);
   return { instrument_id };
 }
+
+function lerverate(o = {}) {
+  const { margin_mode, ...rest } = o;
+  const res = [];
+  if (margin_mode === 'crossed') {
+    const { currency: coin, leverage } = rest;
+    res.push({ coin, lever_rate: parseInt(leverage, 10) });
+  } else {
+    _.forEach(rest, (line, instrument_id) => {
+      const info = getInfoFromInstrumentId(instrument_id);
+      res.push({ ...line, ...info });
+    });
+  }
+  return res;
+}
 function futureTick(res, o) {
   return _formatTick(res, o);
 }
@@ -467,8 +502,10 @@ module.exports = {
   formatFutureOrder: _formatFutureOrder,
   formatTick: _formatTick,
   //
+  futurePositions,
+  futurePositionsO: direct,
   futurePosition,
-  futurePositionO: direct,
+  futurePositionO,
   futureBalancesO,
   futureBalances,
   futureBalanceO,
@@ -504,5 +541,7 @@ module.exports = {
   futureTicksO: direct,
   futureTicks,
   futureTickO,
-  futureTick
+  futureTick,
+  lerverate,
+  lerverateO: direct
 };

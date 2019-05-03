@@ -33,7 +33,7 @@ function _getChanelObject(args, op = 'subscribe') {
 
 function genInstrumentChanelFn(chanel) {
   return (o = {}) => {
-    const pairs = (o.pairs && o.pairs.length) || _.map(o.coins, coin => `${coin}-USD`);
+    const pairs = (o.pairs && o.pairs.length) ? o.pairs : _.map(o.coins, coin => `${coin}-USD`);
     const contract_type = getContractTypeFromO(o);
     const args = [];
     _.forEach(pairs, (pair) => {
@@ -102,9 +102,12 @@ const futureBalance = {
   notNull: ['coins'],
   isSign: true,
   chanel: (o = {}) => _.map(o.coins, coin => `futures/account:${coin}`),
-  formater: res => _.flatten(_.map(res.data, (l) => {
-    return _.map(l, futureUtils.formatBalance);
-  }).filter(exist))
+  formater: (res) => {
+    return _.flatten(_.map(res.data, (l) => {
+      return _.map(l, futureUtils.formatBalance);
+    }).filter(exist))
+;
+  }
 };
 
 

@@ -1,4 +1,4 @@
-const Utils = require('exchanges/utils');
+const Utils = require('./../utils');
 const Event = require('bcore/event');
 const _ = require('lodash');
 // const config = require('./../config');
@@ -81,6 +81,7 @@ class exchange extends Event {
   }
   // CURD
   async get(endpoint, params, isSign) {
+    // console.log({ endpoint, params, isSign });
     return await this.request('GET', endpoint, params, isSign);
   }
   async post(endpoint, params, isSign) {
@@ -224,6 +225,7 @@ class exchange extends Event {
         // const str2 = `${method}: ${endpointCompile}`;
         // Utils.print(str2, 'gray');
         const tStart = new Date();
+        // console.log(endpointCompile, opt, sign, method, 'endpointCompile...');
         const ds = await this[method](endpointCompile, opt, sign);
         const dt = new Date() - tStart;
         if (UtilsInst.getError && ds) {
