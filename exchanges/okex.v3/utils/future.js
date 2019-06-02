@@ -53,10 +53,10 @@ function _formatFuturePosition(line) {
     coin,
     contract_type: future_id2contract_type(line.instrument_id),
     lever_rate: _parse(line.leverage),
-    long_leverage: _parse(line.long_leverage),
-    short_leverage: _parse(line.short_leverage),
-    updated_at: new Date(line.updated_at),
-    created_at: new Date(line.created_at),
+    long_lever_rate: _parse(line.long_leverage),
+    short_lever_rate: _parse(line.short_leverage),
+    server_updated_at: new Date(line.updated_at),
+    server_created_at: new Date(line.created_at),
     time: new Date(),
   };
 }
@@ -190,7 +190,8 @@ function futureOrderO(o = {}) {
   const instrument_id = getCurFutureInstrumentId(o);
   return {
     instrument_id,
-    ..._.pick(o, ['price', 'client_oid']),
+    ..._.pick(o, ['price']),
+    client_oid: o.client_oid || o.oid,
     size: amount,
     type: _.get(futureTypeMap, `${side}.${direction}`),
     match_price: type === 'LIMIT' ? 0 : 1, // 对手价
@@ -199,36 +200,39 @@ function futureOrderO(o = {}) {
 }
 function futureOrder(line, o = {}) {
   if (!line || !line.result) return false;
+  const pps = {};
+  if (line.created_at) pps.created_at = new Date(line.created_at);
   return {
+    ...pps,
     client_oid: line.client_oid,
     order_id: line.order_id,
     error: line.error_message,
     success: line.result,
     status: 'UNFINISH',
-    time: new Date(),
     ...o
   };
 }
 // 撤销订单
-function cancelFutureOrderO(o = {}) {
-  const { order_id } = o;
+function batchCancelFutureOrdersO(o) {
   const instrument_id = getCurFutureInstrumentId(o);
-  return { instrument_id, order_id };
+  return { instrument_id, order_ids: o.order_id };
 }
-function cancelFutureOrder(line, o) {
+
+function batchCancelFutureOrders(line, o) {
   if (!line) return false;
-  return {
-    client_oid: line.client_oid,
+  const { order_id, pair, contract_type } = line;
+  return _.map(order_id, l => ({
+    order_id: l.client_oid,
+    contract_type,
+    pair,
     status: 'CANCEL',
-    time: new Date(),
-    ...o
-  };
+  }));
 }
 // 批撤销订单
 function cancelAllFutureOrdersO(o = {}) {
   const { order_ids } = o;
   const instrument_id = getCurFutureInstrumentId(o);
-  return { instrument_id, order_ids };
+  return { instrument_id, order_ids: order_ids.slice(0, 20) };
 }
 function cancelAllFutureOrders(res, o) {
   if (!res || !res.result) return false;
@@ -251,6 +255,8 @@ const futureStatusMap = {
   CANCEL: -1
 };
 
+const reverseFutureStatusMap = _.invert(futureStatusMap);
+
 function _formatFutureOrder(l, o) {
   const info = getInfoFromInstrumentId(l.instrument_id);
   return {
@@ -262,10 +268,11 @@ function _formatFutureOrder(l, o) {
     price: _parse(l.price),
     price_avg: _parse(l.price_avg),
     lever_rate: _parse(l.leverage),
-    time: new Date(l.timestamp),
+    server_created_at: new Date(l.timestamp),
     order_id: l.order_id,
     client_oid: l.client_oid,
-    status: code2Side[l.type],
+    side: code2Side[l.type],
+    status: reverseFutureStatusMap[l.status],
     direction: code2Direction[l.type],
     ...o,
   };
@@ -445,7 +452,10 @@ function lerverate(o = {}) {
   } else {
     _.forEach(rest, (line, instrument_id) => {
       const info = getInfoFromInstrumentId(instrument_id);
-      res.push({ ...line, ...info });
+      const l = { ...line, ...info };
+      if (line.short_leverage) l.short_lever_rate = line.short_leverage;
+      if (line.long_leverage) l.long_lever_rate = line.long_leverage;
+      res.push(l);
     });
   }
   return res;
@@ -514,8 +524,8 @@ module.exports = {
   futureLedger,
   futureOrderO,
   futureOrder,
-  cancelFutureOrderO,
-  cancelFutureOrder,
+  batchCancelFutureOrdersO,
+  batchCancelFutureOrders,
   cancelAllFutureOrdersO,
   cancelAllFutureOrders,
   futureOrdersO,

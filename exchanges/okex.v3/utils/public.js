@@ -314,10 +314,11 @@ const orderStatusMap = {
 const reverseOrderStatusMap = _.invert(orderStatusMap);
 
 function formatOrder(d, o = {}) {
-  const t = d.created_at || d.timestamp;
   const { from, to, limit, ...rest } = o;
+  const pps = {};
+  if (d.created_at) pps.server_created_at = new Date(d.created_at);
   return {
-    time: t ? new Date(t) : new Date(),
+    // time: t ? new Date(t) : new Date(),
     instrument_id: d.instrument_id,
     side: (d.side || o.side || '').toUpperCase(),
     client_oid: d.client_oid,
@@ -331,6 +332,7 @@ function formatOrder(d, o = {}) {
     type: (d.type || o.type || '').toUpperCase(),
     status: orderStatusMap[d.status] || 'UNFINISH',
     price: _parse(d.price),
+    ...pps,
     ...rest
   };
 }
@@ -342,7 +344,7 @@ function orderO(o) {
     type: o.type.toLowerCase(),
     side: o.side.toLowerCase(),
     instrument_id: o.instrument_id || o.pair,
-    client_oid: o.client_oid
+    client_oid: o.client_oid || o.oid
   };
   if (type.toUpperCase() === 'LIMIT') {
     checkKey(o, ['price', 'amount']);

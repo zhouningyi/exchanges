@@ -70,7 +70,7 @@ class Exchange extends Base {
     this.wsFuturePosition = (o, cb) => this._addChanelV3('futurePosition', o, cb);
     this.wsFutureBalance = (o, cb) => this._addChanelV3('futureBalance', o, cb);
     this.wsFutureOrders = (o, cb) => this._addChanelV3('futureOrders', o, cb);
-    this.wsOrders = (o, cb) => this._addChanelV3('orders', o, cb);
+    this.wsSpotOrders = (o, cb) => this._addChanelV3('spotOrders', o, cb);
     this.wsDepth = (o, cb) => this._addChanelV3('depth', { pairs: this.getPairs(o) }, cb);
     this.wsBalance = (o, cb) => this._addChanelV3('balance', o, cb);
     this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
@@ -116,13 +116,13 @@ class Exchange extends Base {
       this.isWsLogin = true;
     });
   }
-  _genHeader(method, endpoint, params) {
+  _genHeader(method, endpoint, params, isSign) {
     const time = this._getTime();
     return {
       'Content-Type': 'application/json',
       'User-Agent': USER_AGENT,
       'OK-ACCESS-KEY': this.apiKey,
-      'OK-ACCESS-SIGN': this.getSignature(method, time, endpoint, params),
+      'OK-ACCESS-SIGN': isSign ? this.getSignature(method, time, endpoint, params) : '',
       'OK-ACCESS-TIMESTAMP': `${time}`,
       'OK-ACCESS-PASSPHRASE': this.passphrase
     };
@@ -142,16 +142,16 @@ class Exchange extends Base {
       uri: url,
       proxy: this.proxy,
       method,
-      headers: this._genHeader(method, endpoint, params),
+      headers: this._genHeader(method, endpoint, params, isSign),
       ...(method === 'GET' ? {} : { body: JSON.stringify(params) })
     };
     let body;
-    try {
-      body = await request(o);
-    } catch (e) {
-      if (e) console.log(e.message);
-      return false;
-    }
+    // try {
+    body = await request(o);
+    // } catch (e) {
+    //   if (e) console.log(e.message);
+    //   return false;
+    // }
     if (!body) {
       console.log(`${endpoint}: body 返回为空...`);
       return false;
@@ -164,13 +164,17 @@ class Exchange extends Base {
       console.log(`${endpoint}: ${body.msg}`);
       return false;
     }
-    if (body.error_code) {
+    if (body.error_code && body.error_code !== '0') {
+      // console.log(body, 'body...');
       const msg = `${error.getErrorFromCode(body.error_code)}`;
       console.log(`${msg} | ${endpoint}`, endpoint, params);
-      return Utils.throwError(msg);
+      return { error: msg };
     }
     if (body.error_message) {
-      return Utils.throwError(body.error_message);
+      return {
+        error: body.error_message
+      };
+      // return Utils.throwError(body.error_message);
     }
     return body.data || body || false;
   }

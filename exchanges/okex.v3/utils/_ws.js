@@ -89,21 +89,23 @@ class WS extends Event {
         process.exit();
       }
     };
-    ws.on('open', () => {
-      console.log('ws open...');
+    ws.on('open', (socket) => {
       this._isReady = true;
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
-    ws.on('pong', () => {
-      // console.log('pong');
+    ws.on('pong', (e) => {
+      // console.log(e, 'pong');
     });
     ws.on('ping', () => {
       console.log('ping');
     });
+    // ws.on('connection', (socket) => {
+    //   console.log(socket, 'socket...');
+    // });
     ws.on('error', (e) => {
       console.log(e, 'error');
-      this._isReady = false;
       process.exit();
+      this._isReady = false;
       return this.restart();
     });
     ws.on('close', (e) => {
@@ -120,6 +122,7 @@ class WS extends Event {
         this._onCallback(data, ws);
       } catch (error) {
         console.log(`ws Parse json error: ${error.message}`);
+        process.exit();
       }
       onceLoop(() => {
         ws.tryPing();

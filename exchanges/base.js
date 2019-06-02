@@ -80,14 +80,13 @@ class exchange extends Event {
     this[lock] = false;
   }
   // CURD
-  async get(endpoint, params, isSign) {
-    // console.log({ endpoint, params, isSign });
+  async get(endpoint, params, isSign = true) {
     return await this.request('GET', endpoint, params, isSign);
   }
-  async post(endpoint, params, isSign) {
+  async post(endpoint, params, isSign = true) {
     return await this.request('POST', endpoint, params, isSign);
   }
-  async delete(endpoint, params, isSign) {
+  async delete(endpoint, params, isSign = true) {
     return await this.request('DELETE', endpoint, params, isSign);
   }
   // 保存配置
@@ -203,7 +202,7 @@ class exchange extends Event {
     const UtilsInst = this.utils || this.Utils;
     if (!UtilsInst) Utils.warnExit(`${this.name}: this.Utils缺失`);
     checkKey(conf, ['endpoint', 'name', 'name_cn']);
-    const { name = key, notNull: checkKeyO, endpoint, sign = false, endpointParams } = conf;
+    const { name = key, notNull: checkKeyO, endpoint, sign = true, endpointParams } = conf;
     const formatOFn = UtilsInst[`${key}O`];
     if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}O()不存在`);
     const formatFn = UtilsInst[key];
@@ -230,9 +229,9 @@ class exchange extends Event {
         const dt = new Date() - tStart;
         if (UtilsInst.getError && ds) {
           const error = UtilsInst.getError(ds);
-          if (error) this.throwError(error);
+          if (error) return { error };
         }
-        if (!ds) return this.throwError('返回为空...');
+        if (!ds) return console.log(conf) && this.throwError('返回为空...');
         const res = formatFn ? formatFn(ds, o) : ds;
         this.addDt2Res(res, dt);
         return res;

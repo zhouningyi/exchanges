@@ -31,16 +31,26 @@ function wallet(ds, o) {
   return res;
 }
 
-function balancesO(o = {}) {
+function spotBalancesO(o = {}) {
   return o;
 }
 
-function balances(ds, o = {}) {
+function spotBalances(ds, o = {}) {
   const res = wallet(ds, o);
   if (!o.coins) return res;
   const coinMap = _.keyBy(o.coins, d => d);
   return _.filter(res, d => d.coin in coinMap);
 }
+
+function spotBalanceO(o = {}) {
+  return o;
+}
+
+function spotBalance(ds, o = {}) {
+  const res = wallet([ds], o);
+  return _.get(res, 0);
+}
+
 
 function spotLedgerO(o = {}) {
   return { ...o };
@@ -52,14 +62,14 @@ function spotLedger(res, o = {}) {
 }
 
 // 下单
-function orderO(o = {}) {
+function spotOrderO(o = {}) {
   return {
     ...publicUtils.orderO(o),
     margin_trading: 1
   };
 }
 
-function order(res, o = {}) {
+function spotOrder(res, o = {}) {
   if (!res || !res.result) return false;
   return formatOrder(res, o);
 }
@@ -85,22 +95,33 @@ function cancelOrder(res, o = {}) {
 }
 
 // 批量撤单
-function cancelAllOrdersO(o = {}) {
-  const { pair, order_ids } = o;
-  if (order_ids && order_ids.length > 4) Utils.throwError('cancelAllOrdersO： 订单不超过4个');
-  return _.map(order_ids, (order_id) => {
+function batchCancelSpotOrdersO(o = {}) {
+  o = _.map(_.groupBy(o, 'pair'), (l, pair) => {
     return {
       instrument_id: pair.toLowerCase(),
-      order_ids: [order_id]
+      order_ids: _.map(l, _l => _l.order_id).slice(0, 9)
     };
   });
+  return o;
 }
-function cancelAllOrders(res, o = {}) {
-  console.log(res);
+
+function batchCancelSpotOrders(ds) {
+  const res = [];
+  _.forEach(ds, (d, pair) => {
+    _.forEach(d, (_d) => {
+      res.push({
+        client_oid: _d.client_oid,
+        order_id: _d.order_id,
+        success: _d.result,
+        pair: pair.toUpperCase()
+      });
+    });
+  });
+  return res;
 }
 
 // 所有订单
-function ordersO(o = {}) {
+function spotOrdersO(o = {}) {
   const { pair, status, ...rest } = o;
   return {
     instrument_id: pair,
@@ -108,26 +129,26 @@ function ordersO(o = {}) {
     ...rest
   };
 }
-function orders(res, o) {
+function spotOrders(res, o) {
   return _.map(res, d => formatOrder(d, o));
 }
 //
-function unfinishOrdersO(o = {}) {
+function unfinishSpotOrdersO(o = {}) {
   const { pair, ...rest } = o;
   return { instrument_id: pair, ...rest };
 }
 
-function unfinishOrders(res, o) {
+function unfinishSpotOrders(res, o) {
   return _.map(res, d => formatOrder(d, o));
 }
 
-function orderInfoO(o = {}) {
+function spotOrderInfoO(o = {}) {
   return {
     instrument_id: o.pair,
     order_id: o.order_id
   };
 }
-function orderInfo(res, o) {
+function spotOrderInfo(res, o) {
   return formatOrder(res, o);
 }
 
@@ -185,22 +206,24 @@ module.exports = {
   pairsO: direct,
   pairs,
   // order
-  balancesO,
-  balances,
+  spotBalancesO,
+  spotBalances,
+  spotBalance,
+  spotBalanceO,
   spotLedgerO,
   spotLedger,
-  ordersO,
-  orders,
-  orderO,
-  order,
-  unfinishOrdersO,
-  unfinishOrders,
+  spotOrdersO,
+  spotOrders,
+  spotOrderO,
+  spotOrder,
+  unfinishSpotOrdersO,
+  unfinishSpotOrders,
   cancelOrderO,
   cancelOrder,
-  cancelAllOrdersO,
-  cancelAllOrders,
-  orderInfoO,
-  orderInfo,
+  batchCancelSpotOrdersO,
+  batchCancelSpotOrders,
+  spotOrderInfoO,
+  spotOrderInfo,
   orderDetailO,
   orderDetail
 };

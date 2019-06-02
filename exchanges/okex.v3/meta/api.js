@@ -88,8 +88,16 @@ module.exports = {
     endpoint: 'account/v3/ledger',
   },
   // // // // // // // 现货部分  // // // // // // //
-  balances: {
-    name: 'balances',
+  spotBalance: {
+    name: 'spotBalance',
+    name_cn: '余额',
+    sign: true,
+    endpoint: 'spot/v3/accounts/{coin}',
+    endpointParams: ['coin'],
+    notNull: ['coin']
+  },
+  spotBalances: {
+    name: 'spotBalances',
     name_cn: '余额',
     sign: true,
     endpoint: 'spot/v3/accounts',
@@ -109,9 +117,9 @@ module.exports = {
     access: ['from', 'to', 'limit'],
     notNull: ['coin']
   },
-  order: {
+  spotOrder: {
     method: 'POST',
-    name: 'order',
+    name: 'spotOrder',
     name_cn: '现货买卖操作',
     desc: '',
     sign: true,
@@ -127,20 +135,23 @@ module.exports = {
     endpointParams: ['order_id'],
     access: ['client_oid'],
     notNull: ['order_id', 'pair'],
+    sign: true,
     rateLimit: 2000 / 100
   },
-  cancelAllOrders: {
+  batchCancelSpotOrders: {
     method: 'POST',
-    name: 'cancelAllOrders',
+    name: 'batchCancelSpotOrders',
     name_cn: '撤销订单',
     desc: '最多4笔一次',
     endpoint: 'spot/v3/cancel_batch_orders',
-    notNull: ['order_ids', 'pair'],
+    sign: true,
+    // notNull: ['order_ids', 'pair'],
     rateLimit: 2000 / 50
   },
-  orderInfo: {
+  spotOrderInfo: {
     method: 'GET',
-    name: 'orderInfo',
+    name: 'spotOrderInfo',
+    sign: true,
     name_cn: '订单详情',
     endpoint: 'spot/v3/orders/{order_id}',
     endpointParams: ['order_id'],
@@ -152,22 +163,25 @@ module.exports = {
     name_cn: '成交订单详情',
     endpoint: 'spot/v3/fills',
     notNull: ['pair', 'order_id'],
+    sign: true,
   },
-  unfinishOrders: {
+  unfinishSpotOrders: {
     method: 'GET',
-    name: 'unfinishOrders',
+    name: 'unfinishSpotOrders',
     desc: '可以不区分pair地获取所有未成交订单',
     name_cn: '未成交订单',
     endpoint: 'spot/v3/orders_pending',
+    sign: true,
     notNull: []
   },
-  orders: {
+  spotOrders: {
     method: 'GET',
-    name: 'orders',
+    name: 'spotOrders',
     name_cn: '订单',
     desc: '区分pair地获取订单',
     endpoint: 'spot/v3/orders',
     notNull: ['pair'],
+    sign: true,
   },
   // // // // // // // 杠杆交易  // // // // // // //
   marginBalance: {
@@ -180,7 +194,7 @@ module.exports = {
     name: 'marginCoins',
     name_cn: '杠杆账户各币种信息',
     desc: '获取币币杠杆账户的借币配置信息，包括当前最大可借、借币利率、最大杠杆倍数',
-    sign: false,
+    sign: true,
     endpoint: 'margin/v3/accounts/availability',
   },
   borrowHistory: {
@@ -224,11 +238,13 @@ module.exports = {
     method: 'POST',
     name: 'cancelMarginOrder',
     name_cn: '撤销指定订单',
+    sign: true,
     endpoint: 'margin/v3/cancel_orders/{order_id}',
     endpointParams: ['order_id'],
     notNull: ['order_id', 'instrument_id']
   },
   marginOrders: {
+    sign: true,
     method: 'GET',
     name: 'marginOrders',
     defaultOptions: {
@@ -239,6 +255,7 @@ module.exports = {
     notNull: ['instrument_id']
   },
   unfinishMarginOrders: {
+    sign: true,
     method: 'GET',
     name: 'unfinishMarginOrders',
     name_cn: '获取所有未成交订单',
@@ -369,27 +386,28 @@ module.exports = {
     method: 'POST',
     name: 'futureOrder',
     name_cn: '期货下单',
+    sign: true,
     endpoint: 'futures/v3/order',
     accept: ['client_oid'],
     notNull: ['pair', 'contract_type', 'side', 'type', 'direction', 'lever_rate'],
     rateLimit: 2000 / 20
   },
-  cancelFutureOrder: {
+  // cancelFutureOrder: {
+  //   method: 'POST',
+  //   name: 'cancelFutureOrder',
+  //   name_cn: '期货撤单',
+  //   endpoint: 'futures/v3/cancel_order/{instrument_id}/{order_id}',
+  //   endpointParams: ['order_id', 'instrument_id'],
+  //   notNull: ['pair', 'contract_type', 'order_id'],
+  //   rateLimit: 2000 / 10
+  // },
+  batchCancelFutureOrders: {
     method: 'POST',
-    name: 'cancelFutureOrder',
-    name_cn: '期货撤单',
-    endpoint: 'futures/v3/cancel_order/{instrument_id}/{order_id}',
-    endpointParams: ['order_id', 'instrument_id'],
-    notNull: ['pair', 'contract_type', 'order_id'],
-    rateLimit: 2000 / 10
-  },
-  cancelAllFutureOrders: {
-    method: 'POST',
-    name: 'cancelAllFutureOrders',
+    name: 'batchCancelFutureOrders',
     name_cn: '撤销所有订单',
     endpoint: 'futures/v3/cancel_batch_orders/{instrument_id}',
     endpointParams: ['instrument_id'],
-    notNull: ['pair', 'contract_type', 'order_ids'],
+    // notNull: ['pair', 'contract_type', 'order_ids'],
     rateLimit: 2000 / 5
   },
   futureOrders: {
@@ -401,7 +419,8 @@ module.exports = {
     endpoint: 'futures/v3/orders/{instrument_id}',
     accept: ['from', 'to', 'limit'],
     notNull: ['status', 'pair', 'contract_type'],
-    rateLimit: 2000 / 10
+    rateLimit: 2000 / 10,
+    sign: true
   },
   unfinishFutureOrders: {
     method: 'GET',

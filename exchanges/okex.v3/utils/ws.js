@@ -42,6 +42,7 @@ function genInstrumentChanelFn(chanel) {
         args.push(`${chanel}:${instrument_id}`);
       });
     });
+    // console.log(args);
     return args;
   };
 }
@@ -110,7 +111,6 @@ const futureBalance = {
   }
 };
 
-
 const futureOrders = {
   name: 'futures/order',
   isSign: true,
@@ -119,7 +119,7 @@ const futureOrders = {
   formater: res => _.map(res.data, final(futureUtils.formatFutureOrder)).filter(exist)
 };
 
-const orders = {
+const spotOrders = {
   name: 'spot/order',
   notNull: ['pairs'],
   isSign: true,
@@ -183,7 +183,7 @@ module.exports = {
   ..._ws,
   // spot
   ticks,
-  orders,
+  spotOrders,
   depth,
   balance,
   getChanelObject: _getChanelObject,
