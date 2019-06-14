@@ -21,7 +21,7 @@ function future_id2contract_type(instrument_id) {
   const year = tsr.substring(0, 2);
   const month = tsr.substring(2, 4);
   const day = tsr.substring(4, 6);
-  const tstr = `20${year}-${month}-${day}`;
+  const tstr = `20${year}-${month}-${day} 16:00:00`;
   const dt = new Date(tstr) - new Date();
   if (dt > d14) return 'quarter';
   if (dt > d7) return 'next_week';
@@ -152,7 +152,8 @@ function _formatPair(pair) {
 function getFutureInstrumentId(pair, contract_type, t = new Date()) {
   const date = Utils.getFutureSettlementDay(t, contract_type);
   const tstr = date.split('-').join('').substring(2);
-  return `${_formatPair(pair)}-${tstr}`;
+  const res = `${_formatPair(pair)}-${tstr}`;
+  return res;
 }
 function getCurFutureInstrumentId(o) {
   const { pair, contract_type } = o;
