@@ -8,8 +8,6 @@ const { accountTypeMap } = require('./public');
 const { checkKey, throwError, cleanObjectNull } = Utils;
 
 
-// function
-
 const { _parse } = Utils;
 
 const d7 = 7 * 24 * 3600 * 1000;

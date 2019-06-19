@@ -86,7 +86,7 @@ function getFutureSettlementTime(t, type = 'quarter') {
     const st = setts[i];
     const dt = st - t;
     if (type === 'quarter') {
-      if (dt > 0) return st;
+      if (dt > WEEK * 2) return st;
     } else if (type === 'next_week') {
       if (dt > WEEK && dt <= 2 * WEEK) {
         return st;
