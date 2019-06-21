@@ -19,7 +19,7 @@ function future_id2contract_type(instrument_id) {
   const year = tsr.substring(0, 2);
   const month = tsr.substring(2, 4);
   const day = tsr.substring(4, 6);
-  const tstr = `20${year}-${month}-${day} 16:00:00`;
+  const tstr = `20${year}-${month}-${day} 16:10:00`;
   const dt = new Date(tstr) - new Date();
   if (dt > d14) return 'quarter';
   if (dt > d7) return 'next_week';
@@ -442,6 +442,22 @@ function futureTickO(o = {}) {
   return { instrument_id };
 }
 
+function setLerverate(d) {
+  return {
+    success: !!d.result,
+    margin_mode: d.margin_mode,
+    lever_rate: d.leverage,
+    coin: d.currency
+  };
+}
+
+function setLerverateO(o = {}) {
+  return {
+    coin: o.coin,
+    leverage: o.lever_rate
+  };
+}
+
 function lerverate(o = {}) {
   const { margin_mode, ...rest } = o;
   const res = [];
@@ -551,6 +567,8 @@ module.exports = {
   futureTicks,
   futureTickO,
   futureTick,
+  setLerverate,
+  setLerverateO,
   lerverate,
   lerverateO: direct
 };

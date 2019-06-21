@@ -342,6 +342,14 @@ module.exports = {
     endpoint: 'futures/v3/position',
     notNull: []
   },
+  setLerverate: {
+    method: 'POST',
+    name: 'setLerverate',
+    name_cn: '设置币种的杠杆数',
+    endpoint: 'futures/v3/accounts/{coin}/leverage',
+    endpointParams: ['coin'],
+    notNull: ['coin', 'lever_rate'],
+  },
   lerverate: {
     method: 'GET',
     name: 'lerverate',
