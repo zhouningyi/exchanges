@@ -180,7 +180,6 @@ class exchange extends Event {
   }
   getEndPoint(endpoint, endpointParams, params) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
     if (!endpointParams || !endpointParams.length) return endpoint;
-    // console.log(endpoint, params, 'endpointParams');
     endpoint = _.template(endpoint)(params);
     _.forEach(endpointParams, (k) => {
       delete params[k];

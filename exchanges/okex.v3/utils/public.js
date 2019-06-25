@@ -255,7 +255,6 @@ function parseTypeName(typeName) {
   if (typeName.indexOf('From: C2C account') !== -1) return { action_type: 'IN', reference_account_type: 'c2c' };
   if (typeName.indexOf('To: spot account') !== -1) return { action_type: 'OUT', reference_account_type: 'spot' };
   if (typeName.indexOf('From: spot account') !== -1) return { action_type: 'IN', reference_account_type: 'spot' };
-  console.log(typeName, 'typeName......=>');
   return {
   };
 }

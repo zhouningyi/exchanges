@@ -58,7 +58,7 @@ function getTimeString(t, type = 'day') {
 }
 
 //
-const SETTLE_TIME = '16:00:00';
+const SETTLE_TIME = '16:10:00';
 const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27'];
 function getSettlementTimes(t = new Date(), type = 'quarter') { // 今年4个季度以及明年三个季度
   t = fixTime(t);
