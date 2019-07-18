@@ -9,6 +9,18 @@
     "symbol": {
       "type": ["STRING", 10]
     },
+    "max_order_amout": {
+      "type": "FLOAT"
+    },
+    "min_order_amout": {
+      "type": "FLOAT"
+    },
+    "state": {
+      "type": ["STRING", 10]
+    },
+    "lever_rate": {
+      "type": "INTEGER"
+    },
     "quote_asset_precision": {
       "type": "INTEGER"
     },

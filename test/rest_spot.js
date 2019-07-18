@@ -1,10 +1,25 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['okexV3']; // bikicoin
+const exchanges = ['huobi']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
 const tasks = [
+    // {
+  //   fn: 'pairs',
+  //   params: {},
+  //   name: '交易对信息'
+  // },
+  // {
+  //   fn: 'coins',
+  //   params: {},
+  //   name: '币信息'
+  // },
+  // {
+  //   fn: 'time',
+  //   params: {},
+  //   name: '时间1'
+  // },
   // {
   //   fn: 'swapTicks',
   //   name: '永续合约行情'
@@ -168,16 +183,7 @@ const tasks = [
   //   },
   //   name: '已经完成的订单'
   // },
-  // {
-  //   fn: 'pairs',
-  //   params: {},
-  //   name: '交易对信息'
-  // },
-  // {
-  //   fn: 'coins',
-  //   params: {},
-  //   name: '币信息'
-  // },
+
   // {
   //   fn: 'marginBalance',
   //   params: {
@@ -185,11 +191,11 @@ const tasks = [
   //   },
   //   name: '杠杆账户余额'
   // },
-  {
-    fn: 'marginCoins',
-    params: {},
-    name: '杠杆账户各币种信息'
-  },
+  // {
+  //   fn: 'marginCoins',
+  //   params: {},
+  //   name: '杠杆账户各币种信息'
+  // },
   // {
   //   fn: 'tick',
   //   params: { pair: 'ETH-USDT' },
@@ -200,11 +206,11 @@ const tasks = [
   //   params: {},
   //   name: 'bitmex 互换资费'
   // },
-  // {
-  //   fn: 'ticks',
-  //   params: { pair: 'OKB-USDT' },
-  //   name: 'ticks数据'
-  // },
+  {
+    fn: 'spotTicks',
+    params: {},
+    name: 'ticks数据'
+  },
 
   // {
   //   fn: 'accounts',
@@ -237,9 +243,9 @@ const tasks = [
   // },
 
   // {
-  //   fn: 'kline',
+  //   fn: 'spotKline',
   //   params: { pair: 'ETH-BTC', interval: '1m' },
-  //   name: 'orderBook数据'
+  //   name: 'spot kline'
   // },
 // / {
 //   fn: 'orderBook',

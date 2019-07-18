@@ -1,226 +1,203 @@
 // const Utils = require('./utils');
-const Base = require('./../base');
-const request = require('./../../utils/request');
+// const deepmerge = require('deepmerge');
 const crypto = require('crypto');
-const CryptoJS = require('crypto-js');
-const HmacSHA256 = require('crypto-js/hmac-sha256');
-const moment = require('moment');
-const md5 = require('md5');
 const _ = require('lodash');
+const error = require('./errors');
+const Base = require('./../base');
+const kUtils = require('./utils');
 const Utils = require('./../../utils');
-const tUtils = require('./utils');
-const WebSocket = require('ws');
+const request = require('./../../utils/request');
+// const { exchangePairs } = require('./../data');
+const { USER_AGENT, WS_BASE } = require('./config');
+const restConfig = require('./meta/api');
+const future_pairs = require('./meta/future_pairs.json');
 
-const { checkKey } = Utils;
-// /market
-const REST_URL = 'api.huobipro.com';
-const USER_AGENT = 'Mozilla/4.0 (compatible; Node Binance API)';
-const CONTENT_TYPE = 'application/x-www-form-urlencoded';
-const WS_BASE = 'wss://api.huobi.pro/ws';
 //
-const DEFAULT_HEADERS = {
-  'Content-Type': 'application/json',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36'
-};
+const { checkKey } = Utils;
+//
 
-const subscribe = Utils.ws.genSubscribe(WS_BASE);
+// function mergeArray(data, d) {
+//   return data.concat(data, d);
+// }
 
+function merge(data, d) {
+  return { ...data, ...d };
+}
+
+// const URL = 'https://www.okex.com/api';
+const URL = 'https://api.huobi.pro';
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
-    this.name = 'huobi';
+    this.url = URL;
     this.version = 'v1';
+    this.name = 'huobi';
     this.init();
   }
-  getSignature(params) {
-    params = _.cloneDeep(params);
-    params.secret_key = this.apiSecret;
-    const ordered = [];
-    Object.keys(params).sort().forEach((key) => {
-      ordered.push(`${key}=${ordered[key]}`);
-    });
-    return md5(ordered.join('&')).toLowerCase();
-  }
   async init() {
-    // const waitTime = 1000 * 60 * 5;
-    // const pairs = await this.pairs();
-    // tUtils.updatePairs(pairs);
-    // await Utils.delay(waitTime);
-    // await this.init();
+    this.Utils = kUtils;
+    this.loadFnFromConfig(restConfig);
+    await this.updatePairs();
+    // this.initWs();
   }
-  testOrder(o) {
-    return tUtils.testOrder(o);
+  getSignature(method, time, endpoint, params, isws = false) {
+    method = method.toUpperCase();
+    const paramStr = method === 'GET' ? Utils.getQueryString(params) : JSON.stringify(params);
+    const sign = method === 'GET' ? '?' : '';
+    const root = isws ? '' : 'api/';
+    const totalStr = [`${time}${method}/${root}${endpoint}`, paramStr].filter(d => d).join(sign);// paramStr
+    return crypto.createHmac('sha256', this.apiSecret).update(totalStr).digest('base64');// .toString('base64');
   }
-  async time() {
-    return await this.get('time');
+  async updatePairs() {
+    const pairs = this.pairs = await this.pairs();
+    if (pairs && pairs.length) this.saveConfig(pairs, 'pairs');
   }
-  async kline(o = {}) {
-    const defaultO = {
-      size: 2000
+  _getTime() {
+    return new Date().toISOString();
+  }
+  getPairs(o = {}) {
+    return o.pairs || this.pairs;
+  }
+  //
+  initWs(o = {}) {
+    if (!this.ws) {
+      try {
+        this.ws = kUtils.ws.genWs(WS_BASE, { proxy: this.proxy });
+        this.loginWs();
+      } catch (e) {
+        console.log('initWs error');
+        process.exit();
+      }
+    }
+    this.wsFutureIndex = (o, cb) => this._addChanelV3('futureIndex', { pairs: this.getPairs(o) }, cb);
+    this.wsTicks = (o, cb) => this._addChanelV3('ticks', { pairs: this.getPairs(o) }, cb);
+    this.wsFutureDepth = (o, cb) => this._addChanelV3('futureDepth', { ...o, pairs: this.getPairs(o) }, cb);
+    this.wsFutureTicks = (o, cb) => this._addChanelV3('futureTicks', { pairs: this.getPairs(o), contract_type: o.contract_type }, cb);
+    this.wsFuturePosition = (o, cb) => this._addChanelV3('futurePosition', o, cb);
+    this.wsFutureBalance = (o, cb) => this._addChanelV3('futureBalance', o, cb);
+    this.wsFutureOrders = (o, cb) => this._addChanelV3('futureOrders', o, cb);
+    this.wsSpotOrders = (o, cb) => this._addChanelV3('spotOrders', o, cb);
+    this.wsDepth = (o, cb) => this._addChanelV3('depth', { pairs: this.getPairs(o) }, cb);
+    this.wsBalance = (o, cb) => this._addChanelV3('balance', o, cb);
+    this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
+    this.wsSwapDepth = (o, cb) => this._addChanelV3('swapDepth', o, cb);
+  }
+  _addChanelV3(wsName, o = {}, cb) {
+    const { ws } = this;
+    const fns = kUtils.ws[wsName];
+    if (fns.notNull) checkKey(o, fns.notNull);
+    if (!ws || !ws.isReady()) return setTimeout(() => this._addChanelV3(wsName, o, cb), 100);
+    if (fns.isSign && !this.isWsLogin) return setTimeout(() => this._addChanelV3(wsName, o, cb), 100);
+
+    let chanel = fns.chanel(o);
+    if (Array.isArray(chanel)) chanel = kUtils.ws.getChanelObject(chanel);
+    //
+    const validate = res => _.get(res, 'table') === fns.name;
+    //
+    ws.send(chanel);
+    const callback = this.genWsDataCallBack(cb, fns.formater);
+    ws.onData(validate, callback);
+  }
+  genWsDataCallBack(cb, formater) {
+    return (ds) => {
+      if (!ds) return [];
+      const error_code = _.get(ds, 'error_code') || _.get(ds, '0.error_code') || _.get(ds, '0.data.error_code');
+      if (error_code) {
+        const str = `${ds.error_message || error.getErrorFromCode(error_code)} | [ws]`;
+        throw new Error(str);
+      }
+      cb(formater(ds));
     };
-    checkKey(o, ['interval', 'pair']);
-    o = { ...defaultO, ...o };
-    const opt = tUtils.formatKlineO(o);
-    const ds = await this.get('market/history/kline', opt, false);
-    return tUtils.formatKline(ds, o);
   }
-  async prices(o = {}) {
-    const ds = await this.get('v3/ticker/price', o, false);
-    return ds;
+  loginWs() {
+    if (!this.apiSecret) return;
+    const t = `${Date.now() / 1000}`;
+    const endpoint = 'users/self/verify';
+    const sign = this.getSignature('GET', t, endpoint, {}, true);
+    const chanel = { op: 'login', args: [this.apiKey, this.passphrase, t, sign] };
+    const { ws } = this;
+    if (!ws || !ws.isReady()) return setTimeout(() => this.loginWs(), 100);
+    ws.send(chanel);
+    ws.onLogin(() => {
+      this.isWsLogin = true;
+    });
   }
-  async ticks(o = {}) {
-    const ds = await this.get('v3/ticker/bookTicker', o);
-    return tUtils.formatTicks(ds);
-  }
-  async order(o) {
-    const opt = tUtils.formatOrderO(o);
-    if (!opt) return;
-    const ds = await this.post('v3/order', opt, true, true);
-    if (ds) {
-      Utils.print(`${opt.side} - ${o.pair} - ${ds.executedQty}/${o.amount}`, 'red');
-    }
-    return ds;
-  }
-  async fastOrder(o) {
-    checkKey(o, ['amount', 'side', 'pair']);
-    const waitTime = 200;
-    const ds = await this.order(o);
-    if (!ds) return;
-    if (ds.status === 'NEW') {
-      await Utils.delay(waitTime);
-      await this.cancelOrder({
-        order_id: ds.order_id,
-        pair: o.pair,
-        side: o.side
-      });
-      return ds;
-    }
-    return ds;
-  }
-  async cancelOrder(o) {
-    checkKey(o, ['order_id', 'side']);
-    o = tUtils.formatCancelOrderO(o);
-    const ds = await this.delete('v3/order', o, true, true);
-    return ds;
-  }
-  async activeOrders(o = {}) {
-    const ds = await this.get('v3/openOrders', o, true, true);
-    return tUtils.formatActiveOrders(ds);
-  }
-  async pairs(o = {}) {
-    const ds = await this.get('market', o);
-    console.log(ds);
-    // return tUtils.formatPairs(_.get(ds, 'symbols'));
-  }
-  async accounts() {
-    const endpoint = '/v1/account/accounts';
-    const ds = await this.get(endpoint, {}, true);
-    return ds;
-  }
-  async balances(o = {}) {
-    const defaultO = { type: 'spot' };
-    o = { ...defaultO, ...o };
-    const id = o.type === 'spot' ? this.spot_id : this.otc_id;
-    const endpoint = `/v1/account/accounts/${id}/balance`;
-    const ds = await this.get(endpoint, {}, true);
-    return tUtils.formatBalance(ds);
-  }
-  // async orderBook(o = {}) {
-  //   return await this.get('v3/allOrders', o, true, true);
-  // }
-  // async depth(o = {}) {
-  //   o = { limit: 20, ...o };
-  //   const ds = await this.get('v1/depth', o);
-  //   return tUtils.formatDepth(ds);
-  // }
-  // async ping() {
-  //   const ds = await this.get('v1/ping');
-  //   return !!ds;
-  // }
-  // async balances(o = {}) {
-  //   const ds = await this.get('v3/account', {}, true, true);
-  //   return tUtils.formatBalances(_.get(ds, 'balances'), o);
-  // }
-  signSha(method, baseurl, path, data) {
-    // console.log(method, baseurl, path, data, 'method, baseurl, path, data');
-    const pars = [];
-    for (const item in data) {
-      pars.push(`${item}=${encodeURIComponent(data[item])}`);
-    }
-    let p = pars.sort().join('&');
-    console.log(p);
-    const meta = [method, baseurl, path, p].join('\n');
-    const hash = HmacSHA256(meta, this.apiSecret);
-    // const signatureStr = new Buffer(meta).toString('base64');
-    const Signature = encodeURIComponent(CryptoJS.enc.Base64.stringify(hash));
-    // const hash = crypto.createHmac('sha256', this.apiSecret).update(signatureStr).digest('hex');
-    // const sig = new Buffer(hash).toString('base64');
-    // const Signature = encodeURIComponent(hash);
-    p += `&Signature=${Signature}`;
-    return p;
-  }
-  _getBody() {
+  _genHeader(method, endpoint, params, isSign) {
+    const time = this._getTime();
     return {
-      AccessKeyId: this.apiKey,
-      SignatureMethod: 'HmacSHA256',
-      SignatureVersion: 2,
-      Timestamp: moment.utc().format('YYYY-MM-DDTHH:mm:ss'),
+      'Content-Type': 'application/json',
+      'User-Agent': USER_AGENT,
+      'OK-ACCESS-KEY': this.apiKey,
+      'OK-ACCESS-SIGN': isSign ? this.getSignature(method, time, endpoint, params) : '',
+      'OK-ACCESS-TIMESTAMP': `${time}`,
+      'OK-ACCESS-PASSPHRASE': this.passphrase
     };
   }
-
-
-  async request(method = 'GET', endpoint, params = {}, isSign, isTimestamp) {
-    const { options } = this;
-    params = tUtils.formatPair(params);
-    // params.AccessKeyId = this.apiKey;
-    if (method === 'GET') {
-    } else if (method === 'POST') {
+  async request(method = 'GET', endpoint, params = {}, isSign = false) {
+    params = Utils.cleanObjectNull(params);
+    params = _.cloneDeep(params);
+    const qstr = Utils.getQueryString(params);
+    let url;
+    if (endpoint.startsWith('http')) {
+      url = endpoint;
+    } else {
+      url = `${URL}/${endpoint}`;
     }
-    let qstr = '';
-    if (isSign) {
-      const info = this._getBody();
-      const payload = this.signSha(method, REST_URL, endpoint, info);
-      qstr = payload; // [payload].join('&');// qstr,
-    }
-    const url = `https://${REST_URL}${endpoint}?${qstr}`;
+    if (method === 'GET' && qstr) url += `?${qstr}`;
     const o = {
-      timeout: options.timeout,
       uri: url,
       proxy: this.proxy,
       method,
-      headers: {
-        ...DEFAULT_HEADERS,
-        // ...(isSign ? {
-        //   // AuthData: this.getAuth(),
-        //   'User-Agent': USER_AGENT,
-        //   'X-MBX-APIKEY': this.apiKey
-        // } : {})
-      },
+      headers: this._genHeader(method, endpoint, params, isSign),
+      ...(method === 'GET' ? {} : { body: JSON.stringify(params) })
     };
-    //
     let body;
-    try {
-      // console.log('request', o);
-      body = await request(o);
-      // console.log(body, 'body...');
-    } catch (e) {
-      if (e) console.log('request...', e.message || e);
-      return null;
+    // try {
+    body = await request(o);
+    // } catch (e) {
+    //   if (e) console.log(e.message);
+    //   return false;
+    // }
+    if (!body) {
+      console.log(`${endpoint}: body 返回为空...`);
+      return false;
     }
-    const error = body['err-msg'];
-    if (error) throw error;
-    return body.data || body;
+    if (body.code === 500) {
+      console.log(`${endpoint}: code 500, 服务拒绝...`);
+      return false;
+    }
+    if (body.code === -1) {
+      console.log(`${endpoint}: ${body.msg}`);
+      return false;
+    }
+    if (body.error_code && body.error_code !== '0') {
+      // console.log(body, 'body...');
+      const msg = `${error.getErrorFromCode(body.error_code)}`;
+      console.log(`${msg} | ${endpoint}`, endpoint, params);
+      return { error: msg };
+    }
+    if (body.error_message) {
+      return {
+        error: body.error_message
+      };
+      // return Utils.throwError(body.error_message);
+    }
+    return body.data || body || false;
   }
-  //
-  wsTicks(o, cb) {
-    const { proxy } = this;
-    subscribe('!ticker@arr', (data = {}) => {
-      data = data.data;
-      if (!data) return console.log(`${'wsTicks'}数据为空....`);
-      data = tUtils.formatTicksWS(data);
-      cb(data);
-    }, { proxy });
+  calcCost(o = {}) {
+    checkKey(o, ['source', 'target', 'amount']);
+    let { source, target, amount } = o;
+    const outs = { BTC: true, ETH: true, USDT: true };
+    source = source.toUpperCase();
+    target = target.toUpperCase();
+    if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
+    return 0.002 * amount;
   }
+  // calcCostFuture(o = {}) {
+  //   checkKey(o, ['coin', 'side', 'amount']);
+  //   const { coin, amount, side = 'BUY' } = o;
+  // }
 }
 
 module.exports = Exchange;
+
