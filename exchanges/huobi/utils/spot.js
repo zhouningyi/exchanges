@@ -29,12 +29,15 @@ function spotKline(ds, o) {
   return _.map(ds, (d) => {
     return {
       unique_id: `${o.pair}${d.id}`,
+      time: new Date(d.id * 1000),
       low: d.low,
       high: d.high,
       open: d.open,
       close: d.close,
       count: d.count,
       amount: d.amount,
+      interval: o.interval,
+      pair: o.pair
     };
   });
 }

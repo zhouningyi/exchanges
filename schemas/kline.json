@@ -18,7 +18,7 @@
     "open": "FLOAT",
     "close": "FLOAT",
     "high": "FLOAT",
-    "low": ["STRING", 10],
+    "low":  "FLOAT",
     "amount": "FLOAT",
     "count": {
       "type": "FLOAT",

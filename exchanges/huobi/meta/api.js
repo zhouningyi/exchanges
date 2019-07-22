@@ -6,6 +6,7 @@ module.exports = {
   pairs: {
     name: 'pairs',
     name_cn: '币对信息',
+    sign: false,
     endpoint: 'v1/common/symbols',
   },
   //
