@@ -206,11 +206,11 @@ const tasks = [
   //   params: {},
   //   name: 'bitmex 互换资费'
   // },
-  {
-    fn: 'spotTicks',
-    params: {},
-    name: 'ticks数据'
-  },
+  // {
+  //   fn: 'spotTicks',
+  //   params: {},
+  //   name: 'ticks数据'
+  // },
 
   // {
   //   fn: 'accounts',

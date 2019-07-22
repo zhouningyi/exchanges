@@ -152,6 +152,7 @@ function genSubscribe(stream) {
     //
     let ws;
     try {
+      console.log(stream + endpoint);
       ws = new WebSocket(stream + endpoint, options);
     } catch (e) {
       console.log(e);

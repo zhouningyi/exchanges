@@ -181,6 +181,15 @@ class Exchange extends Base {
       cb(data);
     }, { proxy });
   }
+  wsDepth(o, cb) {
+    const { proxy } = this;
+    subscribe('btcusdt@depth', (data = {}) => {
+      data = data.data;
+      // if (!data) return console.log(`${'wsTicks'}数据为空....`);
+      // data = tUtils.formatTicksWS(data);
+      cb(data);
+    }, { proxy });
+  }
   //
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);

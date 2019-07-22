@@ -35,13 +35,13 @@ const wsList = [
   //   },
   //   name: '永续合约tick...'
   // },
-  {
-    fn: 'wsFutureBalance',
-    params: {
-      coins: ['EOS', 'ETH'],
-    },
-    name: 'wsFutureBalance'
-  },
+  // {
+  //   fn: 'wsFutureBalance',
+  //   params: {
+  //     coins: ['EOS', 'ETH'],
+  //   },
+  //   name: 'wsFutureBalance'
+  // },
   // {
   //   fn: 'wsFutureIndex',
   //   params: {
@@ -127,14 +127,14 @@ const wsList = [
   //   name: '期货深度图'
   // },
 
-  // {
-  //   fn: 'wsDepth',
-  //   params: {
-  //     contract_type: 'quarter',
-  //     pairs: ['EOS-USDT']// 'BTC-USDT',
-  //   },
-  //   name: '深度图'
-  // },
+  {
+    fn: 'wsDepth',
+    params: {
+      contract_type: 'quarter',
+      pairs: ['EOS-USDT']// 'BTC-USDT',
+    },
+    name: '深度图'
+  },
   // {
   //   fn: 'wsFutureBalance',
   //   params: {
@@ -153,6 +153,6 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-console.log('okexV3..');
-testOneExchangeWs('okexV3', wsList);
+console.log('binance..');
+testOneExchangeWs('binance', wsList);
 
