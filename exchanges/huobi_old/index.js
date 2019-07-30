@@ -148,7 +148,6 @@ class Exchange extends Base {
       pars.push(`${item}=${encodeURIComponent(data[item])}`);
     }
     let p = pars.sort().join('&');
-    console.log(p);
     const meta = [method, baseurl, path, p].join('\n');
     const hash = HmacSHA256(meta, this.apiSecret);
     // const signatureStr = new Buffer(meta).toString('base64');

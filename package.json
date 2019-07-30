@@ -20,7 +20,7 @@
     "optimist": "^0.6.1",
     "pako": "^1.0.6",
     "request": "^2.85.0",
-    "ws": "^5.1.0"
+    "ws": "^7.1.1"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",

@@ -7,9 +7,6 @@ const pairsRaw = require('./../meta/pairs.json');
 
 const { checkKey } = Utils;
 
-
-// const subscribe = Utils.ws.genSubscribe(config.WS_BASE);
-
 // function _parse(v) {
 //   return parseFloat(v, 10);
 // }
@@ -292,7 +289,11 @@ function time(t) {
   };
 }
 
+function pair2coin(pair) {
+  return pair.split('-')[0].toUpperCase();
+}
 function pair2symbol(pair) {
+  if (!pair) return '';
   return pair.replace('-', '').toLowerCase();
 }
 
@@ -333,17 +334,18 @@ function symbol2pair(symbol) {
 //   return false;
 // }
 
-// const orderStatusMap = {
-//   all: 'ALL',
-//   filled: 'SUCCESS',
-//   part_filled: 'PARTIAL',
-//   open: 'UNFINISH',
-//   canceling: 'CANCELLING',
-//   canceled: 'CANCEL',
-//   cancelled: 'CANCEL',
-// };
+const orderStatusMap = {
+  all: 'ALL',
+  filled: 'SUCCESS',
+  part_filled: 'PARTIAL',
+  open: 'UNFINISH',
+  canceling: 'CANCELLING',
+  canceled: 'CANCEL',
+  cancelled: 'CANCEL',
+  submitted: 'UNFINISH'
+};
 
-// const reverseOrderStatusMap = _.invert(orderStatusMap);
+const reverseOrderStatusMap = _.invert(orderStatusMap);
 
 // function formatOrder(d, o = {}) {
 //   const { from, to, limit, ...rest } = o;
@@ -413,19 +415,21 @@ const base = {
 module.exports = {
   base,
   periodMap,
+  pair2coin,
   pair2symbol,
   pairsO: direct,
   pairs,
   symbol2pair,
   // formatOrder,
-  // orderStatusMap,
-  // reverseOrderStatusMap,
+  reverseOrderStatusMap,
   // accountTypeMap,
   // ledgerMap,
   time,
   timeO,
   coins,
   coinsO: direct,
+  accountsO: direct,
+  orderStatusMap,
   // getError,
   // // 资金流动
   // moveBalanceO,

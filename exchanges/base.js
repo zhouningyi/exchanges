@@ -80,14 +80,14 @@ class exchange extends Event {
     this[lock] = false;
   }
   // CURD
-  async get(endpoint, params, isSign = true) {
-    return await this.request('GET', endpoint, params, isSign);
+  async get(endpoint, params, isSign = true, hostId) {
+    return await this.request('GET', endpoint, params, isSign, hostId);
   }
-  async post(endpoint, params, isSign = true) {
-    return await this.request('POST', endpoint, params, isSign);
+  async post(endpoint, params, isSign = true, hostId) {
+    return await this.request('POST', endpoint, params, isSign, hostId);
   }
-  async delete(endpoint, params, isSign = true) {
-    return await this.request('DELETE', endpoint, params, isSign);
+  async delete(endpoint, params, isSign = true, hostId) {
+    return await this.request('DELETE', endpoint, params, isSign, hostId);
   }
   // 保存配置
   _getConifgPath(file, ext = 'json') {
@@ -178,8 +178,10 @@ class exchange extends Event {
   loadFnFromConfig(confs) {
     _.forEach(confs, (conf, key) => this.loadFn(conf, key));
   }
+
   getEndPoint(endpoint, endpointParams, params) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
     if (!endpointParams || !endpointParams.length) return endpoint;
+    console.log(params, endpoint, 'params...');
     endpoint = _.template(endpoint)(params);
     _.forEach(endpointParams, (k) => {
       delete params[k];
@@ -190,10 +192,10 @@ class exchange extends Event {
     if (!res) return res;
     if (Array.isArray(res)) {
       _.forEach(res, (l) => {
-        l.resp_time = dt;
+        if (l) l.resp_time = dt;
       });
     } else if (typeof res === 'object') {
-      res.resp_time = dt;
+      if (res) res.resp_time = dt;
     }
     return res;
   }
@@ -202,8 +204,8 @@ class exchange extends Event {
     if (!UtilsInst) Utils.warnExit(`${this.name}: this.Utils缺失`);
     checkKey(conf, ['endpoint', 'name', 'name_cn']);
     const { name = key, notNull: checkKeyO, endpoint, sign = true, endpointParams } = conf;
-    const formatOFn = UtilsInst[`${key}O`];
-    if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}O()不存在`);
+    const formatOFn = UtilsInst[`${key}O`] || (d => d);
+    // if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}O()不存在`);
     const formatFn = UtilsInst[key];
     if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}()不存在`);
     const method = (conf.method || 'get').toLowerCase();
@@ -213,8 +215,9 @@ class exchange extends Event {
         o = Object.assign({}, defaultOptions, o);
         if (checkKeyO) checkKey(o, checkKeyO);
         // 顺序不要调换
-        let opt = formatOFn ? _.cloneDeep(formatOFn(o)) : _.cloneDeep(o);
-        const endpointCompile = this.getEndPoint(endpoint, endpointParams, opt);
+        let opt = formatOFn ? _.cloneDeep(formatOFn(o, this.queryOptions)) : _.cloneDeep(o);
+        // console.log(this.queryOptions, 'queryOptions...');
+        const endpointCompile = this.getEndPoint(endpoint, endpointParams, { ...opt, ...(this.queryOptions || {}) });
         // const strO = `输入options: ${stringify(opt)}`;
         // Utils.print(strO, 'blue');
         opt = Utils.cleanObjectNull(opt);
@@ -224,7 +227,7 @@ class exchange extends Event {
         // Utils.print(str2, 'gray');
         const tStart = new Date();
         // console.log(endpointCompile, opt, sign, method, 'endpointCompile...');
-        const ds = await this[method](endpointCompile, opt, sign);
+        const ds = await this[method](endpointCompile, opt, sign, conf.host);
         const dt = new Date() - tStart;
         if (UtilsInst.getError && ds) {
           const error = UtilsInst.getError(ds);

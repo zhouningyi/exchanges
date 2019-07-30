@@ -1,20 +1,32 @@
 // const Utils = require('./utils');
 // const deepmerge = require('deepmerge');
-const crypto = require('crypto');
 const _ = require('lodash');
 const error = require('./errors');
 const Base = require('./../base');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
+const moment = require('moment');
 const request = require('./../../utils/request');
 // const { exchangePairs } = require('./../data');
-const { USER_AGENT, WS_BASE } = require('./config');
+const { FUTURE_BASE, REST_BASE, WS_BASE, WS_BASE_ACCOUNT, WS_BASE_FUTURE, WS_BASE_FUTURE_ACCOUNT } = require('./config');
 const restConfig = require('./meta/api');
+const HmacSHA256 = require('crypto-js/hmac-sha256');
+const CryptoJS = require('crypto-js');
 const future_pairs = require('./meta/future_pairs.json');
+
+
+function fixPath(v) {
+  if (v.startsWith('/')) return v;
+  return `/${v}`;
+}
 
 //
 const { checkKey } = Utils;
 //
+const DEFAULT_HEADERS = {
+  'Content-Type': 'application/json',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36'
+};
 
 // function mergeArray(data, d) {
 //   return data.concat(data, d);
@@ -24,33 +36,74 @@ function merge(data, d) {
   return { ...data, ...d };
 }
 
-// const URL = 'https://www.okex.com/api';
-const URL = 'https://api.huobi.pro';
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
     this.url = URL;
     this.version = 'v1';
     this.name = 'huobi';
+    this.hostMap = {
+      future: FUTURE_BASE
+    };
     this.init();
   }
   async init() {
     this.Utils = kUtils;
     this.loadFnFromConfig(restConfig);
-    await this.updatePairs();
-    // this.initWs();
+    // this.initWsPublic();
+    // this.initWsAccount();
+    // this.initWsFuturePublic();
+    this.initWsFutureAccount();
+    await Promise.all([this.updateAccount(), this.updatePairs(), this.updateFuturePairs()]);
   }
-  getSignature(method, time, endpoint, params, isws = false) {
-    method = method.toUpperCase();
-    const paramStr = method === 'GET' ? Utils.getQueryString(params) : JSON.stringify(params);
-    const sign = method === 'GET' ? '?' : '';
-    const root = isws ? '' : 'api/';
-    const totalStr = [`${time}${method}/${root}${endpoint}`, paramStr].filter(d => d).join(sign);// paramStr
-    return crypto.createHmac('sha256', this.apiSecret).update(totalStr).digest('base64');// .toString('base64');
+  _getBody(params) {
+    const t = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+    // const t = '2019-07-28T12:02:59';
+    return {
+      AccessKeyId: this.apiKey,
+      SignatureMethod: 'HmacSHA256',
+      SignatureVersion: '2',
+      Timestamp: t,
+      ...params
+    };
+  }
+
+  signSha(method, baseurl, path, data) {
+    const pars = [];
+    for (const k in data) {
+      pars.push(`${k}=${encodeURIComponent(data[k])}`);
+    }
+    let p = pars.sort().join('&');
+    const signature = encodeURIComponent(this._signSha(method, baseurl, path, data));
+    p += `&Signature=${signature}`;
+    return p;
+  }
+  _signSha(method, baseurl, path, data) {
+    const pars = [];
+    for (const k in data) {
+      pars.push(`${k}=${encodeURIComponent(data[k])}`);
+    }
+    const p = pars.sort().join('&');
+    const meta = [method, baseurl, fixPath(path), p].join('\n');
+    const hash = HmacSHA256(meta, this.apiSecret);
+    return CryptoJS.enc.Base64.stringify(hash);
+  }
+  async updateAccount() {
+    if (!this.apiKey) return null;
+    const ds = await this.accounts();
+    const accountMap = this.accountMap = {};
+    _.forEach(ds, (d) => {
+      accountMap[`${d.type}Id`] = d.id;
+    });
+    this.queryOptions = Object.assign(this.queryOptions || {}, accountMap);
   }
   async updatePairs() {
     const pairs = this.pairs = await this.pairs();
     if (pairs && pairs.length) this.saveConfig(pairs, 'pairs');
+  }
+  async updateFuturePairs() {
+    const pairs = this.pairs = await this.futurePairs();
+    if (pairs && pairs.length) this.saveConfig(pairs, 'future_pairs_detail');
   }
   _getTime() {
     return new Date().toISOString();
@@ -58,42 +111,79 @@ class Exchange extends Base {
   getPairs(o = {}) {
     return o.pairs || this.pairs;
   }
-  //
-  initWs(o = {}) {
-    if (!this.ws) {
+  initWsFutureAccount() {
+    const wsName = 'wsFutureAccount';
+    if (!this[wsName]) {
       try {
-        this.ws = kUtils.ws.genWs(WS_BASE, { proxy: this.proxy });
-        this.loginWs();
+        this[wsName] = kUtils.ws.genWs(WS_BASE_FUTURE_ACCOUNT, { proxy: this.proxy });
+        this.loginWs({ url: 'api.hbdm.com', path: '/notification', wsName, options: { type: 'api' } });
       } catch (e) {
-        console.log('initWs error');
+        console.log(e, 'initWs error');
         process.exit();
       }
     }
-    this.wsFutureIndex = (o, cb) => this._addChanelV3('futureIndex', { pairs: this.getPairs(o) }, cb);
-    this.wsTicks = (o, cb) => this._addChanelV3('ticks', { pairs: this.getPairs(o) }, cb);
-    this.wsFutureDepth = (o, cb) => this._addChanelV3('futureDepth', { ...o, pairs: this.getPairs(o) }, cb);
-    this.wsFutureTicks = (o, cb) => this._addChanelV3('futureTicks', { pairs: this.getPairs(o), contract_type: o.contract_type }, cb);
-    this.wsFuturePosition = (o, cb) => this._addChanelV3('futurePosition', o, cb);
-    this.wsFutureBalance = (o, cb) => this._addChanelV3('futureBalance', o, cb);
-    this.wsFutureOrders = (o, cb) => this._addChanelV3('futureOrders', o, cb);
-    this.wsSpotOrders = (o, cb) => this._addChanelV3('spotOrders', o, cb);
-    this.wsDepth = (o, cb) => this._addChanelV3('depth', { pairs: this.getPairs(o) }, cb);
-    this.wsBalance = (o, cb) => this._addChanelV3('balance', o, cb);
-    this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
-    this.wsSwapDepth = (o, cb) => this._addChanelV3('swapDepth', o, cb);
+    const _o = { wsName };
+    this.wsFutureOrders = (options, cb) => this._addChanel('futureOrders', { ...options, pairs: this.getPairs(options), ..._o }, cb);
+    this.wsFuturePosition = (options, cb) => this._addChanel('futurePosition', { ...options, pairs: this.getPairs(options), ..._o }, cb);
+    this.wsFutureBalance = (options, cb) => this._addChanel('futureBalance', { ...options, pairs: this.getPairs(options), ..._o }, cb);
+    // this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getPairs(options), ..._o }, cb);
   }
-  _addChanelV3(wsName, o = {}, cb) {
-    const { ws } = this;
+  initWsFuturePublic(o = {}) {
+    const wsName = 'wsFuturePublic';
+    if (!this[wsName]) {
+      try {
+        this[wsName] = kUtils.ws.genWs(WS_BASE_FUTURE, { proxy: this.proxy });
+      } catch (e) {
+        console.log(e, 'initWs error');
+        process.exit();
+      }
+    }
+    const _o = { wsName };
+    this.wsFutureDepth = (options, cb) => this._addChanel('futureDepth', { ...options, pairs: this.getPairs(options), ..._o }, cb);
+    this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getPairs(options), ..._o }, cb);
+  }
+  //
+  initWsPublic(o = {}) {
+    const wsName = 'wsPublic';
+    if (!this[wsName]) {
+      try {
+        this[wsName] = kUtils.ws.genWs(WS_BASE, { proxy: this.proxy });
+      } catch (e) {
+        console.log(e, 'initWs error');
+        process.exit();
+      }
+    }
+    const _o = { wsName };
+    this.wsDepth = (options, cb) => this._addChanel('depth', { pairs: this.getPairs(o), ..._o }, cb);
+  }
+  initWsAccount(o = {}) {
+    const wsName = 'wsAccount';
+    if (!this.wsAccount) {
+      try {
+        this[wsName] = kUtils.ws.genWs(WS_BASE_ACCOUNT, { proxy: this.proxy });
+        this.loginWs({ url: 'api.huobi.pro', path: '/ws/v1', wsName });
+      } catch (e) {
+        console.log(e, 'initWs error');
+        process.exit();
+      }
+    }
+    this.wsSpotBalance = (options, cb) => this._addChanel('spotBalance', { wsName, options }, cb);
+    this.wsSpotOrders = (options, cb) => this._addChanel('spotOrders', { wsName, options }, cb);
+  }
+  _addChanel(wsName, o = {}, cb) {
+    const ws = this[o.wsName];
     const fns = kUtils.ws[wsName];
     if (fns.notNull) checkKey(o, fns.notNull);
-    if (!ws || !ws.isReady()) return setTimeout(() => this._addChanelV3(wsName, o, cb), 100);
-    if (fns.isSign && !this.isWsLogin) return setTimeout(() => this._addChanelV3(wsName, o, cb), 100);
+    if (!ws || !ws.isReady()) return setTimeout(() => this._addChanel(wsName, o, cb), 100);
+    if (fns.isSign && !this.isWsLogin) return setTimeout(() => this._addChanel(wsName, o, cb), 100);
 
-    let chanel = fns.chanel(o);
-    if (Array.isArray(chanel)) chanel = kUtils.ws.getChanelObject(chanel);
-    //
-    const validate = res => _.get(res, 'table') === fns.name;
-    //
+    const chanel = fns.chanel(o, { ...this.queryOptions, ...o.options });
+    // if (Array.isArray(chanel)) chanel = _.map(chanel, c => kUtils.ws.getChanelObject(c, wsName));
+    const topicValidate = res => res.topic === fns.topic;
+    const noLoginValidate = (res) => {
+      return res.ch && res.ch.indexOf(`.${wsName}`) !== -1;
+    };
+    const validate = fns.validate || (fns.topic ? topicValidate : noLoginValidate);
     ws.send(chanel);
     const callback = this.genWsDataCallBack(cb, fns.formater);
     ws.onData(validate, callback);
@@ -109,48 +199,60 @@ class Exchange extends Base {
       cb(formater(ds));
     };
   }
-  loginWs() {
+  loginWs(o = {}) {
     if (!this.apiSecret) return;
-    const t = `${Date.now() / 1000}`;
-    const endpoint = 'users/self/verify';
-    const sign = this.getSignature('GET', t, endpoint, {}, true);
-    const chanel = { op: 'login', args: [this.apiKey, this.passphrase, t, sign] };
-    const { ws } = this;
-    if (!ws || !ws.isReady()) return setTimeout(() => this.loginWs(), 100);
-    ws.send(chanel);
-    ws.onLogin(() => {
-      this.isWsLogin = true;
+    const { url, path, wsName, options } = o;
+    const ws = this[wsName];
+    if (!ws) return setTimeout(() => this.loginWs(o), 100);
+    ws.onOpen(() => {
+      const data = {
+        ...options,
+        ...this._getBody(),
+        Signature: this._signSha('GET', url, path, this._getBody()),
+        op: 'auth',
+      };
+      ws.send(data);
+      ws.onLogin(() => {
+        this.print('ws login...', 'gray');
+        this.isWsLogin = true;
+      });
     });
   }
-  _genHeader(method, endpoint, params, isSign) {
-    const time = this._getTime();
-    return {
-      'Content-Type': 'application/json',
-      'User-Agent': USER_AGENT,
-      'OK-ACCESS-KEY': this.apiKey,
-      'OK-ACCESS-SIGN': isSign ? this.getSignature(method, time, endpoint, params) : '',
-      'OK-ACCESS-TIMESTAMP': `${time}`,
-      'OK-ACCESS-PASSPHRASE': this.passphrase
-    };
+  getHost(hostId) {
+    if (this.hostMap[hostId]) return this.hostMap[hostId];
+    return REST_BASE;
   }
-  async request(method = 'GET', endpoint, params = {}, isSign = false) {
+  async request(method = 'GET', endpoint, params = {}, isSign = false, hostId) {
+    const { options } = this;
     params = Utils.cleanObjectNull(params);
     params = _.cloneDeep(params);
-    const qstr = Utils.getQueryString(params);
+    // const qstr = Utils.getQueryString(params);
     let url;
     if (endpoint.startsWith('http')) {
       url = endpoint;
     } else {
-      url = `${URL}/${endpoint}`;
+      const base = this.getHost(hostId);
+      url = `https://${base}/${endpoint}`;
     }
-    if (method === 'GET' && qstr) url += `?${qstr}`;
+
+    let qstr = '';
+    if (isSign) {
+      const info = this._getBody(method === 'GET' ? params : {});
+      const payload = this.signSha(method, this.getHost(hostId), endpoint, info);
+      qstr = payload; // [payload].join('&');// qstr,
+    }
+    if (qstr && isSign) url = `${url}?${qstr}`;
     const o = {
+      timeout: options.timeout,
       uri: url,
       proxy: this.proxy,
       method,
-      headers: this._genHeader(method, endpoint, params, isSign),
-      ...(method === 'GET' ? {} : { body: JSON.stringify(params) })
+      headers: {
+        ...DEFAULT_HEADERS,
+      },
     };
+
+    if (method === 'POST') o.body = JSON.stringify(this._getBody(params));
     let body;
     // try {
     body = await request(o);
@@ -170,17 +272,20 @@ class Exchange extends Base {
       console.log(`${endpoint}: ${body.msg}`);
       return false;
     }
-    if (body.error_code && body.error_code !== '0') {
-      // console.log(body, 'body...');
-      const msg = `${error.getErrorFromCode(body.error_code)}`;
-      console.log(`${msg} | ${endpoint}`, endpoint, params);
-      return { error: msg };
+    if (body.status === 'error') {
+      const errMsg = body['err-msg'] || body.err_msg;
+      console.log(`${errMsg} | ${endpoint}`, endpoint, params);
+      return { error: errMsg };
+    }
+    if (body.error) {
+      const errMsg = body.error;
+      console.log(`${errMsg} | ${endpoint}`, endpoint, params);
+      return { error: errMsg };
     }
     if (body.error_message) {
       return {
         error: body.error_message
       };
-      // return Utils.throwError(body.error_message);
     }
     return body.data || body || false;
   }

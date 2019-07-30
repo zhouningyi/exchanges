@@ -42,6 +42,7 @@ function throwError(e) {
 }
 
 function _parse(v) {
+  if (v === undefined || v === null) return null;
   return parseFloat(v, 10);
 }
 

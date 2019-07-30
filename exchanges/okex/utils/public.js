@@ -100,7 +100,7 @@ const orderStatus2Code = _.invert(code2OrderStatus);
 
 const code2FutureOrderStatus = {
   1: 'UNFINISH',
-  2: 'SUCCESS'
+  2: 'SUCCESS',
 };
 
 const futureOrderStatus2Code = _.invert(code2FutureOrderStatus);

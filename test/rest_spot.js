@@ -4,7 +4,48 @@ const exchanges = ['huobi']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
+
 const tasks = [
+  // {
+  //   fn: 'spotOrder',
+  //   params: {
+  //     client_oid: `order${Math.floor(Math.random() * 10000)}`,
+  //     pair: 'XRP-USDT',
+  //     type: 'LIMIT',
+  //     side: 'BUY',
+  //     price: 0.21,
+  //     amount: 5
+  //   }
+  // },
+  // {
+  //   fn: 'spotOrders',
+  //   params: {
+  //     pair: 'XRP-USDT',
+  //   }
+  // },
+  // {
+  //   fn: 'unfinishSpotOrders',
+  //   params: {
+  //     pair: 'XRP-USDT',
+  //   }
+  // },
+  {
+    fn: 'batchCancelSpotOrders',
+    params: {
+      pair: 'XRP-USDT',
+    }
+  },
+
+  // {
+  //   fn: 'spotBalance',
+  //   params: {},
+  //   name: '现货账户信息'
+  // },
+  // {
+  //   fn: 'pointBalance',
+  //   params: {},
+  //   name: '点卡账户信息'
+  // },
     // {
   //   fn: 'pairs',
   //   params: {},
@@ -156,6 +197,10 @@ const tasks = [
   //   name: '取消交易'
   // },
 
+  // {
+  //   fn: 'walletLedger'
+  // },
+
 
   // {
   //   fn: 'fastOrder',
@@ -231,11 +276,7 @@ const tasks = [
   //   },
   //   name: '钱包'
   // },
-  // {
-  //   fn: 'futureBalances',
-  //   params: {},
-  //   name: '合约(全仓)余额'
-  // },
+
   // {
   //   fn: 'depth',
   //   params: { pair: 'ETH-BTC', size: 5 },

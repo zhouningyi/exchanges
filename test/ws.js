@@ -13,6 +13,22 @@ const wsList = [
   //   },
   //   name: 'wsTicks'
   // },
+
+  // {
+  //   fn: 'wsSpotBalance',
+  //   params: {
+  //     pairs: ['XRP-USDT', 'EOS-USDT']
+  //   },
+  //   name: 'spotBalance'
+  // },
+  // {
+  //   fn: 'wsSpotOrders',
+  //   params: {
+  //     pairs: ['XRP-USDT', 'EOS-USDT']
+  //   },
+  //   name: 'wsSpotOrders'
+  // },
+
   // {
   //   fn: 'wsFutureTicks',
   //   params: {
@@ -54,7 +70,8 @@ const wsList = [
   // {
   //   fn: 'wsFutureOrders',
   //   params: {
-  //     pairs: ['BTC-USD'], contract_type: 'this_week'
+  //     pairs: ['BTC-USD'],
+  //     contract_type: 'this_week'
   //   },
   //   name: ''
   // },
@@ -127,14 +144,13 @@ const wsList = [
   //   name: '期货深度图'
   // },
 
-  {
-    fn: 'wsDepth',
-    params: {
-      contract_type: 'quarter',
-      pairs: ['EOS-USDT']// 'BTC-USDT',
-    },
-    name: '深度图'
-  },
+  // {
+  //   fn: 'wsDepth',
+  //   params: {
+  //     pairs: ['BTC-USDT', 'EOS-USDT']// 'BTC-USDT',
+  //   },
+  //   name: '深度图'
+  // },
   // {
   //   fn: 'wsFutureBalance',
   //   params: {
@@ -153,6 +169,8 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-console.log('binance..');
-testOneExchangeWs('binance', wsList);
+const exchangeName = 'huobi';
 
+console.log(`=============【${exchangeName}...】=============`);
+testOneExchangeWs(exchangeName, wsList);
+Utils.live();

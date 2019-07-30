@@ -1,7 +1,17 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['okexV3'];// , 'okex'. 'hitbtc', 'bittrex'
+const exchanges = ['huobi'];// , 'okex'. 'hitbtc', 'bittrex'
 const tasks = [
+  // {
+  //   fn: 'spotFutureTransfer',
+  //   params: {
+  //     coin: 'XRP',
+  //     source: 'future',
+  //     target: 'spot',
+  //     amount: 5
+  //   },
+  //   name: '期货现货交易划转'
+  // },
   // {
   //   fn: 'fastOrder',
   //   params: {
@@ -43,11 +53,6 @@ const tasks = [
   //   name: '取消交易'
   // },
   // {
-  //   fn: 'pairs',
-  //   params: {},
-  //   name: '交易对信息'
-  // },
-  // {
   //   fn: 'coins',
   //   params: {},
   //   name: '币信息'
@@ -87,32 +92,47 @@ const tasks = [
   // {
   //   fn: 'futureOrder',
   //   params: {
-  //     pair: 'EOS-USDT',
-  //     contract_type: 'quarter',
-  //     lever_rate: 10,
+  //     pair: 'XRP-USDT',
+  //     contract_type: 'this_week',
+  //     lever_rate: 20,
   //     side: 'BUY',
   //     direction: 'up',
   //     amount: 1,
   //     type: 'LIMIT',
-  //     price: 7.2,
+  //     price: 0.33,
   //   },
   //   name: '购买期货'
   // },
 
   // {
+  //   fn: 'cancelAllFutureOrders',
+  //   params: {
+  //     pair: 'XRP-USDT',
+  //   },
+  //   name: '撤销所有的订单'
+  // },
+
+  // {
   //   fn: 'futureOrders',
   //   params: {
-  //     pair: 'ETH-USDT',
-  //     contract_type: 'next_week',
-  //     status: 'UNFINISH'
+  //     pair: 'XRP-USDT',
+  //     status: 'SUCCESS'
   //   },
   //   name: '所有期货订单'
   // },
   // {
+  //   fn: 'futureOrderInfo',
+  //   params: {
+  //     order_id: [23],
+  //     // contract_type: 'quarter',
+  //     pair: 'XRP-USDT',
+  //   },
+  //   name: '期货订单查询'
+  // },
+  // {
   //   fn: 'unfinishFutureOrders',
   //   params: {
-  //     pair: 'ETH-USDT',
-  //     contract_type: 'next_week'
+  //     pair: 'XRP-USDT',
   //   }
   // },
   // {
@@ -187,24 +207,7 @@ const tasks = [
   //   }
   // },
 
-  // {
-  //   fn: 'futureOrderInfo',
-  //   params: {
-  //     order_id: '1818257805743104',
-  //     contract_type: 'quarter',
-  //     pair: 'ETH-USDT',
-  //   },
-  //   name: '期货订单查询'
-  // },
-  // {
-  //   fn: 'cancelAllFutureOrders',
-  //   params: {
-  //     pair: 'ETH-USDT',
-  //     contract_type: 'next_week',
-  //     order_ids: [1818257805743104, 1818306041693184, 1818279985226752]
-  //   },
-  //   name: '撤销所有的订单'
-  // },
+
   // {
   //   fn: 'cancelFutureOrder',
   //   params: {
@@ -255,9 +258,7 @@ const tasks = [
   // {
   //   fn: 'futureLedger',
   //   params: {
-  //     pair: 'ETH-USDT',
-  //     limit: 21,
-  //     from: 1
+  //     coin: 'XRP',
   //   }
   // },
   // [
@@ -281,21 +282,21 @@ const tasks = [
   //   }
 
   // {
-  //   fn: 'futurePosition',
+  //   fn: 'futurePositions',
   //   params: {
   //     contract_type: 'quarter',
-  //     pair: 'EOS-USDT'
+  //     pair: 'XRP-USDT'
   //   },
   //   name: '期货仓位'
   // },
   {
-    fn: 'futurePosition',
+    fn: 'futureFee',
     params: {
-      contract_type: 'quarter',
-      pair: 'EOS-USDT'
+      pair: ['EOS']
     },
-    name: '期货仓位'
-  }
+    name: '费率'
+  },
+
 ];
 
 testRest(exchanges, tasks);

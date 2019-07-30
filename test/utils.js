@@ -49,8 +49,14 @@ function validate(ex) {
   if (!ex.name) console.log('exchange对象必须有name');
 }
 
+async function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), ms);
+  });
+}
 async function testOneExchange(exName, tasks) {
   const ex = getExchange(exName);
+  await delay(500);
   console.log(`测试交易所【${exName}】...`);
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];

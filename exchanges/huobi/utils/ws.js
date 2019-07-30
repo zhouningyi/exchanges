@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const _ws = require('./_ws');
-const { symbol2pair } = require('./public');
+const { symbol2pair, pair2coin, pair2symbol } = require('./public');
 const { checkKey } = require('./../../../utils');
 const futureUtils = require('./future');
 const spotUtils = require('./spot');
@@ -27,174 +27,298 @@ function final(f, l) {
   };
 }
 
-function _getChanelObject(args, op = 'subscribe') {
-  return { op, args };
+function _getChanelObject(name, api, type = 'sub') {
+  const o = {};
+  o[type] = name;
+  o.id = `${api}_${Math.floor(Math.random() * 10000)}`;
+  return o;
 }
 
-function genInstrumentChanelFn(chanel) {
-  return (o = {}) => {
-    const pairs = (o.pairs && o.pairs.length) ? o.pairs : _.map(o.coins, coin => `${coin}-USD`);
-    const contract_type = getContractTypeFromO(o);
-    const args = [];
-    _.forEach(pairs, (pair) => {
-      _.forEach(contract_type, (c) => {
-        const instrument_id = futureUtils.getFutureInstrumentId(pair, c);
-        args.push(`${chanel}:${instrument_id}`);
-      });
-    });
-    // console.log(args);
-    return args;
-  };
+function _pair2symbol(pair) {
+  return pair.split('-').join('').toLowerCase();
 }
 
+function _depthCh2pair(ch) {
+  return symbol2pair(ch.split('.depth')[0].replace('market.', ''));
+}
 
-// 期货指数
-const futureIndex = {
-  name: 'index/ticker',
-  isSign: false,
+const depth = {
+  name: 'depth',
   notNull: ['pairs'],
-  chanel: (o = {}) => _.map(o.pairs, p => `index/ticker:${p.replace('-USDT', '-USD')}`).filter(exist),
+  isSign: false,
+  chanel: (o) => {
+    const ctrs = _.map(o.pairs, pair => `market.${_pair2symbol(pair)}.depth.${o.type || 'step0'}`);
+    return _.map(ctrs, (ctr) => {
+      return _getChanelObject(ctr, 'depth', 'sub');
+    });
+  },
   formater: (res) => {
-    if (!res) return [];
-    const { data } = res;
-    return _.map(data, (line) => {
-      const { instrument_id: pair, timestamp, last } = line;
-      return { pair, time: new Date(timestamp), price: _parse(last) };
-    }).filter(d => d);
+    const { ts, tick, ch } = res;
+    const pair = _depthCh2pair(ch);
+    const { asks, bids } = tick;
+    return [{
+      pair,
+      exchange: 'huobi',
+      time: new Date(ts),
+      bids: spotUtils.formatDepth(bids),
+      asks: spotUtils.formatDepth(asks),
+    }];
   }
 };
 
 
-// 现货tick
-const ticks = {
-  name: 'spot/ticker',
-  isSign: false,
-  notNull: ['pairs'],
-  chanel: (o = {}) => _.map(o.pairs, p => `spot/ticker:${p}`),
-  formater: res => _.map(res.data, final(spotUtils.formatTick)).filter(exist)
-};
-
-const futureTicks = {
-  name: 'futures/ticker',
-  notNull: ['pairs', 'contract_type'],
-  isSign: false,
-  chanel: genInstrumentChanelFn('futures/ticker'),
-  formater: res => _.map(res.data, final(futureUtils.formatTick)).filter(exist)
-};
-
-function getContractTypeFromO(o) {
-  let { contract_type } = o;
-  if (typeof contract_type === 'string') contract_type = [contract_type];
-  return contract_type;
-}
-
-// future Position
-const futurePosition = {
-  name: 'futures/position',
-  notNull: ['coins', 'contract_type'],
+const spotBalance = {
+  topic: 'accounts',
+  notNull: [],
+  chanel: (o, o1) => {
+    return [{
+      op: 'sub',
+      topic: 'accounts',
+      model: '1'
+    }, {
+      op: 'req',
+      topic: 'accounts.list',
+    }];
+  },
+  validate: o => o && o.topic && o.topic.startsWith('accounts'),
   isSign: true,
-  chanel: genInstrumentChanelFn('futures/position'),
-  formater: res => _.map(res.data, final(futureUtils.formatFuturePosition)).filter(exist)
+  formater: (ds) => {
+    const { data, topic } = ds;
+    if (!data) return false;
+    let res = [];
+    if (topic === 'accounts.list') {
+      const group = _.groupBy(data, 'type');
+      const { point, spot } = group;
+      _.forEach(spot, (s) => {
+        const _res = spotUtils.processBalance(s.list);
+        res = res.concat(_res);
+      });
+      _.forEach(point, (s) => {
+        const _res = spotUtils.processBalance(s.list);
+        res = res.concat(_res);
+      });
+      return res;
+    } else if (topic === 'accounts') {
+      return spotUtils.processBalance(data.list);
+    }
+    return false;
+  }
 };
 
-
-const futureBalance = {
-  name: 'futures/account',
-  notNull: ['coins'],
+const spotOrders = {
+  topic: 'orders',
+  notNull: [],
+  chanel: (o, o1) => {
+    checkKey(o1, ['pairs']);
+    const { pairs } = o1;
+    const symbol = _.map(pairs, _pair2symbol);// .join(',');
+    return [{
+      op: 'sub',
+      topic: 'orders.*.update',
+    }, ..._.map(symbol, (s) => {
+      return {
+        op: 'req',
+        symbol: s,
+        topic: 'orders.list',
+        'account-id': o1.spotId,
+        states: 'submitted,partial-filled,partial-canceled,filled,canceled'
+      };
+    })];
+  },
+  validate: o => o && o.topic && o.topic.startsWith('orders'),
   isSign: true,
-  chanel: (o = {}) => _.map(o.coins, coin => `futures/account:${coin}`),
-  formater: (res) => {
-    return _.flatten(_.map(res.data, (l) => {
-      return _.map(l, futureUtils.formatBalance);
-    }).filter(exist))
-;
+  formater: (ds) => {
+    const { data, topic } = ds;
+    if (!data) return false;
+    if (topic === 'orders.list') {
+      return _.map(data, spotUtils.formatSpotWsOrder);
+    } else if (topic.endsWith('.update')) {
+      return [spotUtils.formatSpotWsOrder(data)];
+    }
+    return false;
   }
 };
 
 const futureOrders = {
-  name: 'futures/order',
+  notNull: [],
+  chanel: (o) => {
+    return [{
+      op: 'sub',
+      topic: 'orders.*',
+    }];
+  },
+  validate: o => o && o.topic && o.topic.startsWith('orders'),
   isSign: true,
-  notNull: ['pairs', 'contract_type'],
-  chanel: genInstrumentChanelFn('futures/order'),
-  formater: res => _.map(res.data, final(futureUtils.formatFutureOrder)).filter(exist)
+  formater: (ds) => {
+    if (!ds) return false;
+    return futureUtils.formatFutureOrder(ds);
+  }
 };
 
-const spotOrders = {
-  name: 'spot/order',
-  notNull: ['pairs'],
+const futurePosition = {
+  notNull: [],
+  chanel: (o) => {
+    return [{
+      op: 'sub',
+      topic: 'positions.*',
+    }];
+  },
+  validate: o => o && o.topic && o.topic.startsWith('positions'),
   isSign: true,
-  chanel: o => _.map(o.pairs, pair => `spot/order:${pair}`),
-  formater: res => _.map(res.data, final(spotUtils.formatOrder)).filter(exist)
+  formater: (ds) => {
+    if (!ds) return false;
+    const { data } = ds;
+    if (!data) return false;
+    // console.log(data, 'futurePositions...');
+    return futureUtils.futurePositions(data);
+  }
 };
+
+const futureBalance = {
+  notNull: [],
+  chanel: (o) => {
+    return [{
+      op: 'sub',
+      topic: 'accounts.*',
+    }];
+  },
+  validate: o => o && o.topic && o.topic.startsWith('accounts'),
+  isSign: true,
+  formater: (ds) => {
+    if (!ds) return false;
+    const { data } = ds;
+    if (!data) return false;
+    return futureUtils.futureBalances(data);
+  }
+};
+
+const futureSymbolMap = {
+  this_week: 'CW',
+  next_week: 'NW',
+  quarter: 'CQ'
+};
+
+const rFutureSymbolMap = _.invert(futureSymbolMap);
+
+function getFutureSymbol(pair, contract_type) {
+  const coin = pair2coin(pair);
+  return `${coin}_${futureSymbolMap[contract_type]}`;
+}
+
+function _futureDepthCh2pair(ch) {
+  const chs = ch.replace('market.', '').split('.depth.')[0];
+  const arr = chs.split('_');
+  const [coin, str] = arr;
+  const contract_type = rFutureSymbolMap[str];
+  const pair = `${arr[0]}-USD`;
+  return { contract_type, pair, coin };
+}
 
 
 const futureDepth = {
+  name: 'futureDepth',
+  notNull: ['pairs', 'contract_type'],
   isSign: false,
-  name: 'futures/depth5',
-  chanel: genInstrumentChanelFn('futures/depth5'),
-  notNull: ['contract_type', 'pairs'],
-  formater: res => futureUtils.formatFutureDepth(res.data)
+  chanel: (o) => {
+    let { contract_type, pairs } = o;
+    if (!Array.isArray(contract_type)) contract_type = [contract_type];
+    const ctrs = [];
+    _.forEach(pairs, (pair) => {
+      _.forEach(contract_type, (c) => {
+        const str = `market.${getFutureSymbol(pair, c)}.depth.${o.type || 'step0'}`;
+        ctrs.push(str);
+      });
+    });
+    const res = _.map(ctrs, (ctr) => {
+      return _getChanelObject(ctr, 'depth', 'sub');
+    });
+    return res;
+  },
+  validate: o => o && o.ch && o.ch.startsWith('market') && o.ch.indexOf('.depth') !== -1,
+  formater: (ds) => {
+    const { ts, tick, ch } = ds;
+    const info = _futureDepthCh2pair(ch);
+    const { asks, bids } = tick;
+    const res = [{
+      exchange: 'huobi',
+      ...info,
+      time: new Date(ts),
+      bids: futureUtils.formatFutureDepth(bids),
+      asks: futureUtils.formatFutureDepth(asks),
+    }];
+    return res;
+  }
 };
 
-const depth = {
-  name: 'spot/depth5',
-  notNull: ['pairs'],
+
+const futureTicks = {
+  name: 'futureTicks',
+  notNull: ['pairs', 'contract_type'],
   isSign: false,
-  chanel: o => _.map(o.pairs, pair => `spot/depth5:${pair}`),
-  formater: res => _.map(res.data, (d) => {
-    if (!d) return null;
-    const { instrument_id: pair, timestamp, asks, bids } = d;
-    return {
-      pair,
-      exchange: 'okex',
-      time: new Date(timestamp),
-      bids: spotUtils.formatDepth(bids),
-      asks: spotUtils.formatDepth(asks),
-    };
-  }).filter(exist)
+  chanel: (o) => {
+    let { contract_type, pairs } = o;
+    if (!Array.isArray(contract_type)) contract_type = [contract_type];
+    const ctrs = [];
+    _.forEach(pairs, (pair) => {
+      _.forEach(contract_type, (c) => {
+        const str = `market.${getFutureSymbol(pair, c)}.${o.type || 'detail'}`;
+        ctrs.push(str);
+      });
+    });
+    return _.map(ctrs, ctr => _getChanelObject(ctr, 'detail', 'sub'));
+  },
+  validate: o => o && o.ch && o.ch.startsWith('market') && o.ch.indexOf('.detail') !== -1,
+  formater: (ds) => {
+    const { ts, tick } = ds;
+    return [{
+      unique_id: `${tick.id}`,
+      time: new Date(ts),
+      low: _parse(tick.low),
+      high: _parse(tick.high),
+      open: _parse(tick.open),
+      close: _parse(tick.close),
+      count: _parse(tick.count),
+      volume: _parse(tick.vol),
+      amount: _parse(tick.amount),
+    }];
+  }
 };
 
-const balance = {
-  name: 'spot/account',
-  notNull: ['coins'],
-  chanel: o => _.map(o.coins, coin => `spot/account:${coin}`),
-  isSign: true,
-  formater: ds => _.map(ds.data, final(spotUtils.formatBalance))
-};
+// const swapTicks = {
+//   name: 'swap/ticker',
+//   isSign: false,
+//   notNull: ['pairs'],
+//   chanel: o => _.map(o.pairs, pair => `swap/ticker:${pair}-SWAP`),
+//   formater: ds => _.map(ds.data, final(swapUtils.formatTick))
+// };
 
-const swapTicks = {
-  name: 'swap/ticker',
-  isSign: false,
-  notNull: ['pairs'],
-  chanel: o => _.map(o.pairs, pair => `swap/ticker:${pair}-SWAP`),
-  formater: ds => _.map(ds.data, final(swapUtils.formatTick))
-};
-
-const swapDepth = {
-  name: 'swap/depth5',
-  isSign: false,
-  notNull: ['pairs'],
-  chanel: o => _.map(o.pairs, pair => `swap/depth5:${pair}-SWAP`),
-  formater: res => futureUtils.formatFutureDepth(res.data, 'swap')
-};
+// const swapDepth = {
+//   name: 'swap/depth5',
+//   isSign: false,
+//   notNull: ['pairs'],
+//   chanel: o => _.map(o.pairs, pair => `swap/depth5:${pair}-SWAP`),
+//   formater: res => futureUtils.formatFutureDepth(res.data, 'swap')
+// };
 
 
 module.exports = {
   ..._ws,
   // spot
-  ticks,
-  spotOrders,
+  // ticks,
   depth,
-  balance,
-  getChanelObject: _getChanelObject,
-  // reqBalance,
-  // future
-  futureIndex,
-  futureTicks,
+  spotOrders,
   futureOrders,
-  futureBalance,
+  spotBalance,
+  getChanelObject: _getChanelObject,
   futureDepth,
+  futureTicks,
+  // // reqBalance,
+  // // future
+  // futureIndex,
+  // futureTicks,
+  futureBalance,
+  // futureDepth,
   futurePosition,
-  swapTicks,
-  swapDepth
+  // swapTicks,
+  // swapDepth
 };

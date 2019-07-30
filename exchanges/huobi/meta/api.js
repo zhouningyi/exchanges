@@ -39,6 +39,193 @@ module.exports = {
     sign: false,
     endpoint: 'market/tickers'
   },
+  accounts: {
+    name: 'accounts',
+    name_cn: '账户信息',
+    sign: true,
+    endpoint: 'v1/account/accounts'
+  },
+  spotBalance: {
+    name: 'spotBalance',
+    name_cn: '现货账户信息',
+    sign: true,
+    endpointParams: ['spotId'],
+    endpoint: 'v1/account/accounts/{spotId}/balance'
+  },
+  pointBalance: {
+    name: 'pointBalance',
+    name_cn: '点卡账户信息',
+    sign: true,
+    endpointParams: ['pointId'],
+    endpoint: 'v1/account/accounts/{pointId}/balance'
+  },
+  spotOrder: {
+    method: 'POST',
+    name: 'spotOrder',
+    name_cn: '现货交易',
+    sign: true,
+    notNull: ['pair', 'type', 'side'],
+    endpoint: 'v1/order/orders/place'
+  },
+  spotOrders: {
+    method: 'GET',
+    name: 'spotOrders',
+    name_cn: '获取所有的订单',
+    sign: true,
+    notNull: ['pair'],
+    endpoint: 'v1/order/orders'
+  },
+  unfinishSpotOrders: {
+    method: 'GET',
+    name: 'unfinishSpotOrders',
+    name_cn: '获取所有未完成的订单',
+    sign: true,
+    notNull: ['pair'],
+    endpoint: 'v1/order/openOrders'
+  },
+  batchCancelSpotOrders: {
+    method: 'POST',
+    name: 'batchCancelSpotOrders',
+    name_cn: '取消所有未完成的订单',
+    sign: true,
+    notNull: ['pair'],
+    endpoint: 'v1/order/orders/batchCancelOpenOrders'
+  },
+  futurePairs: {
+    method: 'GET',
+    name: 'futurePairs',
+    name_cn: '期货币种信息',
+    desc: '期货币种信息',
+    endpoint: 'api/v1/contract_contract_info',
+    host: 'future',
+  },
+  futureIndex: {
+    method: 'GET',
+    name: 'futureIndex',
+    name_cn: '期货指数',
+    sign: false,
+    endpoint: 'api/v1/contract_index',
+    host: 'future',
+  },
+  futureTotalAmount: {
+    method: 'GET',
+    name: 'futureTotalAmount',
+    name_cn: '平台总持仓',
+    endpoint: 'api/v1/contract_open_interest',
+    notNull: [],
+    host: 'future',
+  },
+  futureRiskInfo: {
+    method: 'GET',
+    name: 'futureRiskInfo',
+    name_cn: '分摊风险金',
+    endpoint: 'api/v1/contract_risk_info',
+    notNull: [],
+    host: 'future',
+  },
+  futureBalances: {
+    method: 'POST',
+    name: 'futureBalances',
+    name_cn: '账户余额',
+    endpoint: 'api/v1/contract_account_info',
+    sign: true,
+    notNull: [],
+    host: 'future',
+  },
+  futurePositions: {
+    method: 'POST',
+    name: 'futurePositions',
+    name_cn: '持仓信息',
+    endpoint: 'api/v1/contract_position_info',
+    sign: true,
+    notNull: [],
+    host: 'future',
+  },
+  futureFee: {
+    method: 'POST',
+    name: 'futureFee',
+    name_cn: '用户费率',
+    endpoint: 'api/v1/contract_fee',
+    sign: true,
+    notNull: ['pair'],
+    host: 'future',
+  },
+  futureOrder: {
+    method: 'POST',
+    name: 'futureOrder',
+    name_cn: '期货下单',
+    sign: true,
+    endpoint: 'api/v1/contract_order',
+    accept: ['client_oid'],
+    notNull: ['pair', 'contract_type', 'side', 'type', 'direction', 'lever_rate'],
+    host: 'future',
+  },
+  futureOrders: {
+    method: 'POST',
+    name: 'futureOrders',
+    name_cn: '期货下单',
+    sign: true,
+    endpoint: 'api/v1/contract_hisorders',
+    accept: ['client_oid'],
+    notNull: ['pair'],
+    host: 'future',
+  },
+  unfinishFutureOrders: {
+    method: 'POST',
+    name: 'unfinishFutureOrders',
+    name_cn: '所有未完成的期货订单',
+    endpoint: 'api/v1/contract_openorders',
+    accept: ['pair'],
+    sign: true,
+    notNull: ['pair'],
+    host: 'future',
+  },
+  cancelAllFutureOrders: {
+    method: 'POST',
+    name: 'cancelAllFutureOrders',
+    name_cn: '期货批量撤单',
+    endpoint: 'api/v1/contract_cancelall',
+    sign: true,
+    accept: ['pair', 'contract_type', 'contract_code'],
+    host: 'future',
+    notNull: ['pair']
+  },
+  futureOrderInfo: {
+    method: 'POST',
+    name: 'futureOrderInfo',
+    name_cn: '期货订单信息',
+    desc: '通过订单ID获取单个订单信息',
+    endpoint: 'api/v1/contract_order_info',
+    sign: true,
+    accept: ['order_id', 'client_oid'],
+    notNull: ['pair'],
+    host: 'future',
+  },
+  spotFutureTransfer: {
+    method: 'POST',
+    name: 'spotFutureTransfer',
+    name_cn: '期货现货划转',
+    endpoint: 'v1/futures/transfer',
+    sign: true,
+    accept: ['order_id', 'client_oid'],
+    notNull: ['coin', 'source', 'target'],
+  },
+  // walletLedger: {
+  //   name: 'walletLedger',
+  //   name_cn: '流水',
+  //   sign: true,
+  //   endpoint: 'v1/query/deposit-withdraw',
+  //   // host: 'future',
+  // },
+  // futureLedger: {
+  //   method: 'POST',
+  //   name: 'futureLedger',
+  //   name_cn: '期货账户流水',
+  //   endpoint: 'api/v1/contract_financial_record',
+  //   notNull: ['coin'],
+  //   accept: ['create_date'],
+  //   host: 'future'
+  // },
   // moveBalance: {
   //   method: 'POST',
   //   name: 'moveBalance',
@@ -53,12 +240,7 @@ module.exports = {
   //   endpoint: 'account/v3/withdrawal/history',
   //   sign: true,
   // },
-  // walletLedger: {
-  //   name: 'walletLedger',
-  //   name_cn: '流水',
-  //   sign: true,
-  //   endpoint: 'account/v3/ledger',
-  // },
+
   // // // // // // // // 现货部分  // // // // // // //
   // spotBalance: {
   //   name: 'spotBalance',
@@ -268,15 +450,7 @@ module.exports = {
   //   notNull: ['contract_type', 'pair'],
   //   rateLimit: 2000 / 20
   // },
-  // futureIndex: {
-  //   method: 'GET',
-  //   name: 'futureIndex',
-  //   name_cn: '期货指数',
-  //   endpoint: 'futures/v3/instruments/{instrument_id}/index',
-  //   endpointParams: ['instrument_id'],
-  //   notNull: ['contract_type', 'pair'],
-  //   rateLimit: 2000 / 20
-  // },
+
   // futureLiquidation: {
   //   method: 'GET',
   //   name: 'futureLiquidation',
@@ -285,14 +459,7 @@ module.exports = {
   //   endpointParams: ['instrument_id'],
   //   notNull: ['contract_type', 'pair', 'status'],
   // },
-  // futureTotalAmount: {
-  //   method: 'GET',
-  //   name: 'futureTotalAmount',
-  //   name_cn: '平台总持仓',
-  //   endpoint: 'futures/v3/instruments/{instrument_id}/open_interest',
-  //   endpointParams: ['instrument_id'],
-  //   notNull: ['contract_type', 'pair'],
-  // },
+
   // futureTotalHoldAmount: {
   //   method: 'GET',
   //   name: 'futureTotalHoldAmount',
@@ -348,25 +515,6 @@ module.exports = {
   //   endpointParams: ['coin'],
   //   notNull: ['coin']
   // },
-  // futureLedger: {
-  //   method: 'GET',
-  //   name: 'futureLedger',
-  //   name_cn: '期货账户流水',
-  //   endpoint: 'futures/v3/accounts/{coin}/ledger',
-  //   endpointParams: ['coin'],
-  //   notNull: ['pair'],
-  //   rateLimit: 2000 / 5
-  // },
-  // futureOrder: {
-  //   method: 'POST',
-  //   name: 'futureOrder',
-  //   name_cn: '期货下单',
-  //   sign: true,
-  //   endpoint: 'futures/v3/order',
-  //   accept: ['client_oid'],
-  //   notNull: ['pair', 'contract_type', 'side', 'type', 'direction', 'lever_rate'],
-  //   rateLimit: 2000 / 20
-  // },
   // // cancelFutureOrder: {
   // //   method: 'POST',
   // //   name: 'cancelFutureOrder',
@@ -419,15 +567,7 @@ module.exports = {
   //   notNull: ['pair', 'contract_type'],
   //   rateLimit: 2000 / 10
   // },
-  // futureOrderInfo: {
-  //   method: 'GET',
-  //   name: 'futureOrderInfo',
-  //   name_cn: '期货订单信息',
-  //   desc: '通过订单ID获取单个订单信息',
-  //   endpoint: 'futures/v3/orders/{instrument_id}/{order_id}',
-  //   endpointParams: ['instrument_id', 'order_id'],
-  //   rateLimit: 2000 / 10
-  // },
+
   // futurePairs: {
   //   method: 'GET',
   //   name: 'futurePairs',

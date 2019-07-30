@@ -12,6 +12,8 @@ function noop() {}
 const loopInterval = 4000;
 
 function processWsData(data) {
+  // if (data && data.toString) data = data.toString('utf8');
+  // console.log(data, 'data..');
   if (data instanceof String) {
     try {
       data = JSON.parse(data);
@@ -21,7 +23,9 @@ function processWsData(data) {
     return data;
   } else {
     try {
-      data = pako.inflateRaw(data, { to: 'string' });
+      data = pako.inflate(data, {
+        to: 'string'
+      });
       return JSON.parse(data);
     } catch (e) {
       console.log(e, 'pako parse error...');
@@ -75,9 +79,18 @@ class WS extends Event {
     this.onLoginCb = cb;
   }
   checkLogin(data) {
-    if (data && data.event === 'login' && data.success) {
+    if (data && data.op === 'auth' && !data['err-code']) {
       if (this.onLoginCb) this.onLoginCb();
     }
+  }
+  checkPing(line) {
+    if (line && line.ping) {
+      const msg = JSON.stringify({ pong: line.ping });
+      this.ws.send(msg);
+    }
+  }
+  onOpen(cb) {
+    this._onOpen = cb;
   }
   addHooks(ws, o = {}) {
     const { pingInterval = 1000 } = o;
@@ -91,17 +104,15 @@ class WS extends Event {
     };
     ws.on('open', (socket) => {
       this._isReady = true;
+      if (this._onOpen) this._onOpen();
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
     ws.on('pong', (e) => {
       // console.log(e, 'pong');
     });
-    ws.on('ping', () => {
-      console.log('ping');
+    ws.on('ping', (e) => {
+      console.log('ping', e);
     });
-    // ws.on('connection', (socket) => {
-    //   console.log(socket, 'socket...');
-    // });
     ws.on('error', (e) => {
       console.log(e, 'error');
       process.exit();
@@ -118,7 +129,9 @@ class WS extends Event {
         data = processWsData(data);
         if (typeof data === 'string') data = JSON.parse(data);
         checkError(data);
+        // console.log(data);
         this.checkLogin(data);
+        this.checkPing(data);
         this._onCallback(data, ws);
       } catch (error) {
         console.log(`ws Parse json error: ${error.message}`);
@@ -132,19 +145,12 @@ class WS extends Event {
   send(msg) {
     if (!msg) return;
     if (!this.isReady()) setTimeout(() => this.send(msg), 100);
-    // console.log(msg, 'msg');
-    const { sendSequence } = this;
-    const args = (sendSequence[msg.op] || []).concat(msg.args);
-    _.set(sendSequence, msg.op, args);
-    setTimeout(this._send.bind(this), 100);
-  }
-  _send() {
-    const { sendSequence } = this;
-    if (!_.values(sendSequence).length) return;
-    _.forEach(sendSequence, (args, op) => {
-      this.ws.send(JSON.stringify({ op, args }));
-    });
-    this.sendSequence = {};
+    if (Array.isArray(msg)) {
+      _.forEach(msg, m => this.send(m));
+    } else {
+      const text = JSON.stringify(msg);
+      this.ws.send(text);
+    }
   }
   _onCallback(ds) {
     const { callbacks } = this;
@@ -157,6 +163,7 @@ class WS extends Event {
   genCallback(validate, cb) {
     const validateF = typeof validate === 'function' ? validate : d => d.table === validate;
     return (ds) => {
+      if (ds && ds.op === 'sub') return false;
       if (validateF && validateF(ds)) return cb(ds);
       return false;
     };
@@ -171,73 +178,7 @@ function genWs(stream, o = {}) {
   return new WS(stream, o);
 }
 
-function genSubscribe(stream) {
-  return (endpoint, cb, o = {}) => {
-    let isable = true;
-    //
-    const { proxy, willLink, pingInterval, reconnect } = o;
-    const options = proxy ? {
-      agent: new HttpsProxyAgent(url.parse(proxy))
-    } : {};
-    //
-    let ws;
-    try {
-      ws = new WebSocket(stream + endpoint, options);
-    } catch (e) {
-      console.log(e);
-      restart();
-    }
-
-    function restart() {
-      if (reconnect) reconnect();
-      isable = false;
-    }
-    //
-    ws.tryPing = (noop) => {
-      try {
-        ws.ping(noop);
-      } catch (e) {
-        console.log(e, 'ping error');
-      }
-    };
-    //
-    if (endpoint) ws.endpoint = endpoint;
-    ws.isAlive = false;
-    ws.on('open', () => {
-      console.log('open');
-      if (willLink) willLink(ws);
-      if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
-    });
-    ws.on('pong', () => {
-      // console.log('pong');
-    });
-    ws.on('ping', () => {
-      // console.log('ping');
-    });
-    ws.on('error', (e) => {
-      console.log(e, 'error');
-      restart();
-    });
-    ws.on('close', (e) => {
-      console.log(e, 'close');
-      restart();
-    });
-    ws.on('message', (data) => {
-      try {
-        if (typeof data === 'string') data = JSON.parse(data);
-        cb(data, ws);
-      } catch (error) {
-        console.log(`ws Parse json error: ${error.message}`);
-      }
-      onceLoop(() => {
-        ws.tryPing();
-      }, loopInterval);
-    });
-    return ws;
-  };
-}
 
 module.exports = {
-  genSubscribe,
   genWs,
 };
