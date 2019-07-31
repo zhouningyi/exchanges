@@ -50,9 +50,9 @@ class Exchange extends Base {
   async init() {
     this.Utils = kUtils;
     this.loadFnFromConfig(restConfig);
-    // this.initWsPublic();
-    // this.initWsAccount();
-    // this.initWsFuturePublic();
+    this.initWsPublic();
+    this.initWsAccount();
+    this.initWsFuturePublic();
     this.initWsFutureAccount();
     await Promise.all([this.updateAccount(), this.updatePairs(), this.updateFuturePairs()]);
   }
