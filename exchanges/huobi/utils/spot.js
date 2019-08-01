@@ -5,7 +5,7 @@ const md5 = require('md5');
 const Utils = require('./../../../utils');
 const publicUtils = require('./public');
 
-const { formatOrder, formatLedger, reverseOrderStatusMap, orderStatusMap, symbol2pair, pair2symbol, periodMap } = publicUtils;
+const { getPairInfo, reverseOrderStatusMap, orderStatusMap, symbol2pair, pair2symbol, periodMap } = publicUtils;
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -14,7 +14,6 @@ function _parse(v) {
 function direct(d) {
   return d;
 }
-
 
 function spotKlineO(o = {}) {
   const ko = {
@@ -72,12 +71,12 @@ function _processBalance(list) {
   return res;
 }
 
-function pointBalance(res, o) {
+function pointBalances(res, o) {
   if (!res) return null;
   const { list } = res;
   return _processBalance(list);
 }
-function spotBalance(res, o) {
+function spotBalances(res, o) {
   if (!res) return null;
   const { list } = res;
   return _processBalance(list);
@@ -106,9 +105,10 @@ function getOrderType(o) {
 function _formatSpotOrder(l) {
   const state = l.state || l['order-state'];
   const price = state === 'canceled' ? undefined : _parse(l.price);
+  const order_id = `${l.id || l['order-id']}`;
   return Utils.cleanObjectNull({
-    unique_id: l.id || l['order-id'],
-    order_id: l.id || l['order-id'],
+    unique_id: order_id,
+    order_id,
     pair: symbol2pair(l.symbol),
     account_id: l['account-id'],
     amount: _parse(l.amount),
@@ -118,7 +118,7 @@ function _formatSpotOrder(l) {
     server_finished_at: l['finished-at'] ? new Date(l['finished-at']) : undefined,
     server_canceled_at: l['canceled-at'] ? new Date(l['canceled-at']) : undefined,
     source: l.source,
-    state: orderStatusMap[state],
+    status: orderStatusMap[state],
     filled_amount: _parse(l['filled-amount']),
     fee: _parse(l['filled-fees']),
   });
@@ -133,18 +133,25 @@ function _formatSpotOrder(l) {
 //   return _.map(res, d => formatLedger(d, rest));
 // }
 
+function _formatPrice(price, pair) {
+  const digit = _.get(getPairInfo(pair), 'base_asset_precision');
+  if (digit && (price || price === 0) && price.toFixed) price = price.toFixed(digit);
+  return price;
+}
+
 // // 下单
 function spotOrderO(o = {}, o1) {
   const type = (o.type || 'LIMIT').toUpperCase();
+  const coin = pair2symbol(o.pair);
   const opt = {
     'account-id': o1.spotId,
-    symbol: pair2symbol(o.pair),
+    symbol: coin,
     type: getOrderType(o),
     amount: o.amount,
     source: 'api'
   };
   if (o.client_oid) opt['client-order-id'] = o.client_oid;
-  if (type === 'LIMIT') opt.price = o.price;
+  if (type === 'LIMIT') opt.price = _formatPrice(o.price, o.pair);
   return opt;
 }
 
@@ -174,16 +181,41 @@ function spotOrder(order_id, o = {}) {
 // }
 
 // // 批量撤单
-function batchCancelSpotOrdersO(o = {}, o1) {
-  return {
+function batchCancelOpenSpotOrdersO(o = {}, o1) {
+  const res = {
     'account-id': o1.spotId,
-    symbol: pair2symbol(o.pair),
+  };
+  if (o.pair) res.symbol = pair2symbol(o.pair);
+  return res;
+}
+
+function batchCancelOpenSpotOrders(ds) {
+  console.log(ds, 'ds...');
+  return {
   };
 }
 
-function batchCancelSpotOrders(ds) {
-  return {
+// // 批量撤单
+function batchCancelSpotOrdersO(o = {}, o1) {
+  const order_ids = _.map(o, l => l.order_id);// .join(',');
+  const res = {
+    'order-ids': order_ids
   };
+  // if (o.pair) res.symbol = pair2symbol(o.pair);
+  return res;
+}
+
+function batchCancelSpotOrders(ds) {
+  if (ds.success) {
+    return _.map(ds.success, (order_id) => {
+      return {
+        unique_id: order_id,
+        order_id,
+        status: 'CANCEL'
+      };
+    });
+  }
+  return false;
 }
 
 //  所有订单
@@ -213,15 +245,15 @@ function unfinishSpotOrders(res, o) {
   return _.map(res, d => _formatSpotOrder(d, o));
 }
 
-// function spotOrderInfoO(o = {}) {
-//   return {
-//     instrument_id: o.pair,
-//     order_id: o.order_id
-//   };
-// }
-// function spotOrderInfo(res, o) {
-//   return formatOrder(res, o);
-// }
+function spotOrderInfoO(o = {}) {
+  return {
+    order_id: o.order_id
+  };
+}
+
+function spotOrderInfo(res, o) {
+  return _formatSpotOrder(res, o);
+}
 
 // //
 // function orderDetailO(o = {}) {
@@ -268,8 +300,8 @@ module.exports = {
   spotTicks,
   spotKlineO,
   spotKline,
-  spotBalance,
-  pointBalance,
+  spotBalances,
+  pointBalances,
   spotOrderO,
   spotOrder,
   // // order
@@ -286,10 +318,12 @@ module.exports = {
   unfinishSpotOrders,
   // cancelOrderO,
   // cancelOrder,
+  batchCancelOpenSpotOrdersO,
+  batchCancelOpenSpotOrders,
   batchCancelSpotOrdersO,
   batchCancelSpotOrders,
-  // spotOrderInfoO,
-  // spotOrderInfo,
+  spotOrderInfoO,
+  spotOrderInfo,
   // orderDetailO,
   // orderDetail
 };

@@ -84,9 +84,13 @@ class WS extends Event {
     }
   }
   checkPing(line) {
-    if (line && line.ping) {
-      const msg = JSON.stringify({ pong: line.ping });
-      this.ws.send(msg);
+    if (!line) return;
+    if (line.ping) {
+      const msg = { pong: line.ping };
+      this.send(msg);
+    } else if (line.op === 'ping') {
+      const msg = { op: 'pong', ts: line.ts };
+      this.send(msg);
     }
   }
   onOpen(cb) {
@@ -108,10 +112,11 @@ class WS extends Event {
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
     ws.on('pong', (e) => {
+      // const data = processWsData(e);
       // console.log(e, 'pong');
     });
     ws.on('ping', (e) => {
-      console.log('ping', e);
+      console.log('ping', e.toString());
     });
     ws.on('error', (e) => {
       console.log(e, 'error');
@@ -124,18 +129,26 @@ class WS extends Event {
       this._isReady = false;
       return this.restart();
     });
-    ws.on('message', (data) => {
+    ws.on('message', (_data) => {
+      let data;
       try {
-        data = processWsData(data);
+        data = processWsData(_data);
         if (typeof data === 'string') data = JSON.parse(data);
+      } catch (error) {
+        console.log(`ws Parse json error: ${error.message}`, _data, data);
+        // process.exit();
+      }
+      try {
         checkError(data);
-        // console.log(data);
         this.checkLogin(data);
+      } catch (e) {
+        console.log(e, 1);
+      }
+      try {
         this.checkPing(data);
         this._onCallback(data, ws);
-      } catch (error) {
-        console.log(`ws Parse json error: ${error.message}`);
-        process.exit();
+      } catch (e) {
+        console.log(e, 2);
       }
       onceLoop(() => {
         ws.tryPing();

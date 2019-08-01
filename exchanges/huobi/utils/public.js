@@ -327,6 +327,10 @@ function symbol2pair(symbol) {
   const info = symbolMap[symbol];
   return info ? info.pair : null;
 }
+
+function getPairInfo(pair) {
+  return symbolMap[pair2symbol(pair)];
+}
 // function getError(d) {
 //   if (d.code && d.message) {
 //     return d.message;
@@ -420,6 +424,7 @@ module.exports = {
   pairsO: direct,
   pairs,
   symbol2pair,
+  getPairInfo,
   // formatOrder,
   reverseOrderStatusMap,
   // accountTypeMap,

@@ -6,17 +6,17 @@ const exchanges = ['huobi']; // bikicoin
 
 
 const tasks = [
-  // {
-  //   fn: 'spotOrder',
-  //   params: {
-  //     client_oid: `order${Math.floor(Math.random() * 10000)}`,
-  //     pair: 'XRP-USDT',
-  //     type: 'LIMIT',
-  //     side: 'BUY',
-  //     price: 0.21,
-  //     amount: 5
-  //   }
-  // },
+  {
+    fn: 'spotOrder',
+    params: {
+      client_oid: `order${Math.floor(Math.random() * 10000)}`,
+      pair: 'XRP-USDT',
+      type: 'LIMIT',
+      side: 'BUY',
+      price: 0.213223333322,
+      amount: 5
+    }
+  },
   // {
   //   fn: 'spotOrders',
   //   params: {
@@ -29,12 +29,12 @@ const tasks = [
   //     pair: 'XRP-USDT',
   //   }
   // },
-  {
-    fn: 'batchCancelSpotOrders',
-    params: {
-      pair: 'XRP-USDT',
-    }
-  },
+  // {
+  //   fn: 'batchCancelSpotOrders',
+  //   params: {
+  //     pair: 'XRP-USDT',
+  //   }
+  // },
 
   // {
   //   fn: 'spotBalance',

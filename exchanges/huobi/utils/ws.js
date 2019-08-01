@@ -34,7 +34,12 @@ function _getChanelObject(name, api, type = 'sub') {
   return o;
 }
 
-function _pair2symbol(pair) {
+function _pair2symbol(pair, isFuture) {
+  if (isFuture) {
+    pair = pair.replace('USDT', 'USD');
+  } else if (pair.endsWith('USD')) {
+    pair = `${pair}T`;
+  }
   return pair.split('-').join('').toLowerCase();
 }
 
@@ -42,15 +47,19 @@ function _depthCh2pair(ch) {
   return symbol2pair(ch.split('.depth')[0].replace('market.', ''));
 }
 
-const depth = {
-  name: 'depth',
+const spotDepth = {
+  name: 'spotDepth',
   notNull: ['pairs'],
   isSign: false,
   chanel: (o) => {
     const ctrs = _.map(o.pairs, pair => `market.${_pair2symbol(pair)}.depth.${o.type || 'step0'}`);
-    return _.map(ctrs, (ctr) => {
+    const res = _.map(ctrs, (ctr) => {
       return _getChanelObject(ctr, 'depth', 'sub');
     });
+    return res;
+  },
+  validate: (res) => {
+    return res && res.ch && res.ch.startsWith('market.') && res.ch.indexOf('depth.step') !== -1;
   },
   formater: (res) => {
     const { ts, tick, ch } = res;
@@ -169,7 +178,6 @@ const futurePosition = {
     if (!ds) return false;
     const { data } = ds;
     if (!data) return false;
-    // console.log(data, 'futurePositions...');
     return futureUtils.futurePositions(data);
   }
 };
@@ -305,7 +313,7 @@ module.exports = {
   ..._ws,
   // spot
   // ticks,
-  depth,
+  spotDepth,
   spotOrders,
   futureOrders,
   spotBalance,

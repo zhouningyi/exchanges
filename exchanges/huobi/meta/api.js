@@ -45,15 +45,15 @@ module.exports = {
     sign: true,
     endpoint: 'v1/account/accounts'
   },
-  spotBalance: {
-    name: 'spotBalance',
+  spotBalances: {
+    name: 'spotBalances',
     name_cn: '现货账户信息',
     sign: true,
     endpointParams: ['spotId'],
     endpoint: 'v1/account/accounts/{spotId}/balance'
   },
-  pointBalance: {
-    name: 'pointBalance',
+  pointBalances: {
+    name: 'pointBalances',
     name_cn: '点卡账户信息',
     sign: true,
     endpointParams: ['pointId'],
@@ -75,6 +75,15 @@ module.exports = {
     notNull: ['pair'],
     endpoint: 'v1/order/orders'
   },
+  spotOrderInfo: {
+    method: 'GET',
+    name: 'spotOrderInfo',
+    sign: true,
+    name_cn: '订单详情',
+    endpoint: 'v1/order/orders/{order_id}',
+    endpointParams: ['order_id'],
+    notNull: ['order_id'],
+  },
   unfinishSpotOrders: {
     method: 'GET',
     name: 'unfinishSpotOrders',
@@ -88,7 +97,15 @@ module.exports = {
     name: 'batchCancelSpotOrders',
     name_cn: '取消所有未完成的订单',
     sign: true,
-    notNull: ['pair'],
+    notNull: [],
+    endpoint: 'v1/order/orders/batchcancel'
+  },
+  batchCancelOpenSpotOrders: {
+    method: 'POST',
+    name: 'batchCancelOpenSpotOrders',
+    name_cn: '取消所有未完成的订单',
+    sign: true,
+    notNull: [],
     endpoint: 'v1/order/orders/batchCancelOpenOrders'
   },
   futurePairs: {
@@ -107,9 +124,9 @@ module.exports = {
     endpoint: 'api/v1/contract_index',
     host: 'future',
   },
-  futureTotalAmount: {
+  futureTotalAmounts: {
     method: 'GET',
-    name: 'futureTotalAmount',
+    name: 'futureTotalAmounts',
     name_cn: '平台总持仓',
     endpoint: 'api/v1/contract_open_interest',
     notNull: [],
@@ -190,6 +207,16 @@ module.exports = {
     host: 'future',
     notNull: ['pair']
   },
+  batchCancelFutureOrders: {
+    method: 'POST',
+    name: 'batchCancelFutureOrders',
+    name_cn: '期货批量撤单',
+    endpoint: 'api/v1/contract_cancel',
+    sign: true,
+    accept: ['pair', 'contract_type', 'contract_code'],
+    host: 'future',
+    notNull: ['pair']
+  },
   futureOrderInfo: {
     method: 'POST',
     name: 'futureOrderInfo',
@@ -207,8 +234,7 @@ module.exports = {
     name_cn: '期货现货划转',
     endpoint: 'v1/futures/transfer',
     sign: true,
-    accept: ['order_id', 'client_oid'],
-    notNull: ['coin', 'source', 'target'],
+    notNull: ['coin', 'source', 'target', 'amount'],
   },
   // walletLedger: {
   //   name: 'walletLedger',

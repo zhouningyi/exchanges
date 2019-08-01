@@ -7,7 +7,7 @@ const kUtils = require('./utils');
 const Utils = require('./../../utils');
 const moment = require('moment');
 const request = require('./../../utils/request');
-// const { exchangePairs } = require('./../data');
+const futureUtils = require('./utils/future');
 const { FUTURE_BASE, REST_BASE, WS_BASE, WS_BASE_ACCOUNT, WS_BASE_FUTURE, WS_BASE_FUTURE_ACCOUNT } = require('./config');
 const restConfig = require('./meta/api');
 const HmacSHA256 = require('crypto-js/hmac-sha256');
@@ -56,9 +56,12 @@ class Exchange extends Base {
     this.initWsFutureAccount();
     await Promise.all([this.updateAccount(), this.updatePairs(), this.updateFuturePairs()]);
   }
+  getFutureCoins() {
+    const ps = futureUtils.getDefaultFuturePairs();
+    return _.map(ps, p => p.split('-')[0]);
+  }
   _getBody(params) {
     const t = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
-    // const t = '2019-07-28T12:02:59';
     return {
       AccessKeyId: this.apiKey,
       SignatureMethod: 'HmacSHA256',
@@ -102,14 +105,14 @@ class Exchange extends Base {
     if (pairs && pairs.length) this.saveConfig(pairs, 'pairs');
   }
   async updateFuturePairs() {
-    const pairs = this.pairs = await this.futurePairs();
+    const pairs = this._pairs = await this.futurePairs();
     if (pairs && pairs.length) this.saveConfig(pairs, 'future_pairs_detail');
   }
   _getTime() {
     return new Date().toISOString();
   }
-  getPairs(o = {}) {
-    return o.pairs || this.pairs;
+  getFuturePairs(o = {}) {
+    return o.pairs || futureUtils.getDefaultFuturePairs();
   }
   initWsFutureAccount() {
     const wsName = 'wsFutureAccount';
@@ -123,10 +126,10 @@ class Exchange extends Base {
       }
     }
     const _o = { wsName };
-    this.wsFutureOrders = (options, cb) => this._addChanel('futureOrders', { ...options, pairs: this.getPairs(options), ..._o }, cb);
-    this.wsFuturePosition = (options, cb) => this._addChanel('futurePosition', { ...options, pairs: this.getPairs(options), ..._o }, cb);
-    this.wsFutureBalance = (options, cb) => this._addChanel('futureBalance', { ...options, pairs: this.getPairs(options), ..._o }, cb);
-    // this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getPairs(options), ..._o }, cb);
+    this.wsFutureOrders = (options, cb) => this._addChanel('futureOrders', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
+    this.wsFuturePosition = (options, cb) => this._addChanel('futurePosition', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
+    this.wsFutureBalance = (options, cb) => this._addChanel('futureBalance', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
+    // this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
   }
   initWsFuturePublic(o = {}) {
     const wsName = 'wsFuturePublic';
@@ -139,8 +142,8 @@ class Exchange extends Base {
       }
     }
     const _o = { wsName };
-    this.wsFutureDepth = (options, cb) => this._addChanel('futureDepth', { ...options, pairs: this.getPairs(options), ..._o }, cb);
-    this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getPairs(options), ..._o }, cb);
+    this.wsFutureDepth = (options, cb) => this._addChanel('futureDepth', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
+    this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
   }
   //
   initWsPublic(o = {}) {
@@ -154,7 +157,7 @@ class Exchange extends Base {
       }
     }
     const _o = { wsName };
-    this.wsDepth = (options, cb) => this._addChanel('depth', { pairs: this.getPairs(o), ..._o }, cb);
+    this.wsSpotDepth = (options, cb) => this._addChanel('spotDepth', { pairs: this.getFuturePairs(o), ..._o }, cb);
   }
   initWsAccount(o = {}) {
     const wsName = 'wsAccount';
