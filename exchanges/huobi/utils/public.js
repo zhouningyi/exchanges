@@ -311,6 +311,7 @@ function _formatPair(l) {
     status: l.state,
     quote_asset_precision: _parse(l['amount-precision']),
     base_asset_precision: _parse(l['price-precision']),
+    amount_precision: _parse(l['amount-precision']),
     min_order_amout: _parse(l['min-order-amt']),
     max_order_amout: _parse(l['max-order-amt']),
     lever_rate: _parse(l['leverage-ratio'])

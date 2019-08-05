@@ -3,7 +3,7 @@ const Utils = require('./../../../utils');
 const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
-const { accountTypeMap } = require('./public');
+const { accountTypeMap, getPairInfo } = require('./public');
 
 let future_pairs_detail;
 try {
@@ -34,14 +34,13 @@ function future_id2contract_type(instrument_id) {
   return 'this_week';
 }
 
-function _formatFuturePosition(line) {
+function _formatFuturePosition(line, isws) {
   if (!line) return null;
   const coin = line.symbol;
-  return {
+  const res = {
     instrument_id: line.contract_code, // //
     contract_type: line.contract_type, // //
     pair: `${coin}-USD`,
-    lever_rate: line.lever_rate,
     coin,
     buy_amount: _parse(line.buy_amount),
     buy_benifit: _parse(line.buy_benifit),
@@ -57,9 +56,19 @@ function _formatFuturePosition(line) {
     //
     time: new Date(),
   };
+  const hasPosition = res.sell_amount || res.buy_amount;
+  if (hasPosition) {
+    res.lever_rate = line.lever_rate;
+  }
+  return res;
 }
 
-function futurePositions(ds) {
+function futurePositionsO(o) {
+  return {
+  };
+}
+
+function futurePositions(ds, o, isws) {
   const group = _.groupBy(ds, 'symbol');
   const res = [];
   _.forEach(group, (arr) => {
@@ -88,7 +97,7 @@ function futurePositions(ds) {
       }
     });
   });
-  return _.map(res, _formatFuturePosition);
+  return _.map(res, d => _formatFuturePosition(d, isws));
 }
 
 function futureFeeO(o) {
@@ -149,28 +158,36 @@ function getCurFutureInstrumentId(o) {
   return getFutureInstrumentId(pair, contract_type, new Date());
 }
 
-const futureTypeMap = {//	1:开多2:开空3:平多4:平空
-  BUY: {
-    UP: 1,
-    DOWN: 2
-  },
-  SELL: {
-    UP: 3,
-    DOWN: 4
-  }
+const directionMap = {// /火币在这边是反过来的
+  up: 'sell',
+  down: 'buy'
 };
 
-const directionMap = {
-  up: 'buy',
-  down: 'sell'
-};
+function _formatPrice(price, pair) {
+  const digit = _.get(getPairInfo(pair), 'base_asset_precision') || _.get(getPairInfo(pair.replace('-USD', '-USDT')), 'base_asset_precision');
+  if (digit && (price || price === 0) && price.toFixed) price = price.toFixed(digit - 1);
+  return price;
+}
 
+// function _formatVolume(price, pair) {
+//   const digit = _.get(getPairInfo(pair), 'amount_precision');
+//   if (digit && (price || price === 0) && price.toFixed) price = (price * 0.999).toFixed((digit) || 3);
+//   return price;
+// }
+
+function getOrderProps(o) {
+  const side = o.side.toUpperCase();
+  const direction = o.direction.toUpperCase();
+  if (side === 'BUY' && direction === 'UP') return { offset: 'open', direction: 'buy' };
+  if (side === 'SELL' && direction === 'UP') return { offset: 'close', direction: 'sell' };
+  if (side === 'BUY' && direction === 'DOWN') return { offset: 'open', direction: 'sell' };
+  if (side === 'SELL' && direction === 'DOWN') return { offset: 'close', direction: 'buy' };
+}
 function futureOrderO(o = {}) {
   const { amount, lever_rate, contract_type, client_oid, price } = o;
   const pair = o.pair.replace('-USDT', '-USD');
-  const direction = o.direction.toLowerCase();
-  const side = o.side.toUpperCase();
-  const offset = side === 'BUY' ? 'open' : 'close';
+  o.direction = o.direction.toLowerCase();
+  o.side = o.side.toUpperCase();
   //
   const coin = pair.split('-')[0];
   const opt = {
@@ -178,24 +195,28 @@ function futureOrderO(o = {}) {
     contract_type,
     price,
     volume: amount,
-    offset,
     lever_rate,
-    direction: directionMap[direction],
+    ...getOrderProps(o),
     order_price_type: 'limit'
   };
   if (client_oid) o.client_order_id = client_oid;
+  opt.price = _parse(_formatPrice(o.price, o.pair));
   return opt;
 }
+
+
 function futureOrder(line, o = {}) {
   if (!line) return false;
   const order_id = `${line.order_id}`;
   if (!order_id) return false;
-  return {
+  const opt = {
     unique_id: `futureOrder_${order_id}`,
     order_id,
     status: 'NO_RETURN',
     ...o
   };
+
+  return opt;
 }
 // 返回所有订单信息
 const futureStatusMap = {
@@ -215,17 +236,27 @@ const orderPriceTypMap = {
   post_only: 'MAKER_ONLY'
 };
 
-const rDirectionMap = {
-  buy: 'UP',
-  sell: 'DOWN'
-};
-const rOffsetMap = {
-  open: 'BUY',
-  close: 'SELL'
-};
+// const rDirectionMap = {
+//   buy: 'UP',
+//   sell: 'DOWN'
+// };
+// const rOffsetMap = {
+//   open: 'BUY',
+//   close: 'SELL'
+// };
+
+
+function getROrderProps(o) {
+  const offset = o.offset.toLowerCase();
+  const direction = o.direction.toLowerCase();
+  if (offset === 'open' && direction === 'buy') return { side: 'BUY', direction: 'UP' };
+  if (offset === 'close' && direction === 'sell') return { side: 'SELL', direction: 'UP' };
+  if (offset === 'open' && direction === 'sell') return { side: 'BUY', direction: 'DOWN' };
+  if (offset === 'close' && direction === 'buy') return { side: 'SELL', direction: 'DOWN' };
+}
+
 
 // 0:全部,3:未成交, 4: 部分成交,5: 部分成交已撤单,6: 全部成交,7:已撤单
-
 const statusMap = {
   ALL: 0,
   UNFINISH: 3,
@@ -236,13 +267,12 @@ const statusMap = {
 };
 const rStatusMap = _.invert(statusMap);
 function _formatFutureOrder(l, o) {
-  const { status, symbol: coin, trade, profit, direction, price, lever_rate, volume: amount, create_date, created_at, contract_type, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
+  const { status, symbol: coin, trade, profit, price, lever_rate, volume: amount, create_date, created_at, contract_type, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
   const ct = create_date || created_at;
   const order_id = `${l.order_id}`;
   return {
     coin,
     pair: `${coin}-USDT`,
-    direction: rDirectionMap[direction],
     unique_id: coin + contract_type + order_id,
     contract_type,
     order_id,
@@ -254,7 +284,7 @@ function _formatFutureOrder(l, o) {
     price: _parse(price),
     deal_amount,
     fee: _parse(fee),
-    side: rOffsetMap[offset],
+    ...getROrderProps(l),
     server_created_at: ct ? new Date(ct) : undefined,
     status: rStatusMap[status],
     trade
@@ -405,132 +435,6 @@ function futureBalances(res) {
   return _.map(res, _formatBalance);
 }
 
-// function futureTotalHoldAmountO(o = {}) {
-//   return {
-//     instrument_id: getCurFutureInstrumentId(o),
-//   };
-// }
-// function getFuntureUniqueId(o) {
-//   return `${o.pair}_${o.contract_type}`;
-// }
-// function futureTotalHoldAmount(res, o) {
-//   return {
-//     unique_id: getFuntureUniqueId(o),
-//     instrument_id: o.instrument_id,
-//     ...o,
-//     amount: _parse(res.amount)
-//   };
-// }
-
-// // 期货限价
-// function futureLimitPriceO(o = {}) {
-//   return {
-//     instrument_id: getCurFutureInstrumentId(o),
-//   };
-// }
-// function futureLimitPrice(res, o) {
-//   return {
-//     unique_id: getFuntureUniqueId(o),
-//     ...o,
-//     highest_price: _parse(res.highest),
-//     lowest_price: _parse(res.lowest),
-//   };
-// }
-// function future_id2pair(fid) {
-//   const arr = fid.split('-');
-//   arr.pop();
-//   return `${arr.join('-')}T`;
-// }
-
-// function getInfoFromInstrumentId(instrument_id) {
-//   const pair = future_id2pair(instrument_id);
-//   const contract_type = future_id2contract_type(instrument_id);
-//   return {
-//     id: `${pair}_${contract_type}`,
-//     contract_type,
-//     pair,
-//   };
-// }
-// // 行情
-// function _formatTick(l, o = {}) {
-//   const { instrument_id } = l;
-//   const info = getInfoFromInstrumentId(instrument_id);
-//   return {
-//     ...info,
-//     instrument_id,
-//     last_price: _parse(l.last),
-//     bid_price: _parse(l.best_bid),
-//     ask_price: _parse(l.best_ask),
-//     time: new Date(l.timestamp),
-//     ...o,
-//   };
-// }
-
-// function futureTicks(res, o) {
-//   return _.map(res, d => _formatTick(d, o));
-// }
-
-// function futureTickO(o = {}) {
-//   const instrument_id = getCurFutureInstrumentId(o);
-//   return { instrument_id };
-// }
-
-// function setLerverate(d) {
-//   return {
-//     success: !!d.result,
-//     margin_mode: d.margin_mode,
-//     lever_rate: d.leverage,
-//     coin: d.currency
-//   };
-// }
-
-// function setLerverateO(o = {}) {
-//   return {
-//     coin: o.coin,
-//     leverage: o.lever_rate
-//   };
-// }
-
-
-// function _formatFutureDepth(ds) {
-//   return _.map(ds, (d) => {
-//     return {
-//       price: _parse(d[0]),
-//       volume_amount: _parse(d[1]),
-//       liqui_amount: _parse(d[2]),
-//       count: _parse(d[3])
-//     };
-//   });
-// }
-
-// // swap和future
-// function formatFutureDepth(data, type = 'future') {
-//   const res = {};
-//   _.forEach(data, (d) => {
-//     const { asks, bids, instrument_id, timestamp } = d;
-//     let info;
-//     if (type === 'future') {
-//       info = getInfoFromInstrumentId(instrument_id);
-//     } else if (type === 'swap') {
-//       info = {
-//         instrument_id,
-//         id: instrument_id,
-//         pair: instrument_id.replace('-SWAP', '')
-//       };
-//     }
-//     res[`${info.id}`] = {
-//       ...info,
-//       exchange: 'okex',
-//       time: new Date(timestamp),
-//       bids: _formatFutureDepth(bids),
-//       asks: _formatFutureDepth(asks)
-//     };
-//   }).filter(d => d);
-//   return _.values(res);
-// }
-
-// const direct = d => d;
-
 function _pair2coin(pair) {
   return pair.split('-')[0];
 }
@@ -556,6 +460,13 @@ function cancelAllFutureOrders(res) {
   });
 }
 
+function _formatAmount(price, pair) {
+  const digit = _.get(getPairInfo(pair), 'amount_precision');
+  const num = Math.pow(10, digit || 3);
+  if (digit && (price || price === 0)) price = Math.floor(price * num) / num;
+  return price;
+}
+
 function spotFutureTransferO(o) {
   const { source, target, coin, amount } = o;
   const opt = {
@@ -567,6 +478,7 @@ function spotFutureTransferO(o) {
   } else if (source === 'future' && target === 'spot') {
     opt.type = 'futures-to-pro';
   }
+  opt.amount = _parse(_formatAmount(o.amount, `${o.coin}-USDT`));
   return opt;
 }
 function spotFutureTransfer(res, o) {
@@ -590,18 +502,24 @@ function batchCancelFutureOrdersO(o = {}) {
     if (Array.isArray(order_id)) order_id = order_id.join(',');
     res.order_id = order_id;
   }
-  console.log(res, 22331);
   return res;
 }
 
 function batchCancelFutureOrders(res) {
-  console.log(res);
+  if (res && res.successes) {
+    if (typeof res.successes === 'string') {
+      res.successes = res.successes.split(',').map(order_id => ({ order_id }));
+    }
+    return res.successes;
+  }
+  return [];
 }
 module.exports = {
   getDefaultFuturePairs,
   futureRiskInfo,
   formatFutureDepth: _formatFutureDepth,
   futureBalances,
+  futureBalance: futureBalances,
   // // formatFutureDepth,
   // getInfoFromInstrumentId,
   // getFutureInstrumentId,
@@ -611,7 +529,7 @@ module.exports = {
   // formatTick: _formatTick,
   // //
   // futurePositions,
-  // futurePositionsO: direct,
+  futurePositionsO,
   // futurePosition,
   futurePositions,
   futureFeeO,

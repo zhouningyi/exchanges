@@ -68,7 +68,7 @@ function _processBalance(list) {
     // if (locked && trade) l.total_balance = l.locked_balance + l.balance;
     res.push(l);
   });
-  return res;
+  return res;// _.filter(res, l => l.locked_balance || l.balance); 不要用
 }
 
 function pointBalances(res, o) {
@@ -135,7 +135,12 @@ function _formatSpotOrder(l) {
 
 function _formatPrice(price, pair) {
   const digit = _.get(getPairInfo(pair), 'base_asset_precision');
-  if (digit && (price || price === 0) && price.toFixed) price = price.toFixed(digit);
+  if (digit && (price || price === 0) && price.toFixed) price = price.toFixed((digit - 1) || 4);
+  return price;
+}
+function _formatAmount(price, pair) {
+  const digit = _.get(getPairInfo(pair), 'amount_precision');
+  if (digit && (price || price === 0) && price.toFixed) price = price.toFixed((digit) || 3);
   return price;
 }
 
@@ -152,6 +157,7 @@ function spotOrderO(o = {}, o1) {
   };
   if (o.client_oid) opt['client-order-id'] = o.client_oid;
   if (type === 'LIMIT') opt.price = _formatPrice(o.price, o.pair);
+  opt.amount = _formatAmount(o.amount, o.pair);
   return opt;
 }
 
@@ -301,6 +307,7 @@ module.exports = {
   spotKlineO,
   spotKline,
   spotBalances,
+  spotBalance: spotBalances,
   pointBalances,
   spotOrderO,
   spotOrder,

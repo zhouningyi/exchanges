@@ -272,17 +272,17 @@ class Exchange extends Base {
       return false;
     }
     if (body.code === -1) {
-      console.log(`${endpoint}: ${body.msg}`);
+      console.log(method, `${endpoint}: ${body.msg}`);
       return false;
     }
     if (body.status === 'error') {
       const errMsg = body['err-msg'] || body.err_msg;
-      console.log(`${errMsg} | ${endpoint}`, endpoint, params);
+      console.log(method, `${errMsg} | ${endpoint}`, params);
       return { error: errMsg };
     }
     if (body.error) {
       const errMsg = body.error;
-      console.log(`${errMsg} | ${endpoint}`, endpoint, params);
+      console.log(method, `${errMsg} | ${method}: ${endpoint}`, params);
       return { error: errMsg };
     }
     if (body.error_message) {

@@ -93,6 +93,7 @@ const spotBalance = {
   isSign: true,
   formater: (ds) => {
     const { data, topic } = ds;
+    // console.log(topic, 'balance topic...');
     if (!data) return false;
     let res = [];
     if (topic === 'accounts.list') {
@@ -108,7 +109,9 @@ const spotBalance = {
       });
       return res;
     } else if (topic === 'accounts') {
-      return spotUtils.processBalance(data.list);
+      const result = spotUtils.processBalance(data.list);
+      // console.log(result, 'spotBalance....');
+      return result;
     }
     return false;
   }
@@ -164,11 +167,15 @@ const futureOrders = {
   }
 };
 
+function uuid(str) {
+  return `${str}.${Math.floor(Math.random() * 100000)}`;
+}
 const futurePosition = {
   notNull: [],
   chanel: (o) => {
     return [{
       op: 'sub',
+      cid: uuid('position'),
       topic: 'positions.*',
     }];
   },
@@ -176,9 +183,12 @@ const futurePosition = {
   isSign: true,
   formater: (ds) => {
     if (!ds) return false;
-    const { data } = ds;
+    const { data, topic } = ds;
+    if (topic === 'positions') return false;// 第一次订阅的时候 lever rate是错的。。
     if (!data) return false;
-    return futureUtils.futurePositions(data);
+    const isws = true;
+    const res = futureUtils.futurePositions(data, {}, isws);
+    return res;
   }
 };
 
@@ -194,9 +204,11 @@ const futureBalance = {
   isSign: true,
   formater: (ds) => {
     if (!ds) return false;
-    const { data } = ds;
+    const { data, topic } = ds;
+    // console.log(topic, 'future_balance_topic...');
     if (!data) return false;
-    return futureUtils.futureBalances(data);
+    const res = futureUtils.futureBalances(data);
+    return res;
   }
 };
 

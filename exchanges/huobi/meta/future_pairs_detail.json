@@ -1,0 +1,212 @@
+[
+  {
+    "instrument_id": "BTC190802",
+    "contract_type": "this_week",
+    "pair": "BTC-USD",
+    "coin": "BTC",
+    "tick_size": 0.01,
+    "contract_value": 100,
+    "close_date": "20190802",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "BTC190809",
+    "contract_type": "next_week",
+    "pair": "BTC-USD",
+    "coin": "BTC",
+    "tick_size": 0.01,
+    "contract_value": 100,
+    "close_date": "20190809",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "BTC190927",
+    "contract_type": "quarter",
+    "pair": "BTC-USD",
+    "coin": "BTC",
+    "tick_size": 0.01,
+    "contract_value": 100,
+    "close_date": "20190927",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "LTC190802",
+    "contract_type": "this_week",
+    "pair": "LTC-USD",
+    "coin": "LTC",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190802",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "LTC190809",
+    "contract_type": "next_week",
+    "pair": "LTC-USD",
+    "coin": "LTC",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190809",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "LTC190927",
+    "contract_type": "quarter",
+    "pair": "LTC-USD",
+    "coin": "LTC",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190927",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "ETH190802",
+    "contract_type": "this_week",
+    "pair": "ETH-USD",
+    "coin": "ETH",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190802",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "ETH190809",
+    "contract_type": "next_week",
+    "pair": "ETH-USD",
+    "coin": "ETH",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190809",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "ETH190927",
+    "contract_type": "quarter",
+    "pair": "ETH-USD",
+    "coin": "ETH",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190927",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "EOS190802",
+    "contract_type": "this_week",
+    "pair": "EOS-USD",
+    "coin": "EOS",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190802",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "EOS190809",
+    "contract_type": "next_week",
+    "pair": "EOS-USD",
+    "coin": "EOS",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190809",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "EOS190927",
+    "contract_type": "quarter",
+    "pair": "EOS-USD",
+    "coin": "EOS",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190927",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "BCH190802",
+    "contract_type": "this_week",
+    "pair": "BCH-USD",
+    "coin": "BCH",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190802",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "BCH190809",
+    "contract_type": "next_week",
+    "pair": "BCH-USD",
+    "coin": "BCH",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190809",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "BCH190927",
+    "contract_type": "quarter",
+    "pair": "BCH-USD",
+    "coin": "BCH",
+    "tick_size": 0.001,
+    "contract_value": 10,
+    "close_date": "20190927",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "XRP190802",
+    "contract_type": "this_week",
+    "pair": "XRP-USD",
+    "coin": "XRP",
+    "tick_size": 0.0001,
+    "contract_value": 10,
+    "close_date": "20190802",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "XRP190809",
+    "contract_type": "next_week",
+    "pair": "XRP-USD",
+    "coin": "XRP",
+    "tick_size": 0.0001,
+    "contract_value": 10,
+    "close_date": "20190809",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "XRP190927",
+    "contract_type": "quarter",
+    "pair": "XRP-USD",
+    "coin": "XRP",
+    "tick_size": 0.0001,
+    "contract_value": 10,
+    "close_date": "20190927",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "TRX190802",
+    "contract_type": "this_week",
+    "pair": "TRX-USD",
+    "coin": "TRX",
+    "tick_size": 0.00001,
+    "contract_value": 10,
+    "close_date": "20190802",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "TRX190809",
+    "contract_type": "next_week",
+    "pair": "TRX-USD",
+    "coin": "TRX",
+    "tick_size": 0.00001,
+    "contract_value": 10,
+    "close_date": "20190809",
+    "resp_time": 2043
+  },
+  {
+    "instrument_id": "TRX190927",
+    "contract_type": "quarter",
+    "pair": "TRX-USD",
+    "coin": "TRX",
+    "tick_size": 0.00001,
+    "contract_value": 10,
+    "close_date": "20190927",
+    "resp_time": 2043
+  }
+]

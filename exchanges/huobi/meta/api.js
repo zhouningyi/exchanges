@@ -52,6 +52,13 @@ module.exports = {
     endpointParams: ['spotId'],
     endpoint: 'v1/account/accounts/{spotId}/balance'
   },
+  spotBalance: {
+    name: 'spotBalance',
+    name_cn: '现货账户信息',
+    sign: true,
+    endpointParams: ['spotId'],
+    endpoint: 'v1/account/accounts/{spotId}/balance'
+  },
   pointBalances: {
     name: 'pointBalances',
     name_cn: '点卡账户信息',
@@ -149,6 +156,15 @@ module.exports = {
     notNull: [],
     host: 'future',
   },
+  futureBalance: {
+    method: 'POST',
+    name: 'futureBalance',
+    name_cn: '账户余额',
+    endpoint: 'api/v1/contract_account_info',
+    sign: true,
+    notNull: [],
+    host: 'future',
+  },
   futurePositions: {
     method: 'POST',
     name: 'futurePositions',
@@ -235,6 +251,7 @@ module.exports = {
     endpoint: 'v1/futures/transfer',
     sign: true,
     notNull: ['coin', 'source', 'target', 'amount'],
+    rateLimit: 1000 / 10
   },
   // walletLedger: {
   //   name: 'walletLedger',
@@ -493,14 +510,6 @@ module.exports = {
   //   endpoint: 'futures/v3/accounts/{instrument_id}/holds',
   //   endpointParams: ['instrument_id'],
   //   notNull: ['contract_type', 'pair'],
-  // },
-  // // 合约私有接口
-  // futurePositions: {
-  //   method: 'GET',
-  //   name: 'futurePositions',
-  //   name_cn: '所有期货仓位',
-  //   endpoint: 'futures/v3/position',
-  //   notNull: []
   // },
   // setLerverate: {
   //   method: 'POST',
