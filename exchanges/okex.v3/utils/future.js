@@ -30,26 +30,32 @@ function _formatFuturePosition(line) {
   if (!line || !line.margin_mode) return null;
   const pair = future_id2pair(line.instrument_id);
   const coin = pair.toUpperCase().split('-USD')[0];
+  const contract_type = future_id2contract_type(line.instrument_id);
+  const buy_amount = _parse(line.long_qty);
+  const sell_amount = _parse(line.short_qty);
+  const direction = ((buy_amount || 0) - (sell_amount || 0)) > 0 ? 'UP' : 'DOWN';
   return {
+    unique_id: [contract_type, coin].join('_'),
     margin_mode: line.margin_mode,
     liquidation_price: _parse(line.liquidation_price),
     buy_liqu_price: _parse(line.long_liqui_price),
     buy_margin: _parse(line.long_margin),
-    buy_amount: _parse(line.long_qty),
+    buy_amount,
     buy_avaliable_amount: _parse(line.long_avail_qty), // 多仓可以平仓数量
     buy_price_avg: _parse(line.long_avg_cost), // 多仓平均开仓价
     buy_settlement_price: _parse(line.long_settlement_price),
     benifit: _parse(line.realized_pnl),
     sell_liqu_price: _parse(line.short_liqui_price),
     sell_margin: _parse(line.short_margin),
-    sell_amount: _parse(line.short_qty),
+    sell_amount,
     sell_avaliable_amount: _parse(line.short_avail_qty), // 多仓可以平仓数量
     sell_price_avg: _parse(line.short_avg_cost), // 多仓平均开仓价
     sell_settlement_price: _parse(line.short_settlement_price),
     instrument_id: line.instrument_id,
+    direction,
     pair,
     coin,
-    contract_type: future_id2contract_type(line.instrument_id),
+    contract_type,
     lever_rate: _parse(line.leverage),
     long_lever_rate: _parse(line.long_leverage),
     short_lever_rate: _parse(line.short_leverage),
