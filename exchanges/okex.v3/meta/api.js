@@ -478,6 +478,15 @@ module.exports = {
     notNull: ['pair', 'contract_type'],
     rateLimit: 2000 / 20
   },
+  futureKline: {
+    method: 'GET',
+    name: 'futureKline',
+    name_cn: '期货K线图',
+    endpoint: 'futures/v3/instruments/{instrument_id}/candles',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair', 'contract_type'],
+    rateLimit: 2000 / 20
+  },
   //
   swapTicks: {
     method: 'GET',

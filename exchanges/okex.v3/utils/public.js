@@ -51,6 +51,21 @@ function symbol2pair(symbol, isFuture = false) {
 //   '1d': '1day',
 //   '3d': '2hour',
 // };
+// [60/180/300 900/1800/3600/7200/14400/21600/43200/86400/604800]
+const intervalMap = {
+  '1m': 60,
+  '3m': 180,
+  '5m': 300,
+  '15m': 900,
+  '30m': 1800,
+  '1h': 3600,
+  '2h': 7200,
+  '4h': 14400,
+  '6h': 21600,
+  '12h': 43200,
+  '1d': 86400,
+  '1w': 604800,
+};
 
 // function parseOrderType(typeStr) {
 //   const ts = typeStr.toUpperCase().split('_');
@@ -157,6 +172,7 @@ function moveBalanceO(o = {}) {
   return opt;
 }
 function moveBalance(res, o = {}) {
+  console.log(res, '====');
   const success = res.result === true;
   const error = res.result === true ? null : res.result || res.message;
   return {
@@ -377,6 +393,7 @@ module.exports = {
   coins,
   coinsO: direct,
   getError,
+  intervalMap,
   // 资金流动
   moveBalanceO,
   moveBalance,

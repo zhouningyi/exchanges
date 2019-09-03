@@ -19,8 +19,8 @@
     "open": "FLOAT",
     "close": "FLOAT",
     "high": "FLOAT",
+    "low": "FLOAT",
     "contract_type": ["STRING", 10],
-    "low": ["STRING", 10],
     "volume_amount":{
       "type": ["STRING", 20],
       "comment": "持仓量(张数)"
@@ -28,6 +28,10 @@
     "volume_coin":  {
       "type": "FLOAT",
       "comment": "持仓量(币的数量)"
+    },
+    "count":  {
+      "type": "INTEGER",
+      "comment": "比数"
     }
   }
 }

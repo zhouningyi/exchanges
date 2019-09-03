@@ -3,7 +3,7 @@ const Utils = require('./../../../utils');
 const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
-const { accountTypeMap } = require('./public');
+const { accountTypeMap, intervalMap } = require('./public');
 
 const { checkKey, throwError, cleanObjectNull } = Utils;
 
@@ -84,8 +84,7 @@ function futurePositionO(o) {
   };
 }
 
-
-// /
+//
 function _formatBalance(line, coin) {
   coin = coin.toUpperCase();
   return cleanObjectNull({
@@ -395,6 +394,36 @@ function futureTotalHoldAmount(res, o) {
   };
 }
 
+// 期货k线
+function futureKlineO(o = {}) {
+  const interval = intervalMap[o.interval] || 15 * 60;
+  const res = {
+    ...o,
+    granularity: interval,
+    instrument_id: getCurFutureInstrumentId(o),
+  };
+  if (o.timeStart) res.start = o.timeStart;
+  if (o.timeEnd) res.end = o.timeEnd;
+  return res;
+}
+function _formatFutureKline(l, o) {
+  const time = new Date(l[0]);
+  return {
+    ...o,
+    unique_id: `${o.pair}_${o.contract_type}_${o.interval}_${time.getTime()}`,
+    time,
+    open: _parse(l[1]),
+    high: _parse(l[2]),
+    low: _parse(l[3]),
+    close: _parse(l[4]),
+    volume_coin: _parse(l[5]),
+    volume_amount: _parse(l[6]),
+  };
+}
+function futureKline(res, o) {
+  return _.map(res, l => _formatFutureKline(l, o));
+}
+
 // 期货限价
 function futureLimitPriceO(o = {}) {
   return {
@@ -569,6 +598,8 @@ module.exports = {
   futureTotalHoldAmount,
   futureLimitPriceO,
   futureLimitPrice,
+  futureKline,
+  futureKlineO,
   futureTicksO: direct,
   futureTicks,
   futureTickO,
