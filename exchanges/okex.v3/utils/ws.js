@@ -5,6 +5,7 @@ const _ws = require('./_ws');
 const { symbol2pair } = require('./public');
 const { checkKey } = require('./../../../utils');
 const futureUtils = require('./future');
+const marginUtils = require('./margin');
 const spotUtils = require('./spot');
 const swapUtils = require('./swap');
 
@@ -124,9 +125,10 @@ const spotOrders = {
   notNull: ['pairs'],
   isSign: true,
   chanel: o => _.map(o.pairs, pair => `spot/order:${pair}`),
-  formater: res => _.map(res.data, final(spotUtils.formatOrder)).filter(exist)
+  formater: (res) => {
+    return _.map(res.data, final(spotUtils.formatOrder)).filter(exist);
+  }
 };
-
 
 const futureDepth = {
   isSign: false,
@@ -179,7 +181,24 @@ const swapDepth = {
 };
 
 
+const marginBalance = {
+  name: 'spot/margin_account',
+  notNull: ['pairs'],
+  isSign: true,
+  chanel: (o = {}) => {
+    return _.map(o.pairs, (pair) => {
+      const res = `spot/margin_account:${pair}`;
+      return res;
+    });
+  },
+  formater: (res) => {
+    return _.flatten(_.map(res.data, marginUtils.formatMarginBalance).filter(exist));
+  }
+};
+
+
 module.exports = {
+  marginBalance,
   ..._ws,
   // spot
   ticks,

@@ -184,11 +184,19 @@ module.exports = {
     sign: true,
   },
   // // // // // // // 杠杆交易  // // // // // // //
-  marginBalance: {
-    name: 'marginBalance',
-    name_cn: '杠杆账户余额',
+  marginBalances: {
+    name: 'marginBalances',
+    name_cn: '所有杠杆账户余额',
     sign: true,
     endpoint: 'margin/v3/accounts',
+  },
+  marginBalance: {
+    name: 'marginBalance',
+    name_cn: '单个杠杆账户余额',
+    sign: true,
+    endpointParams: ['coin'],
+    endpoint: 'margin/v3/accounts/{coin}',
+    notNull: ['coin']
   },
   marginCoins: {
     name: 'marginCoins',
@@ -223,7 +231,7 @@ module.exports = {
     desc: '在某个币币杠杆账户里进行借币',
     sign: true,
     endpoint: 'margin/v3/accounts/repayment',
-    notNull: ['instrument_id', 'coin', 'amount', 'order_id']
+    notNull: ['pair', 'coin', 'amount']
   },
   marginOrder: {
     method: 'POST',
@@ -232,7 +240,7 @@ module.exports = {
     desc: '',
     sign: true,
     endpoint: 'margin/v3/orders',
-    notNull: ['instrument_id', 'type', 'side']
+    notNull: ['pair', 'type', 'side']
   },
   cancelMarginOrder: {
     method: 'POST',
@@ -242,6 +250,22 @@ module.exports = {
     endpoint: 'margin/v3/cancel_orders/{order_id}',
     endpointParams: ['order_id'],
     notNull: ['order_id', 'instrument_id']
+  },
+  batchCancelMarginOrder: {
+    method: 'POST',
+    name: 'cancelMarginOrder',
+    name_cn: '撤销指定订单',
+    sign: true,
+    endpoint: 'margin/v3/cancel_batch_orders',
+    // notNull: ['pair']
+  },
+  batchCancelMarginOrders: {
+    method: 'POST',
+    name: 'batchCancelMarginOrders',
+    name_cn: '批量撤销订单',
+    sign: true,
+    endpoint: 'margin/v3/cancel_batch_orders',
+    // notNull: ['pair']
   },
   marginOrders: {
     sign: true,
@@ -260,7 +284,7 @@ module.exports = {
     name: 'unfinishMarginOrders',
     name_cn: '获取所有未成交订单',
     endpoint: 'margin/v3/orders_pending',
-    notNull: ['instrument_id']
+    notNull: []
   },
   marginOrderInfo: {
     method: 'GET',
@@ -268,7 +292,7 @@ module.exports = {
     name_cn: '获取单个订单信息',
     endpoint: 'margin/v3/orders/{order_id}',
     endpointParams: ['order_id'],
-    notNull: ['instrument_id', 'order_id']
+    notNull: ['pair', 'order_id']
   },
   // successMarginOrders: {
   //   method: 'GET',
@@ -369,14 +393,14 @@ module.exports = {
   futureBalances: {
     method: 'GET',
     name: 'futureBalances',
-    name_cn: '期货账户余额',
+    name_cn: '期货账户资产',
     endpoint: 'futures/v3/accounts',
     notNull: []
   },
   futureBalance: {
     method: 'GET',
     name: 'futureBalance',
-    name_cn: '期货账户余额(单币种)',
+    name_cn: '期货账户资产(单币种)',
     endpoint: 'futures/v3/accounts/{coin}',
     endpointParams: ['coin'],
     notNull: ['coin']

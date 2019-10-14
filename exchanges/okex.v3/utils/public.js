@@ -172,7 +172,6 @@ function moveBalanceO(o = {}) {
   return opt;
 }
 function moveBalance(res, o = {}) {
-  console.log(res, '====');
   const success = res.result === true;
   const error = res.result === true ? null : res.result || res.message;
   return {
@@ -326,13 +325,30 @@ const orderStatusMap = {
   cancelled: 'CANCEL',
 };
 
+
+const orderStateMap = {
+  '-2': 'FAIL',
+  // all: 'ALL',
+  2: 'SUCCESS',
+  1: 'PARTIAL',
+  0: 'UNFINISH',
+  3: 'UNFINISH',
+  4: 'CANCELLING',
+  '-1': 'CANCEL',
+};
+
 const reverseOrderStatusMap = _.invert(orderStatusMap);
 
-function formatOrder(d, o = {}) {
+function formatOrder(d, o = {}, error) {
+  if (error) {
+    console.log(d, o, error, 'error....');
+    process.exit();
+  }
+  // console.log(d, 'd...d...');
   const { from, to, limit, ...rest } = o;
   const pps = {};
   if (d.created_at) pps.server_created_at = new Date(d.created_at);
-  return {
+  const res = {
     // time: t ? new Date(t) : new Date(),
     instrument_id: d.instrument_id,
     side: (d.side || o.side || '').toUpperCase(),
@@ -345,11 +361,19 @@ function formatOrder(d, o = {}) {
     amount: _parse(d.size),
     filled_amount: _parse(d.executed_value || d.filled_size),
     type: (d.type || o.type || '').toUpperCase(),
-    status: orderStatusMap[d.status] || 'UNFINISH',
+    status: orderStatusMap[d.status] || orderStateMap[d.state] || 'UNFINISH',
     price: _parse(d.price),
     ...pps,
     ...rest
   };
+  if (d.margin_trading) {
+    if (d.margin_trading === 2 || d.margin_trading === '2') {
+      res.instrument = 'margin';
+    } else {
+      res.instrument = 'spot';
+    }
+  }
+  return res;
 }
 
 function orderO(o) {

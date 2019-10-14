@@ -70,9 +70,23 @@ function futurePositions(ds) {
   return _.map(_.flatten(ds.holding), _formatFuturePosition);
 }
 
-function futurePosition(ds) {
+function futurePosition(ds, o = {}) {
   if (!ds || !ds.holding) throwError('futurePosition 返回错误');
   const l = ds.holding[0];
+  if (!l) {
+    const { contract_type, pair } = o;
+    const coin = pair.split('-')[0];
+    return {
+      unique_id: [contract_type, coin].join('_'),
+      margin_mode: ds.margin_mode,
+      buy_amount: 0,
+      sell_amount: 0,
+      pair,
+      coin,
+      contract_type,
+      time: new Date(),
+    };
+  }
   const pps = {};
   if (l.created_at.startsWith('1970')) pps.time = new Date();
   return { ..._formatFuturePosition(l), ...pps };

@@ -228,12 +228,33 @@ class exchange extends Event {
         // console.log(endpointCompile, opt, sign, method, 'endpointCompile...');
         const ds = await this[method](endpointCompile, opt, sign, conf.host);
         const dt = new Date() - tStart;
+        let errorO;
         if (UtilsInst.getError && ds) {
           const error = UtilsInst.getError(ds);
-          if (error) return { error };
+          if (error) {
+            errorO = { ...ds, error };
+            const errorEventData = { ...errorO, url: conf.endpoint, name_cn: conf.name_cn, name: conf.name, time: new Date() };
+            // console.log(errorEventData, 'errorEventData....');
+            this.emit('request_error', errorEventData);
+          }
         }
         if (!ds) return console.log(conf) && this.throwError('返回为空...');
-        const res = formatFn ? formatFn(ds, o) : ds;
+        let res;
+        const errorApis = [
+          'margin/v3/cancel_batch_orders',
+          'margin/v3/orders/{order_id}',
+        ];
+        if (formatFn) {
+          if (!errorO) {
+            res = formatFn(ds, o);
+          } else if (errorApis.includes(conf.endpoint)) {
+            res = formatFn(ds, o, errorO);
+          } else {
+            return errorO;
+          }
+        } else {
+          res = ds;
+        }
         this.addDt2Res(res, dt);
         return res;
       } catch (e) {

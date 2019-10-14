@@ -7,7 +7,6 @@ const publicUtils = require('./public');
 
 const { formatOrder, formatLedger, reverseOrderStatusMap } = publicUtils;
 
-
 function direct(d) {
   return d;
 }

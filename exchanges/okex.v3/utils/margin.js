@@ -6,6 +6,8 @@ const Utils = require('./../../../utils');
 const { orderStatusMap, formatOrder, orderO } = require('./public');
 
 const reverseOrderStatusMap = _.invert(orderStatusMap);
+const publicUtils = require('./public');
+
 const { checkKey } = Utils;
 
 
@@ -35,37 +37,44 @@ function coin2currency(coin) {
   return `currency:${coin}`;
 }
 
-function marginBalance(ds, o) {
-  const res = [];
-  _.forEach(ds, (d) => {
-    const pair = symbol2pair(d.instrument_id);
-    const [left, right] = pair.split('-');
-    const leftInfo = d[coin2currency(left)];
-    const rightInfo = d[coin2currency(right)];
-    const pub = {
-      pair,
-      liquidation_price: _parse(d.liquidation_price),
-      risk_rate: _parse(d.risk_rate),
-    };
-    res.push({
-      ...pub,
-      unique_id: `${pair}_${left}`,
+
+function formatMarginBalance(d) {
+  const pair = symbol2pair(d.instrument_id);
+  const [left, right] = pair.split('-');
+  const leftInfo = d[coin2currency(left)];
+  const rightInfo = d[coin2currency(right)];
+  const res = {
+    pair,
+    left: {
       coin: left,
       ..._parseBalance(leftInfo)
-    });
-    res.push({
-      ...pub,
-      unique_id: `${pair}_${right}`,
+    },
+    right: {
       coin: right,
       ..._parseBalance(rightInfo)
-    });
-  });
+    }
+  };
+  if (d.liquidation_price) res.liquidation_price = _parse(d.liquidation_price);
+  if (d.risk_rate) res.risk_rate = _parse(d.risk_rate);
+  return res;
+}
+
+function marginBalance(d, o) {
+  const res = formatMarginBalance(d);
   if (o && o.notNull) {
     return _.filter(res, d => d.balance || d.total_balance);
   }
   return res;
 }
 
+
+function marginBalances(ds, o) {
+  let res = _.map(ds, formatMarginBalance);
+  if (!o) return res;
+  if (o.notNull) res = _.filter(res, d => d.balance || d.total_balance);
+  if (o.pairs) res = _.filter(res, d => o.pairs.includes(d.pair));
+  return res;
+}
 
 function _parseMarginCoin(d) {
   return {
@@ -112,19 +121,36 @@ function borrowHistoryO(o = {}) {
   return opt;
 }
 
+const borrowStateMap = {
+  1: 'SUCCESS',
+  2: 'UNFINISH'
+};
 function _borrowHistory(d, o) {
-  return {
-    status: o.status,
-    amount: _parse(d.amount),
+  const amount = _parse(d.amount);
+  const repayed_amount = _parse(d.returned_amount);
+  const interest = _parse(d.interest);
+  const repayed_interest = _parse(d.paid_interest);
+  const unfinish_interest = interest - repayed_interest;
+  const res = {
+    amount,
     order_id: d.borrow_id,
     time: new Date(d.created_at),
     coin: d.currency,
     instrument_id: d.instrument_id,
-    interest: _parse(d.interest),
-    repayed_amount: _parse(d.returned_amount),
-    repayed_interest: _parse(d.paid_interest),
-    last_interest_time: new Date(d.last_interest_time)
+    pair: d.instrument_id,
+    interest,
+    repayed_amount,
+    unfinish_amount: amount - repayed_amount,
+    unfinish_interest,
+    repayed_interest,
+    last_interest_time: new Date(d.last_interest_time),
+    force_repay_time: new Date(d.force_repay_time),
+    rate: _parse(d.rate),
+    rate_day: _parse(d.rate * 24),
+    rate_year: _parse(d.rate * 24 * 365),
   };
+  if (o.status) res.status = o.status;
+  return res;
 }
 
 function borrowHistory(ds, o) {
@@ -152,7 +178,7 @@ function repayO(o) {
   return {
     client_oid: o.client_oid,
     borrow_id: o.order_id,
-    instrument_id: o.instrument_id,
+    instrument_id: o.instrument_id || o.pair,
     amount: o.amount,
     currency: o.coin
   };
@@ -168,11 +194,13 @@ function repay(d) {
 
 // 下单
 function marginOrderO(o) {
-  const opt = { ...orderO, margin_trading: 2 };
-  return opt;
+  return {
+    ...publicUtils.orderO(o),
+    margin_trading: 2
+  };
 }
 function marginOrder(d, o) {
-  if (!d) return false;
+  if (!d) return null;
   return formatOrder(d, o);
 }
 
@@ -181,6 +209,30 @@ function cancelMarginOrderO(o = {}) {
     instrument_id: o.instrument_id,
     client_oid: o.client_oid
   };
+}
+
+function batchCancelMarginOrderO(o = []) {
+  o = _.map(_.groupBy(o, 'pair'), (l, pair) => {
+    return {
+      instrument_id: pair.toLowerCase(),
+      order_ids: _.map(l, _l => _l.order_id).slice(0, 9)
+    };
+  });
+  return o;
+}
+function batchCancelMarginOrder(ds, o = {}) {
+  const res = [];
+  _.forEach(ds, (d, pair) => {
+    _.forEach(d, (_d) => {
+      res.push({
+        client_oid: _d.client_oid,
+        order_id: _d.order_id,
+        success: _d.result,
+        pair: pair.toUpperCase()
+      });
+    });
+  });
+  return res;
 }
 
 function cancelMarginOrder(d, o) {
@@ -201,10 +253,8 @@ function cancelAllMarginOrdersO(o = {}) {
   // return { instrument_id: o.instrument_id, order_id: _formatOrderIds(o.order_ids) };
 }
 function cancelAllMarginOrders(ds, o) {
-  console.log(ds);
   return ds;
 }
-
 
 function marginOrdersO(o = {}) {
   return {
@@ -243,14 +293,22 @@ function marginOrders(ds) {
 }
 
 function marginOrderInfoO(o = {}) {
-  return o;
+  return {
+    instrument_id: o.pair,
+    order_id: o.order_id
+  };
 }
 
-function marginOrderInfo(line, o) {
+function marginOrderInfo(line, o, error) {
+  if (error && error.code === 33014) {
+    return { order_id: o.order_id, status: 'X_FINISH' };
+  }
   return { ...formatOrder(line), ...o };
 }
 
 module.exports = {
+  formatMarginBalance,
+  marginBalances,
   marginBalance,
   marginBalanceO: direct,
   marginCoinsO: direct,
@@ -266,6 +324,10 @@ module.exports = {
   cancelAllMarginOrdersO,
   cancelAllMarginOrders,
   cancelMarginOrderO,
+  batchCancelMarginOrderO,
+  batchCancelMarginOrder,
+  batchCancelMarginOrders: batchCancelMarginOrder,
+  batchCancelMarginOrdersO: batchCancelMarginOrderO,
   cancelMarginOrder,
   marginOrdersO,
   marginOrders,

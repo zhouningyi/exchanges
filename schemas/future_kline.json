@@ -21,6 +21,7 @@
     "high": "FLOAT",
     "low": "FLOAT",
     "contract_type": ["STRING", 10],
+    "source": ["STRING", 10],
     "volume_amount":{
       "type": ["STRING", 20],
       "comment": "持仓量(张数)"

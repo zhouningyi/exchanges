@@ -75,6 +75,7 @@ class Exchange extends Base {
     this.wsBalance = (o, cb) => this._addChanelV3('balance', o, cb);
     this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
     this.wsSwapDepth = (o, cb) => this._addChanelV3('swapDepth', o, cb);
+    this.wsMarginBalance = (o, cb) => this._addChanelV3('marginBalance', o, cb);
   }
   _addChanelV3(wsName, o = {}, cb) {
     const { ws } = this;
@@ -145,9 +146,13 @@ class Exchange extends Base {
       headers: this._genHeader(method, endpoint, params, isSign),
       ...(method === 'GET' ? {} : { body: JSON.stringify(params) })
     };
+
+
     let body;
     // try {
+
     body = await request(o);
+
     // } catch (e) {
     //   if (e) console.log(e.message);
     //   return false;
@@ -165,7 +170,7 @@ class Exchange extends Base {
       return false;
     }
     if (body.error_code && body.error_code !== '0') {
-      // console.log(body, 'body...');
+      console.log(body, 'body...');
       const msg = `${error.getErrorFromCode(body.error_code)}`;
       console.log(`${msg} | ${endpoint}`, endpoint, params);
       return { error: msg };
@@ -176,6 +181,9 @@ class Exchange extends Base {
       };
       // return Utils.throwError(body.error_message);
     }
+    // if (url && url.indexOf('margin/v3/cancel_batch_orders') !== -1) {
+    //   console.log(o, body.data || body || false, '0o2032');
+    // }
     return body.data || body || false;
   }
   calcCost(o = {}) {
