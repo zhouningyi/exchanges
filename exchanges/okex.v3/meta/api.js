@@ -213,6 +213,7 @@ module.exports = {
     defaultOptions: {
       limit: 100
     },
+    // notNull: ['pair'],
     endpoint: 'margin/v3/accounts/borrowed'
   },
   borrow: {
@@ -373,6 +374,13 @@ module.exports = {
     endpoint: 'futures/v3/accounts/{coin}/leverage',
     endpointParams: ['coin'],
     notNull: ['coin', 'lever_rate'],
+  },
+  setMarginMode: {
+    method: 'POST',
+    name: 'setMarginMode',
+    name_cn: '设置仓位类型',
+    endpoint: 'futures/v3/accounts/margin_mode',
+    notNull: ['coin', 'margin_mode'],
   },
   lerverate: {
     method: 'GET',

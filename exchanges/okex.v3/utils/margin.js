@@ -112,19 +112,26 @@ const marginStatus = {
   brrowing: 0,
   payoff: 1,
 };
-
-function borrowHistoryO(o = {}) {
-  const opt = _.cloneDeep(o);
-  if (o.status) {
-    opt.status = marginStatus[o.status];
-  }
-  return opt;
-}
-
 const borrowStateMap = {
   1: 'SUCCESS',
   2: 'UNFINISH'
 };
+
+const reverseBorrowStateMap = {
+  UNFINISH: 0,
+  SUCCESS: 1
+};
+
+function borrowHistoryO(o = {}) {
+  const opt = _.cloneDeep(o);
+  if (o.status) {
+    opt.status = reverseBorrowStateMap[o.status];
+  }
+  if (o.pair) opt.instrument_id = o.pair;
+  return opt;
+}
+
+
 function _borrowHistory(d, o) {
   const amount = _parse(d.amount);
   const repayed_amount = _parse(d.returned_amount);
@@ -175,13 +182,15 @@ function borrow(d) {
 }
 
 function repayO(o) {
-  return {
-    client_oid: o.client_oid,
-    borrow_id: o.order_id,
+  const res = {
     instrument_id: o.instrument_id || o.pair,
     amount: o.amount,
     currency: o.coin
   };
+  if (o.client_oid) res.client_oid = o.client_oid;
+  if (o.borrow_id) res.borrow_id = o.borrow_id || o.order_id;
+  console.log(res, 9999);
+  return res;
 }
 
 function repay(d) {

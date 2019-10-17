@@ -491,6 +491,30 @@ function futureTickO(o = {}) {
   return { instrument_id };
 }
 
+function setMarginModeO(o) {
+  return {
+    currency: o.coin,
+    margin_mode: o.margin_mode || o.marginMode
+  };
+}
+function setMarginMode(d, o) {
+  if (d && d.result) {
+    const { result, currency: coin, margin_mode } = o;
+    if (result) {
+      return {
+        success: true,
+        coin,
+        margin_mode
+      };
+    }
+    return null;
+  }
+  return {
+  };
+  console.log(d, 'setMarginMode...');
+}
+
+
 function setLerverate(d) {
   return {
     success: !!d.result,
@@ -618,6 +642,8 @@ module.exports = {
   futureTicks,
   futureTickO,
   futureTick,
+  setMarginModeO,
+  setMarginMode,
   setLerverate,
   setLerverateO,
   lerverate,
