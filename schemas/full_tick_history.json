@@ -9,7 +9,7 @@
       "type": ["STRING", 5],
       "index": true
     },
-    "time": {  "type": "DATE", "index": true },
+    "time": {  "type": "DATE", "index": true, "notNull": true },
     "spot_bid_price": "FLOAT",
     "spot_bid_volumn": "FLOAT",
     "spot_ask_price": "FLOAT",

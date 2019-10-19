@@ -233,8 +233,8 @@ class exchange extends Event {
           const error = UtilsInst.getError(ds);
           if (error) {
             errorO = { ...ds, error };
-            const errorEventData = { ...errorO, url: conf.endpoint, name_cn: conf.name_cn, name: conf.name, time: new Date() };
-            // console.log(errorEventData, 'errorEventData....');
+            const errorEventData = { ...errorO, opt, url: conf.endpoint, name_cn: conf.name_cn, name: conf.name, time: new Date() };
+            console.log(errorEventData, 'errorEventData....');
             this.emit('request_error', errorEventData);
           }
         }

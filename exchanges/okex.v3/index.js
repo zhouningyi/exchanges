@@ -170,7 +170,7 @@ class Exchange extends Base {
       return false;
     }
     if (body.error_code && body.error_code !== '0') {
-      console.log(body, 'body...');
+      // console.log(body, 'body...');
       const msg = `${error.getErrorFromCode(body.error_code)}`;
       console.log(`${msg} | ${endpoint}`, endpoint, params);
       return { error: msg };

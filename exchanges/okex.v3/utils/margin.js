@@ -78,12 +78,13 @@ function marginBalances(ds, o) {
 
 function _parseMarginCoin(d) {
   return {
+    available: _parse(d.available),
     fee_rate: _parse(d.rate),
     lever_rate: _parse(d.leverage)
   };
 }
 
-function marginCoins(ds) {
+function marginPairInfo(ds) {
   const res = [];
   _.forEach(ds, (d) => {
     const pair = symbol2pair(d.instrument_id);
@@ -92,12 +93,14 @@ function marginCoins(ds) {
     const rightInfo = d[coin2currency(right)];
     const pub = { pair };
     res.push({
+      side: 'left',
       ...pub,
       unique_id: `${pair}_${left}`,
       coin: left,
       ..._parseMarginCoin(leftInfo)
     });
     res.push({
+      side: 'right',
       ...pub,
       coin: right,
       unique_id: `${pair}_${right}`,
@@ -189,7 +192,6 @@ function repayO(o) {
   };
   if (o.client_oid) res.client_oid = o.client_oid;
   if (o.borrow_id) res.borrow_id = o.borrow_id || o.order_id;
-  console.log(res, 9999);
   return res;
 }
 
@@ -320,8 +322,8 @@ module.exports = {
   marginBalances,
   marginBalance,
   marginBalanceO: direct,
-  marginCoinsO: direct,
-  marginCoins,
+  marginPairInfoO: direct,
+  marginPairInfo,
   borrowHistoryO,
   borrowHistory,
   borrow,

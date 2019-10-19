@@ -198,8 +198,8 @@ module.exports = {
     endpoint: 'margin/v3/accounts/{coin}',
     notNull: ['coin']
   },
-  marginCoins: {
-    name: 'marginCoins',
+  marginPairInfo: {
+    name: 'marginPairInfo',
     name_cn: '杠杆账户各币种信息',
     desc: '获取币币杠杆账户的借币配置信息，包括当前最大可借、借币利率、最大杠杆倍数',
     sign: true,

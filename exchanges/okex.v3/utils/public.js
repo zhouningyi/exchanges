@@ -153,9 +153,9 @@ function formatDigit(num, n) {
 }
 // move Balance
 function moveBalanceO(o = {}) {
-  const { source, target, coin, instrument_id, sub_account } = o;
+  const { source, target, coin, instrument_id, source_pair, to_instrument_id, target_pair, sub_account } = o;
   if (source === 'sub_account') checkKey(o, ['sub_account']);
-  if (source === 'margin') checkKey(o, ['instrument_id']);
+  if (source === 'margin') checkKey(o, ['pair']);
   const amount = formatDigit(o.amount, 4);// 有时候会有精度问题
   const from = accountTypeMap[source];
   if (!from) {
@@ -168,7 +168,12 @@ function moveBalanceO(o = {}) {
     return false;
   }
   const currency = coin;// .toLowerCase();
-  const opt = { from, to, currency, instrument_id, sub_account, amount };
+  const opt = { from, to, currency, amount };
+  if (sub_account) opt.sub_account = sub_account;
+  const _instrument_id = instrument_id || source_pair;
+  if (_instrument_id) opt.instrument_id = _instrument_id;
+  const _to_instrument_id = to_instrument_id || target_pair;
+  if (_to_instrument_id) opt.to_instrument_id = _to_instrument_id;
   return opt;
 }
 function moveBalance(res, o = {}) {

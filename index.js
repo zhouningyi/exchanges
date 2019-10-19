@@ -11,8 +11,10 @@ const Fcoin = require('./exchanges/fcoin');
 const Coinall = require('./exchanges/coinall');
 const Bitmex = require('./exchanges/bitmex');
 const Bikicoin = require('./exchanges/bikicoin');
+const Kraken = require('./exchanges/kraken');
 
 module.exports = {
+  Kraken,
   Bikicoin,
   Binance,
   Coinall,

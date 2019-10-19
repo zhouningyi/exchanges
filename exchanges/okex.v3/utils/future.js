@@ -509,9 +509,7 @@ function setMarginMode(d, o) {
     }
     return null;
   }
-  return {
-  };
-  console.log(d, 'setMarginMode...');
+  return null;
 }
 
 
