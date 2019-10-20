@@ -52,7 +52,8 @@ function formatMarginBalance(d) {
     right: {
       coin: right,
       ..._parseBalance(rightInfo)
-    }
+    },
+    margin_ratio: _parse(d.margin_ratio) || 10000
   };
   if (d.liquidation_price) res.liquidation_price = _parse(d.liquidation_price);
   if (d.risk_rate) res.risk_rate = _parse(d.risk_rate);
