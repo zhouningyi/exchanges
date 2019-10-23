@@ -7,6 +7,13 @@ const config = require('./../config');
 const { checkKey } = Utils;
 // const subscribe = Utils.ws.genSubscribe(config.WS_BASE);
 
+let symbolMap;
+
+function _updateSymbolMap(ps) {
+  symbolMap = _.keyBy(ps, p => pair2symbol(p.pair));
+}
+
+
 function transferCoin(coin) {
   if (coin === 'btc') return 'xbt';
   return coin;
@@ -15,6 +22,23 @@ function transferCoin(coin) {
 function _parse(v) {
   if (v === null || v === undefined) return null;
   return parseFloat(v, 10);
+}
+
+function _formatPair(l) {
+  return {
+    pair: `${l.base.toUpperCase()}-${l.quote.toUpperCase()}`,
+    ...l,
+  };
+}
+
+function pairs(res) {
+  const ps = _.map(res.result, _formatPair);
+  _updateSymbolMap(ps);
+  return ps;
+}
+
+function getPairInfo(pair) {
+  return symbolMap[pair2symbol(pair)];
 }
 
 function pair2symbol(pair) {
@@ -75,5 +99,7 @@ module.exports = {
   formatInterval,
   symbol2pair,
   pair2symbol,
-  _parse
+  _parse,
+  getPairInfo,
+  pairs,
 };

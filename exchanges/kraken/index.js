@@ -25,6 +25,7 @@ class Exchange extends Base {
   async init() {
     this.Utils = kUtils;
     this.loadFnFromConfig(apiConfig);
+    await Promise.all([this.updatePairs()]);
   }
   getSignature(method, time, endpoint, params, isws = false) { // 根据本站情况改写
   }
@@ -41,6 +42,7 @@ class Exchange extends Base {
       url = `${URL}/${endpoint}`;
     }
     if (method === 'GET' && qstr) url += `?${qstr}`;
+
     const o = {
       uri: url,
       proxy: this.proxy,
@@ -78,6 +80,12 @@ class Exchange extends Base {
     // }
     return body.data || body || false;
   }
+
+  async updatePairs() {
+    const pairs = this.pairs = await this.pairs();
+    if (pairs && pairs.length) this.saveConfig(pairs, 'pairs');
+  }
+
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);
     let { source, target, amount } = o;
