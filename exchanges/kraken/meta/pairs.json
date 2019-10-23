@@ -1,6 +1,6 @@
 [
   {
-    "pair": "ADA-ZCAD",
+    "pair": "ADA-CAD",
     "altname": "ADACAD",
     "wsname": "ADA/CAD",
     "aclass_base": "currency",
@@ -92,10 +92,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ADA-XETH",
+    "pair": "ADA-ETH",
     "altname": "ADAETH",
     "wsname": "ADA/ETH",
     "aclass_base": "currency",
@@ -187,10 +187,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ADA-ZEUR",
+    "pair": "ADA-EUR",
     "altname": "ADAEUR",
     "wsname": "ADA/EUR",
     "aclass_base": "currency",
@@ -282,10 +282,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ADA-ZUSD",
+    "pair": "ADA-USD",
     "altname": "ADAUSD",
     "wsname": "ADA/USD",
     "aclass_base": "currency",
@@ -377,10 +377,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ADA-XXBT",
+    "pair": "ADA-XBT",
     "altname": "ADAXBT",
     "wsname": "ADA/XBT",
     "aclass_base": "currency",
@@ -472,10 +472,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ATOM-ZCAD",
+    "pair": "ATOM-CAD",
     "altname": "ATOMCAD",
     "wsname": "ATOM/CAD",
     "aclass_base": "currency",
@@ -567,10 +567,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ATOM-XETH",
+    "pair": "ATOM-ETH",
     "altname": "ATOMETH",
     "wsname": "ATOM/ETH",
     "aclass_base": "currency",
@@ -662,10 +662,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ATOM-ZEUR",
+    "pair": "ATOM-EUR",
     "altname": "ATOMEUR",
     "wsname": "ATOM/EUR",
     "aclass_base": "currency",
@@ -757,10 +757,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ATOM-ZUSD",
+    "pair": "ATOM-USD",
     "altname": "ATOMUSD",
     "wsname": "ATOM/USD",
     "aclass_base": "currency",
@@ -852,10 +852,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ATOM-XXBT",
+    "pair": "ATOM-XBT",
     "altname": "ATOMXBT",
     "wsname": "ATOM/XBT",
     "aclass_base": "currency",
@@ -947,10 +947,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "BAT-XETH",
+    "pair": "BAT-ETH",
     "altname": "BATETH",
     "wsname": "BAT/ETH",
     "aclass_base": "currency",
@@ -1042,10 +1042,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "BAT-ZEUR",
+    "pair": "BAT-EUR",
     "altname": "BATEUR",
     "wsname": "BAT/EUR",
     "aclass_base": "currency",
@@ -1137,10 +1137,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "BAT-ZUSD",
+    "pair": "BAT-USD",
     "altname": "BATUSD",
     "wsname": "BAT/USD",
     "aclass_base": "currency",
@@ -1232,10 +1232,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "BAT-XXBT",
+    "pair": "BAT-XBT",
     "altname": "BATXBT",
     "wsname": "BAT/XBT",
     "aclass_base": "currency",
@@ -1327,10 +1327,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "BCH-ZEUR",
+    "pair": "BCH-EUR",
     "altname": "BCHEUR",
     "wsname": "BCH/EUR",
     "aclass_base": "currency",
@@ -1428,10 +1428,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "BCH-ZUSD",
+    "pair": "BCH-USD",
     "altname": "BCHUSD",
     "wsname": "BCH/USD",
     "aclass_base": "currency",
@@ -1529,10 +1529,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "BCH-XXBT",
+    "pair": "BCH-XBT",
     "altname": "BCHXBT",
     "wsname": "BCH/XBT",
     "aclass_base": "currency",
@@ -1628,10 +1628,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "DAI-ZEUR",
+    "pair": "DAI-EUR",
     "altname": "DAIEUR",
     "wsname": "DAI/EUR",
     "aclass_base": "currency",
@@ -1699,10 +1699,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "DAI-ZUSD",
+    "pair": "DAI-USD",
     "altname": "DAIUSD",
     "wsname": "DAI/USD",
     "aclass_base": "currency",
@@ -1770,7 +1770,7 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
     "pair": "DAI-USDT",
@@ -1841,10 +1841,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "DASH-ZEUR",
+    "pair": "DASH-EUR",
     "altname": "DASHEUR",
     "wsname": "DASH/EUR",
     "aclass_base": "currency",
@@ -1936,10 +1936,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "DASH-ZUSD",
+    "pair": "DASH-USD",
     "altname": "DASHUSD",
     "wsname": "DASH/USD",
     "aclass_base": "currency",
@@ -2031,10 +2031,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "DASH-XXBT",
+    "pair": "DASH-XBT",
     "altname": "DASHXBT",
     "wsname": "DASH/XBT",
     "aclass_base": "currency",
@@ -2126,10 +2126,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "EOS-XETH",
+    "pair": "EOS-ETH",
     "altname": "EOSETH",
     "wsname": "EOS/ETH",
     "aclass_base": "currency",
@@ -2221,10 +2221,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "EOS-ZEUR",
+    "pair": "EOS-EUR",
     "altname": "EOSEUR",
     "wsname": "EOS/EUR",
     "aclass_base": "currency",
@@ -2316,10 +2316,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "EOS-ZUSD",
+    "pair": "EOS-USD",
     "altname": "EOSUSD",
     "wsname": "EOS/USD",
     "aclass_base": "currency",
@@ -2411,10 +2411,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "EOS-XXBT",
+    "pair": "EOS-XBT",
     "altname": "EOSXBT",
     "wsname": "EOS/XBT",
     "aclass_base": "currency",
@@ -2506,10 +2506,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-DAI",
+    "pair": "ETH-DAI",
     "altname": "ETHDAI",
     "wsname": "ETH/DAI",
     "aclass_base": "currency",
@@ -2601,10 +2601,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "GNO-XETH",
+    "pair": "GNO-ETH",
     "altname": "GNOETH",
     "wsname": "GNO/ETH",
     "aclass_base": "currency",
@@ -2696,10 +2696,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "GNO-ZEUR",
+    "pair": "GNO-EUR",
     "altname": "GNOEUR",
     "wsname": "GNO/EUR",
     "aclass_base": "currency",
@@ -2791,10 +2791,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "GNO-ZUSD",
+    "pair": "GNO-USD",
     "altname": "GNOUSD",
     "wsname": "GNO/USD",
     "aclass_base": "currency",
@@ -2886,10 +2886,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "GNO-XXBT",
+    "pair": "GNO-XBT",
     "altname": "GNOXBT",
     "wsname": "GNO/XBT",
     "aclass_base": "currency",
@@ -2981,10 +2981,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ICX-XETH",
+    "pair": "ICX-ETH",
     "altname": "ICXETH",
     "wsname": "ICX/ETH",
     "aclass_base": "currency",
@@ -3076,10 +3076,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ICX-ZEUR",
+    "pair": "ICX-EUR",
     "altname": "ICXEUR",
     "wsname": "ICX/EUR",
     "aclass_base": "currency",
@@ -3171,10 +3171,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ICX-ZUSD",
+    "pair": "ICX-USD",
     "altname": "ICXUSD",
     "wsname": "ICX/USD",
     "aclass_base": "currency",
@@ -3266,10 +3266,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "ICX-XXBT",
+    "pair": "ICX-XBT",
     "altname": "ICXXBT",
     "wsname": "ICX/XBT",
     "aclass_base": "currency",
@@ -3361,10 +3361,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "LINK-XETH",
+    "pair": "LINK-ETH",
     "altname": "LINKETH",
     "wsname": "LINK/ETH",
     "aclass_base": "currency",
@@ -3456,10 +3456,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "LINK-ZEUR",
+    "pair": "LINK-EUR",
     "altname": "LINKEUR",
     "wsname": "LINK/EUR",
     "aclass_base": "currency",
@@ -3551,10 +3551,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "LINK-ZUSD",
+    "pair": "LINK-USD",
     "altname": "LINKUSD",
     "wsname": "LINK/USD",
     "aclass_base": "currency",
@@ -3646,10 +3646,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "LINK-XXBT",
+    "pair": "LINK-XBT",
     "altname": "LINKXBT",
     "wsname": "LINK/XBT",
     "aclass_base": "currency",
@@ -3741,10 +3741,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "QTUM-ZCAD",
+    "pair": "QTUM-CAD",
     "altname": "QTUMCAD",
     "wsname": "QTUM/CAD",
     "aclass_base": "currency",
@@ -3836,10 +3836,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "QTUM-XETH",
+    "pair": "QTUM-ETH",
     "altname": "QTUMETH",
     "wsname": "QTUM/ETH",
     "aclass_base": "currency",
@@ -3931,10 +3931,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "QTUM-ZEUR",
+    "pair": "QTUM-EUR",
     "altname": "QTUMEUR",
     "wsname": "QTUM/EUR",
     "aclass_base": "currency",
@@ -4026,10 +4026,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "QTUM-ZUSD",
+    "pair": "QTUM-USD",
     "altname": "QTUMUSD",
     "wsname": "QTUM/USD",
     "aclass_base": "currency",
@@ -4121,10 +4121,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "QTUM-XXBT",
+    "pair": "QTUM-XBT",
     "altname": "QTUMXBT",
     "wsname": "QTUM/XBT",
     "aclass_base": "currency",
@@ -4216,10 +4216,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "SC-XETH",
+    "pair": "SC-ETH",
     "altname": "SCETH",
     "wsname": "SC/ETH",
     "aclass_base": "currency",
@@ -4311,10 +4311,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "SC-ZEUR",
+    "pair": "SC-EUR",
     "altname": "SCEUR",
     "wsname": "SC/EUR",
     "aclass_base": "currency",
@@ -4406,10 +4406,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "SC-ZUSD",
+    "pair": "SC-USD",
     "altname": "SCUSD",
     "wsname": "SC/USD",
     "aclass_base": "currency",
@@ -4501,10 +4501,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "SC-XXBT",
+    "pair": "SC-XBT",
     "altname": "SCXBT",
     "wsname": "SC/XBT",
     "aclass_base": "currency",
@@ -4596,10 +4596,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "USDT-ZUSD",
+    "pair": "USDT-USD",
     "altname": "USDTUSD",
     "wsname": "USDT/USD",
     "aclass_base": "currency",
@@ -4671,10 +4671,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "WAVES-XETH",
+    "pair": "WAVES-ETH",
     "altname": "WAVESETH",
     "wsname": "WAVES/ETH",
     "aclass_base": "currency",
@@ -4766,10 +4766,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "WAVES-ZEUR",
+    "pair": "WAVES-EUR",
     "altname": "WAVESEUR",
     "wsname": "WAVES/EUR",
     "aclass_base": "currency",
@@ -4861,10 +4861,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "WAVES-ZUSD",
+    "pair": "WAVES-USD",
     "altname": "WAVESUSD",
     "wsname": "WAVES/USD",
     "aclass_base": "currency",
@@ -4956,10 +4956,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "WAVES-XXBT",
+    "pair": "WAVES-XBT",
     "altname": "WAVESXBT",
     "wsname": "WAVES/XBT",
     "aclass_base": "currency",
@@ -5051,10 +5051,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETC-XETH",
+    "pair": "ETC-ETH",
     "altname": "ETCETH",
     "wsname": "ETC/ETH",
     "aclass_base": "currency",
@@ -5150,10 +5150,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETC-XXBT",
+    "pair": "ETC-XBT",
     "altname": "ETCXBT",
     "wsname": "ETC/XBT",
     "aclass_base": "currency",
@@ -5251,10 +5251,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETC-ZEUR",
+    "pair": "ETC-EUR",
     "altname": "ETCEUR",
     "wsname": "ETC/EUR",
     "aclass_base": "currency",
@@ -5350,10 +5350,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETC-ZUSD",
+    "pair": "ETC-USD",
     "altname": "ETCUSD",
     "wsname": "ETC/USD",
     "aclass_base": "currency",
@@ -5449,10 +5449,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-XXBT",
+    "pair": "ETH-XBT",
     "altname": "ETHXBT",
     "wsname": "ETH/XBT",
     "aclass_base": "currency",
@@ -5554,10 +5554,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-XXBT",
     "altname": "ETHXBT.d",
     "aclass_base": "currency",
     "base": "XETH",
@@ -5610,10 +5609,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZCAD",
+    "pair": "ETH-CAD",
     "altname": "ETHCAD",
     "wsname": "ETH/CAD",
     "aclass_base": "currency",
@@ -5705,10 +5704,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZCAD",
     "altname": "ETHCAD.d",
     "aclass_base": "currency",
     "base": "XETH",
@@ -5761,10 +5759,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZEUR",
+    "pair": "ETH-EUR",
     "altname": "ETHEUR",
     "wsname": "ETH/EUR",
     "aclass_base": "currency",
@@ -5866,10 +5864,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZEUR",
     "altname": "ETHEUR.d",
     "aclass_base": "currency",
     "base": "XETH",
@@ -5922,10 +5919,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZGBP",
+    "pair": "ETH-GBP",
     "altname": "ETHGBP",
     "wsname": "ETH/GBP",
     "aclass_base": "currency",
@@ -6017,10 +6014,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZGBP",
     "altname": "ETHGBP.d",
     "aclass_base": "currency",
     "base": "XETH",
@@ -6073,10 +6069,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZJPY",
+    "pair": "ETH-JPY",
     "altname": "ETHJPY",
     "wsname": "ETH/JPY",
     "aclass_base": "currency",
@@ -6168,10 +6164,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZJPY",
     "altname": "ETHJPY.d",
     "aclass_base": "currency",
     "base": "XETH",
@@ -6224,10 +6219,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZUSD",
+    "pair": "ETH-USD",
     "altname": "ETHUSD",
     "wsname": "ETH/USD",
     "aclass_base": "currency",
@@ -6329,10 +6324,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XETH-ZUSD",
     "altname": "ETHUSD.d",
     "aclass_base": "currency",
     "base": "XETH",
@@ -6385,10 +6379,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XLTC-XXBT",
+    "pair": "LTC-XBT",
     "altname": "LTCXBT",
     "wsname": "LTC/XBT",
     "aclass_base": "currency",
@@ -6480,10 +6474,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XLTC-ZEUR",
+    "pair": "LTC-EUR",
     "altname": "LTCEUR",
     "wsname": "LTC/EUR",
     "aclass_base": "currency",
@@ -6575,10 +6569,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XLTC-ZUSD",
+    "pair": "LTC-USD",
     "altname": "LTCUSD",
     "wsname": "LTC/USD",
     "aclass_base": "currency",
@@ -6670,10 +6664,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XMLN-XETH",
+    "pair": "MLN-ETH",
     "altname": "MLNETH",
     "wsname": "MLN/ETH",
     "aclass_base": "currency",
@@ -6765,10 +6759,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XMLN-XXBT",
+    "pair": "MLN-XBT",
     "altname": "MLNXBT",
     "wsname": "MLN/XBT",
     "aclass_base": "currency",
@@ -6860,10 +6854,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XREP-XETH",
+    "pair": "REP-ETH",
     "altname": "REPETH",
     "wsname": "REP/ETH",
     "aclass_base": "currency",
@@ -6959,10 +6953,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XREP-XXBT",
+    "pair": "REP-XBT",
     "altname": "REPXBT",
     "wsname": "REP/XBT",
     "aclass_base": "currency",
@@ -7058,10 +7052,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XREP-ZEUR",
+    "pair": "REP-EUR",
     "altname": "REPEUR",
     "wsname": "REP/EUR",
     "aclass_base": "currency",
@@ -7157,10 +7151,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XREP-ZUSD",
+    "pair": "REP-USD",
     "altname": "REPUSD",
     "wsname": "REP/USD",
     "aclass_base": "currency",
@@ -7252,10 +7246,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XTZ-ZCAD",
+    "pair": "XTZ-CAD",
     "altname": "XTZCAD",
     "wsname": "XTZ/CAD",
     "aclass_base": "currency",
@@ -7347,10 +7341,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XTZ-XETH",
+    "pair": "XTZ-ETH",
     "altname": "XTZETH",
     "wsname": "XTZ/ETH",
     "aclass_base": "currency",
@@ -7442,10 +7436,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XTZ-ZEUR",
+    "pair": "XTZ-EUR",
     "altname": "XTZEUR",
     "wsname": "XTZ/EUR",
     "aclass_base": "currency",
@@ -7537,10 +7531,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XTZ-ZUSD",
+    "pair": "XTZ-USD",
     "altname": "XTZUSD",
     "wsname": "XTZ/USD",
     "aclass_base": "currency",
@@ -7632,10 +7626,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XTZ-XXBT",
+    "pair": "XTZ-XBT",
     "altname": "XTZXBT",
     "wsname": "XTZ/XBT",
     "aclass_base": "currency",
@@ -7727,10 +7721,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZCAD",
+    "pair": "XBT-CAD",
     "altname": "XBTCAD",
     "wsname": "XBT/CAD",
     "aclass_base": "currency",
@@ -7822,10 +7816,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZCAD",
     "altname": "XBTCAD.d",
     "aclass_base": "currency",
     "base": "XXBT",
@@ -7878,10 +7871,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZEUR",
+    "pair": "XBT-EUR",
     "altname": "XBTEUR",
     "wsname": "XBT/EUR",
     "aclass_base": "currency",
@@ -7983,10 +7976,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZEUR",
     "altname": "XBTEUR.d",
     "aclass_base": "currency",
     "base": "XXBT",
@@ -8039,10 +8031,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZGBP",
+    "pair": "XBT-GBP",
     "altname": "XBTGBP",
     "wsname": "XBT/GBP",
     "aclass_base": "currency",
@@ -8134,10 +8126,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZGBP",
     "altname": "XBTGBP.d",
     "aclass_base": "currency",
     "base": "XXBT",
@@ -8190,10 +8181,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZJPY",
+    "pair": "XBT-JPY",
     "altname": "XBTJPY",
     "wsname": "XBT/JPY",
     "aclass_base": "currency",
@@ -8285,10 +8276,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZJPY",
     "altname": "XBTJPY.d",
     "aclass_base": "currency",
     "base": "XXBT",
@@ -8341,10 +8331,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZUSD",
+    "pair": "XBT-USD",
     "altname": "XBTUSD",
     "wsname": "XBT/USD",
     "aclass_base": "currency",
@@ -8446,10 +8436,9 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXBT-ZUSD",
     "altname": "XBTUSD.d",
     "aclass_base": "currency",
     "base": "XXBT",
@@ -8502,10 +8491,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXDG-XXBT",
+    "pair": "XDG-XBT",
     "altname": "XDGXBT",
     "wsname": "XDG/XBT",
     "aclass_base": "currency",
@@ -8597,10 +8586,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXLM-XXBT",
+    "pair": "XLM-XBT",
     "altname": "XLMXBT",
     "wsname": "XLM/XBT",
     "aclass_base": "currency",
@@ -8692,10 +8681,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXLM-ZEUR",
+    "pair": "XLM-EUR",
     "altname": "XLMEUR",
     "wsname": "XLM/EUR",
     "aclass_base": "currency",
@@ -8787,10 +8776,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXLM-ZUSD",
+    "pair": "XLM-USD",
     "altname": "XLMUSD",
     "wsname": "XLM/USD",
     "aclass_base": "currency",
@@ -8882,10 +8871,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXMR-XXBT",
+    "pair": "XMR-XBT",
     "altname": "XMRXBT",
     "wsname": "XMR/XBT",
     "aclass_base": "currency",
@@ -8983,10 +8972,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXMR-ZEUR",
+    "pair": "XMR-EUR",
     "altname": "XMREUR",
     "wsname": "XMR/EUR",
     "aclass_base": "currency",
@@ -9082,10 +9071,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXMR-ZUSD",
+    "pair": "XMR-USD",
     "altname": "XMRUSD",
     "wsname": "XMR/USD",
     "aclass_base": "currency",
@@ -9181,10 +9170,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXRP-XXBT",
+    "pair": "XRP-XBT",
     "altname": "XRPXBT",
     "wsname": "XRP/XBT",
     "aclass_base": "currency",
@@ -9282,10 +9271,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXRP-ZCAD",
+    "pair": "XRP-CAD",
     "altname": "XRPCAD",
     "wsname": "XRP/CAD",
     "aclass_base": "currency",
@@ -9377,10 +9366,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXRP-ZEUR",
+    "pair": "XRP-EUR",
     "altname": "XRPEUR",
     "wsname": "XRP/EUR",
     "aclass_base": "currency",
@@ -9482,10 +9471,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXRP-ZJPY",
+    "pair": "XRP-JPY",
     "altname": "XRPJPY",
     "wsname": "XRP/JPY",
     "aclass_base": "currency",
@@ -9577,10 +9566,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XXRP-ZUSD",
+    "pair": "XRP-USD",
     "altname": "XRPUSD",
     "wsname": "XRP/USD",
     "aclass_base": "currency",
@@ -9682,10 +9671,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XZEC-XXBT",
+    "pair": "ZEC-XBT",
     "altname": "ZECXBT",
     "wsname": "ZEC/XBT",
     "aclass_base": "currency",
@@ -9777,10 +9766,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XZEC-ZEUR",
+    "pair": "ZEC-EUR",
     "altname": "ZECEUR",
     "wsname": "ZEC/EUR",
     "aclass_base": "currency",
@@ -9872,10 +9861,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XZEC-ZJPY",
+    "pair": "ZEC-JPY",
     "altname": "ZECJPY",
     "wsname": "ZEC/JPY",
     "aclass_base": "currency",
@@ -9967,10 +9956,10 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   },
   {
-    "pair": "XZEC-ZUSD",
+    "pair": "ZEC-USD",
     "altname": "ZECUSD",
     "wsname": "ZEC/USD",
     "aclass_base": "currency",
@@ -10062,6 +10051,6 @@
     "fee_volume_currency": "ZUSD",
     "margin_call": 80,
     "margin_stop": 40,
-    "resp_time": 406
+    "resp_time": 488
   }
 ]

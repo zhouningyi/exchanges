@@ -7,6 +7,7 @@ const publicUtils = require('./public');
 
 const { pair2symbol, formatInterval, _parse } = publicUtils;
 
+
 function spotKlineO(o) {
   const pair = `${pair2symbol(o.pair)}`;
   const interval = formatInterval(o.interval || '1m');
@@ -36,6 +37,42 @@ function spotKline(ds, o) {
   const { result } = ds;
   for (const symbol in result) {
     return _.map(result[symbol], d => formatSpotKline(d, o));
+  }
+}
+
+function spotTicksO(o) {
+  const pair = `${pair2symbol(o.pair)}`;
+  return {
+    pair
+  };
+}
+function formatSpotTick(d, o) {
+  const { pair } = o;
+  if (!pair) {
+    console.log(`binance的币种${d.s} 无法翻译为标准symbol... 请联系开发者`);
+    return null;
+  }
+  return {
+    pair,
+    bid_price: d.b[0],
+    bid_volume: d.b[1],
+    ask_price: d.a[0],
+    ask_volume: d.a[1],
+    last_price: d.c[0],
+    last_volume: d.c[1],
+    start_price: d.o,
+    trade_number: d.t[0],
+    trade_number_24: d.t[1],
+    low_price: d.l[0],
+    low_price_24: d.l[1],
+    hight_price: d.h[0],
+    hight_price_24: d.h[1],
+  };
+}
+function spotTicks(ds, o) {
+  const { result } = ds;
+  for (const symbol in result) {
+    return formatSpotTick(result[symbol], o);
   }
 }
 
@@ -73,5 +110,5 @@ function depth(ds, o) {
 }
 
 module.exports = {
-  spotKlineO, spotKline, spotTicks, depth, formatDepth, depthO
+  spotKlineO, spotKline, spotTicksO, spotTicks, depth, depthO
 };

@@ -168,6 +168,7 @@ class Exchange extends Base {
       if (params.symbol) params.symbol = kUtils.pair2symbol(params.symbol);
     }
     delete params.pair;
+
     const signedParams = {
       ...params,
       ...(isSign ? {

@@ -22,4 +22,10 @@ module.exports = {
     endpoint: '0/public/Depth',
     notNull: ['pair'],
   },
+  spotTicks: {
+    name: 'spotTicks',
+    name_cn: '现货tick',
+    sign: false,
+    endpoint: '0/public/Ticker'
+  },
 };

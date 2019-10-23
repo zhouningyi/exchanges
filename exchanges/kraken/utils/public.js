@@ -16,6 +16,7 @@ function _updateSymbolMap(ps) {
 
 function transferCoin(coin) {
   if (coin === 'btc') return 'xbt';
+  if (coin === 'usdt') return 'usd';
   return coin;
 }
 
@@ -25,8 +26,9 @@ function _parse(v) {
 }
 
 function _formatPair(l) {
+  const { wsname } = l;
   return {
-    pair: `${l.base.toUpperCase()}-${l.quote.toUpperCase()}`,
+    pair: wsname && wsname.replace('/', '-'),
     ...l,
   };
 }
