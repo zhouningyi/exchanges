@@ -39,7 +39,39 @@ function spotKline(ds, o) {
   }
 }
 
+function depthO(o) {
+  const pair = `${pair2symbol(o.pair)}`;
+  return {
+    pair
+  };
+}
+function formatDepth(d, o) {
+  const { pair } = o;
+  if (!pair) {
+    console.log(`kraken的币种${d.s} 无法翻译为标准symbol... 请联系开发者`);
+    return null;
+  }
+  return {
+    pair,
+    asks: d.asks.map(ask => ({
+      price: _parse(ask[0]),
+      volume: _parse(ask[1]),
+      timestamp: ask[2]
+    })),
+    bids: d.bids.map(bid => ({
+      price: _parse(bid[0]),
+      volume: _parse(bid[1]),
+      timestamp: bid[2]
+    }))
+  };
+}
+function depth(ds, o) {
+  const { result } = ds;
+  for (const symbol in result) {
+    return formatDepth(result[symbol], o);
+  }
+}
 
 module.exports = {
-  spotKlineO, spotKline
+  spotKlineO, spotKline, spotTicks, depth, formatDepth, depthO
 };

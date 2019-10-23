@@ -15,4 +15,11 @@ module.exports = {
     endpoint: '0/public/OHLC',
     notNull: ['pair'],
   },
+  depth: {
+    method: 'GET',
+    name: 'depth',
+    name_cn: '深度',
+    endpoint: '0/public/Depth',
+    notNull: ['pair'],
+  },
 };
