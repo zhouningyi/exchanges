@@ -223,7 +223,7 @@ module.exports = {
     desc: '在某个币币杠杆账户里进行借币',
     sign: true,
     endpoint: 'margin/v3/accounts/borrow',
-    notNull: ['instrument_id', 'coin', 'amount']
+    notNull: ['pair', 'coin', 'amount']
   },
   repay: {
     method: 'POST',

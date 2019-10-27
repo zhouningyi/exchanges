@@ -79,7 +79,7 @@ function marginBalances(ds, o) {
 
 function _parseMarginCoin(d) {
   return {
-    available: _parse(d.available),
+    borrow_available: _parse(d.available),
     fee_rate: _parse(d.rate),
     lever_rate: _parse(d.leverage)
   };
@@ -171,7 +171,7 @@ function borrowHistory(ds, o) {
 // 借款
 function borrowO(o) {
   return {
-    instrument_id: o.instrument_id,
+    instrument_id: o.pair || o.instrument_id,
     currency: o.coin,
     amount: o.amount
   };
