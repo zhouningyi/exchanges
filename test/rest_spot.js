@@ -1,22 +1,22 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['huobi']; // bikicoin
+const exchanges = ['kraken']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
 
 const tasks = [
-  {
-    fn: 'spotOrder',
-    params: {
-      client_oid: `order${Math.floor(Math.random() * 10000)}`,
-      pair: 'XRP-USDT',
-      type: 'LIMIT',
-      side: 'BUY',
-      price: 0.213223333322,
-      amount: 5
-    }
-  },
+  // {
+  //   fn: 'spotOrder',
+  //   params: {
+  //     client_oid: `order${Math.floor(Math.random() * 10000)}`,
+  //     pair: 'XRP-USDT',
+  //     type: 'LIMIT',
+  //     side: 'BUY',
+  //     price: 0.213223333322,
+  //     amount: 5
+  //   }
+  // },
   // {
   //   fn: 'spotOrders',
   //   params: {
@@ -46,7 +46,7 @@ const tasks = [
   //   params: {},
   //   name: '点卡账户信息'
   // },
-    // {
+  // {
   //   fn: 'pairs',
   //   params: {},
   //   name: '交易对信息'
@@ -251,11 +251,11 @@ const tasks = [
   //   params: {},
   //   name: 'bitmex 互换资费'
   // },
-  // {
-  //   fn: 'spotTicks',
-  //   params: {},
-  //   name: 'ticks数据'
-  // },
+  {
+    fn: 'spotTicks',
+    params: { pair: 'BTC-USDT' },
+    name: 'ticks数据'
+  },
 
   // {
   //   fn: 'accounts',
@@ -288,11 +288,11 @@ const tasks = [
   //   params: { pair: 'ETH-BTC', interval: '1m' },
   //   name: 'spot kline'
   // },
-// / {
-//   fn: 'orderBook',
-//   params: { pair: 'ETH-BTC' },
-//   name: 'orderBook数据'
-// },
+  // {
+  //   fn: 'orderBook',
+  //   params: { pair: 'ETH-BTC' },
+  //   name: 'orderBook数据'
+  // },
   // {
   //   fn: 'unfinishedOrderInfo',
   //   params: { pair: 'ETH-USDT' },

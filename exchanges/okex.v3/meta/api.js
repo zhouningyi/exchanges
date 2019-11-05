@@ -367,28 +367,29 @@ module.exports = {
     endpoint: 'futures/v3/position',
     notNull: []
   },
+  lerverate: {
+    method: 'GET',
+    name: 'lerverate',
+    name_cn: '币种的杠杆数',
+    endpoint: 'futures/v3/accounts/{underlying}/leverage',
+    endpointParams: ['underlying'],
+    notNull: ['pair'],
+  },
+
   setLerverate: {
     method: 'POST',
     name: 'setLerverate',
     name_cn: '设置币种的杠杆数',
-    endpoint: 'futures/v3/accounts/{coin}/leverage',
-    endpointParams: ['coin'],
-    notNull: ['coin', 'lever_rate'],
+    endpoint: 'futures/v3/accounts/{underlying}/leverage',
+    endpointParams: ['underlying'],
+    notNull: ['pair', 'lever_rate'],
   },
   setMarginMode: {
     method: 'POST',
     name: 'setMarginMode',
     name_cn: '设置仓位类型',
     endpoint: 'futures/v3/accounts/margin_mode',
-    notNull: ['coin', 'margin_mode'],
-  },
-  lerverate: {
-    method: 'GET',
-    name: 'lerverate',
-    name_cn: '币种的杠杆数',
-    endpoint: 'futures/v3/accounts/{coin}/leverage',
-    endpointParams: ['coin'],
-    notNull: ['coin'],
+    notNull: ['pair', 'margin_mode'],
   },
   futurePosition: {
     method: 'GET',

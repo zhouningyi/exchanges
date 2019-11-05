@@ -455,7 +455,7 @@ function futureLimitPrice(res, o) {
 function future_id2pair(fid) {
   const arr = fid.split('-');
   arr.pop();
-  return `${arr.join('-')}T`;
+  return `${arr.join('-')}`;
 }
 
 function getInfoFromInstrumentId(instrument_id) {
@@ -493,13 +493,13 @@ function futureTickO(o = {}) {
 
 function setMarginModeO(o) {
   return {
-    currency: o.coin,
+    underlying: o.pair,
     margin_mode: o.margin_mode || o.marginMode
   };
 }
-function setMarginMode(d, o) {
+function setMarginMode(d) {
   if (d && d.result) {
-    const { result, currency: coin, margin_mode } = o;
+    const { result, currency: coin, margin_mode } = d;
     if (result) {
       return {
         success: true,
@@ -518,13 +518,13 @@ function setLerverate(d) {
     success: !!d.result,
     margin_mode: d.margin_mode,
     lever_rate: d.leverage,
-    coin: d.currency
+    pair: d.pair
   };
 }
 
 function setLerverateO(o = {}) {
   return {
-    coin: o.coin,
+    underlying: o.pair,
     leverage: o.lever_rate
   };
 }
@@ -645,5 +645,5 @@ module.exports = {
   setLerverate,
   setLerverateO,
   lerverate,
-  lerverateO: direct
+  lerverateO: ({ pair }) => ({ underlying: pair })
 };

@@ -216,7 +216,9 @@ class exchange extends Event {
         // 顺序不要调换
         let opt = formatOFn ? _.cloneDeep(formatOFn(o, this.queryOptions)) : _.cloneDeep(o);
         // console.log(this.queryOptions, 'queryOptions...');
-        const endpointCompile = this.getEndPoint(endpoint, endpointParams, { ...opt, ...(this.queryOptions || {}) });
+        const endO = { ...opt, ...(this.queryOptions || {}) };
+        const endpointCompile = this.getEndPoint(endpoint, endpointParams, endO);
+        // console.log(endO, endpointCompile, '==>>>');
         // const strO = `输入options: ${stringify(opt)}`;
         // Utils.print(strO, 'blue');
         opt = Utils.cleanObjectNull(opt);
@@ -233,7 +235,7 @@ class exchange extends Event {
           const error = UtilsInst.getError(ds);
           if (error) {
             errorO = { ...ds, error };
-            const errorEventData = { ...errorO, opt, url: conf.endpoint, name_cn: conf.name_cn, name: conf.name, time: new Date() };
+            const errorEventData = { ...errorO, o, opt, url: endpointCompile, name_cn: conf.name_cn, name: conf.name, time: new Date() };
             console.log(errorEventData, 'errorEventData....');
             this.emit('request_error', errorEventData);
           }

@@ -25,6 +25,7 @@ function symbol2pair(symbol) {
 
 function _parseBalance(d) {
   return {
+    moveable_amount: _parse(d.can_withdraw),
     balance: _parse(d.available),
     borrow_balance: _parse(d.borrowed),
     total_balance: _parse(d.balance),
