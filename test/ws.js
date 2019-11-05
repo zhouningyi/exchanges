@@ -6,13 +6,13 @@ const config = require('./../config');
 const Utils = require('./utils');
 
 const wsList = [
-  // {
-  //   fn: 'wsTicks',
-  //   params: {
-  //     pairs: ['EOS-USDT']
-  //   },
-  //   name: 'wsTicks'
-  // },
+  {
+    fn: 'wsTicks',
+    params: {
+      pairs: ['XBT-USD']
+    },
+    name: 'wsTicks'
+  },
 
   // {
   //   fn: 'wsSpotBalance',
@@ -169,7 +169,7 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-const exchangeName = 'huobi';
+const exchangeName = 'kraken';
 
 console.log(`=============【${exchangeName}...】=============`);
 testOneExchangeWs(exchangeName, wsList);
