@@ -40,5 +40,6 @@ function swapTicks(ds) {
 module.exports = {
   formatTick,
   swapTicksO,
-  swapTicks
+  swapTicks,
+  inst2pair
 };

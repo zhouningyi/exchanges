@@ -76,6 +76,7 @@ class Exchange extends Base {
     this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
     this.wsSwapDepth = (o, cb) => this._addChanelV3('swapDepth', o, cb);
     this.wsMarginBalance = (o, cb) => this._addChanelV3('marginBalance', o, cb);
+    this.wsSwapFundRate = (o, cb) => this._addChanelV3('swapFundRate', o, cb);
   }
   _addChanelV3(wsName, o = {}, cb) {
     const { ws } = this;

@@ -7,7 +7,7 @@ const publicUtils = require('./public');
 
 const { pair2symbol, formatInterval, _parse } = publicUtils;
 
-
+// Kline
 function spotKlineO(o) {
   const pair = `${pair2symbol(o.pair)}`;
   const interval = formatInterval(o.interval || '1m');
@@ -40,6 +40,7 @@ function spotKline(ds, o) {
   }
 }
 
+// Ticks
 function spotTicksO(o) {
   const pair = `${pair2symbol(o.pair)}`;
   return {
@@ -76,6 +77,7 @@ function spotTicks(ds, o) {
   }
 }
 
+// depth
 function depthO(o) {
   const pair = `${pair2symbol(o.pair)}`;
   return {

@@ -6,6 +6,7 @@ const Base = require('./../base');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
 const request = require('./../../utils/request');
+// const WS = require('./utils/_ws');
 // const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE } = require('./config');
 const apiConfig = require('./meta/api');
@@ -25,10 +26,66 @@ class Exchange extends Base {
   async init() {
     this.Utils = kUtils;
     this.loadFnFromConfig(apiConfig);
+    this.initWs();
     await Promise.all([this.updatePairs()]);
   }
-  getSignature(method, time, endpoint, params, isws = false) { // 根据本站情况改写
+  initWs() {
+    if (!this.ws) {
+      try {
+        this.ws = new WS(WS_BASE, { proxy: this.proxy });
+        this.loginWs();
+      } catch (e) {
+        console.log('initWs error');
+        process.exit();
+      }
+    }
+
+    this.wsTicks = (o, cb) => this._addChanel('ticks', o, cb);
   }
+  loginWs() {
+    if (!this.apiSecret) return;
+    const endpoint = 'GetWebSocketsToken';
+    const { ws } = this;
+    if (!ws || !ws.isReady()) return setTimeout(() => this.loginWs(), 100);
+
+    // 发起登录请求
+    ws.onLogin(() => {
+      this.isWsLogin = true;
+    });
+  }
+
+  _addChanel(wsName, o = {}, cb) {
+    const { ws } = this;
+    const fns = kUtils.ws[wsName];
+    if (fns.notNull) checkKey(o, fns.notNull);
+    if (!ws || !ws.isReady()) return setTimeout(() => this._addChanel(wsName, o, cb), 100);
+    if (fns.isSign && !this.isWsLogin) return setTimeout(() => this._addChanel(wsName, o, cb), 100);
+
+    const chanel = kUtils.ws.getChanelObject({
+      ...o,
+      name: fns.name
+    });
+    //
+    const validate = res => _.get(res, '2') === fns.name;
+    //
+    ws.send(chanel);
+    const callback = this.genWsDataCallBack(cb, fns.formater);
+    ws.onData(validate, callback);
+  }
+
+  genWsDataCallBack(cb, formater) {
+    return (ds) => {
+      console.log('TCL: genWsDataCallBack -> ds', ds);
+      if (!ds) return [];
+      // const error_code = _.get(ds, 'error_code') || _.get(ds, '0.error_code') || _.get(ds, '0.data.error_code');
+      // if (error_code) {
+      //   const str = `${ds.error_message || error.getErrorFromCode(error_code)} | [ws]`;
+      //   throw new Error(str);
+      // }
+      cb(formater(ds));
+    };
+  }
+
   _genHeader(method, endpoint, params, isSign) { // 根据本站改写
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
