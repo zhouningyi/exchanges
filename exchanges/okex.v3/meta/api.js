@@ -88,6 +88,15 @@ module.exports = {
     endpoint: 'account/v3/ledger',
   },
   // // // // // // // 现货部分  // // // // // // //
+  spotKline: {
+    method: 'GET',
+    name: 'spotKline',
+    name_cn: '现货K线图',
+    endpoint: 'spot/v3/instruments/{pair}/candles',
+    endpointParams: ['pair'],
+    notNull: ['pair'],
+    sign: false,
+  },
   spotBalance: {
     name: 'spotBalance',
     name_cn: '余额',
@@ -520,7 +529,7 @@ module.exports = {
     notNull: ['pair', 'contract_type'],
     rateLimit: 2000 / 20
   },
-  //
+  // 永续合约部分
   swapTicks: {
     method: 'GET',
     name: 'swapTicks',
@@ -528,4 +537,21 @@ module.exports = {
     endpoint: 'swap/v3/instruments/ticker',
     rateLimit: 2000 / 20
   },
+  swapKline: {
+    method: 'GET',
+    name: 'swapKline',
+    name_cn: '永续合约K线图',
+    endpoint: 'swap/v3/instruments/{instrument_id}/candles',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+    sign: false,
+  },
+  swapFundingRateHistory: {
+    method: 'GET',
+    name: 'swapFundingRateHistory',
+    name_cn: '永续合约资金费率历史',
+    endpoint: 'swap/v3/instruments/{instrument_id}/historical_funding_rate',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+  }
 };

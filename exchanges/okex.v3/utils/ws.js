@@ -191,10 +191,12 @@ const swapFundRate = {
     const { data } = res;
     return _.map(data, (l) => {
       const pair = swapUtils.inst2pair(l.instrument_id);
+      const coin = pair.split('-')[0];
       return {
         ...l,
         pair,
-        coin: pair.split('-')[0],
+        time: new Date(),
+        coin,
         funding_time: new Date(l.funding_time),
         settlement_time: new Date(l.settlement_time),
         funding_rate: _parse(l.funding_rate),

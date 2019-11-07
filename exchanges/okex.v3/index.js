@@ -13,6 +13,10 @@ const okConfig = require('./meta/api');
 const future_pairs = require('./meta/future_pairs.json');
 
 //
+function _parse(v) {
+  return parseFloat(v, 10);
+}
+
 const { checkKey } = Utils;
 //
 
@@ -128,6 +132,30 @@ class Exchange extends Base {
       'OK-ACCESS-TIMESTAMP': `${time}`,
       'OK-ACCESS-PASSPHRASE': this.passphrase
     };
+  }
+  async swapFundHistoryPage({ pair, page = 1 }) {
+    const url = `https://www.okex.com/v2/perpetual/pc/public/fundingRate?contract=${pair}-SWAP&current=${page}`;
+    const ds = await request({ url });
+    if (!ds) return null;
+    const { data } = ds;
+    if (!data) return null;
+    const { fundingRates } = data;
+    if (!fundingRates) return null;
+    const coin = pair.split('-')[0];
+    return _.map(fundingRates, (d) => {
+      const time = new Date(d.createTime);
+      const tsr = Math.floor(time.getTime() / 1000);
+      return {
+        unique_id: `${pair}_${tsr}`,
+        time,
+        coin,
+        pair,
+        funding_rate: _parse(d.fundingRate),
+        realized_rate: _parse(d.realFundingRate),
+        realized_amount: _parse(d.realFundingFee),
+        interest_rate: _parse(d.interest_rate),
+      };
+    });
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
     params = Utils.cleanObjectNull(params);
