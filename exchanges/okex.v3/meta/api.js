@@ -530,13 +530,6 @@ module.exports = {
     rateLimit: 2000 / 20
   },
   // 永续合约部分
-  swapTicks: {
-    method: 'GET',
-    name: 'swapTicks',
-    name_cn: '永续合约ticker',
-    endpoint: 'swap/v3/instruments/ticker',
-    rateLimit: 2000 / 20
-  },
   swapKline: {
     method: 'GET',
     name: 'swapKline',
@@ -545,6 +538,13 @@ module.exports = {
     endpointParams: ['instrument_id'],
     notNull: ['pair'],
     sign: false,
+  },
+  swapTicks: {
+    method: 'GET',
+    name: 'swapTicks',
+    name_cn: '永续合约ticker',
+    endpoint: 'swap/v3/instruments/ticker',
+    rateLimit: 2000 / 20
   },
   swapFundingRateHistory: {
     method: 'GET',

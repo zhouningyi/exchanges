@@ -11,6 +11,9 @@ const request = require('./../../utils/request');
 const { USER_AGENT, WS_BASE } = require('./config');
 const okConfig = require('./meta/api');
 const future_pairs = require('./meta/future_pairs.json');
+const swapUtils = require('./utils/swap');
+const spotUtils = require('./utils/spot');
+const futureUtils = require('./utils/future');
 
 //
 function _parse(v) {
@@ -157,6 +160,39 @@ class Exchange extends Base {
       };
     });
   }
+  async swapKlinePage(o) {
+    const opt = swapUtils.swapKlineO(o);
+    const { granularity, instrument_id } = opt;
+    const url = `https://www.okex.com/v2/perpetual/pc/public/instruments/${instrument_id}/candles?granularity=${granularity}&size=1000`;
+    const ds = await request({ url });
+    if (!ds) return null;
+    const { data } = ds;
+    return _.map(data, (d) => {
+      return swapUtils.formatSwapKline(d, o);
+    });
+  }
+  async futureKlinePage(o) {
+    const opt = futureUtils.futureKlineO(o);
+    const { granularity, instrument_id } = opt;
+    const url = `https://www.okex.com/v3/futures/pc/market/${instrument_id}/candles?granularity=${granularity}&size=1440`;
+    const ds = await request({ url });
+    if (!ds) return null;
+    const { data } = ds;
+    return _.map(data, (d) => {
+      return futureUtils.formatFutureKline(d, o);
+    });
+  }
+  async spotKlinePage(o) {
+    const opt = spotUtils.spotKlineO(o);
+    const url = `https://www.okex.com/v2/spot/instruments/${o.pair}/candles?granularity=${opt.granularity}&size=1000`;
+    const ds = await request({ url });
+    if (!ds) return null;
+    const { data } = ds;
+    return _.map(data, (d) => {
+      return spotUtils.formatSpotKline(d, o);
+    });
+  }
+
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
     params = Utils.cleanObjectNull(params);
     params = _.cloneDeep(params);

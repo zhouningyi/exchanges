@@ -196,14 +196,13 @@ function _formatDepth(ds) {
   });
 }
 
-
 //
 function spotKlineO(o) {
   const { pair, interval = '15m' } = o;
   const granularity = intervalMap[interval];
-  const res = { pair, granularity, interval };
-  if (o.timeStart) res.start = o.timeStart;
-  if (o.timeEnd) res.end = o.timeEnd;
+  const res = { pair, granularity };
+  if (o.timeStart) res.start = o.timeStart.toISOString();
+  if (o.timeEnd) res.end = o.timeEnd.toISOString();
   return res;
 }
 function _formatSpotKline(d, o) {
@@ -228,6 +227,7 @@ function spotKline(res, o) {
 }
 
 module.exports = {
+  formatSpotKline: _formatSpotKline,
   spotKlineO,
   spotKline,
   formatTick: _formatTick,

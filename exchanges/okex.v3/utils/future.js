@@ -410,14 +410,10 @@ function futureTotalHoldAmount(res, o) {
 
 // 期货k线
 function futureKlineO(o = {}) {
-  const interval = intervalMap[o.interval] || 15 * 60;
-  const res = {
-    ...o,
-    granularity: interval,
-    instrument_id: getCurFutureInstrumentId(o),
-  };
-  if (o.timeStart) res.start = o.timeStart;
-  if (o.timeEnd) res.end = o.timeEnd;
+  const granularity = intervalMap[o.interval] || 15 * 60;
+  const res = { granularity, instrument_id: getCurFutureInstrumentId(o) };
+  if (o.timeStart) res.start = o.timeStart.toISOString();
+  if (o.timeEnd) res.end = o.timeEnd.toISOString();
   return res;
 }
 function _formatFutureKline(l, o) {
@@ -590,6 +586,7 @@ function formatFutureDepth(data, type = 'future') {
 
 const direct = d => d;
 module.exports = {
+  formatFutureKline: _formatFutureKline,
   formatFutureDepth,
   getInfoFromInstrumentId,
   getFutureInstrumentId,

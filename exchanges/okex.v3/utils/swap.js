@@ -66,7 +66,7 @@ function swapFundingRateHistory(ds, o) {
 function swapKlineO(o) {
   const { pair, interval = '15m' } = o;
   const granularity = intervalMap[interval];
-  const res = { instrument_id: `${pair}-SWAP`, granularity, interval };
+  const res = { instrument_id: `${pair}-SWAP`, granularity };
   if (o.timeStart) res.start = o.timeStart;
   if (o.timeEnd) res.end = o.timeEnd;
   return res;
@@ -95,6 +95,7 @@ function swapKline(res, o) {
 
 
 module.exports = {
+  formatSwapKline: _formatSwapKline,
   swapKline,
   swapKlineO,
   swapFundingRateHistoryO,
