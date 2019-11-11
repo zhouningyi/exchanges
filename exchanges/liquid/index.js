@@ -2,11 +2,13 @@
 // const deepmerge = require('deepmerge');
 const crypto = require('crypto');
 const _ = require('lodash');
-const Base = require('./../base');
+const {TapClient, CLIENT_EVENTS} = require('liquid-tap');
+
+const Base = require('../base');
 const kUtils = require('./utils');
-const Utils = require('./../../utils');
-const request = require('./../../utils/request');
-const WS = require('./utils/_ws');
+const Utils = require('../../utils');
+const request = require('../../utils/request');
+// const WS = require('./utils/_ws');
 // const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE } = require('./config');
 const apiConfig = require('./meta/api');
@@ -15,12 +17,12 @@ const apiConfig = require('./meta/api');
 const { checkKey } = Utils;
 //
 
-const URL = 'https://api.kraken.com';
+const URL = 'https://api.liquid.com/';
 class Exchange extends Base {
   constructor(o, options) {
     super(o, options);
     this.url = URL;
-    this.name = 'kraken';
+    this.name = 'liquid';
     this.init();
   }
   async init() {
@@ -31,19 +33,18 @@ class Exchange extends Base {
   }
   initWs() {
     if (!this.ws) {
-      
       try {
-        this.ws = new WS(WS_BASE, { proxy: this.proxy });
-        this.loginWs();
+        this.ws = new TapClient();
+        // this.loginWs();
       } catch (e) {
         console.log('initWs error');
         process.exit();
       }
     }
 
-    this.wsTicks = (o, cb) => this._addChanel('ticks', o, cb);
-    this.wsKline = (o, cb) => this._addChanel('ohlc', o, cb);
-    this.wsDepth = (o, cb) => this._addChanel('book', o, cb);
+    // this.wsTicks = (o, cb) => this._addChanel('ticks', o, cb);
+    // this.wsKline = (o, cb) => this._addChanel('kline', o, cb);
+    this.wsDepth = (o, cb) => this._addChanel('depth', o, cb);
   }
   loginWs() {
     if (!this.apiSecret) return;
@@ -61,22 +62,30 @@ class Exchange extends Base {
     const { ws } = this;
     const fns = kUtils.ws[wsName];
     if (fns.notNull) checkKey(o, fns.notNull);
-    if (!ws || !ws.isReady()) return setTimeout(() => this._addChanel(wsName, o, cb), 100);
-    if (fns.isSign && !this.isWsLogin) return setTimeout(() => this._addChanel(wsName, o, cb), 100);
+    ws.bind(CLIENT_EVENTS.CONNECTED).catch(() => {
+      this._addChanel(wsName, o, cb)
+    })
+    ws.bind(CLIENT_EVENTS.AUTHENTICATION_FAILED).then(() => {
+      this._addChanel(wsName, o, cb)
+    })
 
-    const chanel = kUtils.ws.getChanelObject({
-      ...o,
-      name: fns.name
-    });
-    //
-    const validate = res => {
-      return  Array.isArray(res) ? new RegExp(fns.name).test(_.get(res, '2')) : true;
-    };
+    const validate = () => true;
     
+    o.pairs.map(pair => {
+      const chanels = fns.chanel({
+        pair: pair,
+      })
 
-    ws.send(chanel);
-    const callback = this.genWsDataCallBack(cb, fns.formater);
-    ws.onData(validate, callback);
+      const Chanels = chanels.map(chanel => ws.subscribe(chanel))
+
+      Promise.all(Chanels.map(chanel => chanel.bind('updated'))).then(res => {
+        cb(fns.formater(res, { pair }))
+      })
+    })
+
+    // ws.send(chanel);
+    // const callback = this.genWsDataCallBack(cb, fns.formater);
+    // ws.onData(validate, callback);
   }
 
   genWsDataCallBack(cb, formater) {

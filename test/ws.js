@@ -29,14 +29,14 @@ const wsList = [
   //   name: 'wsSpotOrders'
   // },
 
-  {
-    fn: 'wsFutureTicks',
-    params: {
-      contract_type: ['this_week', 'quarter', 'next_week'], // 'quarter',
-      pairs: ['BTC-USD']
-    },
-    name: '期货tick数据111211...'
-  },
+  // {
+  //   fn: 'wsFutureTicks',
+  //   params: {
+  //     contract_type: ['this_week', 'quarter', 'next_week'], // 'quarter',
+  //     pairs: ['BTC-USD']
+  //   },
+  //   name: '期货tick数据111211...'
+  // },
   // {
   //   fn: 'wsSwapTicks',
   //   params: {
@@ -171,7 +171,7 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-const exchangeName = 'kraken';
+const exchangeName = 'liquid';
 
 console.log(`=============【${exchangeName}...】=============`);
 testOneExchangeWs(exchangeName, wsList);
