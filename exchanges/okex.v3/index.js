@@ -167,6 +167,7 @@ class Exchange extends Base {
     const ds = await request({ url });
     if (!ds) return null;
     const { data } = ds;
+    if (!Array.isArray(data)) return null;
     return _.map(data, (d) => {
       return swapUtils.formatSwapKline(d, o);
     });
@@ -178,7 +179,8 @@ class Exchange extends Base {
     const ds = await request({ url });
     if (!ds) return null;
     const { data } = ds;
-    return _.map(data, (d) => {
+    if (!Array.isArray(data)) return null;
+    return _.map(data.slice(1), (d) => {
       return futureUtils.formatFutureKline(d, o);
     });
   }
@@ -188,7 +190,18 @@ class Exchange extends Base {
     const ds = await request({ url });
     if (!ds) return null;
     const { data } = ds;
-    return _.map(data, (d) => {
+    if (!Array.isArray(data)) return null;
+    return _.map(data.slice(1), (d) => {
+      return spotUtils.formatSpotKline(d, o);
+    });
+  }
+  async indexKlinePage(o) {
+    const opt = spotUtils.spotKlineO(o);
+    const url = `https://www.okex.com/api/index/v3/instruments/${o.pair}/candles?granularity=${opt.granularity}&size=1000`;
+    const ds = await request({ url });
+    if (!ds) return null;
+    const { data } = ds;
+    return _.map(data.slice(1), (d) => {
       return spotUtils.formatSpotKline(d, o);
     });
   }
