@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const md5 = require('md5');
 
-const Utils = require('./../../../utils');
-const config = require('./../config');
+const Utils = require('../../../utils');
+const config = require('../config');
 
 const { checkKey } = Utils;
 // const subscribe = Utils.ws.genSubscribe(config.WS_BASE);
@@ -19,15 +19,15 @@ function _parse(v) {
 }
 
 function _formatPair(l) {
-  const { wsname } = l;
+  const { base_currency, currency } = l;
   return {
-    pair: wsname && wsname.replace('/', '-'),
+    pair: `${base_currency}-${currency}`,
     ...l,
   };
 }
 
 function pairs(res) {
-  const ps = _.map(res.result, _formatPair);
+  const ps = _.map(res, _formatPair);
   _updateSymbolMap(ps);
   return ps;
 }
@@ -89,14 +89,14 @@ function formatInterval(interval) {
 }
 
 function transferCoin(coin) {
-  const lowCoin = coin.toUpperCase()
-  if (lowCoin === 'BTC') return 'XBT';
-  if (lowCoin === 'USDT') return 'USD';
+  const lowCoin = coin.toLowerCase()
+  if (lowCoin === 'usdt') return 'usd';
   return lowCoin;
 }
 
 function formatPair(pair) {
-  return pair.split('-').map(coin => transferCoin(coin)).join('/');
+  console.log("TCL: formatPair -> pair", pair)
+  return pair.split('-').map(coin => transferCoin(coin)).join('');
 }
 
 

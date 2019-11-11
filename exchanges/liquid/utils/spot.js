@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const md5 = require('md5');
 //
-const Utils = require('./../../../utils');
+const Utils = require('../../../utils');
 const publicUtils = require('./public');
 
 const { pair2symbol, formatInterval, _parse } = publicUtils;
@@ -92,15 +92,13 @@ function formatDepth(d, o) {
   }
   return {
     pair,
-    asks: d.asks.map(ask => ({
+    asks: JSON.parse(d[0]).map(ask => ({
       price: _parse(ask[0]),
       volume: _parse(ask[1]),
-      time: ask[2]
     })),
-    bids: d.bids.map(bid => ({
+    bids: JSON.parse(d[1]).map(bid => ({
       price: _parse(bid[0]),
       volume: _parse(bid[1]),
-      time: bid[2]
     }))
   };
 }
