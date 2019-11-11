@@ -41,6 +41,8 @@ class Exchange extends Base {
     }
 
     this.wsTicks = (o, cb) => this._addChanel('ticks', o, cb);
+    this.wsKline = (o, cb) => this._addChanel('ohlc', o, cb);
+    this.wsDepth = (o, cb) => this._addChanel('book', o, cb);
   }
   loginWs() {
     if (!this.apiSecret) return;
@@ -66,8 +68,11 @@ class Exchange extends Base {
       name: fns.name
     });
     //
-    const validate = res => _.get(res, '2') === fns.name;
-    //
+    const validate = res => {
+      return  Array.isArray(res) ? new RegExp(fns.name).test(_.get(res, '2')) : true;
+    };
+    
+
     ws.send(chanel);
     const callback = this.genWsDataCallBack(cb, fns.formater);
     ws.onData(validate, callback);
@@ -76,14 +81,15 @@ class Exchange extends Base {
   genWsDataCallBack(cb, formater) {
     return (ds) => {
 
-    console.log("TCL: genWsDataCallBack -> ds", ds)
       if (!ds) return [];
+
+      cb(formater(ds));
       // const error_code = _.get(ds, 'error_code') || _.get(ds, '0.error_code') || _.get(ds, '0.data.error_code');
       // if (error_code) {
       //   const str = `${ds.error_message || error.getErrorFromCode(error_code)} | [ws]`;
       //   throw new Error(str);
       // }
-      cb(formater(ds));
+      // cb(formater(ds));
     };
   }
   

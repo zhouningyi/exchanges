@@ -13,13 +13,6 @@ function _updateSymbolMap(ps) {
   symbolMap = _.keyBy(ps, p => pair2symbol(p.pair));
 }
 
-
-function transferCoin(coin) {
-  if (coin === 'btc') return 'xbt';
-  if (coin === 'usdt') return 'usd';
-  return coin;
-}
-
 function _parse(v) {
   if (v === null || v === undefined) return null;
   return parseFloat(v, 10);
@@ -95,6 +88,17 @@ function formatInterval(interval) {
   return intervalTranslateMap[interval];
 }
 
+function transferCoin(coin) {
+  const lowCoin = coin.toUpperCase()
+  if (lowCoin === 'BTC') return 'XBT';
+  if (lowCoin === 'USDT') return 'USD';
+  return lowCoin;
+}
+
+function formatPair(pair) {
+  return pair.split('-').map(coin => transferCoin(coin)).join('/');
+}
+
 
 module.exports = {
   getError,
@@ -104,4 +108,5 @@ module.exports = {
   _parse,
   getPairInfo,
   pairs,
+  formatPair
 };

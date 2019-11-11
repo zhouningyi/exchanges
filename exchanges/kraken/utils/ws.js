@@ -1,7 +1,7 @@
 
 
 const _ = require('lodash');
-const { symbol2pair } = require('./public');
+const { formatPair } = require('./public');
 const { checkKey } = require('./../../../utils');
 const spotUtils = require('./spot');
 
@@ -36,19 +36,37 @@ function _getChanelObject(args, event = 'subscribe') {
   };
 }
 
-function formatPair(pair) {
-  return pair.replace('-', '/');
-}
-
 // 现货tick
 const ticks = {
   name: 'ticker',
   isSign: false,
   notNull: ['pairs'],
-  chanel: (o = {}) => _.map(o.pairs, p => p.replace('-', '/')),
-  formater: res => res,
+  chanel: (o = {}) => _.map(o.pairs, p => formatPair(p)),
+  formater: res => Array.isArray(res) ? spotUtils.formatSpotTick(res[1], { pair: res[3] }) : res,
 };
 
+// kline
+const ohlc = {
+  name: 'ohlc',
+  isSign: false,
+  notNull: ['pairs', 'interval'],
+  chanel: (o = {}) => _.map(o.pairs, p => formatPair(p)),
+  formater: res =>  Array.isArray(res) ? spotUtils.formatSpotKline(res[1], { pair: res[3], interval: res[2].split('-')[1] }) : res,
+};
+
+// depth
+
+const book = {
+  name: 'book',
+  isSign: false,
+  notNull: ['pairs', 'depth'],
+  chanel: (o = {}) => _.map(o.pairs, p => formatPair(p)),
+  formater: res =>  Array.isArray(res) ? spotUtils.formatDepth({
+    ...res[1],
+    asks:  _.get(res, '1.as') || _.get(res, '1.a') || [],
+    bids:  _.get(res, '1.bs') || _.get(res, '1.b') || []
+  }, { pair: res[3], depth: res[2].split('-')[1] }) : res,
+};
 
 function getContractTypeFromO(o) {
   let { contract_type } = o;
@@ -58,6 +76,8 @@ function getContractTypeFromO(o) {
 
 module.exports = {
   ticks,
+  ohlc,
+  book,
   getChanelObject: _getChanelObject
 }
 

@@ -6,13 +6,13 @@ const config = require('./../config');
 const Utils = require('./utils');
 
 const wsList = [
-  {
-    fn: 'wsTicks',
-    params: {
-      pairs: ['XBT-USD']
-    },
-    name: 'wsTicks'
-  },
+  // {
+  //   fn: 'wsTicks',
+  //   params: {
+  //     pairs: ['BTC-USD', 'BTC-EOS']
+  //   },
+  //   name: 'wsTicks'
+  // },
 
   // {
   //   fn: 'wsSpotBalance',
@@ -120,11 +120,12 @@ const wsList = [
   //   name: '期货tick k线图...'
   // },
   // {
-  //   fn: 'wsFutureKline',
+  //   fn: 'wsKline',
   //   params: {
-  //     pair: 'BTC-USD'
+  //     pairs: ['BTC-USD'],
+  //     interval: 5
   //   },
-  //   name: '期货tick k线图...(指定pair)'
+  //   name: '现货tick k线图...(指定pair)'
   // },
   // {
   //   fn: 'wsFutureDepth',
@@ -144,13 +145,14 @@ const wsList = [
   //   name: '期货深度图'
   // },
 
-  // {
-  //   fn: 'wsDepth',
-  //   params: {
-  //     pairs: ['BTC-USDT', 'EOS-USDT']// 'BTC-USDT',
-  //   },
-  //   name: '深度图'
-  // },
+  {
+    fn: 'wsDepth',
+    params: {
+      pairs: ['BTC-USDT', 'EOS-USDT'], // 'BTC-USDT',
+      depth: 100
+    },
+    name: '深度图'
+  },
   // {
   //   fn: 'wsFutureBalance',
   //   params: {

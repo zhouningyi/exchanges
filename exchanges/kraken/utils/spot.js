@@ -112,5 +112,5 @@ function depth(ds, o) {
 }
 
 module.exports = {
-  spotKlineO, spotKline, spotTicksO, spotTicks, depth, depthO
+  spotKlineO, spotKline, spotTicksO, spotTicks, depth, depthO, formatSpotTick, formatSpotKline, formatDepth
 };
