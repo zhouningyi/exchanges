@@ -181,6 +181,35 @@ const swapDepth = {
 };
 
 
+const swapFundRate = {
+  name: 'swap/funding_rate',
+  isSign: false,
+  notNull: ['pairs'],
+  chanel: o => _.map(o.pairs, pair => `swap/funding_rate:${pair}-SWAP`),
+  formater: (res) => {
+    if (!res || !res.data) return null;
+    const { data } = res;
+    return _.map(data, (l) => {
+      const pair = swapUtils.inst2pair(l.instrument_id);
+      const coin = pair.split('-')[0];
+      return {
+        ...l,
+        pair,
+        time: new Date(),
+        coin,
+        funding_time: new Date(l.funding_time),
+        settlement_time: new Date(l.settlement_time),
+        funding_rate: _parse(l.funding_rate),
+        estimated_rate: _parse(l.estimated_rate),
+        interest_rate: _parse(l.interest_rate)
+      };
+    });
+  }
+};
+
+// wangbaolan@sanli-edu.com
+
+
 const marginBalance = {
   name: 'spot/margin_account',
   notNull: ['pairs'],
@@ -214,6 +243,7 @@ module.exports = {
   futureBalance,
   futureDepth,
   futurePosition,
+  swapFundRate,
   swapTicks,
   swapDepth
 };

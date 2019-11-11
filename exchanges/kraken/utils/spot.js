@@ -95,12 +95,12 @@ function formatDepth(d, o) {
     asks: d.asks.map(ask => ({
       price: _parse(ask[0]),
       volume: _parse(ask[1]),
-      timestamp: ask[2]
+      time: ask[2]
     })),
     bids: d.bids.map(bid => ({
       price: _parse(bid[0]),
       volume: _parse(bid[1]),
-      timestamp: bid[2]
+      time: bid[2]
     }))
   };
 }

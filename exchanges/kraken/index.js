@@ -6,7 +6,7 @@ const Base = require('./../base');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
 const request = require('./../../utils/request');
-const WS = require('./utils/_ws');
+// const WS = require('./utils/_ws');
 // const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE } = require('./config');
 const apiConfig = require('./meta/api');
@@ -26,7 +26,7 @@ class Exchange extends Base {
   async init() {
     this.Utils = kUtils;
     this.loadFnFromConfig(apiConfig);
-    this.initWs()
+    this.initWs();
     await Promise.all([this.updatePairs()]);
   }
   initWs() {
@@ -80,7 +80,6 @@ class Exchange extends Base {
 
   genWsDataCallBack(cb, formater) {
     return (ds) => {
-
       if (!ds) return [];
 
       cb(formater(ds));
@@ -92,7 +91,7 @@ class Exchange extends Base {
       // cb(formater(ds));
     };
   }
-  
+
   _genHeader(method, endpoint, params, isSign) { // 根据本站改写
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false) {

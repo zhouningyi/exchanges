@@ -155,7 +155,7 @@ function formatDigit(num, n) {
 function moveBalanceO(o = {}) {
   const { source, target, coin, instrument_id, source_pair, to_instrument_id, target_pair, sub_account } = o;
   if (source === 'sub_account') checkKey(o, ['sub_account']);
-  if (source === 'margin') checkKey(o, ['pair']);
+  if (source === 'margin') checkKey(o, ['source_pair']);
   const amount = formatDigit(o.amount, 4);// 有时候会有精度问题
   const from = accountTypeMap[source];
   if (!from) {

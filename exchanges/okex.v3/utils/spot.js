@@ -5,7 +5,7 @@ const md5 = require('md5');
 const Utils = require('./../../../utils');
 const publicUtils = require('./public');
 
-const { formatOrder, formatLedger, reverseOrderStatusMap } = publicUtils;
+const { formatOrder, formatLedger, reverseOrderStatusMap, intervalMap } = publicUtils;
 
 function direct(d) {
   return d;
@@ -196,7 +196,40 @@ function _formatDepth(ds) {
   });
 }
 
+//
+function spotKlineO(o) {
+  const { pair, interval = '15m' } = o;
+  const granularity = intervalMap[interval];
+  const res = { pair, granularity };
+  if (o.timeStart) res.start = o.timeStart.toISOString();
+  if (o.timeEnd) res.end = o.timeEnd.toISOString();
+  return res;
+}
+function _formatSpotKline(d, o) {
+  const { pair, interval } = o;
+  const time = new Date(d[0]);
+  const tstr = time.getTime();
+  const unique_id = `${pair}_${interval}_${tstr}`;
+  return {
+    unique_id,
+    interval,
+    pair,
+    time,
+    open: _parse(d[1]),
+    high: _parse(d[2]),
+    low: _parse(d[3]),
+    close: _parse(d[4]),
+    volume: _parse(d[5]),
+  };
+}
+function spotKline(res, o) {
+  return _.map(res, l => _formatSpotKline(l, o));
+}
+
 module.exports = {
+  formatSpotKline: _formatSpotKline,
+  spotKlineO,
+  spotKline,
   formatTick: _formatTick,
   formatDepth: _formatDepth,
   formatOrder,

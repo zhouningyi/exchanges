@@ -88,6 +88,15 @@ module.exports = {
     endpoint: 'account/v3/ledger',
   },
   // // // // // // // 现货部分  // // // // // // //
+  spotKline: {
+    method: 'GET',
+    name: 'spotKline',
+    name_cn: '现货K线图',
+    endpoint: 'spot/v3/instruments/{pair}/candles',
+    endpointParams: ['pair'],
+    notNull: ['pair'],
+    sign: false,
+  },
   spotBalance: {
     name: 'spotBalance',
     name_cn: '余额',
@@ -223,7 +232,7 @@ module.exports = {
     desc: '在某个币币杠杆账户里进行借币',
     sign: true,
     endpoint: 'margin/v3/accounts/borrow',
-    notNull: ['instrument_id', 'coin', 'amount']
+    notNull: ['pair', 'coin', 'amount']
   },
   repay: {
     method: 'POST',
@@ -367,28 +376,29 @@ module.exports = {
     endpoint: 'futures/v3/position',
     notNull: []
   },
+  lerverate: {
+    method: 'GET',
+    name: 'lerverate',
+    name_cn: '币种的杠杆数',
+    endpoint: 'futures/v3/accounts/{underlying}/leverage',
+    endpointParams: ['underlying'],
+    notNull: ['pair'],
+  },
+
   setLerverate: {
     method: 'POST',
     name: 'setLerverate',
     name_cn: '设置币种的杠杆数',
-    endpoint: 'futures/v3/accounts/{coin}/leverage',
-    endpointParams: ['coin'],
-    notNull: ['coin', 'lever_rate'],
+    endpoint: 'futures/v3/accounts/{underlying}/leverage',
+    endpointParams: ['underlying'],
+    notNull: ['pair', 'lever_rate'],
   },
   setMarginMode: {
     method: 'POST',
     name: 'setMarginMode',
     name_cn: '设置仓位类型',
     endpoint: 'futures/v3/accounts/margin_mode',
-    notNull: ['coin', 'margin_mode'],
-  },
-  lerverate: {
-    method: 'GET',
-    name: 'lerverate',
-    name_cn: '币种的杠杆数',
-    endpoint: 'futures/v3/accounts/{coin}/leverage',
-    endpointParams: ['coin'],
-    notNull: ['coin'],
+    notNull: ['pair', 'margin_mode'],
   },
   futurePosition: {
     method: 'GET',
@@ -519,7 +529,16 @@ module.exports = {
     notNull: ['pair', 'contract_type'],
     rateLimit: 2000 / 20
   },
-  //
+  // 永续合约部分
+  swapKline: {
+    method: 'GET',
+    name: 'swapKline',
+    name_cn: '永续合约K线图',
+    endpoint: 'swap/v3/instruments/{instrument_id}/candles',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+    sign: false,
+  },
   swapTicks: {
     method: 'GET',
     name: 'swapTicks',
@@ -527,4 +546,12 @@ module.exports = {
     endpoint: 'swap/v3/instruments/ticker',
     rateLimit: 2000 / 20
   },
+  swapFundingRateHistory: {
+    method: 'GET',
+    name: 'swapFundingRateHistory',
+    name_cn: '永续合约资金费率历史',
+    endpoint: 'swap/v3/instruments/{instrument_id}/historical_funding_rate',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+  }
 };

@@ -1,5 +1,5 @@
 const WSBase = require('../../wsBase');
-const _ = require('lodash')
+const _ = require('lodash');
 
 class WS extends WSBase {
   send(msg) {
@@ -17,9 +17,9 @@ class WS extends WSBase {
     const { sendSequence } = this;
     if (!_.values(sendSequence).length) return;
     _.forEach(sendSequence, (args) => {
-      _.map(args, arg => {
+      _.map(args, (arg) => {
         this.ws.send(JSON.stringify(arg));
-      })
+      });
     });
     this.sendSequence = {};
   }

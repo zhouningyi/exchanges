@@ -25,6 +25,7 @@ function symbol2pair(symbol) {
 
 function _parseBalance(d) {
   return {
+    moveable_amount: _parse(d.can_withdraw),
     balance: _parse(d.available),
     borrow_balance: _parse(d.borrowed),
     total_balance: _parse(d.balance),
@@ -79,7 +80,7 @@ function marginBalances(ds, o) {
 
 function _parseMarginCoin(d) {
   return {
-    available: _parse(d.available),
+    borrow_available: _parse(d.available),
     fee_rate: _parse(d.rate),
     lever_rate: _parse(d.leverage)
   };
@@ -171,7 +172,7 @@ function borrowHistory(ds, o) {
 // 借款
 function borrowO(o) {
   return {
-    instrument_id: o.instrument_id,
+    instrument_id: o.pair || o.instrument_id,
     currency: o.coin,
     amount: o.amount
   };

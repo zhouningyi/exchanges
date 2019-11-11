@@ -1,6 +1,6 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['huobi'];// , 'okex'. 'hitbtc', 'bittrex'
+const exchanges = ['okexV3'];// , 'okex'. 'hitbtc', 'bittrex'`huobi
 const tasks = [
   // {
   //   fn: 'spotFutureTransfer',
@@ -282,20 +282,40 @@ const tasks = [
   //   }
 
   // {
+  //   fn: 'setLerverate',
+  //   params: {
+  //     pair: 'BTC-USD',
+  //     lever_rate: 5
+  //   }
+  // },
+  // {
+  //   fn: 'lerverate',
+  //   params: {
+  //     pair: 'BTC-USD',
+  //   }
+  // },
+  // {
+  //   fn: 'setMarginMode',
+  //   params: {
+  //     pair: 'ETC-USD',
+  //     margin_mode: 'crossed'
+  //   }
+  // },
+  // {
   //   fn: 'futurePositions',
   //   params: {
   //     contract_type: 'quarter',
-  //     pair: 'XRP-USDT'
+  //     pair: 'XRP-USD'
   //   },
   //   name: '期货仓位'
   // },
-  {
-    fn: 'futureFee',
-    params: {
-      pair: ['EOS']
-    },
-    name: '费率'
-  },
+  // {
+  //   fn: 'futureFee',
+  //   params: {
+  //     pair: ['EOS']
+  //   },
+  //   name: '费率'
+  // },
 
 ];
 

@@ -410,14 +410,10 @@ function futureTotalHoldAmount(res, o) {
 
 // 期货k线
 function futureKlineO(o = {}) {
-  const interval = intervalMap[o.interval] || 15 * 60;
-  const res = {
-    ...o,
-    granularity: interval,
-    instrument_id: getCurFutureInstrumentId(o),
-  };
-  if (o.timeStart) res.start = o.timeStart;
-  if (o.timeEnd) res.end = o.timeEnd;
+  const granularity = intervalMap[o.interval] || 15 * 60;
+  const res = { granularity, instrument_id: getCurFutureInstrumentId(o) };
+  if (o.timeStart) res.start = o.timeStart.toISOString();
+  if (o.timeEnd) res.end = o.timeEnd.toISOString();
   return res;
 }
 function _formatFutureKline(l, o) {
@@ -455,7 +451,7 @@ function futureLimitPrice(res, o) {
 function future_id2pair(fid) {
   const arr = fid.split('-');
   arr.pop();
-  return `${arr.join('-')}T`;
+  return `${arr.join('-')}`;
 }
 
 function getInfoFromInstrumentId(instrument_id) {
@@ -493,13 +489,13 @@ function futureTickO(o = {}) {
 
 function setMarginModeO(o) {
   return {
-    currency: o.coin,
+    underlying: o.pair,
     margin_mode: o.margin_mode || o.marginMode
   };
 }
-function setMarginMode(d, o) {
+function setMarginMode(d) {
   if (d && d.result) {
-    const { result, currency: coin, margin_mode } = o;
+    const { result, currency: coin, margin_mode } = d;
     if (result) {
       return {
         success: true,
@@ -518,13 +514,13 @@ function setLerverate(d) {
     success: !!d.result,
     margin_mode: d.margin_mode,
     lever_rate: d.leverage,
-    coin: d.currency
+    pair: d.pair
   };
 }
 
 function setLerverateO(o = {}) {
   return {
-    coin: o.coin,
+    underlying: o.pair,
     leverage: o.lever_rate
   };
 }
@@ -590,6 +586,7 @@ function formatFutureDepth(data, type = 'future') {
 
 const direct = d => d;
 module.exports = {
+  formatFutureKline: _formatFutureKline,
   formatFutureDepth,
   getInfoFromInstrumentId,
   getFutureInstrumentId,
@@ -645,5 +642,5 @@ module.exports = {
   setLerverate,
   setLerverateO,
   lerverate,
-  lerverateO: direct
+  lerverateO: ({ pair }) => ({ underlying: pair })
 };
