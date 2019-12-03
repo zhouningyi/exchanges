@@ -145,14 +145,40 @@ const wsList = [
   //   name: '期货深度图'
   // },
 
-  {
-    fn: 'wsDepth',
-    params: {
-      pairs: ['BTC-USDT', 'EOS-USDT'], // 'BTC-USDT',
-      depth: 100
-    },
-    name: '深度图'
-  },
+  // {
+  //   fn: 'wsDepth',
+  //   params: {
+  //     pairs: ['BTC-USDT', 'EOS-USDT'], // 'BTC-USDT',
+  //     depth: 100
+  //   },
+  //   name: '深度图'
+  // },
+
+  // {
+  //   fn: 'wsSwapBalance',
+  //   params: {
+  //     pairs: ['ETH-USD', 'EOS-USD'], // 'BTC-USDT',
+  //   },
+  //   name: '永续账户'
+  // },
+
+  // {
+  //   fn: 'wsSwapPosition',
+  //   params: {
+  //     pairs: ['ETH-USD', 'EOS-USD'], // 'BTC-USDT',
+  //   },
+  //   name: '永续账户'
+  // },
+
+  // {
+  //   fn: 'wsSwapOrder',
+  //   params: {
+  //     pairs: ['ETH-USD', 'EOS-USD'], // 'BTC-USDT',
+  //   },
+  //   name: '永续订单'
+  // },
+
+
   // {
   //   fn: 'wsFutureBalance',
   //   params: {
@@ -171,7 +197,7 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-const exchangeName = 'liquid';
+const exchangeName = 'okexV3';
 
 console.log(`=============【${exchangeName}...】=============`);
 testOneExchangeWs(exchangeName, wsList);

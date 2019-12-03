@@ -267,18 +267,18 @@ const tasks = [
   //     "unique_id": "EOS-USDT_quarter",
   //     "contract_type": "quarter",
   //     "time": "2018-09-14T13:27:14.000Z",
-  //     "buy_amount": 0,
-  //     "buy_available": 0,
-  //     "buy_price_avg": 0,
-  //     "buy_price_cost": 0,
-  //     "buy_profit_real": 296.70025018,
+  //     "long_amount": 0,
+  //     "long_available": 0,
+  //     "long_price_avg": 0,
+  //     "long_price_cost": 0,
+  //     "long_profit_real": 296.70025018,
   //     "contract_id": 201812280200054,
   //     "lever_rate": 20,
-  //     "sell_amount": 351,
-  //     "sell_available": 351,
-  //     "sell_price_avg": 5.44317002,
-  //     "sell_price_cost": 5.58204008,
-  //     "sell_profit_real": 296.70025018
+  //     "short_amount": 351,
+  //     "short_available": 351,
+  //     "short_price_avg": 5.44317002,
+  //     "short_price_cost": 5.58204008,
+  //     "short_profit_real": 296.70025018
   //   }
 
   // {

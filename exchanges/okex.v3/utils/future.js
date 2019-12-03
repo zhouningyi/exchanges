@@ -31,26 +31,28 @@ function _formatFuturePosition(line) {
   const pair = future_id2pair(line.instrument_id);
   const coin = pair.toUpperCase().split('-USD')[0];
   const contract_type = future_id2contract_type(line.instrument_id);
-  const buy_amount = _parse(line.long_qty);
-  const sell_amount = _parse(line.short_qty);
-  const direction = ((buy_amount || 0) - (sell_amount || 0)) > 0 ? 'UP' : 'DOWN';
+  const long_amount = _parse(line.long_qty);
+  const short_amount = _parse(line.short_qty);
+  const direction = ((long_amount || 0) - (short_amount || 0)) > 0 ? 'UP' : 'DOWN';
   return {
     unique_id: [contract_type, coin].join('_'),
     margin_mode: line.margin_mode,
     liquidation_price: _parse(line.liquidation_price),
-    buy_liqu_price: _parse(line.long_liqui_price),
-    buy_margin: _parse(line.long_margin),
-    buy_amount,
-    buy_avaliable_amount: _parse(line.long_avail_qty), // 多仓可以平仓数量
-    buy_price_avg: _parse(line.long_avg_cost), // 多仓平均开仓价
-    buy_settlement_price: _parse(line.long_settlement_price),
+    long_liqu_price: _parse(line.long_liqui_price),
+    long_margin: _parse(line.long_margin),
+    long_amount,
+    long_avaliable_amount: _parse(line.long_avail_qty), // 多仓可以平仓数量
+    long_price_avg: _parse(line.long_avg_cost), // 多仓平均开仓价
+    long_settlement_price: _parse(line.long_settlement_price),
+    long_benifit: _parse(line.long_pnl),
     benifit: _parse(line.realized_pnl),
-    sell_liqu_price: _parse(line.short_liqui_price),
-    sell_margin: _parse(line.short_margin),
-    sell_amount,
-    sell_avaliable_amount: _parse(line.short_avail_qty), // 多仓可以平仓数量
-    sell_price_avg: _parse(line.short_avg_cost), // 多仓平均开仓价
-    sell_settlement_price: _parse(line.short_settlement_price),
+    short_liqu_price: _parse(line.short_liqui_price),
+    short_margin: _parse(line.short_margin),
+    short_amount,
+    short_avaliable_amount: _parse(line.short_avail_qty), // 多仓可以平仓数量
+    short_price_avg: _parse(line.short_avg_cost), // 多仓平均开仓价
+    short_settlement_price: _parse(line.short_settlement_price),
+    short_benifit: _parse(line.short_pnl),
     instrument_id: line.instrument_id,
     direction,
     pair,
@@ -79,8 +81,8 @@ function futurePosition(ds, o = {}) {
     return {
       unique_id: [contract_type, coin].join('_'),
       margin_mode: ds.margin_mode,
-      buy_amount: 0,
-      sell_amount: 0,
+      short_amount: 0,
+      long_amount: 0,
       pair,
       coin,
       contract_type,
@@ -104,13 +106,16 @@ function _formatBalance(line, coin) {
   return cleanObjectNull({
     coin,
     pair: `${coin}-USDT`,
+    instrument_id: line.instrument_id,
     margin_mode: line.margin_mode,
     account_rights: _parse(line.equity),
     margin_ratio: _parse(line.margin_ratio), // 保证金率
+    maint_margin_ratio: _parse(line.maint_margin_ratio), //
     profit_real: _parse(line.realized_pnl),
     profit_unreal: _parse(line.unrealized_pnl),
     margin_locked: _parse(line.margin_for_unfilled),
     margin_used: _parse(line.margin_frozen),
+    can_withdraw: _parse(line.can_withdraw),
     margin: _parse(line.margin),
     balance: _parse(line.total_avail_balance), //	账户余额
     time: new Date()
@@ -162,7 +167,7 @@ function futureLedger(ds, o) {
 }
 
 function _formatPair(pair) {
-  if (!pair) return false;
+  if (!pair) return null;
   return pair.toUpperCase().replace('-USDT', '-USD');
 }
 
@@ -200,21 +205,31 @@ const code2Direction = {
   3: 'UP',
   4: 'DOWN'
 };
+const orderTypeMap = {
+  NORMAL: 0,
+  MAKER: 1,
+  FOK: 2,
+  IOC: 3
+};
+const reverseTypeMap = _.invert(orderTypeMap);
+
 function futureOrderO(o = {}) {
-  const { amount, lever_rate } = o;
+  const { amount, order_type } = o;
   const direction = o.direction.toUpperCase();
   const side = o.side.toUpperCase();
   const type = o.type.toUpperCase();
   const instrument_id = getCurFutureInstrumentId(o);
-  return {
+  const client_oid = o.client_oid || o.oid;
+  const res = {
     instrument_id,
     ..._.pick(o, ['price']),
-    client_oid: o.client_oid || o.oid,
     size: amount,
     type: _.get(futureTypeMap, `${side}.${direction}`),
     match_price: type === 'LIMIT' ? 0 : 1, // 对手价
-    leverage: lever_rate,
   };
+  if (client_oid) res.client_oid = client_oid;
+  if (order_type) res.order_type = orderTypeMap[order_type.toUpperCase()];
+  return res;
 }
 function futureOrder(line, o = {}) {
   if (!line || !line.result) return false;
@@ -233,11 +248,11 @@ function futureOrder(line, o = {}) {
 // 撤销订单
 function batchCancelFutureOrdersO(o) {
   const instrument_id = getCurFutureInstrumentId(o);
-  return { instrument_id, order_ids: o.order_id };
+  return { instrument_id, order_ids: o.order_id || o.order_ids };
 }
 
 function batchCancelFutureOrders(line, o) {
-  if (!line) return false;
+  if (!line) return null;
   const { order_id, pair, contract_type } = line;
   return _.map(order_id, l => ({
     order_id: l.client_oid,
@@ -253,7 +268,7 @@ function cancelAllFutureOrdersO(o = {}) {
   return { instrument_id, order_ids: order_ids.slice(0, 20) };
 }
 function cancelAllFutureOrders(res, o) {
-  if (!res || !res.result) return false;
+  if (!res || !res.result) return null;
   return _.map(res.order_ids, (order_id) => {
     return {
       order_id,
@@ -266,48 +281,62 @@ function cancelAllFutureOrders(res, o) {
 
 // 返回所有订单信息
 const futureStatusMap = {
-  UNFINISH: 0,
+  FAIL: -2, //
+  CANCEL: -1, //
+  WAITING: 0,
   PARTIAL: 1,
-  SUCCESS: 2,
-  CANCELLING: 3,
-  CANCEL: -1
+  FILLED: 2, //
+  ORDERING: 3,
+  CANCELLING: 4,
+  UNFINISH: 6,
+  SUCCESS: 7,
 };
 
 const reverseFutureStatusMap = _.invert(futureStatusMap);
 
-function _formatFutureOrder(l, o) {
-  const info = getInfoFromInstrumentId(l.instrument_id);
-  return {
-    ...info,
+function formatContractOrder(l, o) {
+  const res = {
     instrument_id: l.instrument_id,
     amount: _parse(l.size),
     filled_amount: _parse(l.filled_qty),
-    fee: _parse(l.fee),
+    fee: -(_parse(l.fee)), // 考虑负手续费的情况
     price: _parse(l.price),
     price_avg: _parse(l.price_avg),
-    lever_rate: _parse(l.leverage),
+    contract_val: _parse(l.contract_val),
     server_created_at: new Date(l.timestamp),
     order_id: l.order_id,
-    client_oid: l.client_oid,
+    order_type: reverseTypeMap[l.order_type],
     side: code2Side[l.type],
-    status: reverseFutureStatusMap[l.status],
+    status: reverseFutureStatusMap[l.state],
     direction: code2Direction[l.type],
     ...o,
   };
+  if (l.leverage) res.lever_rate = _parse(l.leverage);
+  return res;
+}
+
+function _formatFutureOrder(l, o) {
+  const info = getInfoFromInstrumentId(l.instrument_id);
+  const res = {
+    ...info,
+    ...formatContractOrder(l, o)
+  };
+  if (l.client_oid) res.client_oid = l.client_oid;
+  return res;
 }
 
 function futureOrdersO(o = {}) {
   const instrument_id = getCurFutureInstrumentId(o);
   return {
     instrument_id,
-    status: futureStatusMap[o.status],
+    state: futureStatusMap[o.state || o.status],
     from: o.from,
     to: o.to,
     limit: o.limit
   };
 }
 function futureOrders(ds, o) {
-  if (!ds || !ds.result) return false;
+  if (!ds) return false;
   return _.map(ds.order_info, d => _formatFutureOrder(d, o));
 }
 function unfinishFutureOrdersO(o = {}) {
@@ -586,13 +615,16 @@ function formatFutureDepth(data, type = 'future') {
 
 const direct = d => d;
 module.exports = {
+  futureStatusMap,
   formatFutureKline: _formatFutureKline,
   formatFutureDepth,
   getInfoFromInstrumentId,
   getFutureInstrumentId,
   formatBalance: _formatBalance,
+  formatFutureBalance: _formatBalance,
   formatFuturePosition: _formatFuturePosition,
   formatFutureOrder: _formatFutureOrder,
+  formatContractOrder,
   formatTick: _formatTick,
   //
   futurePositions,
@@ -642,5 +674,6 @@ module.exports = {
   setLerverate,
   setLerverateO,
   lerverate,
+  formatFuturePair: _formatPair,
   lerverateO: ({ pair }) => ({ underlying: pair })
 };

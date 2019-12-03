@@ -107,8 +107,7 @@ const futureBalance = {
   formater: (res) => {
     return _.flatten(_.map(res.data, (l) => {
       return _.map(l, futureUtils.formatBalance);
-    }).filter(exist))
-;
+    }).filter(exist));
   }
 };
 
@@ -138,7 +137,7 @@ const futureDepth = {
   formater: res => futureUtils.formatFutureDepth(res.data)
 };
 
-const depth = {
+const spotDepth = {
   name: 'spot/depth5',
   notNull: ['pairs'],
   isSign: false,
@@ -156,7 +155,7 @@ const depth = {
   }).filter(exist)
 };
 
-const balance = {
+const spotBalance = {
   name: 'spot/account',
   notNull: ['coins'],
   chanel: o => _.map(o.coins, coin => `spot/account:${coin}`),
@@ -207,9 +206,6 @@ const swapFundRate = {
   }
 };
 
-// wangbaolan@sanli-edu.com
-
-
 const marginBalance = {
   name: 'spot/margin_account',
   notNull: ['pairs'],
@@ -225,6 +221,39 @@ const marginBalance = {
   }
 };
 
+//
+const swapBalance = {
+  name: 'swap/account',
+  notNull: ['pairs'],
+  isSign: true,
+  chanel: (o = {}) => _.map(o.pairs, pair => `swap/account:${pair}-SWAP`),
+  formater: (res) => {
+    if (res && res.data) return _.map(res.data, l => swapUtils.formatSwapBalance(l));
+    return [];
+  }
+};
+
+const swapPosition = {
+  name: 'swap/position',
+  notNull: ['pairs'],
+  isSign: true,
+  chanel: (o = {}) => _.map(o.pairs, pair => `swap/position:${pair}-SWAP`),
+  formater: (res) => {
+    if (res && res.data) return swapUtils.formatSwapPosition(res.data);
+    return [];
+  }
+};
+
+const swapOrders = {
+  name: 'swap/order',
+  notNull: ['pairs'],
+  isSign: true,
+  chanel: (o = {}) => _.map(o.pairs, pair => `swap/order:${pair}-SWAP`),
+  formater: (res) => {
+    if (res && res.data) return _.map(res.data, d => futureUtils.formatContractOrder(d));
+    return [];
+  }
+};
 
 module.exports = {
   marginBalance,
@@ -232,8 +261,8 @@ module.exports = {
   // spot
   ticks,
   spotOrders,
-  depth,
-  balance,
+  spotDepth,
+  spotBalance,
   getChanelObject: _getChanelObject,
   // reqBalance,
   // future
@@ -245,5 +274,8 @@ module.exports = {
   futurePosition,
   swapFundRate,
   swapTicks,
-  swapDepth
+  swapDepth,
+  swapBalance,
+  swapPosition,
+  swapOrders
 };

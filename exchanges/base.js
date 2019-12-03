@@ -179,11 +179,12 @@ class exchange extends Event {
     _.forEach(confs, (conf, key) => this.loadFn(conf, key));
   }
 
-  getEndPoint(endpoint, endpointParams, params) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
+  getEndPoint(endpoint, endpointParams, params, opt) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
     if (!endpointParams || !endpointParams.length) return endpoint;
     endpoint = _.template(endpoint)(params);
     _.forEach(endpointParams, (k) => {
       delete params[k];
+      // delete opt[k];
     });
     return endpoint;
   }
@@ -217,7 +218,7 @@ class exchange extends Event {
         let opt = formatOFn ? _.cloneDeep(formatOFn(o, this.queryOptions)) : _.cloneDeep(o);
         // console.log(this.queryOptions, 'queryOptions...');
         const endO = { ...opt, ...(this.queryOptions || {}) };
-        const endpointCompile = this.getEndPoint(endpoint, endpointParams, endO);
+        const endpointCompile = this.getEndPoint(endpoint, endpointParams, endO, opt);
         // console.log(endO, endpointCompile, '==>>>');
         // const strO = `输入options: ${stringify(opt)}`;
         // Utils.print(strO, 'blue');
@@ -261,7 +262,7 @@ class exchange extends Event {
         return res;
       } catch (e) {
         console.log(e);
-        return false;
+        return null;
       }
     };
   }

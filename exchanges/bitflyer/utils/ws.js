@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const { formatPair } = require('./public');
-const { checkKey } = require('./../../../utils');
+const { checkKey } = require('../../../utils');
 const spotUtils = require('./spot');
 
 function _parse(v) {
@@ -26,11 +26,11 @@ function final(f, l) {
 
 function _getChanelObject(args, event = 'subscribe') {
   const { pairs, name, ...other } = args;
-  return {
+  return { 
     event,
     pair: _.map(pairs, formatPair),
     subscription: {
-      name,
+      name: name,
       ...other
     }
   };
@@ -51,21 +51,18 @@ const ohlc = {
   isSign: false,
   notNull: ['pairs', 'interval'],
   chanel: (o = {}) => _.map(o.pairs, p => formatPair(p)),
-  formater: res => Array.isArray(res) ? spotUtils.formatSpotKline(res[1], { pair: res[3], interval: res[2].split('-')[1] }) : res,
+  formater: res =>  Array.isArray(res) ? spotUtils.formatSpotKline(res[1], { pair: res[3], interval: res[2].split('-')[1] }) : res,
 };
 
 // depth
 
-const book = {
-  name: 'book',
+const depth = {
+  name: 'depth',
   isSign: false,
-  notNull: ['pairs', 'depth'],
-  chanel: (o = {}) => _.map(o.pairs, p => formatPair(p)),
-  formater: res => Array.isArray(res) ? spotUtils.formatDepth({
-    ...res[1],
-    asks: _.get(res, '1.as') || _.get(res, '1.a') || [],
-    bids: _.get(res, '1.bs') || _.get(res, '1.b') || []
-  }, { pair: res[3], depth: res[2].split('-')[1] }) : res,
+  notNull: ['pairs'],
+  event: 'updated',
+  chanel: (o = {}) => [`price_ladders_cash_${formatPair(o.pair)}_buy`, `price_ladders_cash_${formatPair(o.pair)}_sell`],
+  formater: (res, o) =>  spotUtils.formatDepth(res, o),
 };
 
 function getContractTypeFromO(o) {
@@ -77,7 +74,7 @@ function getContractTypeFromO(o) {
 module.exports = {
   ticks,
   ohlc,
-  book,
+  depth,
   getChanelObject: _getChanelObject
-};
+}
 

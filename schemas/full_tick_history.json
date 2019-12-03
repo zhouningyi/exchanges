@@ -10,31 +10,43 @@
       "index": true
     },
     "time": {  "type": "DATE", "index": true, "notNull": true },
+
     "spot_bid_price": "FLOAT",
     "spot_bid_volumn": "FLOAT",
     "spot_ask_price": "FLOAT",
     "spot_ask_volumn": "FLOAT",
+
     "quarter_bid_price": "FLOAT",
     "quarter_bid_volumn": "FLOAT",
     "quarter_ask_price": "FLOAT",
+    "quarter_last_price": "FLOAT",
     "quarter_ask_volumn": "FLOAT",
+    "quarter_hold_amount": "INTEGER",
+
     "this_week_bid_price": "FLOAT",
     "this_week_bid_volumn": "FLOAT",
+    "this_week_last_price": "FLOAT",
     "this_week_ask_price": "FLOAT",
     "this_week_ask_volumn": "FLOAT",
+    "this_week_hold_amount": "INTEGER",
+
     "next_week_bid_price": "FLOAT",
     "next_week_bid_volumn": "FLOAT",
+    "next_week_last_price": "FLOAT",
     "next_week_ask_price": "FLOAT",
     "next_week_ask_volumn": "FLOAT",
+    "next_week_hold_amount": "INTEGER",
+
     "swap_ask_volumn": "FLOAT",
     "swap_bid_volumn": "FLOAT",
+    "swap_last_price": "FLOAT",
     "swap_ask_price": "FLOAT",
     "swap_bid_price": "FLOAT",
+    "swap_hold_amount": "INTEGER",
+
     "margin_coin_fee_rate": "FLOAT",
     "margin_usdt_fee_rate": "FLOAT",
     "index": "FLOAT",
-    "quarter_hold_amount": "INTEGER",
-    "this_week_hold_amount": "INTEGER",
-    "next_week_hold_amount": "INTEGER"
+    "config": "JSONB"
   }
 }

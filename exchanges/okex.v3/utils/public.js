@@ -123,9 +123,9 @@ const intervalMap = {
 
 // const futureOrderStatus2Code = _.invert(code2FutureOrderStatus);
 
-// function pair2coin(pair) {
-//   return pair.split('-')[0].toUpperCase();
-// }
+function pair2coin(pair) {
+  return pair.split('-')[0].toUpperCase();
+}
 // function coin2pair(coin) {
 //   return (`${coin}-USDT`).toUpperCase();
 // }
@@ -411,6 +411,7 @@ const base = {
 };
 
 module.exports = {
+  pair2coin,
   base,
   symbol2pair,
   pair2symbol,

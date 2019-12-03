@@ -22,11 +22,6 @@ module.exports = {
   //   rateLimit: 220,
   //   retry: 3
   // },
-  // futurePosition: {
-  //   timeout: 5000,
-  //   rateLimit: 220,
-  //   retry: 3
-  // },
   // unfinishedOrderInfo: {
   //   timeout: 5000,
   //   rateLimit: 220,
@@ -439,7 +434,7 @@ module.exports = {
     sign: true,
     endpoint: 'futures/v3/order',
     accept: ['client_oid'],
-    notNull: ['pair', 'contract_type', 'side', 'type', 'direction', 'lever_rate'],
+    notNull: ['pair', 'contract_type', 'side', 'type', 'direction'],
     rateLimit: 2000 / 20
   },
   // cancelFutureOrder: {
@@ -553,5 +548,108 @@ module.exports = {
     endpoint: 'swap/v3/instruments/{instrument_id}/historical_funding_rate',
     endpointParams: ['instrument_id'],
     notNull: ['pair'],
-  }
+  },
+  swapOrder: {
+    method: 'POST',
+    name: 'swapOrder',
+    name_cn: '永续下单',
+    sign: true,
+    endpoint: 'swap/v3/order',
+    accept: ['client_oid'],
+    notNull: ['pair', 'side', 'type', 'direction'],
+    rateLimit: 2000 / 20
+  },
+  batchCancelSwapOrders: {
+    method: 'POST',
+    name: 'batchCancelSwapOrders',
+    name_cn: '撤销所有订单',
+    endpoint: 'swap/v3/cancel_batch_orders/{instrument_id}',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+    rateLimit: 2000 / 5
+  },
+  swapPositions: {
+    method: 'GET',
+    name: 'swapPositions',
+    name_cn: '所有永续仓位',
+    endpoint: 'swap/v3/position',
+    rateLimit: 10000 / 1,
+    notNull: []
+  },
+  swapPosition: {
+    method: 'GET',
+    name: 'swapPosition',
+    name_cn: '单个永续仓位',
+    endpointParams: ['instrument_id'],
+    endpoint: 'swap/v3/{instrument_id}/position',
+    notNull: ['pair'],
+    rateLimit: 2000 / 20,
+  },
+  swapOrderInfo: {
+    method: 'GET',
+    name: 'swapOrderInfo',
+    name_cn: '永续订单信息',
+    desc: '通过订单ID获取单个订单信息',
+    endpoint: 'swap/v3/orders/{instrument_id}/{order_id}',
+    endpointParams: ['instrument_id', 'order_id'],
+    notNull: ['pair', 'order_id'],
+    rateLimit: 2000 / 40
+  },
+  swapBalances: {
+    method: 'GET',
+    name: 'swapBalances',
+    name_cn: '永续账户资产',
+    endpoint: 'swap/v3/accounts',
+    notNull: []
+  },
+  swapBalance: {
+    method: 'GET',
+    name: 'swapBalance',
+    name_cn: '永续账户资产',
+    endpoint: 'swap/v3/{instrument_id}/accounts',
+    endpointParams: ['instrument_id'],
+  },
+  swapOrders: {
+    method: 'GET',
+    name: 'swapOrders',
+    name_cn: '所有的永续订单',
+    desc: '可以返回撤单成功、等待成交、部分成交、已完成的订单',
+    endpointParams: ['instrument_id'],
+    endpoint: 'swap/v3/orders/{instrument_id}',
+    accept: ['from', 'to', 'limit'],
+    notNull: ['status', 'pair'],
+    rateLimit: 2000 / 20,
+    sign: true
+  },
+  unfinishSwapOrders: {
+    method: 'GET',
+    name: 'unfinishSwapOrders',
+    name_cn: '所有未完成的期货订单',
+    desc: '调用 ex.unfinishSwapOrders()',
+    endpointParams: ['instrument_id'],
+    endpoint: 'swap/v3/orders/{instrument_id}',
+    accept: ['from', 'to', 'limit'],
+    notNull: ['pair'],
+    rateLimit: 2000 / 10
+  },
+  getSwapConfig: {
+    method: 'GET',
+    name: 'getSwapConfig',
+    name_cn: '获取配置',
+    endpointParams: ['instrument_id'],
+    endpoint: 'swap/v3/accounts/{instrument_id}/settings',
+    accept: ['from', 'to', 'limit'],
+    notNull: ['pair'],
+    rateLimit: 2000 / 10
+  },
+  setSwapLeverate: {
+    method: 'POST',
+    name: 'setSwapLeverate',
+    name_cn: '设置杠杆',
+    endpointParams: ['instrument_id'],
+    endpoint: 'swap/v3/accounts/{instrument_id}/leverage',
+    accept: ['from', 'to', 'limit'],
+    notNull: ['pair', 'lever_rate'],
+    rateLimit: 2000 / 5
+  },
 };

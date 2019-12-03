@@ -20,6 +20,9 @@ function _parse(v) {
   return parseFloat(v, 10);
 }
 
+function klinePageFilter(d) {
+  return d.close && d.open;
+}
 const { checkKey } = Utils;
 //
 
@@ -78,12 +81,15 @@ class Exchange extends Base {
     this.wsFutureBalance = (o, cb) => this._addChanelV3('futureBalance', o, cb);
     this.wsFutureOrders = (o, cb) => this._addChanelV3('futureOrders', o, cb);
     this.wsSpotOrders = (o, cb) => this._addChanelV3('spotOrders', o, cb);
-    this.wsDepth = (o, cb) => this._addChanelV3('depth', { pairs: this.getPairs(o) }, cb);
-    this.wsBalance = (o, cb) => this._addChanelV3('balance', o, cb);
+    this.wsSpotDepth = (o, cb) => this._addChanelV3('spotDepth', { pairs: this.getPairs(o) }, cb);
+    this.wsSpotBalance = (o, cb) => this._addChanelV3('spotBalance', o, cb);
     this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
     this.wsSwapDepth = (o, cb) => this._addChanelV3('swapDepth', o, cb);
-    this.wsMarginBalance = (o, cb) => this._addChanelV3('marginBalance', o, cb);
     this.wsSwapFundRate = (o, cb) => this._addChanelV3('swapFundRate', o, cb);
+    this.wsMarginBalance = (o, cb) => this._addChanelV3('marginBalance', o, cb);
+    this.wsSwapBalance = (o, cb) => this._addChanelV3('swapBalance', o, cb);
+    this.wsSwapPosition = (o, cb) => this._addChanelV3('swapPosition', o, cb);
+    this.wsSwapOrders = (o, cb) => this._addChanelV3('swapOrders', o, cb);
   }
   _addChanelV3(wsName, o = {}, cb) {
     const { ws } = this;
@@ -170,7 +176,7 @@ class Exchange extends Base {
     if (!Array.isArray(data)) return null;
     return _.map(data, (d) => {
       return swapUtils.formatSwapKline(d, o);
-    });
+    }).filter(klinePageFilter);
   }
   async futureKlinePage(o) {
     const opt = futureUtils.futureKlineO(o);
@@ -180,9 +186,9 @@ class Exchange extends Base {
     if (!ds) return null;
     const { data } = ds;
     if (!Array.isArray(data)) return null;
-    return _.map(data.slice(1), (d) => {
+    return _.map(data, (d) => {
       return futureUtils.formatFutureKline(d, o);
-    });
+    }).filter(klinePageFilter);
   }
   async spotKlinePage(o) {
     const opt = spotUtils.spotKlineO(o);
@@ -193,7 +199,7 @@ class Exchange extends Base {
     if (!Array.isArray(data)) return null;
     return _.map(data.slice(1), (d) => {
       return spotUtils.formatSpotKline(d, o);
-    });
+    }).filter(klinePageFilter);
   }
   async indexKlinePage(o) {
     const opt = spotUtils.spotKlineO(o);
@@ -203,7 +209,7 @@ class Exchange extends Base {
     const { data } = ds;
     return _.map(data.slice(1), (d) => {
       return spotUtils.formatSpotKline(d, o);
-    });
+    }).filter(klinePageFilter);
   }
 
   async request(method = 'GET', endpoint, params = {}, isSign = false) {
@@ -230,7 +236,6 @@ class Exchange extends Base {
 
     let body;
     // try {
-
     body = await request(o);
 
     // } catch (e) {
@@ -250,7 +255,6 @@ class Exchange extends Base {
       return false;
     }
     if (body.error_code && body.error_code !== '0') {
-      // console.log(body, 'body...');
       const msg = `${error.getErrorFromCode(body.error_code)}`;
       console.log(`${msg} | ${endpoint}`, endpoint, params);
       return { error: msg };
@@ -266,6 +270,7 @@ class Exchange extends Base {
     // }
     return body.data || body || false;
   }
+
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);
     let { source, target, amount } = o;
@@ -275,10 +280,6 @@ class Exchange extends Base {
     if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
     return 0.002 * amount;
   }
-  // calcCostFuture(o = {}) {
-  //   checkKey(o, ['coin', 'side', 'amount']);
-  //   const { coin, amount, side = 'BUY' } = o;
-  // }
 }
 
 module.exports = Exchange;
