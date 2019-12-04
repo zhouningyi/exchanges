@@ -134,9 +134,7 @@ function swapOrderInfo(ds, o) {
   return res;
 }
 
-
 function _formatSwapPosition(l) {
-  console.log(l, 'resresresres...');
   const { instrument_id } = l;
   const pair = inst2pair(instrument_id);
   const { side } = l;
@@ -157,12 +155,12 @@ function _formatSwapPosition(l) {
     [`${side}_settlement_price`]: _parse(l.settlement_price),
     lever_rate: _parse(l.leverage),
     maint_margin_ratio: _parse(l.maint_margin_ratio),
-    margin_ratio: _parse(l.maint_margin_ratio),
+    margin_ratio: _parse(l.margin_ratio),
     [`${side}_benifit`]: _parse(l.settled_pnl),
     [`${side}_realize_benifit`]: _parse(l.realized_pnl),
     [`${side}_unrealize_benifit`]: _parse(l.unrealized_pnl),
     server_updated_at: new Date(l.timestamp),
-    time: new Date(l.timestamp),
+    time: new Date(),
   };
 }
 

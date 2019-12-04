@@ -106,6 +106,7 @@ module.exports = {
     sign: true,
     endpoint: 'spot/v3/accounts',
     notNull: [],
+    rateLimit: 2000 / 20
   },
   pairs: {
     name: 'pairs',
@@ -193,6 +194,7 @@ module.exports = {
     name_cn: '所有杠杆账户余额',
     sign: true,
     endpoint: 'margin/v3/accounts',
+    rateLimit: 2000 / 20
   },
   marginBalance: {
     name: 'marginBalance',
@@ -408,7 +410,8 @@ module.exports = {
     name: 'futureBalances',
     name_cn: '期货账户资产',
     endpoint: 'futures/v3/accounts',
-    notNull: []
+    notNull: [],
+    rateLimit: 10000 / 1
   },
   futureBalance: {
     method: 'GET',
@@ -600,7 +603,8 @@ module.exports = {
     name: 'swapBalances',
     name_cn: '永续账户资产',
     endpoint: 'swap/v3/accounts',
-    notNull: []
+    notNull: [],
+    rateLimit: 10000 / 1
   },
   swapBalance: {
     method: 'GET',
