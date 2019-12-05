@@ -137,7 +137,8 @@ const accountTypeMap = {
   c2c: 4,
   margin: 5,
   wallet: 6,
-  ETT: 7
+  ETT: 7,
+  swap: 9
 };
 
 function direct(d) {

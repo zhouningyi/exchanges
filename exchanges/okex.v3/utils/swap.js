@@ -42,6 +42,7 @@ function formatTick(d) {
     pair,
   };
 }
+
 function swapTicks(ds) {
   return _.map(ds, formatTick);
 }
@@ -119,7 +120,7 @@ function batchCancelSwapOrders(res, o) {
   const { ids: order_id, instrument_id } = res;
   return _.map(order_id, order_id => ({
     order_id,
-    pair: inst2pair(instrument_id),
+    // pair: inst2pair(instrument_id),
     status: 'CANCEL',
   }));
 }
@@ -130,7 +131,7 @@ function swapOrderInfoO(o) {
 
 function swapOrderInfo(ds, o) {
   const res = futureApiUtils.formatContractOrder(ds, o);
-  res.pair = getInstrumentId(ds.instrument_id);
+  res.pair = inst2pair(ds.instrument_id);
   return res;
 }
 
@@ -138,7 +139,7 @@ function _formatSwapPosition(l) {
   const { instrument_id } = l;
   const pair = inst2pair(instrument_id);
   const { side } = l;
-  return {
+  const res = {
     unique_id: instrument_id,
     instrument_id,
     pair,
@@ -155,13 +156,14 @@ function _formatSwapPosition(l) {
     [`${side}_settlement_price`]: _parse(l.settlement_price),
     lever_rate: _parse(l.leverage),
     maint_margin_ratio: _parse(l.maint_margin_ratio),
-    margin_ratio: _parse(l.margin_ratio),
     [`${side}_benifit`]: _parse(l.settled_pnl),
     [`${side}_realize_benifit`]: _parse(l.realized_pnl),
     [`${side}_unrealize_benifit`]: _parse(l.unrealized_pnl),
     server_updated_at: new Date(l.timestamp),
     time: new Date(),
   };
+  if (l.margin_ratio) res.margin_ratio = _parse(l.margin_ratio);
+  return res;
 }
 
 function formatSwapPosition(res) {

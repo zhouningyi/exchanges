@@ -373,6 +373,14 @@ module.exports = {
     endpoint: 'futures/v3/position',
     notNull: []
   },
+  futurePosition: {
+    method: 'GET',
+    name: 'futurePosition',
+    name_cn: '单个期货仓位',
+    endpointParams: ['instrument_id'],
+    endpoint: 'futures/v3/{instrument_id}/position',
+    notNull: ['contract_type'],
+  },
   lerverate: {
     method: 'GET',
     name: 'lerverate',
@@ -396,14 +404,6 @@ module.exports = {
     name_cn: '设置仓位类型',
     endpoint: 'futures/v3/accounts/margin_mode',
     notNull: ['pair', 'margin_mode'],
-  },
-  futurePosition: {
-    method: 'GET',
-    name: 'futurePosition',
-    name_cn: '单个期货仓位',
-    endpointParams: ['instrument_id'],
-    endpoint: 'futures/v3/{instrument_id}/position',
-    notNull: ['contract_type', 'pair'],
   },
   futureBalances: {
     method: 'GET',

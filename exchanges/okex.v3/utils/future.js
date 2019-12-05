@@ -178,7 +178,8 @@ function getFutureInstrumentId(pair, contract_type, t = new Date()) {
   return res;
 }
 function getCurFutureInstrumentId(o) {
-  const { pair, contract_type } = o;
+  const { pair: _pair, coin, contract_type } = o;
+  const pair = _pair || `${coin}-USD`;
   return getFutureInstrumentId(pair, contract_type, new Date());
 }
 
