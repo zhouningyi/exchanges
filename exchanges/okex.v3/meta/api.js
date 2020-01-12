@@ -200,9 +200,9 @@ module.exports = {
     name: 'marginBalance',
     name_cn: '单个杠杆账户余额',
     sign: true,
-    endpointParams: ['coin'],
-    endpoint: 'margin/v3/accounts/{coin}',
-    notNull: ['coin']
+    endpointParams: ['pair'],
+    endpoint: 'margin/v3/accounts/{pair}',
+    notNull: ['pair']
   },
   marginPairInfo: {
     name: 'marginPairInfo',
@@ -283,7 +283,7 @@ module.exports = {
     },
     name_cn: '所有订单列表',
     endpoint: 'margin/v3/orders',
-    notNull: ['instrument_id']
+    notNull: ['pair']
   },
   unfinishMarginOrders: {
     sign: true,

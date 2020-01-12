@@ -1,6 +1,6 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['kraken']; // bikicoin
+const exchanges = ['okexV3']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
@@ -10,11 +10,12 @@ const tasks = [
   //   fn: 'spotOrder',
   //   params: {
   //     client_oid: `order${Math.floor(Math.random() * 10000)}`,
-  //     pair: 'XRP-USDT',
+  //     pair: 'BSV-USDT',
   //     type: 'LIMIT',
   //     side: 'BUY',
-  //     price: 0.213223333322,
-  //     amount: 5
+  //     order_type: 'MAKER',
+  //     price: 190,
+  //     amount: 0.01
   //   }
   // },
   // {
@@ -38,7 +39,9 @@ const tasks = [
 
   // {
   //   fn: 'spotBalance',
-  //   params: {},
+  //   params: {
+  //     coin: 'USDT'
+  //   },
   //   name: '现货账户信息'
   // },
   // {
@@ -251,11 +254,11 @@ const tasks = [
   //   params: {},
   //   name: 'bitmex 互换资费'
   // },
-  {
-    fn: 'spotTicks',
-    params: { pair: 'BTC-USDT' },
-    name: 'ticks数据'
-  },
+  // {
+  //   fn: 'spotTicks',
+  //   params: { pair: 'BTC-USDT' },
+  //   name: 'ticks数据'
+  // },
 
   // {
   //   fn: 'accounts',

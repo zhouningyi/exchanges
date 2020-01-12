@@ -7,6 +7,7 @@ const tasks = [
   //   params: {
   //     pair: 'ETH-USD',
   //     direction: 'UP',
+  //     order_type: 'MAKER',
   //     amount: 1,
   //     price: 100,
   //     side: 'BUY',
@@ -78,13 +79,13 @@ const tasks = [
   //     pair: 'ETH-USD',
   //   }
   // },
-  {
-    fn: 'setSwapLeverate',
-    params: {
-      pair: 'ETH-USD',
-      lever_rate: 11,
-    }
-  },
+  // {
+  //   fn: 'setSwapLeverate',
+  //   params: {
+  //     pair: 'ETH-USD',
+  //     lever_rate: 11,
+  //   }
+  // },
 ];
 
 testRest(exchanges, tasks);

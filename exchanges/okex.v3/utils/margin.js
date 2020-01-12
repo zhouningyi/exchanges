@@ -39,8 +39,8 @@ function coin2currency(coin) {
 }
 
 
-function formatMarginBalance(d) {
-  const pair = symbol2pair(d.instrument_id);
+function formatMarginBalance(d, o = {}) {
+  const pair = o.pair || symbol2pair(d.instrument_id);
   const [left, right] = pair.split('-');
   const leftInfo = d[coin2currency(left)];
   const rightInfo = d[coin2currency(right)];
@@ -62,7 +62,7 @@ function formatMarginBalance(d) {
 }
 
 function marginBalance(d, o) {
-  const res = formatMarginBalance(d);
+  const res = formatMarginBalance(d, o);
   if (o && o.notNull) {
     return _.filter(res, d => d.balance || d.total_balance);
   }
@@ -237,12 +237,14 @@ function batchCancelMarginOrder(ds, o = {}) {
   const res = [];
   _.forEach(ds, (d, pair) => {
     _.forEach(d, (_d) => {
-      res.push({
+      const l = {
         client_oid: _d.client_oid,
         order_id: _d.order_id,
         success: _d.result,
         pair: pair.toUpperCase()
-      });
+      };
+      if (l.success) l.status = 'CANCEL';
+      res.push(l);
     });
   });
   return res;
@@ -271,7 +273,7 @@ function cancelAllMarginOrders(ds, o) {
 
 function marginOrdersO(o = {}) {
   return {
-    instrument_id: o.instrument_id,
+    instrument_id: o.pair,
     status: reverseOrderStatusMap[o.status],
     from: o.from,
     to: o.to,

@@ -250,7 +250,7 @@ const swapOrders = {
   isSign: true,
   chanel: (o = {}) => _.map(o.pairs, pair => `swap/order:${pair}-SWAP`),
   formater: (res) => {
-    if (res && res.data) return _.map(res.data, d => futureUtils.formatContractOrder(d));
+    if (res && res.data) return _.map(res.data, d => swapUtils.formatSwapOrder(d));
     return [];
   }
 };

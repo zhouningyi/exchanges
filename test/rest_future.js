@@ -146,12 +146,13 @@ const tasks = [
   // {
   //   fn: 'futureOrder',
   //   params: {
-  //     client_oid: 'xx',
+  //     client_oid: 'xxx',
   //     pair: 'ETH-USDT',
   //     contract_type: 'next_week',
   //     lever_rate: 20,
   //     side: 'BUY',
   //     direction: 'up',
+  //     order_type: 'MAKER',
   //     amount: 1,
   //     type: 'LIMIT',
   //     price: 100,

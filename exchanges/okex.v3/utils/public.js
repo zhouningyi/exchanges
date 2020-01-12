@@ -350,12 +350,10 @@ function formatOrder(d, o = {}, error) {
     console.log(d, o, error, 'error....');
     process.exit();
   }
-  // console.log(d, 'd...d...');
   const { from, to, limit, ...rest } = o;
   const pps = {};
   if (d.created_at) pps.server_created_at = new Date(d.created_at);
   const res = {
-    // time: t ? new Date(t) : new Date(),
     instrument_id: d.instrument_id,
     side: (d.side || o.side || '').toUpperCase(),
     client_oid: d.client_oid,
@@ -369,6 +367,8 @@ function formatOrder(d, o = {}, error) {
     type: (d.type || o.type || '').toUpperCase(),
     status: orderStatusMap[d.status] || orderStateMap[d.state] || 'UNFINISH',
     price: _parse(d.price),
+    order_type: reverseOrderTypeMap[d.order_type],
+    price_avg: _parse(d.price_avg),
     ...pps,
     ...rest
   };
@@ -383,18 +383,21 @@ function formatOrder(d, o = {}, error) {
 }
 
 function orderO(o) {
-  const { type } = o;
-  let opt = {
+  const { type, order_type } = o;
+  const client_oid = o.client_oid || o.oid;
+  let res = {
     margin_trading: 1, //
     type: o.type.toLowerCase(),
     side: o.side.toLowerCase(),
     instrument_id: o.instrument_id || o.pair,
     client_oid: o.client_oid || o.oid
   };
+  if (client_oid) res.client_oid = client_oid;
+  if (order_type) res.order_type = orderTypeMap[order_type.toUpperCase()];
   if (type.toUpperCase() === 'LIMIT') {
     checkKey(o, ['price', 'amount']);
-    opt = {
-      ...opt,
+    res = {
+      ...res,
       instrument_id: o.pair,
       price: o.price,
       size: o.amount
@@ -404,14 +407,23 @@ function orderO(o) {
     console.log('市价单还没做...');
     process.exit();
   }
-  return opt;
+  return res;
 }
 
 const base = {
   WS_BASE: 'wss://real.okex.com:10440/websocket/okexapi'
 };
+const orderTypeMap = {
+  NORMAL: 0,
+  MAKER: 1,
+  FOK: 2,
+  IOC: 3
+};
+const reverseOrderTypeMap = _.invert(orderTypeMap);
 
 module.exports = {
+  orderTypeMap,
+  reverseOrderTypeMap,
   pair2coin,
   base,
   symbol2pair,

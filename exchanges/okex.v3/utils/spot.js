@@ -108,12 +108,14 @@ function batchCancelSpotOrders(ds) {
   const res = [];
   _.forEach(ds, (d, pair) => {
     _.forEach(d, (_d) => {
-      res.push({
+      const l = {
         client_oid: _d.client_oid,
         order_id: _d.order_id,
         success: _d.result,
         pair: pair.toUpperCase()
-      });
+      };
+      if (l.success) l.status = 'CANCEL';
+      res.push(l);
     });
   });
   return res;
@@ -122,11 +124,14 @@ function batchCancelSpotOrders(ds) {
 // 所有订单
 function spotOrdersO(o = {}) {
   const { pair, status, ...rest } = o;
-  return {
+  const client_oid = o.client_oid || o.oid;
+  const res = {
     instrument_id: pair,
     status: reverseOrderStatusMap[status],
     ...rest
   };
+  if (client_oid) res.client_oid = client_oid;
+  return res;
 }
 function spotOrders(res, o) {
   return _.map(res, d => formatOrder(d, o));

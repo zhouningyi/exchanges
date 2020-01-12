@@ -3,7 +3,7 @@ const Utils = require('./../../../utils');
 const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
-const { accountTypeMap, intervalMap } = require('./public');
+const { accountTypeMap, intervalMap, reverseOrderTypeMap, orderTypeMap } = require('./public');
 
 const { checkKey, throwError, cleanObjectNull } = Utils;
 
@@ -206,13 +206,7 @@ const code2Direction = {
   3: 'UP',
   4: 'DOWN'
 };
-const orderTypeMap = {
-  NORMAL: 0,
-  MAKER: 1,
-  FOK: 2,
-  IOC: 3
-};
-const reverseTypeMap = _.invert(orderTypeMap);
+
 
 function futureOrderO(o = {}) {
   const { amount, order_type } = o;
@@ -236,15 +230,17 @@ function futureOrder(line, o = {}) {
   if (!line || !line.result) return false;
   const pps = {};
   if (line.created_at) pps.created_at = new Date(line.created_at);
-  return {
+  const client_oid = line.client_oid || o.client_oid;
+  const res = {
     ...pps,
-    client_oid: line.client_oid,
+    client_oid,
     order_id: line.order_id,
     error: line.error_message,
     success: line.result,
     status: 'UNFINISH',
     ...o
   };
+  return res;
 }
 // 撤销订单
 function batchCancelFutureOrdersO(o) {
@@ -254,13 +250,15 @@ function batchCancelFutureOrdersO(o) {
 
 function batchCancelFutureOrders(line, o) {
   if (!line) return null;
-  const { order_id, pair, contract_type } = line;
-  return _.map(order_id, l => ({
-    order_id: l.client_oid,
-    contract_type,
-    pair,
-    status: 'CANCEL',
-  }));
+  const { instrument_id } = line;
+  let info;
+  if (instrument_id) info = getInfoFromInstrumentId(instrument_id);
+  const order_ids = line.order_ids || line.order_id;
+  return _.map(order_ids, (order_id) => {
+    const res = { order_id, status: 'CANCEL' };
+    if (info) Object.assign(res, info);
+    return res;
+  });
 }
 // 批撤销订单
 function cancelAllFutureOrdersO(o = {}) {
@@ -306,13 +304,14 @@ function formatContractOrder(l, o) {
     contract_val: _parse(l.contract_val),
     server_created_at: new Date(l.timestamp),
     order_id: l.order_id,
-    order_type: reverseTypeMap[l.order_type],
+    order_type: reverseOrderTypeMap[l.order_type],
     side: code2Side[l.type],
     status: reverseFutureStatusMap[l.state],
     direction: code2Direction[l.type],
     ...o,
   };
   if (l.leverage) res.lever_rate = _parse(l.leverage);
+  if (l.client_oid) res.client_oid = l.client_oid;
   return res;
 }
 

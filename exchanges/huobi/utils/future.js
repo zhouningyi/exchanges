@@ -506,6 +506,7 @@ function batchCancelFutureOrdersO(o = {}) {
 }
 
 function batchCancelFutureOrders(res) {
+  console.log(res);
   if (res && res.successes) {
     if (typeof res.successes === 'string') {
       res.successes = res.successes.split(',').map(order_id => ({ order_id }));

@@ -3,7 +3,7 @@ const _ = require('lodash');
 // const md5 = require('md5');
 //
 const Utils = require('./../../../utils');
-const { intervalMap, pair2coin } = require('./public');
+const { intervalMap, pair2coin, orderTypeMap, reverseOrderTypeMap } = require('./public');
 const futureApiUtils = require('./future');
 const deepmerge = require('deepmerge');
 
@@ -113,14 +113,18 @@ function swapOrder(res, o) {
 }
 
 function batchCancelSwapOrdersO(o) {
-  return { ..._getInstrumentO(o), ids: o.order_id || o.order_ids };
+  const res = _getInstrumentO(o);
+  const ids = o.order_id || o.order_ids;
+  if (ids) res.ids = ids;
+  return res;
 }
 function batchCancelSwapOrders(res, o) {
   if (!res) return null;
-  const { ids: order_id, instrument_id } = res;
-  return _.map(order_id, order_id => ({
+  const { instrument_id } = res;
+  const order_ids = res.order_ids || res.ids;
+  return _.map(order_ids, order_id => ({
     order_id,
-    // pair: inst2pair(instrument_id),
+    pair: inst2pair(instrument_id),
     status: 'CANCEL',
   }));
 }
@@ -130,7 +134,7 @@ function swapOrderInfoO(o) {
 }
 
 function swapOrderInfo(ds, o) {
-  const res = futureApiUtils.formatContractOrder(ds, o);
+  const res = formatSwapOrder(ds, o);
   res.pair = inst2pair(ds.instrument_id);
   return res;
 }
@@ -237,6 +241,8 @@ function _getInstrumentO(o) {
 }
 
 function swapOrdersO(o) {
+  const client_oid = o.client_oid || o.oid;
+  const { order_type } = o;
   const res = {
     ..._getInstrumentO(o),
     state: futureApiUtils.futureStatusMap[o.state || o.status],
@@ -244,12 +250,20 @@ function swapOrdersO(o) {
     to: o.to,
     limit: o.limit
   };
+  if (client_oid) res.client_oid = client_oid;
+  if (order_type) res.order_type = orderTypeMap[order_type];
+  return res;
+}
+
+function formatSwapOrder(d, o) {
+  const res = futureApiUtils.formatContractOrder(d, o);
+  if (d.instrument_id) res.pair = inst2pair(d.instrument_id);
   return res;
 }
 
 function swapOrders(ds, o) {
   if (!ds) return false;
-  return _.map(ds.order_info, d => futureApiUtils.formatContractOrder(d, o));
+  return _.map(ds.order_info, d => formatSwapOrder(d, o));
 }
 
 function unfinishSwapOrdersO(o) {
@@ -278,6 +292,7 @@ function setSwapLeverate(res, o) {
 }
 
 module.exports = {
+  formatSwapOrder,
   getSwapInstrumentId: getInstrumentId,
   inst2pair,
   formatSwapKline: _formatSwapKline,
