@@ -236,8 +236,8 @@ class exchange extends Event {
           const error = UtilsInst.getError(ds);
           if (error) {
             errorO = { ...ds, error };
-            const errorEventData = { ...errorO, o, opt, url: endpointCompile, name_cn: conf.name_cn, name: conf.name, time: new Date() };
-            console.log(errorEventData, 'errorEventData....');
+            const errorEventData = { ...errorO, o, opt, url: endpointCompile, name_cn: conf.name_cn, endpoint: conf.endpoint, name: conf.name, time: new Date() };
+            // console.log(errorEventData, 'errorEventData....');// errorEventData,
             this.emit('request_error', errorEventData);
           }
         }
@@ -246,6 +246,7 @@ class exchange extends Event {
         const errorApis = [
           'margin/v3/cancel_batch_orders',
           'margin/v3/orders/{order_id}',
+          'spot/v3/orders/{order_id}',
         ];
         if (formatFn) {
           if (!errorO) {

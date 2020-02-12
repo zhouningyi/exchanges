@@ -6,6 +6,7 @@ const Utils = require('./../../../utils');
 const { intervalMap, pair2coin, orderTypeMap, reverseOrderTypeMap } = require('./public');
 const futureApiUtils = require('./future');
 const deepmerge = require('deepmerge');
+const publicUtils = require('./public');
 
 
 const { checkKey, throwError, cleanObjectNull } = Utils;
@@ -125,6 +126,7 @@ function batchCancelSwapOrders(res, o) {
   return _.map(order_ids, order_id => ({
     order_id,
     pair: inst2pair(instrument_id),
+    instrument: 'swap',
     status: 'CANCEL',
   }));
 }
@@ -258,6 +260,7 @@ function swapOrdersO(o) {
 function formatSwapOrder(d, o) {
   const res = futureApiUtils.formatContractOrder(d, o);
   if (d.instrument_id) res.pair = inst2pair(d.instrument_id);
+  res.instrument = 'swap';
   return res;
 }
 
@@ -289,6 +292,28 @@ function setSwapLeverateO(o) {
 }
 function setSwapLeverate(res, o) {
   return [res];
+}
+
+const swapLedgerTypeMap = {
+  funding: 14
+};
+
+function swapLedgerO(o) {
+  const opt = { instrument_id: getInstrumentId(o.pair), };
+  if (o.type) opt.type = swapLedgerTypeMap[o.type];
+  return opt;
+}
+
+function swapLedger(ds, o) {
+  return _.map(ds, d => publicUtils.formatAssetLedger(d, { ...o, instrument: 'swap', asset_type: 'swap' }));
+}
+
+function swapFillsO(o) {
+  return { instrument_id: getInstrumentId(o.pair), };
+}
+
+function swapFills(ds, o) {
+  return _.map(ds, d => publicUtils.formatFill(d, { ...o, instrument: 'swap', asset_type: 'swap' }));
 }
 
 module.exports = {
@@ -323,6 +348,10 @@ module.exports = {
   unfinishSwapOrdersO,
   getSwapConfigO: _getInstrumentO,
   getSwapConfig,
+  swapFillsO,
+  swapFills,
+  swapLedgerO,
+  swapLedger,
   setSwapLeverateO,
   setSwapLeverate,
 };

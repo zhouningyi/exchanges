@@ -316,7 +316,9 @@ function marginOrderInfoO(o = {}) {
 
 function marginOrderInfo(line, o, error) {
   if (error && error.code === 33014) {
-    return { order_id: o.order_id, status: 'X_FINISH' };
+    const res = { order_id: o.order_id, status: 'X_FINISH' };
+    if (o.client_oid) res.client_oid = o.client_oid;
+    return res;
   }
   return { ...formatOrder(line), ...o };
 }

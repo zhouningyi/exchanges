@@ -83,6 +83,14 @@ module.exports = {
     endpoint: 'account/v3/ledger',
   },
   // // // // // // // 现货部分  // // // // // // //
+  spotFills: {
+    method: 'GET',
+    name: 'spotFills',
+    name_cn: '现货交易明细',
+    endpoint: 'spot/v3/fills',
+    notNull: ['pair'],
+    rateLimit: 2000 / 5
+  },
   spotKline: {
     method: 'GET',
     name: 'spotKline',
@@ -366,6 +374,14 @@ module.exports = {
     notNull: ['contract_type', 'pair'],
   },
   // 合约私有接口
+  futureFills: {
+    method: 'GET',
+    name: 'futureFills',
+    name_cn: '期货交易明细',
+    endpoint: 'futures/v3/fills',
+    notNull: ['pair', 'contract_type'],
+    rateLimit: 2000 / 5
+  },
   futurePositions: {
     method: 'GET',
     name: 'futurePositions',
@@ -425,8 +441,8 @@ module.exports = {
     method: 'GET',
     name: 'futureLedger',
     name_cn: '期货账户流水',
-    endpoint: 'futures/v3/accounts/{coin}/ledger',
-    endpointParams: ['coin'],
+    endpoint: 'futures/v3/accounts/{pair}/ledger',
+    endpointParams: ['pair'],
     notNull: ['pair'],
     rateLimit: 2000 / 5
   },
@@ -536,6 +552,24 @@ module.exports = {
     endpointParams: ['instrument_id'],
     notNull: ['pair'],
     sign: false,
+  },
+  swapLedger: {
+    method: 'GET',
+    name: 'swapLedger',
+    name_cn: '永续账户流水',
+    endpoint: 'swap/v3/accounts/{instrument_id}/ledger',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+    rateLimit: 2000 / 5
+  },
+  swapFills: {
+    method: 'GET',
+    name: 'swapFills',
+    name_cn: '永续账户交易明细',
+    endpoint: 'swap/v3/fills',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+    rateLimit: 2000 / 5
   },
   swapTicks: {
     method: 'GET',

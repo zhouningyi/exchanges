@@ -210,19 +210,38 @@ const ledgerMap = {
   1: '充值',
   2: '提现',
   13: '撤销提现',
-  18: '转入合约账户',
-  19: '合约账户转出',
+  18: '转入交割合约',
+  19: '交割合约转出',
   20: '转入子账户',
   21: '子账户转出',
   28: '领取',
   29: '转入指数交易区',
-  30: '指数交易区转出',
+  30: '转出指数交易区',
   31: '转入点对点账户',
   32: '点对点账户转出',
   33: '转入币币杠杆账户',
   34: '币币杠杆账户转出',
   37: '转入币币账户',
   38: '币币账户转出',
+  41: '点卡手续费',
+  42: '购买点卡',
+  43: '点卡转让',
+  44: '撤销点卡转让',
+  47: '系统冲正',
+  48: '活动得到',
+  49: '活动送出',
+  50: '预约得到',
+  51: '预约扣除',
+  52: '发红包',
+  53: '抢红包',
+  54: '红包退还',
+  55: '转入永续',
+  56: '永续转出',
+  57: '转入余币宝',
+  58: '余币宝转出',
+  59: '套保账户转出',
+  60: '转入套保账户',
+  61: '兑换',
 };
 
 const rLedgerMap = _.invert(ledgerMap);
@@ -421,6 +440,68 @@ const orderTypeMap = {
 };
 const reverseOrderTypeMap = _.invert(orderTypeMap);
 
+const orderFillTypeMap = {
+  T: 'TAKER',
+  M: 'MAKER'
+};
+
+const directionFillMap = {
+  long: 'UP',
+  short: 'DOWN'
+};
+
+function formatFill(d, o) {
+  return {
+    order_id: d.order_id,
+    trade_id: d.trade_id,
+    instrument_id: d.instrument_id,
+    price: _parse(d.price),
+    amount: o.instrument === 'spot' ? _parse(d.size) : _parse(d.order_qty),
+    fee: _parse(d.fee),
+    time: d.created_at ? new Date(d.created_at) : new Date(d.timestamp),
+    exec_type: orderFillTypeMap[d.exec_type],
+    direction: d.side ? directionFillMap[d.side] : null,
+    side: d.side ? d.side.toUpperCase() : null,
+    coin: d.currency || d.instrument_id ? d.instrument_id.split('-')[0] : null,
+    ...o
+  };
+}
+
+function formatAssetLedger(d, o) {
+  // console.log(d, 'ddd....');
+  const coin = d.currency;
+  // spot
+  // {
+  //   timestamp: '2020-02-02T08:17:59.000Z',
+  //   ledger_id: '9346130336',
+  //   created_at: '2020-02-02T08:17:59.000Z',
+  //   currency: 'BSV',
+  //   amount: '0.10603634',
+  //   balance: '67.94539549',
+  //   type: 'trade',
+  //   details: {
+  //     instrument_id: 'BSV-USDT',
+  //     order_id: '4318526116736000',
+  //     product_id: 'BSV-USDT'
+  //   },
+  //   resp_time: 216
+  // }
+
+  const res = {
+    ledger_id: d.ledger_id,
+    order_id: d.order_id || _.get(d.details, 'order_id'),
+    instrument_id: d.instrument_id || _.get(d.details, 'instrument_id'),
+    amount: ['margin', 'spot'].includes(o.instrument) ? _parse(d.amount) : _parse(d.balance),
+    balance: ['margin', 'spot'].includes(o.instrument) ? _parse(d.balance) : _parse(d.amount),
+    time: new Date(d.timestamp),
+    type: d.type || o.type,
+    coin,
+    ...o
+  };
+  if (!['future'].includes(o.instrument)) res.fee = _parse(d.fee) || null;
+  return res;
+}
+
 module.exports = {
   orderTypeMap,
   reverseOrderTypeMap,
@@ -437,6 +518,7 @@ module.exports = {
   coinsO: direct,
   getError,
   intervalMap,
+  formatFill,
   // 资金流动
   moveBalanceO,
   moveBalance,
@@ -446,5 +528,6 @@ module.exports = {
   walletLedger,
   orderO,
   formatLedger: _formatLedger,
-  formatWalletLedger: _formatWalletLedger
+  formatWalletLedger: _formatWalletLedger,
+  formatAssetLedger
 };

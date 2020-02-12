@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const Utils = require('./../../../utils');
+const publicUtils = require('./public');
 const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
@@ -139,32 +140,32 @@ function futureBalance(d, o) {
   return _formatBalance(d, o.coin);
 }
 
-function futureLedgerO(o = {}) {
-  const { pair, ...rest } = o;
-  return {
-    coin: (pair.split('-')[0]).toLowerCase(),
-    ...rest
-  };
-}
+// function futureLedgerO(o = {}) {
+//   const { pair, ...rest } = o;
+//   return {
+//     coin: (pair.split('-')[0]).toLowerCase(),
+//     ...rest
+//   };
+// }
 
-function _futureLedger(d, o) { // 其实可以把Ledger理解为清算
-  return {
-    unique_id: d.ledger_id,
-    ledger_id: d.ledger_id,
-    time: new Date(d.timestamp),
-    coin_amount: _parse(d.amount), // 币的增减
-    amount: _parse(d.balance), // 张数
-    coin: d.currency,
-    type: d.type, // 流水来源 fee 交易手续费 match 交易 liquidation 爆仓 settlement 交割 transfer 转账
-    order_id: _.get(d, 'details.order_id'),
-    instrument_id: _.get(d, 'details.instrument_id'),
-    ...o
-  };
-}
+// function _futureLedger(d, o) { // 其实可以把Ledger理解为清算
+//   return {
+//     unique_id: d.ledger_id,
+//     ledger_id: d.ledger_id,
+//     time: new Date(d.timestamp),
+//     coin_amount: _parse(d.amount), // 币的增减
+//     amount: _parse(d.balance), // 张数
+//     coin: d.currency,
+//     type: d.type, // 流水来源 fee 交易手续费 match 交易 liquidation 爆仓 settlement 交割 transfer 转账
+//     order_id: _.get(d, 'details.order_id'),
+//     instrument_id: _.get(d, 'details.instrument_id'),
+//     ...o
+//   };
+// }
 
-function futureLedger(ds, o) {
-  return _.map(ds, d => _futureLedger(d, o));
-}
+// function futureLedger(ds, o) {
+//   return _.map(ds, d => _futureLedger(d, o));
+// }
 
 function _formatPair(pair) {
   if (!pair) return null;
@@ -212,7 +213,7 @@ function futureOrderO(o = {}) {
   const { amount, order_type } = o;
   const direction = o.direction.toUpperCase();
   const side = o.side.toUpperCase();
-  const type = o.type.toUpperCase();
+  // const type = o.type.toUpperCase();
   const instrument_id = getCurFutureInstrumentId(o);
   const client_oid = o.client_oid || o.oid;
   const res = {
@@ -220,7 +221,7 @@ function futureOrderO(o = {}) {
     ..._.pick(o, ['price']),
     size: amount,
     type: _.get(futureTypeMap, `${side}.${direction}`),
-    match_price: type === 'LIMIT' ? 0 : 1, // 对手价
+    // match_price: type === 'LIMIT' ? 0 : 1, // 对手价
   };
   if (client_oid) res.client_oid = client_oid;
   if (order_type) res.order_type = orderTypeMap[order_type.toUpperCase()];
@@ -255,7 +256,7 @@ function batchCancelFutureOrders(line, o) {
   if (instrument_id) info = getInfoFromInstrumentId(instrument_id);
   const order_ids = line.order_ids || line.order_id;
   return _.map(order_ids, (order_id) => {
-    const res = { order_id, status: 'CANCEL' };
+    const res = { order_id, status: 'CANCEL', instrument: 'future' };
     if (info) Object.assign(res, info);
     return res;
   });
@@ -319,7 +320,8 @@ function _formatFutureOrder(l, o) {
   const info = getInfoFromInstrumentId(l.instrument_id);
   const res = {
     ...info,
-    ...formatContractOrder(l, o)
+    ...formatContractOrder(l, o),
+    instrument: 'future'
   };
   if (l.client_oid) res.client_oid = l.client_oid;
   return res;
@@ -613,8 +615,33 @@ function formatFutureDepth(data, type = 'future') {
   return _.values(res);
 }
 
+
+function futureFillsO(o) {
+  return { instrument_id: getCurFutureInstrumentId(o), };
+}
+
+function futureFills(ds, o) {
+  return _.map(ds, d => publicUtils.formatFill(d, { ...o, instrument: 'future', asset_type: o.contract_type }));
+}
+
+function futureLedgerO(o) {
+  return o;
+}
+
+function futureLedger(ds, o) {
+  return _.map(ds, (d) => {
+    const res = publicUtils.formatAssetLedger(d, { instrument: 'future' });
+    const info = getInfoFromInstrumentId(res.instrument_id);
+    if (info) res.asset_type = info.contract_type;
+    return res;
+  });
+}
+
+
 const direct = d => d;
 module.exports = {
+  futureLedgerO,
+  futureLedger,
   futureStatusMap,
   formatFutureKline: _formatFutureKline,
   formatFutureDepth,
@@ -675,5 +702,7 @@ module.exports = {
   setLerverateO,
   lerverate,
   formatFuturePair: _formatPair,
+  futureFillsO,
+  futureFills,
   lerverateO: ({ pair }) => ({ underlying: pair })
 };

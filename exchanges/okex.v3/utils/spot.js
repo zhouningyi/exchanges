@@ -51,15 +51,6 @@ function spotBalance(ds, o = {}) {
 }
 
 
-function spotLedgerO(o = {}) {
-  return { ...o };
-}
-
-function spotLedger(res, o = {}) {
-  const { from, to, limit, ...rest } = o;
-  return _.map(res, d => formatLedger(d, rest));
-}
-
 // 下单
 function spotOrderO(o = {}) {
   return {
@@ -152,7 +143,12 @@ function spotOrderInfoO(o = {}) {
     order_id: o.order_id
   };
 }
-function spotOrderInfo(res, o) {
+function spotOrderInfo(res, o, error) {
+  if (error && error.code === 33014) {
+    const res = { order_id: o.order_id, status: 'X_FINISH' };
+    if (o.client_oid) res.client_oid = o.client_oid;
+    return res;
+  }
   return formatOrder(res, o);
 }
 
@@ -231,6 +227,24 @@ function spotKline(res, o) {
   return _.map(res, l => _formatSpotKline(l, o));
 }
 
+function spotLedgerO(o = {}) {
+  return { ...o };
+}
+
+function spotLedger(ds, o = {}) {
+  return _.map(ds, d => publicUtils.formatAssetLedger(d, { instrument: 'spot', asset_type: 'spot' }));
+}
+
+
+function spotFillsO(o) {
+  return { instrument_id: o.pair };
+}
+
+function spotFills(ds, o) {
+  return _.map(ds, d => publicUtils.formatFill(d, { ...o, instrument: 'spot', asset_type: 'spot' }));
+}
+
+
 module.exports = {
   formatSpotKline: _formatSpotKline,
   spotKlineO,
@@ -242,6 +256,8 @@ module.exports = {
   wallet,
   pairsO: direct,
   pairs,
+  spotFillsO,
+  spotFills,
   // order
   spotBalancesO,
   spotBalances,
