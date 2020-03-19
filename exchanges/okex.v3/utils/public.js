@@ -502,7 +502,17 @@ function formatAssetLedger(d, o) {
   return res;
 }
 
+function assetTotalBalanceO(o) {
+  return o;
+}
+
+function assetTotalBalance(res) {
+  console.log(res);
+}
+
 module.exports = {
+  assetTotalBalanceO,
+  assetTotalBalance,
   orderTypeMap,
   reverseOrderTypeMap,
   pair2coin,

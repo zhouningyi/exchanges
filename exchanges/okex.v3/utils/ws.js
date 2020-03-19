@@ -43,7 +43,6 @@ function genInstrumentChanelFn(chanel) {
         args.push(`${chanel}:${instrument_id}`);
       });
     });
-    // console.log(args);
     return args;
   };
 }
@@ -116,7 +115,7 @@ const futureOrders = {
   isSign: true,
   notNull: ['pairs', 'contract_type'],
   chanel: genInstrumentChanelFn('futures/order'),
-  formater: res => _.map(res.data, final(futureUtils.formatFutureOrder)).filter(exist)
+  formater: res => _.map(res.data, final((a, b) => futureUtils.formatFutureOrder(a, b, 'ws futureOrders'))).filter(exist)
 };
 
 const spotOrders = {

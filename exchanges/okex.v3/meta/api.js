@@ -62,6 +62,13 @@ module.exports = {
     desc: '获取平台所有币种列表。并非所有币种都可被用于交易。在ISO 4217标准中未被定义的币种代码可能使用的是自定义代码',
     notNull: [],
   },
+  assetTotalBalance: {
+    method: 'GET',
+    name: 'assetTotalBalance',
+    name_cn: '账户资金总额',
+    endpoint: 'account/v3/asset-valuation',
+    sign: true,
+  },
   moveBalance: {
     method: 'POST',
     name: 'moveBalance',
@@ -190,7 +197,7 @@ module.exports = {
   spotOrders: {
     method: 'GET',
     name: 'spotOrders',
-    name_cn: '订单',
+    name_cn: '现货订单',
     desc: '区分pair地获取订单',
     endpoint: 'spot/v3/orders',
     notNull: ['pair'],
@@ -468,7 +475,7 @@ module.exports = {
   batchCancelFutureOrders: {
     method: 'POST',
     name: 'batchCancelFutureOrders',
-    name_cn: '撤销所有订单',
+    name_cn: '批量撤销期货订单',
     endpoint: 'futures/v3/cancel_batch_orders/{instrument_id}',
     endpointParams: ['instrument_id'],
     // notNull: ['pair', 'contract_type', 'order_ids'],
@@ -599,7 +606,7 @@ module.exports = {
   batchCancelSwapOrders: {
     method: 'POST',
     name: 'batchCancelSwapOrders',
-    name_cn: '撤销所有订单',
+    name_cn: '批量撤销永续订单',
     endpoint: 'swap/v3/cancel_batch_orders/{instrument_id}',
     endpointParams: ['instrument_id'],
     notNull: ['pair'],
@@ -673,7 +680,7 @@ module.exports = {
   getSwapConfig: {
     method: 'GET',
     name: 'getSwapConfig',
-    name_cn: '获取配置',
+    name_cn: '获取永续配置',
     endpointParams: ['instrument_id'],
     endpoint: 'swap/v3/accounts/{instrument_id}/settings',
     accept: ['from', 'to', 'limit'],

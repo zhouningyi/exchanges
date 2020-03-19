@@ -4,7 +4,7 @@
   "name": "full_tick_history",
   "desc": "full_tick_history",
   "columns": {
-    "unique_id": { "type": ["STRING", 15],   "unique": true },
+    "unique_id": { "type": ["STRING", 15],  "index": true, "unique": true },
     "coin":  {
       "type": ["STRING", 5],
       "index": true
@@ -22,6 +22,14 @@
     "quarter_last_price": "FLOAT",
     "quarter_ask_volumn": "FLOAT",
     "quarter_hold_amount": "INTEGER",
+
+
+    "next_quarter_bid_price": "FLOAT",
+    "next_quarter_bid_volumn": "FLOAT",
+    "next_quarter_ask_price": "FLOAT",
+    "next_quarter_last_price": "FLOAT",
+    "next_quarter_ask_volumn": "FLOAT",
+    "next_quarter_hold_amount": "INTEGER",
 
     "this_week_bid_price": "FLOAT",
     "this_week_bid_volumn": "FLOAT",

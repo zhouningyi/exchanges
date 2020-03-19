@@ -45,6 +45,7 @@ class exchange extends Event {
     this.spot_id = spot_id;
     this.unique_id = unique_id;
     this.proxy = isProxy ? 'http://127.0.0.1:1087' : null;
+    this.resp_time_n = 500;
   }
   // io
   getApiKey() {
@@ -79,6 +80,9 @@ class exchange extends Event {
     const lock = this._getLockName(side, coin);
     this[lock] = false;
   }
+  p(p) {
+    return Math.random() < Math.abs(p);
+  }
   // CURD
   async get(endpoint, params, isSign = true, hostId) {
     return await this.request('GET', endpoint, params, isSign, hostId);
@@ -111,6 +115,10 @@ class exchange extends Event {
   calcCost(o = {}) {
     console.log(`${this.name}没有独立实现calcCost`);
     process.exit();
+  }
+  uuid(name) {
+    const tlong = new Date().getTime();
+    return `${name}_${Math.floor(tlong / 1000)}_${Math.floor(Math.random() * 10000)}`;
   }
   // 函数包装
   _getWrapConfig(config = {}) {
@@ -188,6 +196,49 @@ class exchange extends Event {
     });
     return endpoint;
   }
+  updateApiInfo(conf) {
+    const id = conf.endpoint;
+    const name_cn = conf.name_cn || conf.name;
+    const name = conf.name;
+    const apiMap = this.apiMap = this.apiMap || {};
+    apiMap[conf.endpoint] = apiMap[conf.endpoint] || { id, name, name_cn, count: 0 };
+  }
+  updateLockInfo(conf) {
+    this.updateApiInfo(conf);
+  }
+  updateErrorInfo(conf, message = '') {
+    this.updateApiInfo(conf);
+    const line = this.apiMap[conf.endpoint];
+    line.error_count = line.error_count ? line.error_count + 1 : 1;
+    const error = message || conf.error || '?';
+    const error_id = conf.endpoint + error;
+    const errorMap = this.errorMap = this.errorMap || {};
+    const errorLine = errorMap[error_id] = errorMap[error_id] || { api: conf.endpoint, api_name: conf.name_cn || conf.name, error, count: 0 };
+    errorLine.count += 1;
+  }
+  updateMeanRespTime(conf, resp_time) {
+    this.updateApiInfo(conf);
+    const { resp_time_n, apiMap } = this;
+    const q = 1 / resp_time_n;
+    const p = 1 - q;
+    //
+    const line = apiMap[conf.endpoint];
+    line.resp_time = (line.resp_time || resp_time) * p + q * resp_time;
+    line.count += 1;
+    //
+    this.mean_resp_time = (this.mean_resp_time || resp_time) * p + q * resp_time;
+  }
+  getErrorMap() {
+
+  }
+  getMeanRespTime() {
+    return this.mean_resp_time;
+  }
+  getApiSummary() {
+    const res = _.map(this.apiMap);
+    this.mergeLockFns(res);
+    return _.sortBy(res, d => -d.resp_time);
+  }
   addDt2Res(res, dt) {
     if (!res) return res;
     if (Array.isArray(res)) {
@@ -198,6 +249,21 @@ class exchange extends Event {
       if (res) res.resp_time = dt;
     }
     return res;
+  }
+  addFnLock(conf, query_id) {
+    const apiLockMap = this.apiLockMap = this.apiLockMap || {};
+    apiLockMap[query_id] = { ...conf };
+    // const line = apiLockMap[query_id] = || { ...conf, count: 0 };
+  }
+  cancelFnLock(conf, query_id) {
+    delete this.apiLockMap[query_id];
+  }
+  mergeLockFns(map) {
+    const groups = _.groupBy(this.apiLockMap, 'endpoint');
+    _.forEach(map, (l) => {
+      const arr = groups[l.id];
+      l.lock_count = arr ? arr.length : 0;
+    });
   }
   loadFn(conf = {}, key) {
     const UtilsInst = this.utils || this.Utils;
@@ -211,6 +277,7 @@ class exchange extends Event {
     const method = (conf.method || 'get').toLowerCase();
     const defaultOptions = conf.defaultOptions || {};
     this[name] = async (o) => {
+      const query_id = this.uuid();
       try {
         o = Object.assign({}, defaultOptions, o);
         if (checkKeyO) checkKey(o, checkKeyO);
@@ -229,7 +296,9 @@ class exchange extends Event {
         // Utils.print(str2, 'gray');
         const tStart = new Date();
         // console.log(endpointCompile, opt, sign, method, 'endpointCompile...');
+        this.addFnLock(conf, query_id);
         const ds = await this[method](endpointCompile, opt, sign, conf.host);
+        this.cancelFnLock(conf, query_id);
         const dt = new Date() - tStart;
         let errorO;
         if (UtilsInst.getError && ds) {
@@ -237,11 +306,15 @@ class exchange extends Event {
           if (error) {
             errorO = { ...ds, error };
             const errorEventData = { ...errorO, o, opt, url: endpointCompile, name_cn: conf.name_cn, endpoint: conf.endpoint, name: conf.name, time: new Date() };
-            // console.log(errorEventData, 'errorEventData....');// errorEventData,
+            this.updateErrorInfo(errorEventData);
             this.emit('request_error', errorEventData);
           }
         }
-        if (!ds) return console.log(conf) && this.throwError('返回为空...');
+        if (!ds) {
+          const error = '返回为空...';
+          this.updateErrorInfo(conf, error);
+          return console.log(conf) && this.throwError(error);
+        }
         let res;
         const errorApis = [
           'margin/v3/cancel_batch_orders',
@@ -260,9 +333,12 @@ class exchange extends Event {
           res = ds;
         }
         this.addDt2Res(res, dt);
+        this.updateMeanRespTime(conf, dt);
         return res;
       } catch (e) {
-        console.log(e);
+        console.log(e, conf, 'query_error');
+        this.updateErrorInfo(conf, e ? e.message : '未知错误');
+        this.cancelFnLock(conf, query_id);
         return null;
       }
     };

@@ -8,11 +8,13 @@ const { accountTypeMap, intervalMap, reverseOrderTypeMap, orderTypeMap } = requi
 
 const { checkKey, throwError, cleanObjectNull } = Utils;
 
-
 const { _parse } = Utils;
 
-const d7 = 7 * 24 * 3600 * 1000;
+const d1 = 24 * 3600 * 1000;
+const d7 = 7 * d1;
 const d14 = d7 * 2;
+const d90 = d1 * 365 / 4;
+// d1 * 90;
 function future_id2contract_type(instrument_id) {
   if (!instrument_id) return null;
   const arr = instrument_id.split('-');
@@ -22,6 +24,7 @@ function future_id2contract_type(instrument_id) {
   const day = tsr.substring(4, 6);
   const tstr = `20${year}-${month}-${day} 16:10:00`;
   const dt = new Date(tstr) - new Date();
+  if (dt > d90 + d14) return 'next_quarter';
   if (dt > d14) return 'quarter';
   if (dt > d7) return 'next_week';
   return 'this_week';
@@ -77,8 +80,9 @@ function futurePosition(ds, o = {}) {
   if (!ds || !ds.holding) throwError('futurePosition 返回错误');
   const l = ds.holding[0];
   if (!l) {
-    const { contract_type, pair } = o;
-    const coin = pair.split('-')[0];
+    const { contract_type } = o;
+    const coin = o.coin || pair.split('-')[0];
+    const pair = o.pair || `${coin}-USD`;
     return {
       unique_id: [contract_type, coin].join('_'),
       margin_mode: ds.margin_mode,
@@ -253,7 +257,7 @@ function batchCancelFutureOrders(line, o) {
   if (!line) return null;
   const { instrument_id } = line;
   let info;
-  if (instrument_id) info = getInfoFromInstrumentId(instrument_id);
+  if (instrument_id) info = getInfoFromInstrumentId(instrument_id, 'batchCancelFutureOrders');
   const order_ids = line.order_ids || line.order_id;
   return _.map(order_ids, (order_id) => {
     const res = { order_id, status: 'CANCEL', instrument: 'future' };
@@ -316,8 +320,9 @@ function formatContractOrder(l, o) {
   return res;
 }
 
-function _formatFutureOrder(l, o) {
-  const info = getInfoFromInstrumentId(l.instrument_id);
+function _formatFutureOrder(l, o, source) {
+  if (!l.instrument_id) return null;
+  const info = getInfoFromInstrumentId(l.instrument_id, '_formatFutureOrder');
   const res = {
     ...info,
     ...formatContractOrder(l, o),
@@ -337,9 +342,9 @@ function futureOrdersO(o = {}) {
     limit: o.limit
   };
 }
-function futureOrders(ds, o) {
+function futureOrders(ds, o, source = '') {
   if (!ds) return false;
-  return _.map(ds.order_info, d => _formatFutureOrder(d, o));
+  return _.map(ds.order_info, d => _formatFutureOrder(d, o, `${source}/futureOrders`));
 }
 function unfinishFutureOrdersO(o = {}) {
   return futureOrdersO({ ...o, status: 'UNFINISH' });
@@ -351,13 +356,16 @@ function successFutureOrdersO(o) {
 // 返回单个订单信息
 function futureOrderInfoO(o = {}) {
   const instrument_id = getCurFutureInstrumentId(o);
+  o.instrument_id = instrument_id;
   return {
     instrument_id,
     order_id: o.order_id
   };
 }
+
 function futureOrderInfo(res, o) {
-  return _formatFutureOrder(res, o);
+  if (_.isEqual(res, {})) return { ...o, status: 'CANCEL' };
+  return _formatFutureOrder(res, o, 'futureOrderInfo');
 }
 //
 function _futurePairs(line) {
@@ -479,14 +487,16 @@ function futureLimitPrice(res, o) {
     lowest_price: _parse(res.lowest),
   };
 }
-function future_id2pair(fid) {
+function future_id2pair(fid, source) {
+  if (!fid) console.log('future_id2pair source:', source);
   const arr = fid.split('-');
   arr.pop();
   return `${arr.join('-')}`;
 }
 
-function getInfoFromInstrumentId(instrument_id) {
-  const pair = future_id2pair(instrument_id);
+function getInfoFromInstrumentId(instrument_id, source) {
+  if (!instrument_id) console.log('getInfoFromInstrumentId source:', source);
+  const pair = future_id2pair(instrument_id, 'getInfoFromInstrumentId');
   const contract_type = future_id2contract_type(instrument_id);
   return {
     id: `${pair}_${contract_type}`,
@@ -497,7 +507,7 @@ function getInfoFromInstrumentId(instrument_id) {
 // 行情
 function _formatTick(l, o = {}) {
   const { instrument_id } = l;
-  const info = getInfoFromInstrumentId(instrument_id);
+  const info = getInfoFromInstrumentId(instrument_id, '_formatTick');
   return {
     ...info,
     instrument_id,
@@ -564,7 +574,7 @@ function lerverate(o = {}) {
     res.push({ coin, lever_rate: parseInt(leverage, 10) });
   } else {
     _.forEach(rest, (line, instrument_id) => {
-      const info = getInfoFromInstrumentId(instrument_id);
+      const info = getInfoFromInstrumentId(instrument_id, 'lerverate');
       const l = { ...line, ...info };
       if (line.short_leverage) l.short_lever_rate = line.short_leverage;
       if (line.long_leverage) l.long_lever_rate = line.long_leverage;
@@ -596,7 +606,7 @@ function formatFutureDepth(data, type = 'future') {
     const { asks, bids, instrument_id, timestamp } = d;
     let info;
     if (type === 'future') {
-      info = getInfoFromInstrumentId(instrument_id);
+      info = getInfoFromInstrumentId(instrument_id, 'formatFutureDepth');
     } else if (type === 'swap') {
       info = {
         instrument_id,
@@ -631,7 +641,7 @@ function futureLedgerO(o) {
 function futureLedger(ds, o) {
   return _.map(ds, (d) => {
     const res = publicUtils.formatAssetLedger(d, { instrument: 'future' });
-    const info = getInfoFromInstrumentId(res.instrument_id);
+    const info = getInfoFromInstrumentId(res.instrument_id, 'futureLedger');
     if (info) res.asset_type = info.contract_type;
     return res;
   });

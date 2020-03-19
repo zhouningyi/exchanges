@@ -180,7 +180,12 @@ function formatSwapPosition(res) {
     const time = new Date(timestamp);
     _.forEach(holding, (l) => {
       const instrument_id = l.instrument_id || _instrument_id;
-      const old = resMap[instrument_id] || {};
+      const old = resMap[instrument_id] || {
+        // long_amount: 0,
+        // long_margin: 0,
+        // short_amount: 0,
+        // short_margin: 0
+      };
       const _l = { ..._formatSwapPosition({ instrument_id, ...l }), margin_mode, time };
       const newl = deepmerge(old, _l);
       resMap[instrument_id] = newl;
@@ -189,11 +194,19 @@ function formatSwapPosition(res) {
   return _.values(resMap);
 }
 
-function swapPosition(res, o) {
-  return formatSwapPosition([res]);
+function swapPosition(ds, o) {
+  let res = formatSwapPosition([ds]);
+  res = _.map(res, (l) => {
+    return Object.assign(
+      { short_amount: 0, short_margin: 0, short_avail_amount: 0, long_amount: 0, long_margin: 0, long_avail_amount: 0, },
+      l
+      );
+  });
+  return res;
 }
-function swapPositions(res, o) {
-  return formatSwapPosition(res, o);
+function swapPositions(ds, o) {
+  const res = formatSwapPosition(ds, o);
+  return res;
 }
 
 // balance

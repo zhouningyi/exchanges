@@ -8,6 +8,7 @@ const logrest = !!argv.logrest;
 function requestPromise(o) {
   const t = new Date();
   return new Promise((resolve, reject) => {
+    if (!o.timeout) o.timeout = 10000;
     request(o, (e, res, body) => {
       const url = `${o.method}: ${(o.uri || o.url).substring(0, 80)}...`;
       if (logrest) {
@@ -22,6 +23,7 @@ function requestPromise(o) {
         reject();
       } catch (e) {
         Utils.print(url, 'red');
+        console.log(body, o, 'body...');
         console.log(e);
         reject();
       }
