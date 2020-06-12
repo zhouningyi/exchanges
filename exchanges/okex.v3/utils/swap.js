@@ -233,7 +233,7 @@ function _formatBalance(line) {
   });
 }
 
-function swapBalances(res, o) {
+function swapBalances(res) {
   const info = _.get(res, 'info');
   return _.map(info, _formatBalance);
 }

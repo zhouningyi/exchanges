@@ -59,7 +59,7 @@ function getTimeString(t, type = 'day') {
 
 //
 const SETTLE_TIME = '16:10:00';
-const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27', '2020-06-26', '2020-09-25'];
+const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27', '2020-06-26', '2020-09-25', '2020-12-25'];
 function getSettlementTimes(t = new Date(), type = 'quarter') { // 今年4个季度以及明年三个季度
   t = fixTime(t);
   if (type === 'quarter' || type === 'next_quarter') {
@@ -84,8 +84,12 @@ function getFutureSettlementTime(t, type = 'quarter') {
     const st = setts[i];
     const dt = st - t;
     if (type === 'next_quarter') {
-      if (dt > QUARTER + 2 * WEEK) {
-        return st;
+      const pst = setts[i - 1];
+      if (pst) {
+        const dpst = pst - t;
+        if (dpst > 2 * WEEK) {
+          return st;
+        }
       }
     } else if (type === 'quarter') {
       if (dt > WEEK * 2) {
@@ -125,6 +129,7 @@ function getFutureSettlementMoveDay(t = new Date(), type = 'quarter') {
 }
 
 module.exports = {
+  SETTLEMENT_QUARTER_MONTHES,
   getTimeString,
   getWeekDay,
   DAY,

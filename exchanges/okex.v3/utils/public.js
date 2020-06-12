@@ -510,6 +510,27 @@ function assetTotalBalance(res) {
   console.log(res);
 }
 
+const systemStatusMap = {
+  0: 'WILL',
+  1: 'ING',
+  2: 'DONE'
+};
+function systemStatusO(o) {
+  return o;
+}
+function systemStatus(res) {
+  res = _.map(res, (l) => {
+    return {
+      title: l.title,
+      status: systemStatusMap[l.status],
+      time_start: new Date(l.start_time),
+      time_end: new Date(l.end_time),
+    };
+  });
+  return res;
+}
+
+
 module.exports = {
   assetTotalBalanceO,
   assetTotalBalance,
@@ -539,5 +560,7 @@ module.exports = {
   orderO,
   formatLedger: _formatLedger,
   formatWalletLedger: _formatWalletLedger,
-  formatAssetLedger
+  formatAssetLedger,
+  systemStatusO,
+  systemStatus
 };

@@ -6,8 +6,23 @@ const md5 = require('md5');
 const error = require('./../errors');
 const { accountTypeMap, intervalMap, reverseOrderTypeMap, orderTypeMap } = require('./public');
 
-const { checkKey, throwError, cleanObjectNull } = Utils;
+const { checkKey, throwError, cleanObjectNull, SETTLEMENT_QUARTER_MONTHES, getTimeString, getFutureSettlementTime } = Utils;
 
+
+function getDeliveryMap() {
+  const contracts = ['next_week', 'this_week', 'quarter', 'next_quarter'];
+  const res = {};
+  for (const i in contracts) {
+    const contract = contracts[i];
+    const time = getFutureSettlementTime(new Date(), contract);
+    const day = getTimeString(time);
+    const dstr = day.replace(/-/g, '').substring(2);
+    res[dstr] = contract;
+  }
+  return res;
+}
+
+const SETTLE_TIME = '16:10:00';
 const { _parse } = Utils;
 
 const d1 = 24 * 3600 * 1000;
@@ -16,9 +31,15 @@ const d14 = d7 * 2;
 const d90 = d1 * 365 / 4;
 // d1 * 90;
 function future_id2contract_type(instrument_id) {
+  const deliveryMap = getDeliveryMap();
   if (!instrument_id) return null;
   const arr = instrument_id.split('-');
   const tsr = arr[arr.length - 1];
+  if (deliveryMap[tsr]) {
+    return deliveryMap[tsr];
+  } else {
+    console.log(tsr, 'tsr......');
+  }
   const year = tsr.substring(0, 2);
   const month = tsr.substring(2, 4);
   const day = tsr.substring(4, 6);

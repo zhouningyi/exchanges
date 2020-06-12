@@ -35,10 +35,21 @@ function spotBalancesO(o = {}) {
 }
 
 function spotBalances(ds, o = {}) {
-  const res = wallet(ds, o);
+  let res = wallet(ds, o);
   if (!o.coins) return res;
   const coinMap = _.keyBy(o.coins, d => d);
-  return _.filter(res, d => d.coin in coinMap);
+  res = _.filter(res, d => d.coin in coinMap);
+  const resmap = _.keyBy(res, d => d.coin);
+  const newmap = {};
+  _.forEach(o.coins, (coin) => {
+    newmap[coin] = resmap[coin] || {
+      coin,
+      total_balance: 0,
+      locked_balance: 0,
+      balance: 0,
+    };
+  });
+  return _.values(newmap);
 }
 
 function spotBalanceO(o = {}) {

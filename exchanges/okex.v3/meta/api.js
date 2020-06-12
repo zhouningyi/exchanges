@@ -54,6 +54,14 @@ module.exports = {
   // },
   //
   // // // // // // // 公共部分  // // // // // // //
+  systemStatus: {
+    name: 'systemStatus',
+    name_cn: '系统状态',
+    sign: false,
+    endpoint: 'system/v3/status',
+    desc: '系统状态',
+    notNull: []
+  },
   coins: {
     name: 'coins',
     name_cn: '币种信息',
