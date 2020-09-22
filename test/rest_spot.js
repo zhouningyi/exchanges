@@ -1,11 +1,109 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['okexV3']; // bikicoin
+const exchanges = ['deribit']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
+const newtasks = [
+  // ['assetOrder', { pair: 'BTC-USD', asset_type: 'SWAP', side: 'CLOSE', direction: 'SHORT', price: 10000, amount: 10, type: 'LIMIT', order_type: 'NORMAL' }],
+  // ['cancelAssetOrder', { order_id: '22074158437' }],
+  // ['volatilityHistory', { coin: 'BTC' }],
+];
 
 const tasks = [
+  ...newtasks.map(([fn, params]) => ({ fn, params })),
+  // {
+  //   fn: 'assets',
+  //   params: {
+  //     coin: 'BTC'
+  //   }
+  // },
+  // {
+  //   fn: 'positions',
+  //   params: {
+  //     pair: 'BTC-USD',
+  //   }
+  // },
+  // {
+  //   fn: 'position',
+  //   params: {
+  //     pair: 'BTC-USD',
+  //     asset_type: 'SWAP'
+  //   }
+  // },
+  // {
+  //   fn: 'time',
+  //   params: {}
+  // },
+  // {
+  //   fn: 'spotPairs',
+  //   params: {},
+  //   name: '现货交易对信息'
+  // },
+  // {
+  //   fn: 'usdtContractPairs',
+  //   params: {},
+  //   name: '现货交易对信息'
+  // },
+  // {
+  //   fn: 'coinContractBalances',
+  //   params: {
+  //     // coin: 'BTC'
+  //   },
+  //   name: '币本位资产余额'
+  // },
+  // {
+  //   fn: 'coinContractPositions',
+  //   params: {
+  //     // coin: 'BTC'
+  //   },
+  //   name: '币本位资产仓位'
+  // },
+  // {
+  //   fn: 'coinContractPositionsRisk',
+  //   params: {
+  //     // coin: 'BTC'
+  //   },
+  //   name: '币本位资产仓位风险'
+  // },
+
+  // {
+  //   fn: 'coinContractOrders',
+  //   params: {
+  //     pair: 'BTC-USD',
+  //     asset_type: 'NEXT_QUARTER',
+  //     // limit: 2
+  //   },
+  // },
+
+
+  // {
+  //   fn: 'spotDepth',
+  //   params: {
+  //     pair: 'BTC-USDT',
+  //     limit: 5
+  //   },
+  //   name: '现货深度',
+  // },
+  // {
+  //   fn: 'spotTrades',
+  //   params: {
+  //     pair: 'BTC-USDT'
+  //   },
+  //   name: '近期成交(归集)'
+  // },
+  // {
+  //   fn: 'spotAggTrades',
+  //   params: {
+  //     pair: 'BTC-USDT'
+  //   },
+  //   name: '近期成交(归集)'
+  // },
+  // {
+  //   fn: 'pairs',
+  //   params: {},
+  //   name: '交易对信息'
+  // },
   // {
   //   fn: 'spotOrder',
   //   params: {
@@ -48,11 +146,6 @@ const tasks = [
   //   fn: 'pointBalance',
   //   params: {},
   //   name: '点卡账户信息'
-  // },
-  // {
-  //   fn: 'pairs',
-  //   params: {},
-  //   name: '交易对信息'
   // },
   // {
   //   fn: 'coins',

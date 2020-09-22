@@ -59,7 +59,7 @@ function getTimeString(t, type = 'day') {
 
 //
 const SETTLE_TIME = '16:10:00';
-const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27', '2020-06-26', '2020-09-25', '2020-12-25'];
+const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27', '2020-06-26', '2020-09-25', '2020-12-25', '2021-03-26'];
 function getSettlementTimes(t = new Date(), type = 'quarter') { // 今年4个季度以及明年三个季度
   t = fixTime(t);
   if (type === 'quarter' || type === 'next_quarter') {
@@ -77,9 +77,10 @@ function getFutureSettlementDay(t, type = 'quarter') {
   return getTimeString(time, 'day');
 }
 
-function getFutureSettlementTime(t, type = 'quarter') {
+function getFutureSettlementTime(t, type = 'quarter', mode = 'okex') {
   t = fixTime(t);
   const setts = getSettlementTimes(t, type);
+  const preDeliveryInterval = mode === 'okex' ? WEEK : 0;
   for (let i = 0; i < setts.length; i++) {
     const st = setts[i];
     const dt = st - t;
@@ -87,20 +88,20 @@ function getFutureSettlementTime(t, type = 'quarter') {
       const pst = setts[i - 1];
       if (pst) {
         const dpst = pst - t;
-        if (dpst > 2 * WEEK) {
+        if (dpst > 2 * preDeliveryInterval) {
           return st;
         }
       }
     } else if (type === 'quarter') {
-      if (dt > WEEK * 2) {
+      if (dt > preDeliveryInterval * 2) {
         return st;
       }
     } else if (type === 'next_week') {
-      if (dt > WEEK && dt <= 2 * WEEK) {
+      if (dt > preDeliveryInterval && dt <= 2 * preDeliveryInterval) {
         return st;
       }
     } else if (type === 'this_week') {
-      if (dt > 0 && dt <= WEEK) {
+      if (dt > 0 && dt <= preDeliveryInterval) {
         return st;
       }
     }

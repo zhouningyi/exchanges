@@ -4,6 +4,7 @@ const Okex = require('./exchanges/okex');
 const OkexV3 = require('./exchanges/okex.v3');
 const Huobi = require('./exchanges/huobi');
 const Binance = require('./exchanges/binance');
+const Deribit = require('./exchanges/deribit');
 const Kucoin = require('./exchanges/kucoin');
 const Hitbtc = require('./exchanges/hitbtc');
 const Bittrex = require('./exchanges/bittrex');
@@ -20,6 +21,7 @@ module.exports = {
   Bitflyer,
   Bikicoin,
   Binance,
+  Deribit,
   Coinall,
   Kucoin,
   Bitmex,
@@ -27,11 +29,6 @@ module.exports = {
   OkexV3,
   Okex,
   Fcoin,
-  // binance: Binance,
-  // kucoin: Kucoin,
-  // okex: Okex,
   Hitbtc,
-  // hitbtc: Hitbtc,
   Bittrex,
-  // bittrex: Bittrex
 };
