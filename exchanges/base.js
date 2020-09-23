@@ -187,12 +187,12 @@ class exchange extends Event {
     _.forEach(confs, (conf, key) => this.loadFn(conf, key));
   }
 
-  getEndPoint(endpoint, endpointParams, params, opt) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
+  getEndPoint(endpoint, endpointParams, params, opt, { delEndParams }) { // api/margin/v3/cancel_orders/<order-id>，填充order-id
     if (!endpointParams || !endpointParams.length) return endpoint;
     endpoint = _.template(endpoint)(params);
     _.forEach(endpointParams, (k) => {
       delete params[k];
-      // delete opt[k];
+      if (delEndParams) delete opt[k];
     });
     return endpoint;
   }
@@ -265,39 +265,35 @@ class exchange extends Event {
       l.lock_count = arr ? arr.length : 0;
     });
   }
+  async queryFunc({ method, endpointCompile, opt, sign, host }) {
+    return await this[method](endpointCompile, opt, sign, host);
+  }
   loadFn(conf = {}, key) {
     const UtilsInst = this.utils || this.Utils;
     if (!UtilsInst) Utils.warnExit(`${this.name}: this.Utils缺失`);
     checkKey(conf, ['endpoint', 'name', 'name_cn']);
-    const { name = key, notNull: checkKeyO, endpoint, sign = true, endpointParams } = conf;
+    const { name = key, notNull: checkKeyO, endpoint, sign = true, endpointParams, delEndParams } = conf;
     const formatOFn = UtilsInst[`${key}O`] || (d => d);
     // if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}O()不存在`);
     const formatFn = UtilsInst[key];
     if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}()不存在`);
     const method = (conf.method || 'get').toLowerCase();
     const defaultOptions = conf.defaultOptions || {};
-    this[name] = async (o) => {
+    this[name] = async (o, cb) => {
       const query_id = this.uuid();
       try {
         o = Object.assign({}, defaultOptions, o);
         if (checkKeyO) checkKey(o, checkKeyO);
-        // 顺序不要调换
+          // 顺序不要调换
         let opt = formatOFn ? _.cloneDeep(formatOFn(o, this.queryOptions)) : _.cloneDeep(o);
-        // console.log(this.queryOptions, 'queryOptions...');
         const endO = { ...opt, ...(this.queryOptions || {}) };
-        const endpointCompile = this.getEndPoint(endpoint, endpointParams, endO, opt);
-        // console.log(endO, endpointCompile, '==>>>');
-        // const strO = `输入options: ${stringify(opt)}`;
-        // Utils.print(strO, 'blue');
+        const endpointCompile = this.getEndPoint(endpoint, endpointParams, endO, opt, { delEndParams });
         opt = Utils.cleanObjectNull(opt);
-        // const str1 = `opt: ${stringify(opt)}`;
-        // Utils.print(str1, 'gray');
-        // const str2 = `${method}: ${endpointCompile}`;
-        // Utils.print(str2, 'gray');
         const tStart = new Date();
-        // console.log(endpointCompile, opt, sign, method, 'endpointCompile...');
         this.addFnLock(conf, query_id);
-        const ds = await this[method](endpointCompile, opt, sign, conf.host);
+        const queryOption = { method, name, endpointCompile, opt, o, sign, host: conf.host };
+        if (conf.type === 'ws') return this.wsSubscribe(queryOption, cb, { formatFn });
+        const ds = await this.queryFunc(queryOption);
         this.cancelFnLock(conf, query_id);
         const dt = new Date() - tStart;
         let errorO;

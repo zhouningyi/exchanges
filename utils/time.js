@@ -77,9 +77,10 @@ function getFutureSettlementDay(t, type = 'quarter') {
   return getTimeString(time, 'day');
 }
 
-function getFutureSettlementTime(t, type = 'quarter') {
+function getFutureSettlementTime(t, type = 'quarter', mode = 'okex') {
   t = fixTime(t);
   const setts = getSettlementTimes(t, type);
+  const preDeliveryInterval = mode === 'okex' ? WEEK : 0;
   for (let i = 0; i < setts.length; i++) {
     const st = setts[i];
     const dt = st - t;
@@ -87,20 +88,20 @@ function getFutureSettlementTime(t, type = 'quarter') {
       const pst = setts[i - 1];
       if (pst) {
         const dpst = pst - t;
-        if (dpst > 2 * WEEK) {
+        if (dpst > 2 * preDeliveryInterval) {
           return st;
         }
       }
     } else if (type === 'quarter') {
-      if (dt > WEEK * 2) {
+      if (dt > preDeliveryInterval * 2) {
         return st;
       }
     } else if (type === 'next_week') {
-      if (dt > WEEK && dt <= 2 * WEEK) {
+      if (dt > preDeliveryInterval && dt <= 2 * preDeliveryInterval) {
         return st;
       }
     } else if (type === 'this_week') {
-      if (dt > 0 && dt <= WEEK) {
+      if (dt > 0 && dt <= preDeliveryInterval) {
         return st;
       }
     }

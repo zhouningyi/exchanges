@@ -5,7 +5,31 @@ const Exchanges = require('./../index');
 const config = require('./../config');
 const Utils = require('./utils');
 
+const newtasks = [
+  // ['wsFutureIndex', { pair: 'BTC-USD' }],
+  // ['wsOptionMarkPrice', { pair: 'BTC-USD' }],
+  // ['wsAssetTrades', { pair: 'BTC-USD', asset_type: 'SWAP' }],
+  // ['wsCoinTrades', { coin: 'BTC', instrument: 'future', }],
+  // ['wsAssetOrder', { pair: 'BTC-USD', asset_type: 'SWAP' }],
+  // ['wsPortfolio', { coin: 'BTC' }],
+  ['wsAssetPosition', { pair: 'BTC-USD', asset_type: 'SWAP' }],
+  // ['wsAssetTrade', { pair: 'BTC-USD', asset_type: 'SWAP' }],
+  // ['wsAssetAnyChange', { pair: 'BTC-USD', asset_type: 'SWAP' }],
+];
+
 const wsList = [
+  ...newtasks.map(([fn, params]) => ({ fn, params })),
+  // {
+  //   fn: 'wsAssetDepth',
+  //   params: {
+  //     pair: 'BTC-USD',
+  //     asset_type: 'SWAP',
+  //     group: 2,
+  //     depth: 10
+  //   },
+  //   name: 'wsTicks'
+  // },
+
   // {
   //   fn: 'wsTicks',
   //   params: {
@@ -197,7 +221,7 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-const exchangeName = 'okexV3';
+const exchangeName = 'deribit';
 
 console.log(`=============【${exchangeName}...】=============`);
 testOneExchangeWs(exchangeName, wsList);
