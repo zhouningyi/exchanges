@@ -6,7 +6,7 @@ const md5 = require('md5');
 const error = require('./../errors');
 const { accountTypeMap, intervalMap, reverseOrderTypeMap, orderTypeMap } = require('./public');
 
-const { checkKey, throwError, cleanObjectNull, SETTLEMENT_QUARTER_MONTHES, getTimeString, getFutureSettlementTime } = Utils;
+const { checkKey, throwError, cleanObjectNull, getTimeString, getFutureSettlementTime } = Utils;
 
 
 function getDeliveryMap() {
@@ -22,7 +22,6 @@ function getDeliveryMap() {
   return res;
 }
 
-const SETTLE_TIME = '16:10:00';
 const { _parse } = Utils;
 
 const d1 = 24 * 3600 * 1000;
