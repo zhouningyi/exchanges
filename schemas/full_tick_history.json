@@ -5,11 +5,8 @@
   "desc": "full_tick_history",
   "columns": {
     "unique_id": { "type": ["STRING", 15],  "index": true, "unique": true },
-    "coin":  {
-      "type": ["STRING", 5],
-      "index": true
-    },
-    "time": {  "type": "DATE", "index": true, "notNull": true },
+    "coin":  { "type": ["STRING", 5], "index": true },
+    "time": {  "type": "DATE", "notNull": true },
 
     "spot_bid_price": "FLOAT",
     "spot_bid_volumn": "FLOAT",

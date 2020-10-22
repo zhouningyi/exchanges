@@ -4,8 +4,8 @@
   {"name":"assetOrder","notNull":["asset_type", "pair"]},
   {"name":"assetOrderInfo"},
   {"name":"assetCancelOrder","notNull":[]},
-  {"name":"wsAssetOrders","notNull":[]},
-  {"name":"wsAssetPositions","notNull":[]},
-  {"name":"wsAssetDepth","notNull":[]},
-  {"name":"wsAssetBalances","notNull":[]}
+  {"name":"subscribeAssetOrders","notNull":[]},
+  {"name":"subscribeAssetPositions","notNull":[]},
+  {"name":"subscribeAssetDepth","notNull":[]},
+  {"name":"subscribeAssetBalances","notNull":[]}
 ]

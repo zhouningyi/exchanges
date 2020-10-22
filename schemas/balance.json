@@ -3,11 +3,11 @@
   "desc": "balance",
   "columns": {
     "api_key": {
+      "index": true,
       "type": ["STRING", 12]
     },
     "coin": {
       "type": ["STRING", 12],
-      "unique": true,
       "index": true
     },
     "borrow_balance": "FLOAT",

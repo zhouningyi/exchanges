@@ -224,7 +224,7 @@ class Exchange extends Base {
     // WS
     const wsFns = ['orders', 'positions', 'balances', 'depth'];
     for (const name of wsFns) {
-      const fnName = `wsAsset${upperFirst(name)}`;
+      const fnName = `subscribeAsset${upperFirst(name)}`;
       this[fnName] = async (o, cb) => {
         const assets = this.parseAssets(o);
         const assetsGroup = _.groupBy(assets, asset => this._getAssetBaseType(asset));

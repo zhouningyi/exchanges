@@ -19,10 +19,10 @@ const newtasks = [
   // ['wsCoinContractOrder', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
   // ['wsCoinContractPositions', {}],
   // ['wsCoinContractBalances', { }]
-  // ['wsAssetDepth', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
-  // ['wsAssetOrder', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
-  // ['wsAssetPositions', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
-  ['wsAssetBalances', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }]
+  // ['subscribeAssetDepth', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
+  // ['subscribeAssetOrder', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
+  // ['subscribeAssetPositions', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
+  ['subscribeAssetBalances', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }]
 ];
 
 const wsList = [
