@@ -2,6 +2,8 @@ const { _parse, checkKey, throwError, cleanObjectNull, SETTLEMENT_QUARTER_MONTHE
 const ws = require('./_ws');
 const _ = require('lodash');
 
+const { now } = require('lodash');
+
 function pair2coin(pair) {
   return pair.split('-')[0];
 }
@@ -11,18 +13,27 @@ function pair2symbol(pair) {
 }
 
 //
-function info2instrument_id({ asset_type, pair }) {
+function info2instrument_id({ asset_type, pair, instrument_id }) {
+  if (instrument_id) return instrument_id;
   asset_type = asset_type.toUpperCase();
   const coin = pair2coin(pair);
   if (asset_type === 'SWAP') return [coin, 'PERPETUAL'].join('-');
 }
 
+function fix(str) {
+  if (str.length === 1) return `0${str}`;
+  return str;
+}
+
 const monthMap = { JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06', AUG: '08', SEP: '09', OCT: 10, NOV: 11, DEC: 12 };
 function period_str2period(period_str) {
-  const day = period_str.substring(0, 2);
-  const month = monthMap[period_str.substring(2, 5)];
-  const year = period_str.substring(5);
-  return [year, month, day].join('');
+  for (const month3 in monthMap) {
+    if (period_str.indexOf(month3) !== -1) {
+      const [day, year] = period_str.split(month3);
+      const month = monthMap[month3];
+      return [20 + year, fix(month), fix(day)].join('.');
+    }
+  }
 }
 
 
@@ -89,21 +100,22 @@ function instrument_id2info(o) {
   if (instrument_name.endsWith('PERPETUAL')) {
     const [coin] = instrument_name.split('-');
     const pair = `${coin}-USD`;
-    return { ...res, instrument: kind || 'SWAP', coin, pair, asset_type: 'SWAP' };
+    return { ...res, instrument: kind || 'swap', coin, pair, asset_type: 'swap' };
   }
   if (elems.length === 2) {
     const [coin, ext] = instrument_name.split('-');
     const pair = `${coin}-USD`;
-    return { ...res, instrument: 'FUTURE', coin, pair, asset_type: getContractTypeFromString(ext) };
+    return { ...res, instrument: 'future', coin, pair, asset_type: getContractTypeFromString(ext) };
   }
-  if (elems.length > 2 || kind === 'OPTIONS') {
+  if (elems.length > 2 || kind === 'OPTION') {
     let [coin, period, strike, option_type_str] = elems;
+    const pair = `${coin}-USD`;
     strike = _parse(strike);
     let option_type = null;
     if (option_type_str === 'P') option_type = 'PUT';
     if (option_type_str === 'C') option_type = 'CALL';
 
-    return { ...res, period_str: period, period: period_str2period(period), instrument: 'OPTIONS', coin, strike, option_type };
+    return { ...res, period_str: period, period: period_str2period(period), instrument: 'option', asset_type: 'option', pair, coin, strike, option_type };
   }
   return res;
 }
@@ -157,6 +169,8 @@ function formatOptOrderType(opt, o) {
 
 function getVectorString(o) {
   const { side, direction } = o;
+  if (side === 'BUY') return 'buy';
+  if (side === 'SELL') return 'sell';
   if (side === 'OPEN') {
     if (direction === 'LONG') return 'buy';
     if (direction === 'SHORT') return 'sell';
@@ -179,7 +193,8 @@ function assetOrderO(o = {}) {
   if (o.price) opt.price = o.price;
   if (o.client_oid) opt.label = o.client_oid;
   if (o.max_show) opt.max_show = o.max_show;
-  if (o.side === 'CLOSE') opt.reduce_only = true;
+  // if (o.side === 'CLOSE' || o.side === 'SELL') opt.reduce_only = true;
+  console.log(opt, 'opt..');
   return opt;
 }
 
@@ -188,26 +203,37 @@ function assetOrder(ds, o) {
   return { ...o, ..._formatAssetOrder(ds.order) };
 }
 
+function assetOrderInfoO(o = {}) {
+  return o;
+}
+function assetOrderInfo(d) {
+  return _formatAssetOrder(d);
+}
+
+function coinAssetOrdersO(o = {}) {
+  const { coin, instrument } = o;
+  const opt = { currency: coin, include_oid: true, include_unfilled: true };
+  if (instrument) opt.kind = instrument.toLowerCase();
+  return opt;
+}
+function coinAssetOrders(ds) {
+  return ds ? _.map(ds, _formatAssetOrder) : [];
+}
+
+
 function cancelAssetOrder(d) {
   return _formatAssetOrder(d);
 }
 
-// 订阅数据
-function _getDepthChannel(o) {
-  const instrument_name = info2instrument_id(o);
-  const { group = 1, interval = '100ms', depth = 10 } = o;
-  return `book.${instrument_name}.${group}.${depth}.${interval}`;
-}
-function wsAssetDepthO(o = {}) {
-  return {
-    channel: _getDepthChannel(o)
-  };
-}
+
 function _formatFutureDepth(ds) {
   return _.map(ds, (d) => {
+    // const action = d[0];
+    // if (action === 'delete')console.log(d, '===>>>');
     return {
-      price: _parse(d[0]),
-      volume_amount: _parse(d[1]),
+      // action,
+      price: _parse(d[1]),
+      amount: _parse(d[2]),
     };
   });
 }
@@ -282,21 +308,77 @@ function wsAssetPosition(res, o) {
   return null;
 }
 
+
+// 订阅数据
+function _getTickerChannel(o) {
+  const instrument_name = info2instrument_id(o);
+  const { interval = '100ms' } = o;
+  return `ticker.${instrument_name}.${interval}`;
+}
+
+function wsAssetTickerO(o = {}) {
+  const { instrument_id, instrument_ids } = o;
+  if (instrument_id) return { channel: _getTickerChannel(o) };
+  if (instrument_ids) {
+    return { channel: _.map(instrument_ids, (instrument_id) => {
+      const newo = { ...o, instrument_id };
+      return _getTickerChannel(newo);
+    }) };
+  }
+}
+
+function _formatTicker(d) {
+  return {
+    time: new Date(d.timestamp),
+    bid_price: d.best_bid_price,
+    ask_price: d.best_ask_price,
+    mid_price: (d.best_bid_price + d.best_ask_price) / 2,
+    bid_volume: d.best_bid_amount,
+    ask_volume: d.best_ask_amount,
+    index_price: d.index_price,
+    instrument_id: d.instrument_name,
+  };
+}
+function wsAssetTicker(d) {
+  return [_formatTicker(d)];
+}
+
+
+// 订阅数据
+function _getDepthChannel(o) {
+  const instrument_name = info2instrument_id(o);
+  const { group = 1, interval = '100ms', depth = 10 } = o;
+  return `book.${instrument_name}.${interval}`;
+}
+
+function wsAssetDepthO(o = {}) {
+  const { instrument_id, instrument_ids } = o;
+  if (instrument_id) return { channel: _getDepthChannel(o) };
+  if (instrument_ids) {
+    return { channel: _.map(instrument_ids, (instrument_id) => {
+      const newo = { ...o, instrument_id };
+      return _getDepthChannel(newo);
+    }) };
+  }
+}
+
 function wsAssetDepth(ds) {
-  const { timestamp, bids, asks } = ds;
+  const { timestamp, bids, asks, instrument_name } = ds;
+  // if (Math.random() < 0.01)console.log(ds, 'ds....');
   return [{
     exchange: 'deribit',
+    instrument_id: instrument_name,
     time: new Date(timestamp),
     bids: _formatFutureDepth(bids),
     asks: _formatFutureDepth(asks)
   }];
 }
 
-function wsFutureIndexO(o = {}) {
+function wsIndexO(o = {}) {
   const symbol = pair2symbol(o.pair);
   return { channel: `deribit_price_index.${symbol}` };
 }
-function wsFutureIndex(d, o) {
+function wsIndex(d, o) {
   return {
     pair: o.pair,
     time: new Date(d.timestamp),
@@ -308,17 +390,14 @@ function wsOptionMarkPriceO(o = {}) {
   const symbol = pair2symbol(o.pair);
   return { channel: `markprice.options.${symbol}` };
 }
+
+
 function wsOptionMarkPrice(ds) {
   return _.map(ds, (d) => {
     const { instrument_name, ...rest } = d;
-    return { ...rest, ...instrument_id2info({ ...d, kind: 'OPTIONS' }) };
+    const info = instrument_id2info({ ...d, kind: 'OPTION' });
+    return { ...rest, ...info };
   });
-}
-
-function wsAssetOrderO(o = {}) {
-  const instrument_id = info2instrument_id(o);
-  const channel = `user.orders.${instrument_id}.raw`;
-  return { channel };
 }
 
 const orderTypeMap = {
@@ -345,7 +424,7 @@ const orderStateMap = {
 function getOrderDirectionInfo(d) {
   const { direction: _direction, profit_loss, reduce_only } = d;
   const isClose = !!profit_loss || reduce_only;
-  const side = isClose ? 'CLOSE' : 'OPEN';
+  const side = isClose ? 'SELL' : 'BUY';
   let direction;
   if (_direction === 'buy') direction = isClose ? 'SHORT' : 'LONG';
   if (_direction === 'sell') direction = isClose ? 'LONG' : 'SHORT';
@@ -371,12 +450,23 @@ function _formatAssetOrder(d) {
     max_show: d.max_show,
     ...getOrderDirectionInfo(d),
     ...instrument_id2info(d),
-    amount: d.amount
+    amount: d.amount,
+    filled_amount: d.filled_amount,
+    fee: d.commission
   };
   return res;
 }
 
-function wsAssetOrder(d) {
+
+function wsCoinAssetOrderO(o = {}) {
+  // const instrument_id = info2instrument_id(o);
+  const channel = `user.orders.${o.asset_type}.${o.coin}.raw`;
+  // const channel = `user.orders.${instrument_id}.raw`;
+  return { channel };
+}
+
+
+function wsCoinAssetOrder(d) {
   return [_formatAssetOrder(d)];
 }
 
@@ -401,7 +491,10 @@ function wsAssetAnyChange(ds) {
 
 // 市场数据
 function assetsO(o = {}) {
-  return { currency: o.coin };
+  const { coin, instrument, ...rest } = o;
+  const res = { currency: coin, expired: false, ...rest };
+  if (instrument) res.kind = instrument;
+  return res;
 }
 
 function assets(ds, o) {
@@ -412,6 +505,7 @@ function assets(ds, o) {
       tick_size: d.tick_size,
       taker_fee: d.taker_commission,
       maker_fee: d.maker_commission,
+      instrument_id: d.instrument_name,
       contract_size: d.contract_size,
       ...instrument_id2info(d),
     };
@@ -436,26 +530,55 @@ function getError(res) {
   return res.error;
 }
 
+function wsInstrumentDepthO(o = {}) {
+  return { channel: `user.portfolio.${o.coin.toLowerCase()}` };
+}
+
+function wsInstrumentDepth() {
+  // get_book_summary_by_currency
+}
+
+
+function coinBalanceO(o = {}) {
+  return { currency: o.coin };
+}
+function coinBalance(d, o) {
+  return { ...d, coin: o.coin };
+}
+
+
 module.exports = {
+  coinUnfinishAssetOrdersO: coinAssetOrdersO,
+  coinUnfinishAssetOrders: coinAssetOrders,
+  coinAssetOrdersO,
+  coinAssetOrders,
+  assetOrderInfoO,
+  assetOrderInfo,
+  coinBalanceO,
+  coinBalance,
   getError,
+  wsInstrumentDepthO,
+  wsInstrumentDepth,
   wsAssetPositionO,
   wsAssetPosition,
   wsAssetAnyChangeO,
   wsAssetAnyChange,
-  wsAssetOrderO,
-  wsAssetOrder,
+  wsCoinAssetOrderO,
+  wsCoinAssetOrder,
   wsPortfolioO,
   wsPortfolio,
   // wsAssetTradeO,
   // wsAssetTrade,
   wsOptionMarkPriceO,
   wsOptionMarkPrice,
-  wsFutureIndexO,
-  wsFutureIndex,
+  wsIndexO,
+  wsIndex,
   volatilityHistoryO,
   volatilityHistory,
   wsAssetDepthO,
   wsAssetDepth,
+  wsAssetTickerO,
+  wsAssetTicker,
   wsTradesO,
   wsTrades,
   wsCoinTradesO,

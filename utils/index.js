@@ -12,7 +12,14 @@ const time = require('./time');
 function getQueryString(params, isEncode = false) {
   params = _.map(params, (value, key) => ({ value, key }));
   params = _.sortBy(params, d => d.key);
-  return _.map(params, ({ value, key }) => `${key}=${isEncode ? encodeURIComponent(value) : value}`).join('&');
+  return _.map(params, ({ value, key }) => {
+    if (Array.isArray(value)) {
+      return _.map(value, (_value) => {
+        return `${key}=${isEncode ? encodeURIComponent(_value) : _value}`;
+      }).join('&');
+    }
+    return `${key}=${isEncode ? encodeURIComponent(value) : value}`;
+  }).join('&');
 }
 
 function isNull(v) {
@@ -46,6 +53,10 @@ function _parse(v) {
   return parseFloat(v, 10);
 }
 
+function getInstrumentId({ exchange = '', asset_type, pair }) {
+  return [exchange, asset_type, pair].filter(d => d).join('_').toUpperCase();
+}
+
 module.exports = {
   ...base,
   ...morph,
@@ -53,6 +64,7 @@ module.exports = {
   ...fn,
   ...time,
   unique,
+  getInstrumentId,
   getQueryString,
   checkKey,
   ws,

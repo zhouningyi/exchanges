@@ -4,7 +4,6 @@ function delay(time) {
   return new Promise(resolve => setTimeout(() => resolve('delay'), time));
 }
 
-
 function cleanObjectNull(o, isDeleteNull = false) {
   let v;
   for (const k in o) {

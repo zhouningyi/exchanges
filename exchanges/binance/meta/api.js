@@ -70,15 +70,69 @@ const coinContractConfig = {
     endpoint: 'dapi/v1/userTrades',
     notNull: ['pair', 'asset_type'],
     sign: true
-  }
+  },
+  coinContractOrder: {
+    name_cn: '币本位合约下单',
+    endpoint: 'dapi/v1/order',
+    notNull: ['pair', 'asset_type', 'side', 'direction', 'amount'],
+    method: 'POST',
+    sign: true
+  },
+  coinContractBatchCancelOrder: {
+    name_cn: '批量撤销币本位合约下单',
+    endpoint: 'dapi/v1/batchOrders',
+    notNull: ['pair', 'asset_type'],
+    method: 'DELETE',
+    sign: true
+  },
+  coinContractCancelOrder: {
+    name_cn: '撤销币本位合约下单',
+    endpoint: 'dapi/v1/order',
+    notNull: ['pair', 'asset_type'],
+    method: 'DELETE',
+    sign: true
+  },
+  coinContractOrderInfo: {
+    name_cn: '币本位合约订单',
+    endpoint: 'dapi/v1/order',
+    notNull: ['pair', 'asset_type'],
+    method: 'GET',
+    sign: true
+  },
+  coinContracUnfinishedtOrders: {
+    name_cn: '币本位合约未完成订单',
+    endpoint: 'dapi/v1/openOrders',
+    notNull: ['pair', 'asset_type'],
+    method: 'GET',
+    sign: true
+  },
+  coinContractUnfinishedOrderHistory: {
+    name_cn: '币本位合约历史订单',
+    endpoint: 'dapi/v1/allOrders',
+    notNull: ['pair', 'asset_type'],
+    method: 'GET',
+    sign: true
+  },
+  coinContractListenKey: {
+    name_cn: '币本位合约_listenKey',
+    endpoint: 'dapi/v1/listenKey',
+    method: 'POST',
+    sign: false
+  },
+  updateCoinContractListenKey: {
+    name_cn: '币本位合约_listenKey',
+    endpoint: 'dapi/v1/listenKey',
+    method: 'PUT',
+    sign: false
+  },
 };
-
 
 function fix(config, host) {
   for (const name in config) {
     const l = config[name];
     l.name = name;
     l.host = host;
+    if (!l.sign)l.sign = false;
     if (!l.method) l.method = 'GET';
   }
   return config;

@@ -1,6 +1,8 @@
 
 const { delay } = require('./base');
 const { print } = require('./console');
+const baseFnsConfig = require('./fn.json');
+
 
 const defaultO = {
   timeout: 1500,
@@ -34,7 +36,7 @@ function wrapFn(fn, o = {}, isPrint, fnName) {
   return f;
 }
 
-
 module.exports = {
+  baseFnsConfig,
   wrapFn
 };

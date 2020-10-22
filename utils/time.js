@@ -60,31 +60,31 @@ function getTimeString(t, type = 'day') {
 //
 const SETTLE_TIME = '16:10:00';
 const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27', '2020-06-26', '2020-09-25', '2020-12-25', '2021-03-26'];
-function getSettlementTimes(t = new Date(), type = 'quarter') { // 今年4个季度以及明年三个季度
+function getSettlementTimes(t = new Date(), type = 'QUARTER') { // 今年4个季度以及明年三个季度
   t = fixTime(t);
-  if (type === 'quarter' || type === 'next_quarter') {
+  if (type === 'QUARTER' || type === 'NEXT_QUARTER') {
     return SETTLEMENT_QUARTER_MONTHES
          .map(v => new Date(`${v} ${SETTLE_TIME}`));
-  } else if (type === 'this_week' || type === 'next_week') {
+  } else if (type === 'THIS_WEEK' || type === 'NEXT_WEEK') {
     return [prevWeek(t, 5, 0), prevWeek(t, 5, -1), prevWeek(t, 5, -2), prevWeek(t, 5, -3)]
            .map(t => new Date(`${getTimeString(t, 'day')} ${SETTLE_TIME}`));
   }
   console.log(type, '❌getSettlementDays type错误...');
 }
 // ✅
-function getFutureSettlementDay(t, type = 'quarter') {
+function getFutureSettlementDay(t, type = 'QUARTER') {
   const time = getFutureSettlementTime(t, type);
   return getTimeString(time, 'day');
 }
 
-function getFutureSettlementTime(t, type = 'quarter', mode = 'okex') {
+function getFutureSettlementTime(t, type = 'QUARTER', mode = 'okex') {
   t = fixTime(t);
   const setts = getSettlementTimes(t, type);
   const preDeliveryInterval = mode === 'okex' ? WEEK : 0;
   for (let i = 0; i < setts.length; i++) {
     const st = setts[i];
     const dt = st - t;
-    if (type === 'next_quarter') {
+    if (type === 'NEXT_QUARTER') {
       const pst = setts[i - 1];
       if (pst) {
         const dpst = pst - t;
@@ -92,15 +92,15 @@ function getFutureSettlementTime(t, type = 'quarter', mode = 'okex') {
           return st;
         }
       }
-    } else if (type === 'quarter') {
+    } else if (type === 'QUARTER') {
       if (dt > preDeliveryInterval * 2) {
         return st;
       }
-    } else if (type === 'next_week') {
+    } else if (type === 'NEXT_WEEK') {
       if (dt > preDeliveryInterval && dt <= 2 * preDeliveryInterval) {
         return st;
       }
-    } else if (type === 'this_week') {
+    } else if (type === 'THIS_WEEK') {
       if (dt > 0 && dt <= preDeliveryInterval) {
         return st;
       }
@@ -112,19 +112,19 @@ function getFutureSettlementTime(t, type = 'quarter', mode = 'okex') {
 }
 
 // 合约挪动仓位的时间(对季度合约是第一次移动仓位时间)
-function getFutureSettlementMoveTime(t = new Date(), type = 'quarter') {
-  if (type === 'this_week') return console.log('getFutureSettlementMoveDay: 当周期货无移动仓位');
+function getFutureSettlementMoveTime(t = new Date(), type = 'QUARTER') {
+  if (type === 'THIS_WEEK') return console.log('getFutureSettlementMoveDay: 当周期货无移动仓位');
   const set = getFutureSettlementTime(t, type);
-  if (type === 'quarter') {
+  if (type === 'QUARTER') {
     return prevWeek(set, 5, 2);
   }
-  if (type === 'next_week') {
+  if (type === 'NEXT_WEEK') {
     return prevWeek(set, 5, 1);
   }
   console.log('❌getFutureSettlementMoveTime 错误...');
 }
 
-function getFutureSettlementMoveDay(t = new Date(), type = 'quarter') {
+function getFutureSettlementMoveDay(t = new Date(), type = 'QUARTER') {
   const time = getFutureSettlementMoveTime(t, type);
   return getTimeString(time, 'day');
 }

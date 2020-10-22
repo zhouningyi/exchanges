@@ -350,7 +350,6 @@ const orderStatusMap = {
   cancelled: 'CANCEL',
 };
 
-
 const orderStateMap = {
   '-2': 'FAIL',
   // all: 'ALL',

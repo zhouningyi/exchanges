@@ -1,0 +1,11 @@
+[ 
+  {"name":"assetBalances","notNull":["asset_type"]},
+  {"name":"assetPositions","notNull":["asset_type","pair"]},
+  {"name":"assetOrder","notNull":["asset_type", "pair"]},
+  {"name":"assetOrderInfo"},
+  {"name":"assetCancelOrder","notNull":[]},
+  {"name":"wsAssetOrders","notNull":[]},
+  {"name":"wsAssetPositions","notNull":[]},
+  {"name":"wsAssetDepth","notNull":[]},
+  {"name":"wsAssetBalances","notNull":[]}
+]

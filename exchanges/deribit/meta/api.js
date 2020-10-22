@@ -12,12 +12,32 @@ const config = {
     endpoint: 'private/get_position',
     notNull: ['pair', 'asset_type']
   },
+  coinBalance: {
+    name_cn: '账户资产(币为单位)',
+    endpoint: 'private/get_account_summary',
+    notNull: ['coin']
+  },
   assetOrder: {
     name_cn: '下单',
     endpoint: 'private/{vector_string}',
-    notNull: ['pair', 'asset_type', 'amount', 'side'],
+    notNull: ['instrument_id', 'amount', 'side'],
     endpointParams: ['vector_string'],
     delEndParams: true
+  },
+  assetOrderInfo: {
+    name_cn: '订单',
+    endpoint: 'private/get_order_state',
+    notNull: ['order_id']
+  },
+  coinAssetOrders: {
+    name_cn: '币种的订单信息',
+    endpoint: 'private/get_user_trades_by_currency',
+    notNull: ['coin']
+  },
+  coinUnfinishAssetOrders: {
+    name_cn: '币种的未成交订单信息',
+    endpoint: 'private/get_open_orders_by_currency',
+    notNull: ['coin']
   },
   cancelAssetOrder: {
     name_cn: '下单',
@@ -41,10 +61,16 @@ const config = {
   wsAssetDepth: {
     type: 'ws',
     name_cn: '深度推送',
-    endpoint: 'public/subscribe',
-    notNull: ['pair', 'asset_type']
+    endpoint: 'private/subscribe',
+    notNull: ['pair']
   },
-  wsFutureIndex: {
+  // wsInstrumentDepth: {
+  //   type: 'ws',
+  //   name_cn: '深度推送(按品种)',
+  //   endpoint: 'public/subscribe',
+  //   notNull: ['pair', 'instrument']
+  // },
+  wsIndex: {
     type: 'ws',
     name_cn: '指数',
     endpoint: 'public/subscribe',
@@ -53,6 +79,12 @@ const config = {
   wsOptionMarkPrice: {
     type: 'ws',
     name_cn: '期权标记价格',
+    endpoint: 'public/subscribe',
+    notNull: ['pair']
+  },
+  wsAssetTicker: {
+    type: 'ws',
+    name_cn: 'ticker',
     endpoint: 'public/subscribe',
     notNull: ['pair']
   },
@@ -82,11 +114,11 @@ const config = {
     notNull: ['pair', 'asset_type'],
     sign: true
   },
-  wsAssetOrder: {
+  wsCoinAssetOrder: {
     type: 'ws',
     name_cn: '订阅下单变化',
     endpoint: 'private/subscribe',
-    notNull: ['pair', 'asset_type'],
+    notNull: ['coin', 'asset_type'],
     sign: true
   },
   wsPortfolio: {

@@ -12,9 +12,17 @@ const newtasks = [
   // ['wsCoinTrades', { coin: 'BTC', instrument: 'future', }],
   // ['wsAssetOrder', { pair: 'BTC-USD', asset_type: 'SWAP' }],
   // ['wsPortfolio', { coin: 'BTC' }],
-  ['wsAssetPosition', { pair: 'BTC-USD', asset_type: 'SWAP' }],
+  // ['wsAssetPosition', { pair: 'BTC-USD', asset_type: 'SWAP' }],
   // ['wsAssetTrade', { pair: 'BTC-USD', asset_type: 'SWAP' }],
   // ['wsAssetAnyChange', { pair: 'BTC-USD', asset_type: 'SWAP' }],
+  // ['wsCoinContractDepth', { pair: 'BTC-USD', asset_type: 'QUARTER', level: 10 }],
+  // ['wsCoinContractOrder', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
+  // ['wsCoinContractPositions', {}],
+  // ['wsCoinContractBalances', { }]
+  // ['wsAssetDepth', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
+  // ['wsAssetOrder', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
+  // ['wsAssetPositions', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
+  ['wsAssetBalances', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }]
 ];
 
 const wsList = [
@@ -221,7 +229,7 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-const exchangeName = 'deribit';
+const exchangeName = 'binance';
 
 console.log(`=============【${exchangeName}...】=============`);
 testOneExchangeWs(exchangeName, wsList);

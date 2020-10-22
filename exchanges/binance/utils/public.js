@@ -6,19 +6,17 @@ const meta = require('./../../../utils/meta');
 
 const config = require('./../config');
 
-const { checkKey } = Utils;
+const { checkKey, throwError, cleanObjectNull, getInstrumentId, _parse, SETTLEMENT_QUARTER_MONTHES, getTimeString, getFutureSettlementTime } = Utils;
 // const subscribe = Utils.ws.genSubscribe(config.WS_BASE);
 
-function pair2symbol(pair, isReverse = false) {
-  if (!isReverse) return pair.replace('-', '').toUpperCase();
-  return pair.split('-').reverse().join('').toUpperCase();
-}
+const SETTLE_TIME = '16:10:00';
 
-function symbol2pair(symbol, isFuture = false) {
-  let ss = symbol.split('_');
-  if (isFuture) ss = ss.reverse();
-  return ss.join('-').toUpperCase();
-}
+const d1 = 24 * 3600 * 1000;
+const d7 = 7 * d1;
+const d14 = d7 * 2;
+const d90 = d1 * 365 / 4;
+// d1 * 90;
+
 
 function time(o) {
   return {
@@ -65,13 +63,170 @@ function usdtContractPairs(ds) {
   });
 }
 
+function getOrderTypeOptions(o) {
+  let { order_type } = o;
+  const type = o.type.toUpperCase();
+  const opt = { type, timeInForce: 'GTC' };
+  if (order_type) {
+    order_type = order_type.toUpperCase();
+    if (['FOK', 'IOC', 'GTX', 'GTC'].includes(order_type)) opt.timeInForce = order_type;
+    if (order_type === 'POST_ONLY') opt.timeInForce = 'GTX';
+  }
+  return opt;
+}
+
+function parseOrderTypeOptions(o) {
+  const { type, timeInForce } = o;
+  const opt = { type };
+  if (timeInForce) {
+    if (['FOK', 'IOC', 'GTC'].includes(timeInForce)) opt.order_type = timeInForce;
+    if (timeInForce === 'GTX') opt.timeInForce = 'POST_ONLY';
+  }
+  return opt;
+}
+
+
+function pair2symbol(pair) {
+  return pair.replace('-', '');
+}
+
+function isFutureType(asset_type) {
+  return ['THIS_WEEK', 'NEXT_WEEK', 'NEXT_QUARTER', 'QUARTER'].includes(asset_type);
+}
+
+function getSymbolId({ asset_type, pair }) {
+  asset_type = asset_type.toUpperCase();
+  const symbol = pair2symbol(pair);
+  if (asset_type === 'SPOT') return symbol;
+  if (asset_type === 'SWAP') return `${symbol}_PERP`;
+  if (isFutureType(asset_type)) {
+    const ext = contract_type2future_id(asset_type);
+    return `${symbol}_${ext}`;
+  }
+  console.log('getSymbolId:没有匹配 symbolId..');
+}
+
+const baseCoins = ['USD', 'USDT', 'BTC', 'ETH', 'BNB', 'BUSD'];
+
+function formatSymbolPair(symbol) {
+  for (const baseCoin of baseCoins) {
+    if (symbol.endsWith(baseCoin)) return symbol.replace(baseCoin, `-${baseCoin}`);
+  }
+  console.log(`formatSymbolPair:${symbol} 无法标准化...`);
+}
+
+function parseSymbolId(o) {
+  const [symbol, ext] = o.symbol.split('_');
+  const pair = formatSymbolPair(symbol);
+  const coin = pair ? pair.split('-')[0] : null;
+  const asset_type = ext2asset_type(ext);
+  const instrument_id = getInstrumentId({ exchange: 'BINANCE', pair, asset_type });
+  return { coin, pair, asset_type, instrument_id };
+}
+
+function getDeliveryMap(reverse = false) {
+  const contracts = ['QUARTER', 'NEXT_QUARTER'];
+  const res = {};
+  for (const i in contracts) {
+    const contract = contracts[i];
+    const time = getFutureSettlementTime(new Date(), contract, 'binance');
+    const day = getTimeString(time);
+    const dstr = day.replace(/-/g, '').substring(2);
+    if (reverse) {
+      res[contract] = dstr;
+    } else {
+      res[dstr] = contract;
+    }
+  }
+  return res;
+}
+
+
+function ext2asset_type(ext) {
+  if (ext === 'PERP') return 'SWAP';
+  return future_id2contract_type(ext);
+}
+
+function asset_type2ext(asset_type) {
+  asset_type = asset_type.toUpperCase();
+  if (asset_type === 'SWAP') return 'PERP';
+  return contract_type2future_id(asset_type);
+}
+
+
+function future_id2contract_type(ext) {
+  const deliveryMap = getDeliveryMap();
+  return deliveryMap[ext];
+}
+
+function contract_type2future_id(type) {
+  const reverseDeliveryMap = getDeliveryMap(true);
+  return reverseDeliveryMap[type.toLowerCase()];
+}
+
+function getOrderDirectionOptions({ side, direction }) {
+  side = side.toUpperCase();
+  direction = direction.toUpperCase();
+  const d1 = direction === 'SHORT' ? -1 : 1;
+  const s1 = direction === 'SELL' ? -1 : 1;
+  return { side: d1 * s1 > 0 ? 'BUY' : 'SELL' };
+}
+
+function parseOrderDirectionOptions({ side, realizedPnl }) {
+  realizedPnl = parseFloat(realizedPnl, 10);
+  if (!realizedPnl) {
+    if (side === 'SELL') return { side: 'BUY', direction: 'SHORT' };
+    if (side === 'BUY') return { side: 'BUY', direction: 'LONG' };
+  }
+  if (side === 'SELL') return { side: 'SELL', direction: 'LONG' };
+  if (side === 'BUY') return { side: 'SELL', direction: 'SHORT' };
+}
+
+
+function parseOrderStatusOptions(d) {
+  const { status } = d;
+  return {
+    status: {
+      NEW: 'UNFINISH',
+      PARTIALLY_FILLED: 'PARTIAL',
+      FILLED: 'SUCCESS',
+      CANCELED: 'CANCEL',
+      EXPIRED: 'CANCEL',
+      NEW_INSURANCE: 'LIQUID',
+      NEW_ADL: 'LIQUID',
+    }[status]
+  };
+}
+function getOrderStatusOptions(d) {
+  const { status } = d;
+  return {
+    status: {
+      UNFINISH: 'NEW',
+      PARTIAL: 'PARTIALLY_FILLED',
+      SUCCESS: 'FILLED',
+      CANCEL: ['CANCELED', 'EXPIRED'],
+      LIQUID: ['NEW_INSURANCE', 'NEW_ADL']
+    }[status]
+  };
+}
+
 module.exports = {
+  parseOrderStatusOptions,
+  getOrderStatusOptions,
+  getOrderDirectionOptions,
+  parseOrderDirectionOptions,
+  asset_type2ext,
+  parseSymbolId,
+  getSymbolId,
+  pair2symbol,
+  getOrderTypeOptions,
+  parseOrderTypeOptions,
   usdtContractPairsO,
   usdtContractPairs,
   pair2coin,
   coin2pair,
-  symbol2pair,
-  pair2symbol,
+  formatSymbolPair,
   intervalMap,
+  timeO: () => ({}),
   time
 };

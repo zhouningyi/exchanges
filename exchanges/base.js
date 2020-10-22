@@ -93,6 +93,9 @@ class exchange extends Event {
   async delete(endpoint, params, isSign = true, hostId) {
     return await this.request('DELETE', endpoint, params, isSign, hostId);
   }
+  async put(endpoint, params, isSign = true, hostId) {
+    return await this.request('PUT', endpoint, params, isSign, hostId);
+  }
   // 保存配置
   _getConifgPath(file, ext = 'json') {
     return path.join(__dirname, `./${this.name}/meta/${file}.${ext}`);
@@ -292,7 +295,7 @@ class exchange extends Event {
         const tStart = new Date();
         this.addFnLock(conf, query_id);
         const queryOption = { method, name, endpointCompile, opt, o, sign, host: conf.host };
-        if (conf.type === 'ws') return this.wsSubscribe(queryOption, cb, { formatFn });
+        if (conf.type === 'ws') return await this.wsSubscribe(queryOption, cb, { formatFn });
         const ds = await this.queryFunc(queryOption);
         this.cancelFnLock(conf, query_id);
         const dt = new Date() - tStart;

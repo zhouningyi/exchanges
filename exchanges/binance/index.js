@@ -10,13 +10,10 @@ const request = require('./../../utils/request');
 // const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE, SPOT_REST_BASE, USDT_CONTRACT_REST_BASE, COIN_CONTRACT_REST_BASE } = require('./config');
 const apiConfig = require('./meta/api');
+const wsFunctionConfig = require('./meta/ws');
 const future_pairs = require('./meta/future_pairs.json');
-const swapUtils = require('./utils/swap');
-const spotUtils = require('./utils/spot');
-const futureUtils = require('./utils/future');
-// const { patch } = require('request');
+const { upperFirst } = require('lodash');
 
-//
 // const recvWindow = 5000;
 
 function _parse(v) {
@@ -52,15 +49,22 @@ class Exchange extends Base {
     this.name = 'binance';
     this.options = { ...Exchange.options, ...options };
     this.init();
+    this.compatible();
   }
   async init() {
+    this.timeOffset = 0;
     this.Utils = kUtils;
     this.loadFnFromConfig(apiConfig);
     this.initWs();
+    await this.syncTime();
+  }
+  async syncTime() {
+    const time = await this.time();
+    this.timeOffset = time.timestamp - new Date().getTime();
   }
   getSignature(method, endpoint, params, isws = false) {
     method = method.toUpperCase();
-    const totalStr = makeQueryString(params);
+    const totalStr = makeQueryString(params, true);
     return crypto.createHmac('sha256', this.apiSecret).update(totalStr).digest('hex');// .toString('base64');
   }
   _getTime() {
@@ -77,72 +81,15 @@ class Exchange extends Base {
   }
   //
   initWs(o = {}) {
-    // if (!this.ws) {
-    //   try {
-    //     this.ws = kUtils.ws.genWs(WS_BASE, { proxy: this.proxy });
-    //     this.loginWs();
-    //   } catch (e) {
-    //     console.log('initWs error');
-    //     process.exit();
-    //   }
-    // }
-    // this.wsFutureIndex = (o, cb) => this._addChanelV3('futureIndex', { pairs: this.getPairs(o) }, cb);
-    // this.wsTicks = (o, cb) => this._addChanelV3('ticks', { pairs: this.getPairs(o) }, cb);
-    // this.wsFutureDepth = (o, cb) => this._addChanelV3('futureDepth', { ...o, pairs: this.getPairs(o) }, cb);
-    // this.wsFutureTicks = (o, cb) => this._addChanelV3('futureTicks', { pairs: this.getPairs(o), contract_type: o.contract_type }, cb);
-    // this.wsFuturePosition = (o, cb) => this._addChanelV3('futurePosition', o, cb);
-    // this.wsFutureBalance = (o, cb) => this._addChanelV3('futureBalance', o, cb);
-    // this.wsFutureOrders = (o, cb) => this._addChanelV3('futureOrders', o, cb);
-    // this.wsSpotOrders = (o, cb) => this._addChanelV3('spotOrders', o, cb);
-    // this.wsSpotDepth = (o, cb) => this._addChanelV3('spotDepth', { pairs: this.getPairs(o) }, cb);
-    // this.wsSpotBalance = (o, cb) => this._addChanelV3('spotBalance', o, cb);
-    // this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
-    // this.wsSwapDepth = (o, cb) => this._addChanelV3('swapDepth', o, cb);
-    // this.wsSwapFundRate = (o, cb) => this._addChanelV3('swapFundRate', o, cb);
-    // this.wsMarginBalance = (o, cb) => this._addChanelV3('marginBalance', o, cb);
-    // this.wsSwapBalance = (o, cb) => this._addChanelV3('swapBalance', o, cb);
-    // this.wsSwapPosition = (o, cb) => this._addChanelV3('swapPosition', o, cb);
-    // this.wsSwapOrders = (o, cb) => this._addChanelV3('swapOrders', o, cb);
-  }
-  _addChanelV3(wsName, o = {}, cb) {
-    const { ws } = this;
-    const fns = kUtils.ws[wsName];
-    if (fns.notNull) checkKey(o, fns.notNull);
-    if (!ws || !ws.isReady()) return setTimeout(() => this._addChanelV3(wsName, o, cb), 100);
-    if (fns.isSign && !this.isWsLogin) return setTimeout(() => this._addChanelV3(wsName, o, cb), 100);
-
-    let chanel = fns.chanel(o);
-    if (Array.isArray(chanel)) chanel = kUtils.ws.getChanelObject(chanel);
-    //
-    const validate = res => _.get(res, 'table') === fns.name;
-    //
-    ws.send(chanel);
-    const callback = this.genWsDataCallBack(cb, fns.formater);
-    ws.onData(validate, callback);
-  }
-  genWsDataCallBack(cb, formater) {
-    return (ds) => {
-      if (!ds) return [];
-      const error_code = _.get(ds, 'error_code') || _.get(ds, '0.error_code') || _.get(ds, '0.data.error_code');
-      if (error_code) {
-        const str = `${ds.error_message || error.getErrorFromCode(error_code)} | [ws]`;
-        throw new Error(str);
+    if (!this.ws) {
+      try {
+        const ws = this.ws = kUtils.ws.genWs(this, { proxy: this.proxy });
+        ws.loadConfigs(wsFunctionConfig);
+      } catch (e) {
+        console.log(e, 'initWs error');
+        process.exit();
       }
-      cb(formater(ds));
-    };
-  }
-  loginWs() {
-    if (!this.apiSecret) return;
-    const t = `${Date.now() / 1000}`;
-    const endpoint = 'users/self/verify';
-    const sign = this.getSignature('GET', t, endpoint, {}, true);
-    const chanel = { op: 'login', args: [this.apiKey, this.passphrase, t, sign] };
-    const { ws } = this;
-    if (!ws || !ws.isReady()) return setTimeout(() => this.loginWs(), 100);
-    ws.send(chanel);
-    ws.onLogin(() => {
-      this.isWsLogin = true;
-    });
+    }
   }
   _genHeader(method, endpoint, params, isSign) {
     const time = this._getTime();
@@ -156,9 +103,9 @@ class Exchange extends Base {
     params = Utils.cleanObjectNull(params);
     params = _.cloneDeep(params);
     const hour8 = 3600 * 1000 * 8;
-    params.timestamp = new Date().getTime();// + hour8;
+    if (isSign) params.timestamp = new Date().getTime() + this.timeOffset;// + hour8;
     // params.recvWindow = this.options.recvWindow;
-    const qstr = Utils.getQueryString(params);
+    const qstr = makeQueryString(params, true);
     // if (!params.recvWindow) params.recvWindow = this.options.recvWindow;
     const REST_BASE = this.getUrlBase({ host });
     let url;
@@ -167,8 +114,9 @@ class Exchange extends Base {
     } else {
       url = `${REST_BASE}/${endpoint}`;
     }
-    if (method === 'GET' && qstr) url += `?${qstr}`;
+    if (method !== 'POST' && qstr) url += `?${qstr}`;
     if (isSign) {
+      // console.log(method, endpoint, params, 'method, endpoint, params....');
       const signature = this.getSignature(method, endpoint, params, false);
       const sigStr = `signature=${signature}`;
       params.signature = signature;
@@ -183,8 +131,9 @@ class Exchange extends Base {
       proxy: this.proxy,
       method,
       headers: this._genHeader(method, endpoint, params, isSign),
-      ...(method === 'GET' ? { qs: params } : { body: JSON.stringify(params) })
+      ...(method === 'POST' ? { form: params } : { qs: params })
     };
+    // console.log(o, 'o..........');
 
     let body;
     // try {
@@ -222,7 +171,6 @@ class Exchange extends Base {
     // }
     return body.data || body || false;
   }
-
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);
     let { source, target, amount } = o;
@@ -232,6 +180,66 @@ class Exchange extends Base {
     if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
     return 0.002 * amount;
   }
+  _isCoinContract(o) {
+    const { pair, asset_type } = o;
+    return isFuture(asset_type) && pair && pair.toUpperCase().endsWith('USD');
+  }
+  _isUsdtContract(o) {
+    const { pair, asset_type } = o;
+    return isFuture(asset_type) && pair && pair.toUpperCase().endsWith('USDT');
+  }
+  _isSpot(o) {
+    const { asset_type } = o;
+    return !asset_type || asset_type.toLowerCase() === 'spot';
+  }
+  _getAssetBaseType(o) {
+    if (this._isCoinContract(o)) return 'coinContract';
+    if (this._isUsdtContract(o)) return 'usdtContract';
+    if (this._isSpot(o)) return 'spot';
+  }
+  parseAssets(o) {
+    let { assets, pair, asset_type } = o;
+    if (assets) return assets;
+    assets = [];
+    if (typeof pair === 'string') pair = [pair];
+    if (typeof asset_type === 'string') asset_type = [asset_type];
+    for (const _asset_type of asset_type) {
+      for (const _pair of pair) {
+        assets.push({ asset_type: _asset_type, pair: _pair });
+      }
+    }
+    return assets;
+  }
+  compatible() {
+    // REST
+    const restFns = ['balances', 'positions', 'order', 'orderInfo', 'cancelOrder'];
+    for (const name of restFns) {
+      const fnName = `asset${upperFirst(name)}`;
+      this[fnName] = async (o) => {
+        const baseType = this._getAssetBaseType(o);
+        const realFnName = `${baseType}${upperFirst(name)}`;
+        return await this[realFnName](o);
+      };
+    }
+    // WS
+    const wsFns = ['orders', 'positions', 'balances', 'depth'];
+    for (const name of wsFns) {
+      const fnName = `wsAsset${upperFirst(name)}`;
+      this[fnName] = async (o, cb) => {
+        const assets = this.parseAssets(o);
+        const assetsGroup = _.groupBy(assets, asset => this._getAssetBaseType(asset));
+        for (const assetBaseType in assetsGroup) {
+          const realFnName = `ws${upperFirst(assetBaseType)}${upperFirst(name)}`;
+          this[realFnName]({ assets, ...o }, cb);
+        }
+      };
+    }
+  }
+}
+
+function isFuture(asset_type) {
+  if (!asset_type) return false;
+  return ['swap', 'quarter', 'next_quarter'].includes(asset_type.toLowerCase());
 }
 
 Exchange.options = {

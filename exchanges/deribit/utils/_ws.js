@@ -10,7 +10,7 @@ const Event = require('bcore/event');
 const md5 = require('md5');
 
 async function delay(t) {
-  return new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     setTimeout(resolve, t);
   });
 }
@@ -75,6 +75,7 @@ class WS extends Event {
     this.sendSequence = {};
     this.subscribeSequence = {};
     this.init();
+    this.id = uuid('ws');
   }
   async init() {
     const { stream, options: o } = this;
@@ -100,6 +101,7 @@ class WS extends Event {
     const { error } = data;
     if (error) {
       const { message } = error;
+      // console.log(data, 'checkError...');
       console.log(`【${message}】`, 'checkError data...');
     }
   }
@@ -108,6 +110,9 @@ class WS extends Event {
   }
   async login() {
     if (!this.apiSecret) return;
+    if (this.loginStatus === 'ing') return;
+    if (this.isLogin()) return;
+    this.loginStatus = 'ing';
     const timestamp = this._getNow();
     const nonce = 'himalaya';
     const signature = CryptoJS.HmacSHA256(`${timestamp}\n${nonce}\n`, this.apiSecret).toString();
@@ -123,8 +128,9 @@ class WS extends Event {
         data: ''
       }
     };
-    await this.checkWsReady();
+    await this.checkWsReady('login');
     let res = await this.send(msg);
+    this.loginStatus = 'done';
     res = resp(res);
     if (!res) return;
     this.refresh_token = res.refresh_token;
@@ -181,13 +187,13 @@ class WS extends Event {
       return this.restart();
     });
     ws.on('close', (e) => {
+      console.log('on close..........');
       // this._isReady = false;
       return this.login();
     });
     ws.on('message', (data) => {
       try {
         data = processWsData(data);
-        // console.log(data, 'data............');
         if (typeof data === 'string') data = JSON.parse(data);
         this.checkError(data);
         this.checkCallback(data);
@@ -220,27 +226,27 @@ class WS extends Event {
       }
     }
   }
-  async checkWsReady() {
-    while (!this.isReady()) {
-      await delay(50);
-    }
+  async checkWsReady(source) {
+    const isready = this.isReady();
+    if (isready) return true;
+    await delay(100);
+    return await this.checkWsReady(source);
   }
   async checkWsLogin() {
-    while (!this.isLogin()) {
-      await delay(50);
-    }
+    const islogin = this.isLogin();
+    if (islogin) return true;
+    await delay(100);
+    return await this.checkWsLogin();
   }
   async send(msg, callback) {
     if (!msg) return;
-    await this.checkWsReady();
+    await this.checkWsReady('send');
     let cancel;
     const p = new Promise((r, rj) => {
       cancel = rj;
       if (!callback) callback = r;
     });
-    //
     msg = messageWrapper(msg);
-    // console.log(msg, 'send msg......');
     const { sendSequence } = this;
     _.set(sendSequence, msg.id, { ...msg, callback, cancel });
     this._send();
@@ -250,19 +256,32 @@ class WS extends Event {
     const { sendSequence } = this;
     if (!_.values(sendSequence).length) return;
     _.forEach(sendSequence, (info) => {
-      this.ws.send(JSON.stringify(info));
-      info.isSend = true;
+      if (info && info.method && !info.isSend) {
+        this.ws.send(JSON.stringify(info));
+        info.isSend = true;
+      }
     });
   }
 
+  channelHash(channel) {
+    return md5(channel);
+  }
   async subscribe(msg, callback) {
     if (!msg) return;
-    await this.checkWsReady();
+    await this.checkWsReady('subscribe');
     msg = messageWrapper(msg);
     const { channel, ...rest } = msg.params;
-    msg.params = { channels: [channel], ...rest };
-    _.set(this.subscribeSequence, md5(channel), { ...msg, callback });
-    this.sendSequence[msg.id] = { callback: () => { console.log(channel, 'channel receive...'); } };
+    const channels = Array.isArray(channel) ? channel : [channel];
+    msg.params = { channels, ...rest };
+    for (const _channel of channels) {
+      const hash = this.channelHash(_channel);
+      _.set(this.subscribeSequence, hash, { ...msg, callback });
+    }
+
+    this.sendSequence[msg.id] = { callback: () => {
+      const channelString = JSON.stringify(channel).substring(0, 200);
+      // console.log(channelString, 'channel receive...');
+    } };
     this.ws.send(JSON.stringify(msg));
   }
 }

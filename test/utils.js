@@ -2,11 +2,12 @@
 const _ = require('lodash');
 const Utils = require('./../utils');
 //
+const { baseFnsConfig } = require('./../utils/fn');
 const config = require('./../config');
 const Exchanges = require('./../index');
 
 function getAppKey(name) {
-  const keyName = `${name}Zhou`;
+  const keyName = `${name}`;
   return config[keyName];
 }
 
@@ -30,10 +31,17 @@ async function extrude(ex, exName, d) {
   print(ds, d.name);
 }
 
-
 function upperFirst(d) {
   const str = d[0].toUpperCase();
   return str + d.substring(1);
+}
+
+function checkExchangeFns(exchange) {
+  _.forEach(baseFnsConfig, (o) => {
+    const { name } = o;
+    const fn = exchange[name];
+    if (!fn) return Utils.print(`交易所${exchange.name}: 缺失函数${name}`, 'gray');
+  });
 }
 
 function getExchange(name) {
@@ -47,6 +55,7 @@ function getExchange(name) {
 
 function validate(ex) {
   if (!ex.name) console.log('exchange对象必须有name');
+  checkExchangeFns(ex);
 }
 
 async function delay(ms) {

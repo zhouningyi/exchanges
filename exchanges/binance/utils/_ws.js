@@ -3,31 +3,25 @@ const WebSocket = require('ws');
 const url = require('url');
 const _ = require('lodash');
 const HttpsProxyAgent = require('https-proxy-agent');
-const pako = require('pako');
-
 const Event = require('bcore/event');
+const Utils = require('../../../utils');
+
+const { delay, checkKey, cleanObjectNull } = Utils;
 
 function noop() {}
 
 const loopInterval = 4000;
 
 function processWsData(data) {
-  if (data instanceof String) {
+  if (typeof (data) === 'string') {
     try {
       data = JSON.parse(data);
     } catch (e) {
       console.log(e, 'String parse json error');
     }
     return data;
-  } else {
-    try {
-      data = pako.inflateRaw(data, { to: 'string' });
-      return JSON.parse(data);
-    } catch (e) {
-      console.log(e, 'pako parse error...');
-    }
   }
-  return false;
+  return data;
 }
 
 function loop(fn, time) {
@@ -37,49 +31,134 @@ function loop(fn, time) {
 const onceLoop = _.once(loop);
 
 function checkError(l) {
-  const { event, message } = l;
-  if (event === 'error') {
-    console.log(`【error】: ${message}`);
+  const { event, error } = l;
+  if (error) {
+    console.log(`【error】: ${error.msg || error}`);
     process.exit();
   }
 }
 
 class WS extends Event {
-  constructor(stream, o) {
+  constructor(that, o) {
     super();
-    this.stream = stream;
+    this.that = that;
     this.options = o;
+    this.streams = {};
+    this.listenKeys = {};
+    this.idIndex = 1;
+    this.funcIdMap = {};
+    this.idFuncMap = {};
+    this.callbacks = {};
     this._isReady = false;
-    this.callbacks = [];
-    this.sendSequence = {};
-    this.init();
+    this.updateListenKeys();
   }
-  async init() {
-    const { stream, options: o } = this;
+  loadConfigs(os) {
+    _.forEach(os, (o, name) => this.loadConfig(o, name));
+  }
+  loadConfig(o) {
+    this.that[o.name] = this.createFunction(o);
+  }
+  createFuncId() {
+    this.idIndex += 1;
+    return this.idIndex;
+  }
+  async _getListenKey({ baseType }) {
+    let listenKey = this.listenKeys[baseType];
+    if (!listenKey) {
+      const listenKeyO = await this.createListenKey(baseType);
+      listenKey = listenKeyO ? listenKeyO.listenKey : '';
+      if (listenKey) this.listenKeys[baseType] = listenKey;
+    }
+    return listenKey;
+  }
+  async updateListenKeys() {
+    const { listenKeys } = this;
+    const coinContractListenKey = listenKeys.coinContract;
+    if (coinContractListenKey) {
+      await this.that.updateCoinContractListenKey({ listenKey: coinContractListenKey });
+    }
+    await delay(30 * 1000);
+    await this.updateListenKeys();
+  }
+  async createListenKey(baseType) {
+    if (baseType === 'coinContract') return await this.that.coinContractListenKey();
+    console.log('createListenKey baseType....');
+  }
+  async getMessage(opt, o) {
+    const { streamName, method } = o;
+    const params = (typeof (streamName) === 'function') ? streamName(opt) : streamName;
+    const id = this.idFuncMap[o.name] || this.createFuncId();
+    this.idFuncMap[id] = o.name;
+    this.funcIdMap[o.name] = id;
+    return { method, params, id };
+  }
+  _cleanResult(data) {
+    if (Array.isArray(data)) return _.map(data, cleanObjectNull);// cleanObjectNull(data);
+    if (data) return cleanObjectNull(data);
+  }
+  createFunction(o = {}) {
+    const { streamName, base } = o;
+    if (streamName !== 'listenKey') {
+      const connectionId = base;
+      const connectionUrl = base;
+      if (!this[connectionId]) this.createConnection({ connectionId, connectionUrl });
+      return async (opt, cb) => {
+        const mesagage = await this.getMessage(opt, o);
+        this.send(connectionId, mesagage);
+        this.registerFunc(connectionId, async (data) => {
+          if (o.chanel) {
+            const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
+            if (channelF(data)) {
+              data = o.formater(data, opt);
+              data = this._cleanResult(data);
+              cb(data);
+            }
+          }
+        });
+      };
+    } else {
+      return async (opt, cb) => {
+        const streamName = await this._getListenKey(o);
+        const connectionId = `${base}_account`;
+        if (!this[connectionId]) this.createConnection({ connectionId, connectionUrl: `${o.base}/${streamName}` });
+        this.registerFunc(connectionId, async (data) => {
+          if (o.chanel) {
+            const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
+            if (channelF(data)) {
+              data = o.formater(data, opt);
+              data = this._cleanResult(data);
+              cb(data);
+            }
+          }
+        });
+      };
+    }
+  }
+  registerFunc(name, fn) {
+    const cbs = this.callbacks[name] = this.callbacks[name] || [];
+    cbs.push(fn);
+  }
+  async send(connectionId, message) {
+    const ws = this[connectionId];
+    if (!ws || !ws._isReady) {
+      await delay(100);
+      return await this.send(connectionId, message);
+    }
+    ws.send(JSON.stringify(message));
+  }
+  createConnection(o) {
+    const { connectionId, connectionUrl } = o;
     const options = o.proxy ? { agent: new HttpsProxyAgent(url.parse(o.proxy)) } : {};
     try {
-      const ws = this.ws = new WebSocket(stream, options);
-      this.addHooks(ws, o);
+      const ws = this[connectionId] = new WebSocket(connectionUrl, options);
+      this.addWsHooks(ws, o);
+      return ws;
     } catch (e) {
       console.log(e, '建立ws出错 重启中...');
-      await this.init(stream, o);
+      return this.createConnection(o);
     }
   }
-  isReady() {
-    return this._isReady;
-  }
-  restart() {
-    this.init();
-  }
-  onLogin(cb) {
-    this.onLoginCb = cb;
-  }
-  checkLogin(data) {
-    if (data && data.event === 'login' && data.success) {
-      if (this.onLoginCb) this.onLoginCb();
-    }
-  }
-  addHooks(ws, o = {}) {
+  addWsHooks(ws, o = {}) {
     const { pingInterval = 1000 } = o;
     ws.tryPing = (noop) => {
       try {
@@ -90,11 +169,11 @@ class WS extends Event {
       }
     };
     ws.on('open', (socket) => {
-      this._isReady = true;
+      ws._isReady = true;
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
     ws.on('pong', (e) => {
-      // console.log(e, 'pong');
+      // console.log('pong');
     });
     ws.on('ping', () => {
       console.log('ping');
@@ -105,65 +184,35 @@ class WS extends Event {
     ws.on('error', (e) => {
       console.log(e, 'error');
       process.exit();
-      this._isReady = false;
+      ws._isReady = false;
       return this.restart();
     });
     ws.on('close', (e) => {
-      console.log(e, 'close');
+      console.log(e, o, 'close');
       this._isReady = false;
       return this.restart();
     });
     ws.on('message', (data) => {
-      try {
-        data = processWsData(data);
-        if (typeof data === 'string') data = JSON.parse(data);
-        checkError(data);
-        this.checkLogin(data);
-        this._onCallback(data, ws);
-      } catch (error) {
-        console.log(`ws Parse json error: ${error.message}`);
-        process.exit();
-      }
+      this._onCallback(data, o);
       onceLoop(() => {
         ws.tryPing();
       }, loopInterval);
     });
   }
-  send(msg) {
-    if (!msg) return;
-    if (!this.isReady()) setTimeout(() => this.send(msg), 100);
-    // console.log(msg, 'msg');
-    const { sendSequence } = this;
-    const args = (sendSequence[msg.op] || []).concat(msg.args);
-    _.set(sendSequence, msg.op, args);
-    setTimeout(this._send.bind(this), 100);
+  restart() {
+    console.log('restart... 111111111111111111');
+    process.exit();
   }
-  _send() {
-    const { sendSequence } = this;
-    if (!_.values(sendSequence).length) return;
-    _.forEach(sendSequence, (args, op) => {
-      this.ws.send(JSON.stringify({ op, args }));
-    });
-    this.sendSequence = {};
-  }
-  _onCallback(ds) {
-    const { callbacks } = this;
-    let bol = true;
-    _.forEach(callbacks, (cb) => {
-      if (!bol) return;
-      bol = bol && !cb(ds);
-    });
-  }
-  genCallback(validate, cb) {
-    const validateF = typeof validate === 'function' ? validate : d => d.table === validate;
-    return (ds) => {
-      if (validateF && validateF(ds)) return cb(ds);
-      return false;
-    };
-  }
-  onData(validate, cb) {
-    cb = this.genCallback(validate, cb);
-    this.callbacks.push(cb);
+  _onCallback(data, { connectionId }) {
+    try {
+      data = processWsData(data);
+      checkError(data);
+    } catch (error) {
+      console.log(`ws Parse raw message error: ${error.message}`);
+      process.exit();
+    }
+    const cbs = this.callbacks[connectionId];
+    _.forEach(cbs, cb => cb(data));
   }
 }
 
@@ -171,73 +220,6 @@ function genWs(stream, o = {}) {
   return new WS(stream, o);
 }
 
-function genSubscribe(stream) {
-  return (endpoint, cb, o = {}) => {
-    let isable = true;
-    //
-    const { proxy, willLink, pingInterval, reconnect } = o;
-    const options = proxy ? {
-      agent: new HttpsProxyAgent(url.parse(proxy))
-    } : {};
-    //
-    let ws;
-    try {
-      ws = new WebSocket(stream + endpoint, options);
-    } catch (e) {
-      console.log(e);
-      restart();
-    }
-
-    function restart() {
-      if (reconnect) reconnect();
-      isable = false;
-    }
-    //
-    ws.tryPing = (noop) => {
-      try {
-        ws.ping(noop);
-      } catch (e) {
-        console.log(e, 'ping error');
-      }
-    };
-    //
-    if (endpoint) ws.endpoint = endpoint;
-    ws.isAlive = false;
-    ws.on('open', () => {
-      console.log('open');
-      if (willLink) willLink(ws);
-      if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
-    });
-    ws.on('pong', () => {
-      // console.log('pong');
-    });
-    ws.on('ping', () => {
-      // console.log('ping');
-    });
-    ws.on('error', (e) => {
-      console.log(e, 'error');
-      restart();
-    });
-    ws.on('close', (e) => {
-      console.log(e, 'close');
-      restart();
-    });
-    ws.on('message', (data) => {
-      try {
-        if (typeof data === 'string') data = JSON.parse(data);
-        cb(data, ws);
-      } catch (error) {
-        console.log(`ws Parse json error: ${error.message}`);
-      }
-      onceLoop(() => {
-        ws.tryPing();
-      }, loopInterval);
-    });
-    return ws;
-  };
-}
-
 module.exports = {
-  genSubscribe,
   genWs,
 };

@@ -1,6 +1,6 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['deribit']; // bikicoin
+const exchanges = ['binance']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
@@ -8,6 +8,16 @@ const newtasks = [
   // ['assetOrder', { pair: 'BTC-USD', asset_type: 'SWAP', side: 'CLOSE', direction: 'SHORT', price: 10000, amount: 10, type: 'LIMIT', order_type: 'NORMAL' }],
   // ['cancelAssetOrder', { order_id: '22074158437' }],
   // ['volatilityHistory', { coin: 'BTC' }],
+  // ['coinContractOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }]
+  // ['coinContractOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', type: 'limit', direction: 'LONG', side: 'BUY', price: 10000, amount: 1, client_oid: 'x2xfffs' }],
+  // ['coinContractBatchCancelOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', order_ids: [562672879, 562673242] }],
+  // ['coinContractCancelOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', client_oid: 'xxfffs' }],
+  // ['coinContractOrderInfo', { pair: 'BTC-USD', asset_type: 'QUARTER', order_id: 562672879 }],
+  // ['coinContracUnfinishedtOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
+  // ['coinContractUnfinishedOrderHistory', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
+  ['coinContractBalances', { coin: 'BTC' }],
+  // ['updateCoinContractListenKey', {}],
+    // ['coinContractPositions', {}],
 ];
 
 const tasks = [
@@ -46,13 +56,6 @@ const tasks = [
   //   name: '现货交易对信息'
   // },
   // {
-  //   fn: 'coinContractBalances',
-  //   params: {
-  //     // coin: 'BTC'
-  //   },
-  //   name: '币本位资产余额'
-  // },
-  // {
   //   fn: 'coinContractPositions',
   //   params: {
   //     // coin: 'BTC'
@@ -67,15 +70,6 @@ const tasks = [
   //   name: '币本位资产仓位风险'
   // },
 
-  // {
-  //   fn: 'coinContractOrders',
-  //   params: {
-  //     pair: 'BTC-USD',
-  //     asset_type: 'NEXT_QUARTER',
-  //     // limit: 2
-  //   },
-  // },
-
 
   // {
   //   fn: 'spotDepth',
@@ -85,6 +79,7 @@ const tasks = [
   //   },
   //   name: '现货深度',
   // },
+
   // {
   //   fn: 'spotTrades',
   //   params: {
