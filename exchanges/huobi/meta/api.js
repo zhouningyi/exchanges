@@ -1,13 +1,186 @@
 
 const Utils = require('./../utils');
 
-module.exports = {
+
+function fix(config) {
+  for (const name in config) {
+    const l = config[name];
+    l.name = name;
+    if (!l.sign)l.sign = false;
+    if (!l.method) l.method = 'GET';
+  }
+  return config;
+}
+
+const spotConfig = {
   // // // // // // // 公共部分  // // // // // // //
-  pairs: {
-    name: 'pairs',
-    name_cn: '币对信息',
-    sign: false,
+  spotSystemStatus: {
+    name_cn: '系统当前状态',
+    endpoint: 'v2/summary.json',
+    desc: '获取系统当前状态',
+    notNull: [],
+    host: 'huobigroup'
+  },
+  spotAssets: {
+    name_cn: '所有现货交易对',
     endpoint: 'v1/common/symbols',
+    desc: '所有现货交易对',
+    notNull: [],
+    check: 'assets'
+  },
+  spotKline: {
+    name: 'spotKline',
+    name_cn: 'k线图',
+    sign: false,
+    endpoint: 'market/history/kline',
+    notNull: ['pair', 'interval'],
+    check: 'kline'
+  },
+  // // // // // // // 私有部分  // // // // // // //
+  spotBalances: {
+    name_cn: '现货账户信息',
+    sign: true,
+    endpointParams: ['spotId'],
+    endpoint: 'v1/account/accounts/{spotId}/balance',
+    check: 'balance'
+  },
+  spotOrder: {
+    method: 'POST',
+    name_cn: '现货交易',
+    sign: true,
+    notNull: ['pair', 'type', 'side'],
+    endpoint: 'v1/order/orders/place',
+    check: 'order'
+  },
+  spotCancelOrderByOrderId: {
+    method: 'POST',
+    name_cn: '取消订单(order_id)',
+    sign: true,
+    notNull: ['order_id'],
+    endpointParams: ['order_id'],
+    endpoint: 'v1/order/orders/{order_id}/submitcancel'
+  },
+  spotCancelOrderByClientOrderId: {
+    method: 'POST',
+    name_cn: '取消订单(client_oid)',
+    sign: true,
+    notNull: ['client_oid'],
+    endpoint: 'v1/order/orders/submitCancelClientOrder'
+  },
+  spotOrderInfoByOrderId: {
+    method: 'GET',
+    sign: true,
+    name_cn: '订单详情(order_id)',
+    endpoint: 'v1/order/orders/{order_id}',
+    endpointParams: ['order_id'],
+    notNull: ['order_id'],
+    check: 'order'
+  },
+  spotOrderInfoByClientOrderId: {
+    method: 'GET',
+    sign: true,
+    name_cn: '订单详情(client_oid)',
+    endpoint: 'v1/order/orders/getClientOrder',
+    notNull: ['client_oid'],
+    check: 'order'
+  },
+  // batchCancelSpotOrders: {
+  //   method: 'POST',
+  //   name: 'batchCancelSpotOrders',
+  //   name_cn: '取消所有未完成的订单',
+  //   sign: true,
+  //   notNull: [],
+  //   endpoint: 'v1/order/orders/batchcancel'
+  // },
+  // spotMoveBalance: {
+  //   method: 'POST',
+  //   name_cn: '现货资金划转',
+  //   endpoint: 'account/v3/transfer',
+  //   sign: true,
+  //   notNull: ['source', 'target', 'amount', 'coin']
+  // },
+};
+
+const futureConfig = {
+  futureMoveBalance: {
+    method: 'POST',
+    name_cn: '期货现货划转',
+    endpoint: 'v1/futures/transfer',
+    sign: true,
+    notNull: ['coin', 'source', 'target', 'amount'],
+    rateLimit: 1000 / 10,
+    check: 'moveBalance'
+  },
+  futureBalances: {
+    method: 'POST',
+    name_cn: '账户余额',
+    endpoint: 'api/v1/contract_account_info',
+    sign: true,
+    notNull: [],
+    host: 'future',
+    check: 'balance'
+  },
+  futurePositions: {
+    method: 'POST',
+    name_cn: '持仓信息',
+    endpoint: 'api/v1/contract_position_info',
+    sign: true,
+    notNull: [],
+    host: 'future',
+  },
+  futureOrder: {
+    method: 'POST',
+    name_cn: '期货下单',
+    sign: true,
+    endpoint: 'api/v1/contract_order',
+    accept: ['client_oid'],
+    notNull: ['pair', 'asset_type', 'side', 'type', 'direction', 'lever_rate'],
+    host: 'future',
+  },
+  futureCancelOrder: {
+    method: 'POST',
+    name_cn: '期货撤单',
+    sign: true,
+    endpoint: 'api/v1/contract_cancel',
+    accept: ['client_oid'],
+    notNull: ['pair', 'asset_type'],
+    host: 'future',
+  },
+  futureOrderInfo: {
+    method: 'POST',
+    name_cn: '期货订单信息',
+    desc: '通过订单ID获取单个订单信息',
+    endpoint: 'api/v1/contract_order_info',
+    sign: true,
+    accept: ['order_id', 'client_oid'],
+    notNull: ['pair'],
+    host: 'future',
+  },
+  futureAssets: {
+    name_cn: '所有资产',
+    desc: '通过订单ID获取单个订单信息',
+    endpoint: 'api/v1/contract_contract_info',
+    sign: true,
+    accept: ['pair'],
+    host: 'future',
+    check: 'asset'
+  }
+};
+
+const publicConfig = {
+  time: {
+    name: 'time',
+    name_cn: '时间',
+    sign: false,
+    endpoint: 'v1/common/timestamp',
+    desc: '获取系统时间',
+    notNull: [],
+  },
+  accounts: {
+    name: 'accounts',
+    name_cn: '账户信息',
+    sign: true,
+    endpoint: 'v1/account/accounts'
   },
   //
   coins: {
@@ -18,46 +191,12 @@ module.exports = {
     desc: '获取平台所有币种列表',
     notNull: [],
   },
-  time: {
-    name: 'time',
-    name_cn: '时间',
-    sign: false,
-    endpoint: 'v1/common/timestamp',
-    desc: '获取系统时间',
-    notNull: [],
-  },
-  spotKline: {
-    name: 'spotKline',
-    name_cn: 'k线图',
-    sign: false,
-    endpoint: 'market/history/kline',
-    notNull: ['pair', 'interval']
-  },
+
   spotTicks: {
     name: 'spotTicks',
     name_cn: '现货tick',
     sign: false,
     endpoint: 'market/tickers'
-  },
-  accounts: {
-    name: 'accounts',
-    name_cn: '账户信息',
-    sign: true,
-    endpoint: 'v1/account/accounts'
-  },
-  spotBalances: {
-    name: 'spotBalances',
-    name_cn: '现货账户信息',
-    sign: true,
-    endpointParams: ['spotId'],
-    endpoint: 'v1/account/accounts/{spotId}/balance'
-  },
-  spotBalance: {
-    name: 'spotBalance',
-    name_cn: '现货账户信息',
-    sign: true,
-    endpointParams: ['spotId'],
-    endpoint: 'v1/account/accounts/{spotId}/balance'
   },
   pointBalances: {
     name: 'pointBalances',
@@ -65,14 +204,6 @@ module.exports = {
     sign: true,
     endpointParams: ['pointId'],
     endpoint: 'v1/account/accounts/{pointId}/balance'
-  },
-  spotOrder: {
-    method: 'POST',
-    name: 'spotOrder',
-    name_cn: '现货交易',
-    sign: true,
-    notNull: ['pair', 'type', 'side'],
-    endpoint: 'v1/order/orders/place'
   },
   spotOrders: {
     method: 'GET',
@@ -82,15 +213,6 @@ module.exports = {
     notNull: ['pair'],
     endpoint: 'v1/order/orders'
   },
-  spotOrderInfo: {
-    method: 'GET',
-    name: 'spotOrderInfo',
-    sign: true,
-    name_cn: '订单详情',
-    endpoint: 'v1/order/orders/{order_id}',
-    endpointParams: ['order_id'],
-    notNull: ['order_id'],
-  },
   unfinishSpotOrders: {
     method: 'GET',
     name: 'unfinishSpotOrders',
@@ -99,14 +221,6 @@ module.exports = {
     notNull: ['pair'],
     endpoint: 'v1/order/openOrders'
   },
-  batchCancelSpotOrders: {
-    method: 'POST',
-    name: 'batchCancelSpotOrders',
-    name_cn: '取消所有未完成的订单',
-    sign: true,
-    notNull: [],
-    endpoint: 'v1/order/orders/batchcancel'
-  },
   batchCancelOpenSpotOrders: {
     method: 'POST',
     name: 'batchCancelOpenSpotOrders',
@@ -114,14 +228,6 @@ module.exports = {
     sign: true,
     notNull: [],
     endpoint: 'v1/order/orders/batchCancelOpenOrders'
-  },
-  futurePairs: {
-    method: 'GET',
-    name: 'futurePairs',
-    name_cn: '期货币种信息',
-    desc: '期货币种信息',
-    endpoint: 'api/v1/contract_contract_info',
-    host: 'future',
   },
   futureIndex: {
     method: 'GET',
@@ -147,29 +253,11 @@ module.exports = {
     notNull: [],
     host: 'future',
   },
-  futureBalances: {
-    method: 'POST',
-    name: 'futureBalances',
-    name_cn: '账户余额',
-    endpoint: 'api/v1/contract_account_info',
-    sign: true,
-    notNull: [],
-    host: 'future',
-  },
   futureBalance: {
     method: 'POST',
     name: 'futureBalance',
     name_cn: '账户余额',
     endpoint: 'api/v1/contract_account_info',
-    sign: true,
-    notNull: [],
-    host: 'future',
-  },
-  futurePositions: {
-    method: 'POST',
-    name: 'futurePositions',
-    name_cn: '持仓信息',
-    endpoint: 'api/v1/contract_position_info',
     sign: true,
     notNull: [],
     host: 'future',
@@ -181,16 +269,6 @@ module.exports = {
     endpoint: 'api/v1/contract_fee',
     sign: true,
     notNull: ['pair'],
-    host: 'future',
-  },
-  futureOrder: {
-    method: 'POST',
-    name: 'futureOrder',
-    name_cn: '期货下单',
-    sign: true,
-    endpoint: 'api/v1/contract_order',
-    accept: ['client_oid'],
-    notNull: ['pair', 'contract_type', 'side', 'type', 'direction', 'lever_rate'],
     host: 'future',
   },
   futureOrders: {
@@ -233,26 +311,6 @@ module.exports = {
     host: 'future',
     notNull: ['pair']
   },
-  futureOrderInfo: {
-    method: 'POST',
-    name: 'futureOrderInfo',
-    name_cn: '期货订单信息',
-    desc: '通过订单ID获取单个订单信息',
-    endpoint: 'api/v1/contract_order_info',
-    sign: true,
-    accept: ['order_id', 'client_oid'],
-    notNull: ['pair'],
-    host: 'future',
-  },
-  spotFutureTransfer: {
-    method: 'POST',
-    name: 'spotFutureTransfer',
-    name_cn: '期货现货划转',
-    endpoint: 'v1/futures/transfer',
-    sign: true,
-    notNull: ['coin', 'source', 'target', 'amount'],
-    rateLimit: 1000 / 10
-  },
   // walletLedger: {
   //   name: 'walletLedger',
   //   name_cn: '流水',
@@ -268,14 +326,6 @@ module.exports = {
   //   notNull: ['coin'],
   //   accept: ['create_date'],
   //   host: 'future'
-  // },
-  // moveBalance: {
-  //   method: 'POST',
-  //   name: 'moveBalance',
-  //   name_cn: '资金划转',
-  //   endpoint: 'account/v3/transfer',
-  //   sign: true,
-  //   notNull: ['source', 'target', 'amount', 'coin']
   // },
   // withdrawHistory: {
   //   name: 'withdrawHistory',
@@ -629,3 +679,13 @@ module.exports = {
   //   rateLimit: 2000 / 20
   // },
 };
+
+
+const config = {
+  ...fix(spotConfig),
+  ...fix(futureConfig),
+  ...fix(publicConfig)
+};
+
+
+module.exports = config;

@@ -65,7 +65,7 @@ function usdtContractPairs(ds) {
 
 function getOrderTypeOptions(o) {
   let { order_type } = o;
-  const type = o.type.toUpperCase();
+  const type = (o.type || 'LIMIT').toUpperCase();
   const opt = { type, timeInForce: 'GTC' };
   if (order_type) {
     order_type = order_type.toUpperCase();
@@ -84,7 +84,6 @@ function parseOrderTypeOptions(o) {
   }
   return opt;
 }
-
 
 function pair2symbol(pair) {
   return pair.replace('-', '');
@@ -109,6 +108,7 @@ function getSymbolId({ asset_type, pair }) {
 const baseCoins = ['USD', 'USDT', 'BTC', 'ETH', 'BNB', 'BUSD'];
 
 function formatSymbolPair(symbol) {
+  symbol = symbol.toUpperCase();
   for (const baseCoin of baseCoins) {
     if (symbol.endsWith(baseCoin)) return symbol.replace(baseCoin, `-${baseCoin}`);
   }
@@ -141,9 +141,9 @@ function getDeliveryMap(reverse = false) {
   return res;
 }
 
-
 function ext2asset_type(ext) {
   if (ext === 'PERP') return 'SWAP';
+  if (!ext) return 'SPOT';
   return future_id2contract_type(ext);
 }
 
@@ -153,22 +153,21 @@ function asset_type2ext(asset_type) {
   return contract_type2future_id(asset_type);
 }
 
-
 function future_id2contract_type(ext) {
   const deliveryMap = getDeliveryMap();
   return deliveryMap[ext];
 }
 
-function contract_type2future_id(type) {
+function contract_type2future_id(asset_type) {
   const reverseDeliveryMap = getDeliveryMap(true);
-  return reverseDeliveryMap[type.toLowerCase()];
+  return reverseDeliveryMap[asset_type.toUpperCase()];
 }
 
 function getOrderDirectionOptions({ side, direction }) {
   side = side.toUpperCase();
   direction = direction.toUpperCase();
   const d1 = direction === 'SHORT' ? -1 : 1;
-  const s1 = direction === 'SELL' ? -1 : 1;
+  const s1 = side === 'SELL' ? -1 : 1;
   return { side: d1 * s1 > 0 ? 'BUY' : 'SELL' };
 }
 
@@ -181,8 +180,6 @@ function parseOrderDirectionOptions({ side, realizedPnl }) {
   if (side === 'SELL') return { side: 'SELL', direction: 'LONG' };
   if (side === 'BUY') return { side: 'SELL', direction: 'SHORT' };
 }
-
-
 function parseOrderStatusOptions(d) {
   const { status } = d;
   return {
@@ -210,7 +207,23 @@ function getOrderStatusOptions(d) {
   };
 }
 
+function _formatOrderO(o) {
+  const symbol = getSymbolId(o);
+  const opt = { symbol };
+  if (o.order_id)opt.orderId = o.order_id;
+  if (o.client_oid)opt.origClientOrderId = o.client_oid;
+  console.log(o, 'o....');
+  return opt;
+}
+
+function formatDepth(ls) {
+  return _.map(ls, l => ({ price: _parse(l[0]), volume: _parse(l[1]) }));
+}
+
+
 module.exports = {
+  formatDepth,
+  formatOrderO: _formatOrderO,
   parseOrderStatusOptions,
   getOrderStatusOptions,
   getOrderDirectionOptions,

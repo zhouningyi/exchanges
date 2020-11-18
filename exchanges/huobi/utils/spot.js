@@ -3,9 +3,10 @@ const _ = require('lodash');
 const md5 = require('md5');
 //
 const Utils = require('./../../../utils');
+const ef = require('./../../../utils/formatter');
 const publicUtils = require('./public');
 
-const { getPairInfo, reverseOrderStatusMap, orderStatusMap, symbol2pair, pair2symbol, periodMap } = publicUtils;
+const { getPairInfo, systemStatusMap, checkKey, reverseOrderStatusMap, orderStatusMap, symbol2pair, pair2symbol, periodMap } = publicUtils;
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -25,7 +26,7 @@ function spotKlineO(o = {}) {
 }
 
 function spotKline(ds, o) {
-  return _.map(ds, (d) => {
+  return ef.mapResult(ds, (d) => {
     return {
       unique_id: `${o.pair}${d.id}`,
       time: new Date(d.id * 1000),
@@ -34,7 +35,8 @@ function spotKline(ds, o) {
       open: d.open,
       close: d.close,
       count: d.count,
-      amount: d.amount,
+      volume: d.amount,
+      base_volume: d.vol,
       interval: o.interval,
       pair: o.pair
     };
@@ -55,6 +57,7 @@ function spotTicks(ds) {
   });
 }
 
+const exchange = 'HUOBI';
 function _processBalance(list) {
   const group = _.groupBy(list, l => l.currency.toUpperCase());
   const res = [];
@@ -62,9 +65,11 @@ function _processBalance(list) {
     const map = _.groupBy(arr, d => d.type);
     const locked = _.get(map.frozen, '0');
     const trade = _.get(map.trade, '0');
-    const l = { coin };
+    const l = { coin, exchange };
     if (locked) l.locked_balance = _parse(locked.balance);
     if (trade) l.balance = _parse(trade.balance);
+    l.asset_type = 'SPOT';
+    l.unique_id = Utils.formatter.getBalanceId(l);
     // if (locked && trade) l.total_balance = l.locked_balance + l.balance;
     res.push(l);
   });
@@ -83,45 +88,64 @@ function spotBalances(res, o) {
 }
 
 // buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker（
-function getOrderProps(type) {
-  if (type === 'buy-market') return { type: 'MARKET', side: 'BUY' };
-  if (type === 'sell-market') return { type: 'MARKET', side: 'SELL' };
-  if (type === 'buy-limit') return { type: 'LIMIT', side: 'BUY' };
-  if (type === 'sell-limit') return { type: 'LIMIT', side: 'SELL' };
-  if (type === 'buy-limit-maker') return { type: 'LIMIT', side: 'BUY', exec_type: 'maker' };
-  if (type === 'sell-limit-maker') return { type: 'LIMIT', side: 'SELL', exec_type: 'maker' };
-  if (type === 'buy-ioc') return { type: 'IOC', side: 'BUY' };
-  if (type === 'sell-ioc') return { type: 'IOC', side: 'SELL' };
+function getOrderProps({ type, exec_type }) {
+  let res = {};
+  if (type === 'buy-market') res = { type: 'MARKET', side: 'BUY' };
+  if (type === 'sell-market') res = { type: 'MARKET', side: 'SELL' };
+  if (type === 'buy-limit') res = { type: 'LIMIT', side: 'BUY' };
+  if (type === 'sell-limit') res = { type: 'LIMIT', side: 'SELL' };
+  if (type === 'buy-limit-maker') res = { type: 'LIMIT', side: 'BUY', order_type: 'POST_ONLY' };
+  if (type === 'sell-limit-maker') res = { type: 'LIMIT', side: 'SELL', order_type: 'POST_ONLY' };
+  if (type === 'buy-ioc') res = { type: 'IOC', side: 'BUY' };
+  if (type === 'sell-ioc') res = { type: 'IOC', side: 'SELL' };
+  if (exec_type === 'marker') {
+    res.order_type = 'POST_ONLY';
+  } else if (exec_type === 'fok') {
+    res.order_type = 'FOK';
+  }
+  return res;
 }
 function getOrderType(o) {
   const type = o.type.toUpperCase();
   const side = o.side.toUpperCase();
-  if (type === 'MARKET' && side === 'BUY') return 'buy-market';
-  if (type === 'MARKET' && side === 'SELL') return 'sell-market';
-  if (type === 'LIMIT' && side === 'BUY') return 'buy-limit';
-  if (type === 'LIMIT' && side === 'SELL') return 'sell-limit';
-  console.log(o, 'getOrderType: type未知...');
+  const order_type = (o.order_type || '').toUpperCase();
+  let res = null;
+  if (type === 'MARKET' && side === 'BUY') res = 'buy-market';
+  if (type === 'MARKET' && side === 'SELL') res = 'sell-market';
+  if (type === 'LIMIT' && side === 'BUY') res = 'buy-limit';
+  if (type === 'LIMIT' && side === 'SELL') res = 'sell-limit';
+  let addon = '';
+  if (['POST_ONLY', 'MAKER'].includes(order_type)) addon = 'maker';
+  if (['FOK'].includes(order_type)) addon = 'fok';
+  if (['IOC'].includes(order_type) && res) res = res.replace('-limit', '-ioc');
+  res = [res, addon].filter(d => d).join('-');
+  if (!res)console.log(o, 'getOrderType: type未知...');
+  return res;
 }
+
 function _formatSpotOrder(l) {
   const state = l.state || l['order-state'];
   const price = state === 'canceled' ? undefined : _parse(l.price);
   const order_id = `${l.id || l['order-id']}`;
-  return Utils.cleanObjectNull({
+  const res = {
     unique_id: order_id,
+    asset_type: 'SPOT',
     order_id,
     pair: symbol2pair(l.symbol),
     account_id: l['account-id'],
     amount: _parse(l.amount),
     price,
     server_created_at: l['created-at'] ? new Date(l['created-at']) : undefined,
-    ...getOrderProps(l.type),
-    server_finished_at: l['finished-at'] ? new Date(l['finished-at']) : undefined,
+    ...getOrderProps(l),
+    server_updated_at: l['finished-at'] ? new Date(l['finished-at']) : undefined,
     server_canceled_at: l['canceled-at'] ? new Date(l['canceled-at']) : undefined,
     source: l.source,
     status: orderStatusMap[state],
     filled_amount: _parse(l['filled-amount']),
     fee: _parse(l['filled-fees']),
-  });
+  };
+  if (l['client-order-id'])res.client_oid = l['client-order-id'];
+  return Utils.cleanObjectNull(res);
 }
 
 // function spotLedgerO(o = {}) {
@@ -132,17 +156,6 @@ function _formatSpotOrder(l) {
 //   const { from, to, limit, ...rest } = o;
 //   return _.map(res, d => formatLedger(d, rest));
 // }
-
-function _formatPrice(price, pair) {
-  const digit = _.get(getPairInfo(pair), 'base_asset_precision');
-  if (digit && (price || price === 0) && price.toFixed) price = price.toFixed((digit - 1) || 4);
-  return price;
-}
-function _formatAmount(price, pair) {
-  const digit = _.get(getPairInfo(pair), 'amount_precision');
-  if (digit && (price || price === 0) && price.toFixed) price = price.toFixed((digit) || 3);
-  return price;
-}
 
 // // 下单
 function spotOrderO(o = {}, o1) {
@@ -156,14 +169,14 @@ function spotOrderO(o = {}, o1) {
     source: 'api'
   };
   if (o.client_oid) opt['client-order-id'] = o.client_oid;
-  if (type === 'LIMIT') opt.price = _formatPrice(o.price, o.pair);
-  opt.amount = _formatAmount(o.amount, o.pair);
+  if (type === 'LIMIT') opt.price = `${o.price}`;
+  // opt.amount = _formatAmount(o.amount, o.pair);
   return opt;
 }
 
 function spotOrder(order_id, o = {}) {
   if (!order_id || order_id.error) return false;
-  return { ...o, order_id };
+  return { ...o, asset_type: 'SPOT', order_id };
 }
 
 // // 撤单
@@ -251,15 +264,6 @@ function unfinishSpotOrders(res, o) {
   return _.map(res, d => _formatSpotOrder(d, o));
 }
 
-function spotOrderInfoO(o = {}) {
-  return {
-    order_id: o.order_id
-  };
-}
-
-function spotOrderInfo(res, o) {
-  return _formatSpotOrder(res, o);
-}
 
 // //
 // function orderDetailO(o = {}) {
@@ -293,7 +297,80 @@ function _formatDepth(ds) {
   });
 }
 
+// /
+
+function spotSystemStatus(d) {
+  if (!d) return { error: 'systemStatus没数据..' };
+  const interval = 5 * 60 * 1000;
+  const now = new Date().getTime();
+  return _.map(d.scheduled_maintenances, (d) => {
+    return {
+      title: d.name,
+      status: systemStatusMap[d.status],
+      time_start: new Date(d.scheduled_for),
+      time_end: new Date(d.scheduled_end)
+    };
+  }).concat(_.map(d.components, (d) => {
+    if (['operational', 'degraded_performance'].includes(d.status)) return null;
+    return {
+      title: d.name,
+      statusName: d.status,
+      status: 'ING',
+      time_start: new Date(now - interval),
+      time_end: new Date(now - interval)
+    };
+  })).filter(d => d);
+}
+const asset_type = 'SPOT';
+function spotAssets(ds) {
+  if (!ds) return null;
+  return _.map(ds, (d) => {
+    const pair = [d['base-currency'], d['quote-currency']].join('-').toUpperCase();
+    const res = {
+      exchange,
+      pair,
+      asset_type,
+      price_precision: d['price-precision'],
+      base_precision: d['amount-precision'],
+      lever_rate: _parse(d['leverage-ratio']),
+      isable: d.state === 'online'
+    };
+    res.instrument_id = Utils.formatter.getInstrumentId(res);
+    return res;
+  });
+}
+
+// 按照order_id撤销订单
+function spotCancelOrderByOrderId(order_id, o) {
+  return (order_id && !order_id.error) ? { ...o, order_id, status: 'CANCELING' } : null;
+}
+
+// 按照client_oid撤销订单
+function spotCancelOrderByClientOrderIdO(d) {
+  return { 'client-order-id': d.client_oid };
+}
+function spotCancelOrderByClientOrderId(statusId, o) {
+  if (statusId && !statusId.error) return { ...o, status: orderStatusMap[statusId] };
+  return statusId;
+}
+
+const spotOrderInfoByOrderId = _formatSpotOrder;
+
+function spotOrderInfoByClientOrderIdO(o) {
+  return { clientOrderId: o.client_oid };
+}
+const spotOrderInfoByClientOrderId = _formatSpotOrder;
 module.exports = {
+  spotOrderInfoByOrderId,
+  spotOrderInfoByClientOrderIdO,
+  spotOrderInfoByClientOrderId,
+  spotCancelOrderByClientOrderIdO,
+  spotCancelOrderByClientOrderId,
+  spotCancelOrderByOrderId,
+  // spotMoveBalanceO,
+  // spotMoveBalance,
+  spotAssets,
+  spotSystemStatus,
   ...publicUtils,
   // formatTick: _formatTick,
   formatDepth: _formatDepth,
@@ -320,6 +397,7 @@ module.exports = {
   // spotLedger,
   spotOrdersO,
   spotOrders,
+  getSpotOrderProps: getOrderProps,
   //
   unfinishSpotOrdersO,
   unfinishSpotOrders,
@@ -329,8 +407,44 @@ module.exports = {
   batchCancelOpenSpotOrders,
   batchCancelSpotOrdersO,
   batchCancelSpotOrders,
-  spotOrderInfoO,
-  spotOrderInfo,
   // orderDetailO,
   // orderDetail
 };
+
+
+// function formatDigit(num, n) {
+//   const k = Math.pow(10, n);
+//   return Math.floor(num * k) / k;
+// }
+// function spotMoveBalanceO(o = {}) {
+//   const { source, target, coin, instrument_id, sub_account } = o;
+//   if (source === 'sub_account') checkKey(o, ['sub_account']);
+//   if (source === 'margin') checkKey(o, ['instrument_id']);
+//   const amount = formatDigit(o.amount, 4);// 有时候会有精度问题
+//   const from = accountTypeMap[source];
+//   if (!from) {
+//     console.log(`source: ${source}错误，找不到相应的错误码`);
+//     return false;
+//   }
+//   const to = accountTypeMap[target];
+//   if (!to) {
+//     console.log(`target: ${target}错误，找不到相应的错误码`);
+//     return false;
+//   }
+//   const currency = coin;// .toLowerCase();
+//   const opt = { from, to, currency, instrument_id, sub_account, amount };
+//   return opt;
+// }
+// function spotMoveBalance(res, o = {}) {
+//   const success = res.result === true;
+//   const error = res.result === true ? null : res.result || res.message;
+//   return {
+//     trx_id: res.transfer_id,
+//     coin: o.coin,
+//     source: o.source,
+//     target: o.target,
+//     amount: res.amount || o.amount,
+//     success,
+//     error
+//   };
+// }

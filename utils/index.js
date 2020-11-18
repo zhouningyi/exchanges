@@ -8,6 +8,8 @@ const ws = require('./ws');
 const fn = require('./fn');
 const base = require('./base');
 const time = require('./time');
+const formatter = require('./formatter');
+
 
 function getQueryString(params, isEncode = false) {
   params = _.map(params, (value, key) => ({ value, key }));
@@ -22,23 +24,6 @@ function getQueryString(params, isEncode = false) {
   }).join('&');
 }
 
-function isNull(v) {
-  return v === undefined || v === null || v === '';
-}
-
-function _handelNull(k) {
-  Console.print(`${k}的值不能为空`, 'red');
-  process.exit();
-}
-
-function checkKey(o, vs) {
-  if (Array.isArray(vs)) {
-    vs = _.keyBy(vs, v => v);
-    _.forEach(vs, (k) => {
-      if (isNull(o[k])) _handelNull(k);
-    });
-  } else if (isNull(o[vs])) _handelNull(vs);
-}
 
 function parse(v) {
   return parseFloat(v, 10);
@@ -53,20 +38,16 @@ function _parse(v) {
   return parseFloat(v, 10);
 }
 
-function getInstrumentId({ exchange = '', asset_type, pair }) {
-  return [exchange, asset_type, pair].filter(d => d).join('_').toUpperCase();
-}
-
 module.exports = {
   ...base,
   ...morph,
   ...Console,
   ...fn,
   ...time,
+  formatter,
   unique,
-  getInstrumentId,
+  getInstrumentId: formatter.getInstrumentId,
   getQueryString,
-  checkKey,
   ws,
   parse,
   throwError,

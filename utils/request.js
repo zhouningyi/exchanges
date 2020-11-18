@@ -2,9 +2,17 @@
 const request = require('request');
 const got = require('got');
 const Utils = require('./../utils');
+const { fcoin } = require('../config');
 const argv = require('optimist').argv;
 
 const logrest = !!argv.logrest;
+
+// async function test() {
+//   const response = await got('https://baidu.com');
+//   console.log(response.body);
+// }
+
+// test();
 
 // {
 //   uri: 'https://www.okex.com/api/futures/v3/orders/ETH-USD-200515?instrument_id=ETH-USD-200515&state=6',
@@ -21,11 +29,24 @@ const logrest = !!argv.logrest;
 // }
 
 
-async function requestP(o) {
+async function requestGot(o) {
   let { uri, url, method = 'GET', headers = {} } = o;
-  if (method === 'POST') {
-    console.log(o);
-    process.exit();
+
+  const dataO = {};
+  if (o.form) {
+    dataO.form = o.form;
+    headers['content-type'] = headers['Content-Type'] = 'application/x-www-form-urlencoded';
+  }
+  if (o.qs) {
+    if (o.method === 'PUT') {
+      // dataO.body = JSON.stringify(o.qs);
+      // // headers['content-type'] = headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    } else {
+      dataO.json = o.qs;
+    }
+  }
+  if (o.body) {
+    dataO.body = o.body;
   }
 
   method = method.toUpperCase();
@@ -33,28 +54,34 @@ async function requestP(o) {
   let res;
   //
   headers['content-type'] = headers['Content-Type'];
-  const defaultO = { headers: { ...headers }, resolveBodyOnly: true, http2: true, responseType: 'json' };
+  const defaultO = { headers: { ...headers }, dnsCache: true, resolveBodyOnly: true, http2: false, responseType: 'json' };
   let opt;
   try {
     if (method === 'GET') {
       opt = { ...defaultO };
+      // console.log(opt, 'GET start......');
       res = await got(url, opt);
     } else if (method === 'POST') {
-      // console.log(9999999999999999999999999);
-      res = await got.post(url, { ...defaultO, body: 'json' });
+      opt = { ...defaultO, ...dataO };
+      res = await got.post(url, opt);
+    } else if (method === 'DELETE') {
+      opt = { ...defaultO, ...dataO };
+      res = await got.delete(url, opt);
+    } else if (method === 'PUT') {
+      opt = { ...defaultO, ...dataO };
+      res = await got.put(url, opt);
     } else {
-      console.log('METHOD..ERROR.............');
+      console.log(method, 'METHOD..ERROR.............');
     }
   } catch (e) {
-    console.log(e, opt, 999999999);
+    console.log(e, o, 'request query_error...');
+    return null;
   }
-
-  return res ? res.body : null;
+  if (!res) console.log(o, opt, 'requestP/no data...');
+  return res || null;
 }
 
-
 function requestPromise(o) {
-  // console.log(o, '===>>>');
   const t = new Date();
   return new Promise((resolve, reject) => {
     if (!o.timeout) o.timeout = 10000;
@@ -73,11 +100,18 @@ function requestPromise(o) {
       } catch (e) {
         Utils.print(url, 'red');
         console.log(body, o, 'body...');
-        console.log(e);
+        console.log(e, 'e....');
         reject();
       }
     });
   });
 }
 
-module.exports = requestPromise;
+async function requestMix(o) {
+  if (['GET', 'POST'].includes(o.method)) {
+    return await requestGot(o);
+  }
+  return await requestPromise(o);
+}
+
+module.exports = requestMix;

@@ -2,7 +2,6 @@
 const WebSocket = require('ws');
 const url = require('url');
 const _ = require('lodash');
-const HttpsProxyAgent = require('https-proxy-agent');
 const CryptoJS = require('crypto-js');
 const pako = require('pako');
 
@@ -79,7 +78,7 @@ class WS extends Event {
   }
   async init() {
     const { stream, options: o } = this;
-    const options = o.proxy ? { agent: new HttpsProxyAgent(url.parse(o.proxy)) } : {};
+    const options = {};
     try {
       const ws = this.ws = new WebSocket(stream, options);
       this.addHooks(ws, o);

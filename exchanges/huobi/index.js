@@ -5,16 +5,16 @@ const error = require('./errors');
 const Base = require('./../base');
 const kUtils = require('./utils');
 const Utils = require('./../../utils');
+const ef = require('./../../utils/formatter');
 const moment = require('moment');
 const request = require('./../../utils/request');
 const futureUtils = require('./utils/future');
-const { FUTURE_BASE, REST_BASE, WS_BASE, WS_BASE_ACCOUNT, WS_BASE_FUTURE, WS_BASE_FUTURE_ACCOUNT } = require('./config');
+const { FUTURE_BASE, REST_BASE, WS_BASE, REST_HUOBI_GROUP, WS_BASE_ACCOUNT, WS_BASE_FUTURE, WS_BASE_ACCOUNT_V2, WS_BASE_FUTURE_ACCOUNT } = require('./config');
 const restConfig = require('./meta/api');
 const HmacSHA256 = require('crypto-js/hmac-sha256');
 const CryptoJS = require('crypto-js');
-const future_pairs = require('./meta/future_pairs.json');
 
-
+const { upperFirst } = _;
 function fixPath(v) {
   if (v.startsWith('/')) return v;
   return `/${v}`;
@@ -43,7 +43,8 @@ class Exchange extends Base {
     this.version = 'v1';
     this.name = 'huobi';
     this.hostMap = {
-      future: FUTURE_BASE
+      future: FUTURE_BASE,
+      huobigroup: REST_HUOBI_GROUP
     };
     this.init();
   }
@@ -51,40 +52,49 @@ class Exchange extends Base {
     this.Utils = kUtils;
     this.loadFnFromConfig(restConfig);
     this.initWsPublic();
-    this.initWsAccount();
+    this.initWsSpotAccount();
     this.initWsFuturePublic();
     this.initWsFutureAccount();
-    await Promise.all([this.updateAccount(), this.updatePairs(), this.updateFuturePairs()]);
+    await Promise.all([this.updateAccount()]);
   }
   getFutureCoins() {
     const ps = futureUtils.getDefaultFuturePairs();
     return _.map(ps, p => p.split('-')[0]);
   }
-  _getBody(params) {
+  _getBody(params, version = '2') {
     const t = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+    if (version === '2.1') {
+      return {
+        accessKey: this.apiKey,
+        signatureMethod: 'HmacSHA256',
+        signatureVersion: '2.1',
+        timestamp: t
+      };
+    }
     return {
       AccessKeyId: this.apiKey,
       SignatureMethod: 'HmacSHA256',
-      SignatureVersion: '2',
+      SignatureVersion: version,
       Timestamp: t,
       ...params
     };
   }
 
-  signSha(method, baseurl, path, data) {
+  signSha(method, baseurl, path, data, isEncode = true) {
     const pars = [];
     for (const k in data) {
-      pars.push(`${k}=${encodeURIComponent(data[k])}`);
+      pars.push(`${k}=${isEncode ? encodeURIComponent(data[k]) : data[k]}`);
     }
     let p = pars.sort().join('&');
-    const signature = encodeURIComponent(this._signSha(method, baseurl, path, data));
+    let signature = this._signSha(method, baseurl, path, data);
+    if (isEncode)signature = encodeURIComponent(signature);
     p += `&Signature=${signature}`;
     return p;
   }
-  _signSha(method, baseurl, path, data) {
+  _signSha(method, baseurl, path, data, isEncode = true) {
     const pars = [];
     for (const k in data) {
-      pars.push(`${k}=${encodeURIComponent(data[k])}`);
+      pars.push(`${k}=${isEncode ? encodeURIComponent(data[k]) : data[k]}`);
     }
     const p = pars.sort().join('&');
     const meta = [method, baseurl, fixPath(path), p].join('\n');
@@ -101,7 +111,7 @@ class Exchange extends Base {
     this.queryOptions = Object.assign(this.queryOptions || {}, accountMap);
   }
   async updatePairs() {
-    const pairs = this.pairs = await this.pairs();
+    const pairs = this.pairs = await this.spotAssets();
     if (pairs && pairs.length) this.saveConfig(pairs, 'pairs');
   }
   async updateFuturePairs() {
@@ -142,8 +152,8 @@ class Exchange extends Base {
       }
     }
     const _o = { wsName };
-    this.wsFutureDepth = (options, cb) => this._addChanel('futureDepth', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
-    this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
+    this.wsFutureDepth = (options, cb) => this._addChanel('futureDepth', { ...options, ..._o }, cb);
+    this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, ..._o }, cb);
   }
   //
   initWsPublic(o = {}) {
@@ -157,14 +167,14 @@ class Exchange extends Base {
       }
     }
     const _o = { wsName };
-    this.wsSpotDepth = (options, cb) => this._addChanel('spotDepth', { pairs: this.getFuturePairs(o), ..._o }, cb);
+    this.wsSpotDepth = (options, cb) => this._addChanel('spotDepth', { ...options, ..._o }, cb);
   }
-  initWsAccount(o = {}) {
+  initWsSpotAccount(o = {}) {
     const wsName = 'wsAccount';
     if (!this.wsAccount) {
       try {
-        this[wsName] = kUtils.ws.genWs(WS_BASE_ACCOUNT, { proxy: this.proxy });
-        this.loginWs({ url: 'api.huobi.pro', path: '/ws/v1', wsName });
+        this[wsName] = kUtils.ws.genWs(WS_BASE_ACCOUNT_V2, { proxy: this.proxy });
+        this.loginWs({ url: 'api.huobi.pro', path: '/ws/v2', wsName });
       } catch (e) {
         console.log(e, 'initWs error');
         process.exit();
@@ -199,7 +209,9 @@ class Exchange extends Base {
         const str = `${ds.error_message || error.getErrorFromCode(error_code)} | [ws]`;
         throw new Error(str);
       }
-      cb(formater(ds));
+      ds = formater(ds);
+      ds = this.wrapperInfo(ds);
+      cb(ds);
     };
   }
   loginWs(o = {}) {
@@ -208,15 +220,29 @@ class Exchange extends Base {
     const ws = this[wsName];
     if (!ws) return setTimeout(() => this.loginWs(o), 100);
     ws.onOpen(() => {
-      const data = {
-        ...options,
-        ...this._getBody(),
-        Signature: this._signSha('GET', url, path, this._getBody()),
-        op: 'auth',
-      };
+      let data = null;
+      if (path === '/ws/v2') {
+        const body = this._getBody(null, '2.1');
+        data = {
+          action: 'req',
+          ch: 'auth',
+          params: {
+            authType: 'api',
+            ...body,
+            signature: this._signSha('GET', url, path, body),
+          }
+        };
+      } else {
+        data = {
+          ...options,
+          ...this._getBody(),
+          Signature: this._signSha('GET', url, path, this._getBody()),
+          op: 'auth',
+        };
+      }
       ws.send(data);
       ws.onLogin(() => {
-        this.print('ws login...', 'gray');
+        this.print(`ws ${wsName} login...`, 'gray');
         this.isWsLogin = true;
       });
     });
@@ -237,14 +263,13 @@ class Exchange extends Base {
       const base = this.getHost(hostId);
       url = `https://${base}/${endpoint}`;
     }
-
-    let qstr = '';
+    let qstr = Utils.getQueryString(params);
     if (isSign) {
       const info = this._getBody(method === 'GET' ? params : {});
-      const payload = this.signSha(method, this.getHost(hostId), endpoint, info);
-      qstr = payload; // [payload].join('&');// qstr,
+      qstr = this.signSha(method, this.getHost(hostId), endpoint, info);
     }
-    if (qstr && isSign) url = `${url}?${qstr}`;
+    if (qstr) url = `${url}?${qstr}`;// && method === 'GET'
+    // console.log(url, 'url....');
     const o = {
       timeout: options.timeout,
       uri: url,
@@ -292,6 +317,16 @@ class Exchange extends Base {
     }
     return body.data || body || false;
   }
+  async spotCancelOrder(o = {}) {
+    if (o.order_id) return await this.spotCancelOrderByOrderId(o);
+    if (o.client_oid) return await this.spotCancelOrderByClientOrderId(o);
+    return console.log('spotCancelOrder: 必须含有order_id/client_oid');
+  }
+  async spotOrderInfo(o = {}) {
+    if (o.order_id) return await this.spotOrderInfoByOrderId(o);
+    if (o.client_oid) return await this.spotOrderInfoByClientOrderId(o);
+    return console.log('spotCancelOrder: 必须含有order_id/client_oid');
+  }
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);
     let { source, target, amount } = o;
@@ -300,6 +335,16 @@ class Exchange extends Base {
     target = target.toUpperCase();
     if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
     return 0.002 * amount;
+  }
+  _getAssetBaseType(o) {
+    if (ef.isFuture(o) && ef.isUsdPair(o)) return 'future';
+    if (ef.isSwap(o) && ef.isUsdPair(o)) return 'coinSwap';
+    if (ef.isSwap(o) && ef.isUsdtPair(o)) return 'usdtContract';
+    if (ef.isSpot(o)) return 'spot';
+    return 'none';
+  }
+  _compatible() {
+    console.log('_compatible.._compatible.....');
   }
   // calcCostFuture(o = {}) {
   //   checkKey(o, ['coin', 'side', 'amount']);

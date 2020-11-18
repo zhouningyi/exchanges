@@ -2,7 +2,6 @@
 const WebSocket = require('ws');
 const url = require('url');
 const _ = require('lodash');
-const HttpsProxyAgent = require('https-proxy-agent');
 const Event = require('bcore/event');
 const Utils = require('../../../utils');
 
@@ -86,34 +85,56 @@ class WS extends Event {
   }
   async getMessage(opt, o) {
     const { streamName, method } = o;
-    const params = (typeof (streamName) === 'function') ? streamName(opt) : streamName;
+    const params = (typeof (streamName) === 'function') ? streamName(opt) : Array.isArray(streamName) ? streamName : [streamName];
     const id = this.idFuncMap[o.name] || this.createFuncId();
     this.idFuncMap[id] = o.name;
     this.funcIdMap[o.name] = id;
     return { method, params, id };
   }
-  _cleanResult(data) {
-    if (Array.isArray(data)) return _.map(data, cleanObjectNull);// cleanObjectNull(data);
-    if (data) return cleanObjectNull(data);
+  _formatLine(line) {
+    line = cleanObjectNull(line);
+    line.api_key = this.that.getApiKey();
+    line.exchange = this.that.name.toUpperCase();
+    return line;
+  }
+  _formatResult(data) {
+    if (Array.isArray(data)) return _.map(data, d => this._formatLine(d));// cleanObjectNull(data);
+    if (data) return this._formatLine(data);
   }
   createFunction(o = {}) {
-    const { streamName, base } = o;
+    let { streamName, base, method } = o;
     if (streamName !== 'listenKey') {
       const connectionId = base;
       const connectionUrl = base;
       if (!this[connectionId]) this.createConnection({ connectionId, connectionUrl });
       return async (opt, cb) => {
-        const mesagage = await this.getMessage(opt, o);
+        if (streamName && streamName.startsWith && streamName.startsWith('listenKey')) {
+          const listenKey = await this._getListenKey(o);
+          streamName = streamName.replace('listenKey', listenKey);
+        }
+        const mesagage = await this.getMessage(opt, { ...o, streamName, method });
         this.send(connectionId, mesagage);
-        this.registerFunc(connectionId, async (data) => {
-          if (o.chanel) {
-            const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
-            if (channelF(data)) {
-              data = o.formater(data, opt);
-              data = this._cleanResult(data);
-              cb(data);
-            }
+        return new Promise((resolve, reject) => {
+          let timeoutId;
+          if (!cb) {
+            timeoutId = setTimeout(() => {
+              console.log(`${streamName}: timeout...`);
+              process.exit();
+              reject([]);
+            }, 10000);
           }
+          this.registerFunc(connectionId, async (data) => {
+            if (o.chanel) {
+              const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
+              if (channelF(data)) {
+                data = o.formater(data, opt);
+                data = this._formatResult(data);
+                if (cb) cb(data);
+                resolve(data);
+                clearTimeout(timeoutId);
+              }
+            }
+          });
         });
       };
     } else {
@@ -126,7 +147,8 @@ class WS extends Event {
             const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
             if (channelF(data)) {
               data = o.formater(data, opt);
-              data = this._cleanResult(data);
+              data = this.that.wrapperApiKey(data);
+              data = this._formatResult(data);
               cb(data);
             }
           }
@@ -148,7 +170,7 @@ class WS extends Event {
   }
   createConnection(o) {
     const { connectionId, connectionUrl } = o;
-    const options = o.proxy ? { agent: new HttpsProxyAgent(url.parse(o.proxy)) } : {};
+    const options = {};
     try {
       const ws = this[connectionId] = new WebSocket(connectionUrl, options);
       this.addWsHooks(ws, o);

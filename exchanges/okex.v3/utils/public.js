@@ -529,7 +529,6 @@ function systemStatus(res) {
   return res;
 }
 
-
 module.exports = {
   assetTotalBalanceO,
   assetTotalBalance,

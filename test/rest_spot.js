@@ -1,23 +1,59 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['binance']; // bikicoin
+const exchanges = ['huobi']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
+const assets = [{ pair: 'BTC-USD', asset_type: 'QUARTER' }, { pair: 'BTC-USDT', asset_type: 'SPOT' }];
+const orderO = { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BSV-USDT', asset_type: 'SPOT', type: 'LIMIT', side: 'BUY', order_type: 'MAKER', price: '90.0', amount: 0.1 };
+const futureOrderO = { pair: 'BTC-USD', asset_type: 'THIS_WEEK', client_oid: Math.round(Math.random() * 1000000), lever_rate: 5, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 10000 };
 const newtasks = [
-  // ['assetOrder', { pair: 'BTC-USD', asset_type: 'SWAP', side: 'CLOSE', direction: 'SHORT', price: 10000, amount: 10, type: 'LIMIT', order_type: 'NORMAL' }],
   // ['cancelAssetOrder', { order_id: '22074158437' }],
   // ['volatilityHistory', { coin: 'BTC' }],
   // ['coinContractOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }]
   // ['coinContractOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', type: 'limit', direction: 'LONG', side: 'BUY', price: 10000, amount: 1, client_oid: 'x2xfffs' }],
   // ['coinContractBatchCancelOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', order_ids: [562672879, 562673242] }],
-  // ['coinContractCancelOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', client_oid: 'xxfffs' }],
+  // ['coinContractCancelOrder', { pair: 'BTC-USD', asset_type: 'SWAP', client_oid: 'HLpkQ3lMl9qziInAabQ7cn' }],
   // ['coinContractOrderInfo', { pair: 'BTC-USD', asset_type: 'QUARTER', order_id: 562672879 }],
   // ['coinContracUnfinishedtOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
   // ['coinContractUnfinishedOrderHistory', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
-  ['coinContractBalances', { coin: 'BTC' }],
+  // ['coinContractBalances', { coin: 'BTC' }],
   // ['updateCoinContractListenKey', {}],
     // ['coinContractPositions', {}],
+    // ['spotSystemStatus', {}],
+    // ['spotAssets', {}],
+    // ['time', {}],
+        // ['futureMoveBalance', { source: 'SPOT', target: 'FUTURE', amount: 0.02, coin: 'BTC' }],
+    // //////////////////////////////SPOT//////////////////////////////////////////////////
+    // ['spotKline', { pair: 'BTC-USDT', interval: '15m' }],
+    // ['spotBalances', { }],
+    // ['spotMoveBalance', { coin: 'USDT', instrument_id: 'ETH-USDT', amount: 11, source: 'spot', target: 'margin' }],
+    // ['spotBalance', {}],
+    // ['spotOrder', { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BSV-USDT', type: 'LIMIT', side: 'BUY', order_type: 'MAKER', price: '90.0', amount: 0.1 }],
+    // ['spotCancelOrderByOrderId', { order_id: '146927075055460' }]
+  // ['spotCancelOrder', { order_id: '146927351927031' }],
+    // ['spotCancelOrderByClientOrderId', { client_oid: 'order8072' }]
+    // ['spotOrderInfoByOrderId', { order_id: 146927452656883 }],
+    // ['spotOrderInfoByClientOrderId', { client_oid: 'order925' }],
+    // ['spotOrderInfo', { order_id: '146927662255048' }],
+    //
+        // //////////////////////////////FUTURE//////////////////////////////////////////////////
+    // ['futureBalances', {}],
+    // ['futurePositions', {}],
+    // ['futureOrder', { pair: 'BTC-USD', asset_type: 'THIS_WEEK', client_oid: Math.round(Math.random() * 1000000), lever_rate: 5, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 10000 }],
+    // ['futureCancelOrder', { order_id: '778103238384988160', asset_type: 'THIS_WEEK', pair: 'BTC-USD', }],
+    // ['futureOrderInfo', { order_id: '778103238384988160', asset_type: 'THIS_WEEK', pair: 'BTC-USD', }],
+    // ['futureAssets', {}],
+  // ////////////////////////////// 综合 //////////////////////////////////////////////////
+    //
+      // ['assetOrder', { pair: 'BTC-USD', asset_type: 'SWAP', side: 'OPEN', direction: 'LONG', price: 10000, amount: 1, type: 'LIMIT', order_type: 'NORMAL' }],
+      // ['assetOrders', { assets: [{ pair: 'BTC-USD', asset_type: 'THIS_WEEK' }, { pair: 'BTC-USDT', asset_type: 'SPOT' }] }], //,
+      // ['assetPositions', { assets }],
+      // ['assetBalances', { assets }],
+        // ['assetAssets', { assets }],
+        // ['assetOrder', futureOrderO],
+        // ['assetOrderInfo', { asset_type: 'SPOT', client_oid: 'order7452' }],
+        // ['assetCancelOrder', { asset_type: 'THIS_WEEK', pair: 'BTC-USD', order_id: '778558223040516096' }]
 ];
 
 const tasks = [
@@ -44,11 +80,6 @@ const tasks = [
   // {
   //   fn: 'time',
   //   params: {}
-  // },
-  // {
-  //   fn: 'spotPairs',
-  //   params: {},
-  //   name: '现货交易对信息'
   // },
   // {
   //   fn: 'usdtContractPairs',
@@ -99,18 +130,7 @@ const tasks = [
   //   params: {},
   //   name: '交易对信息'
   // },
-  // {
-  //   fn: 'spotOrder',
-  //   params: {
-  //     client_oid: `order${Math.floor(Math.random() * 10000)}`,
-  //     pair: 'BSV-USDT',
-  //     type: 'LIMIT',
-  //     side: 'BUY',
-  //     order_type: 'MAKER',
-  //     price: 190,
-  //     amount: 0.01
-  //   }
-  // },
+
   // {
   //   fn: 'spotOrders',
   //   params: {
@@ -279,14 +299,7 @@ const tasks = [
   //   },
   //   name: '交易'
   // },
-  // {
-  //   fn: 'cancelOrder',
-  //   params: {
-  //     order_id: '1821919279130624',
-  //     pair: 'ETH-USDT',
-  //   },
-  //   name: '取消交易'
-  // },
+
 
   // {
   //   fn: 'walletLedger'
@@ -374,11 +387,6 @@ const tasks = [
   //   name: '深度'
   // },
 
-  // {
-  //   fn: 'spotKline',
-  //   params: { pair: 'ETH-BTC', interval: '1m' },
-  //   name: 'spot kline'
-  // },
   // {
   //   fn: 'orderBook',
   //   params: { pair: 'ETH-BTC' },

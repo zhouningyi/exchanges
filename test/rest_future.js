@@ -89,20 +89,7 @@ const tasks = [
   // {
   //   fn: 'futurePairs'
   // },
-  // {
-  //   fn: 'futureOrder',
-  //   params: {
-  //     pair: 'XRP-USDT',
-  //     contract_type: 'this_week',
-  //     lever_rate: 20,
-  //     side: 'BUY',
-  //     direction: 'up',
-  //     amount: 1,
-  //     type: 'LIMIT',
-  //     price: 0.33,
-  //   },
-  //   name: '购买期货'
-  // },
+
 
   // {
   //   fn: 'cancelAllFutureOrders',
@@ -120,15 +107,7 @@ const tasks = [
   //   },
   //   name: '所有期货订单'
   // },
-  // {
-  //   fn: 'futureOrderInfo',
-  //   params: {
-  //     order_id: [23],
-  //     // contract_type: 'quarter',
-  //     pair: 'XRP-USDT',
-  //   },
-  //   name: '期货订单查询'
-  // },
+
   // {
   //   fn: 'unfinishFutureOrders',
   //   params: {
@@ -209,15 +188,6 @@ const tasks = [
   // },
 
 
-  // {
-  //   fn: 'cancelFutureOrder',
-  //   params: {
-  //     order_id: '1818307157179392',
-  //     contract_type: 'next_week',
-  //     pair: 'ETH-USDT',
-  //   },
-  //   name: '清空期货'
-  // },
   // {
   //   fn: 'futureDepth',
   //   params: {

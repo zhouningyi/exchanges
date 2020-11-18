@@ -1,0 +1,24 @@
+{
+  "assets":{
+    "notNull":["pair", "price_precision"],
+    "recommmond": ["status"]
+  },
+  "time":{
+    "notNull":["time"]
+  },
+  "kline":{
+    "notNull":["time","low","high","open","close","pair","interval"]
+  },
+  "moveBalance":{
+    "notNull":["success","source","target","amount"]
+  },
+  "balance":{
+    "notNull":["balance","coin"]
+  },
+  "order":{
+    "notNull":["type","pair","amount","asset_type"]
+  },
+  "position":{
+    "notNull":["pair","amount","asset_type"]
+  }
+}

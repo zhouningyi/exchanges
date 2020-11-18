@@ -1,5 +1,4 @@
 // const Utils = require('./utils');
-const HttpsProxyAgent = require('https-proxy-agent');
 const url = require('url');
 const Base = require('./../base');
 const request = require('./../../utils/request');
@@ -171,9 +170,7 @@ class Exchange extends Base {
   initWs(endpoint, sendMessage, filter, cb) {
     if (this.ws) return sendMessage(this.ws);
     this._isWsReady = false;
-    const options = this.proxy ? {
-      agent: new HttpsProxyAgent(url.parse(this.proxy))
-    } : {};
+    const options = {};
     let ws;
     const reconnect = () => {
       this._isWsReady = false;

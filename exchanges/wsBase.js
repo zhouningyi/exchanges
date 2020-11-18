@@ -2,7 +2,6 @@
 const WebSocket = require('ws');
 const url = require('url');
 const _ = require('lodash');
-const HttpsProxyAgent = require('https-proxy-agent');
 const pako = require('pako');
 
 const Event = require('bcore/event');
@@ -22,7 +21,7 @@ function processWsData(data) {
     try {
       // data = pako.inflateRaw(data, { to: 'string' }); // 会报错，暂时去掉
       // return JSON.parse(data);
-      return data
+      return data;
     } catch (e) {
       console.log(e, 'pako parse error...');
     }
@@ -57,7 +56,7 @@ class WS extends Event {
 
   async init() {
     const { stream, options: o } = this;
-    const options = o.proxy ? { agent: new HttpsProxyAgent(url.parse(o.proxy)) } : {};
+    const options = {};
     try {
       const ws = this.ws = new WebSocket(stream, options);
       this._addHooks(ws, o);
@@ -97,7 +96,7 @@ class WS extends Event {
     };
     ws.on('open', (socket) => {
       this._isReady = true;
-      if (pingInterval) loop((noop) => ws.tryPing(noop), pingInterval);
+      if (pingInterval) loop(noop => ws.tryPing(noop), pingInterval);
     });
     ws.on('pong', (e) => {
       // console.log(e, 'pong');
@@ -150,7 +149,7 @@ class WS extends Event {
   }
 
   genCallback(validate, cb) {
-    const validateF = typeof validate === 'function' ? validate : () => true
+    const validateF = typeof validate === 'function' ? validate : () => true;
     return (ds) => {
       if (validateF && validateF(ds)) return cb(ds);
       return false;

@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const _ws = require('./_ws');
-const { symbol2pair, pair2coin, pair2symbol } = require('./public');
+const { symbol2pair, pair2coin, pair2symbol, orderStatusMap } = require('./public');
 const { checkKey } = require('./../../../utils');
 const futureUtils = require('./future');
 const spotUtils = require('./spot');
@@ -49,14 +49,12 @@ function _depthCh2pair(ch) {
 
 const spotDepth = {
   name: 'spotDepth',
-  notNull: ['pairs'],
+  // notNull: ['assets'],
   isSign: false,
   chanel: (o) => {
-    const ctrs = _.map(o.pairs, pair => `market.${_pair2symbol(pair)}.depth.${o.type || 'step0'}`);
-    const res = _.map(ctrs, (ctr) => {
-      return _getChanelObject(ctr, 'depth', 'sub');
+    return _.map(o.assets, ({ pair }) => {
+      return _getChanelObject(`market.${_pair2symbol(pair)}.depth.${o.type || 'step0'}`, 'depth', 'sub');
     });
-    return res;
   },
   validate: (res) => {
     return res && res.ch && res.ch.startsWith('market.') && res.ch.indexOf('depth.step') !== -1;
@@ -67,7 +65,7 @@ const spotDepth = {
     const { asks, bids } = tick;
     return [{
       pair,
-      exchange: 'huobi',
+      asset_type: 'SPOT',
       time: new Date(ts),
       bids: spotUtils.formatDepth(bids),
       asks: spotUtils.formatDepth(asks),
@@ -118,46 +116,36 @@ const spotBalance = {
 };
 
 const spotOrders = {
+  version: 'v2',
   topic: 'orders',
   notNull: [],
   chanel: (o, o1) => {
-    checkKey(o1, ['pairs']);
-    const { pairs } = o1;
-    const symbol = _.map(pairs, _pair2symbol);// .join(',');
-    return [{
-      op: 'sub',
-      topic: 'orders.*.update',
-    }, ..._.map(symbol, (s) => {
-      return {
-        op: 'req',
-        symbol: s,
-        topic: 'orders.list',
-        'account-id': o1.spotId,
-        states: 'submitted,partial-filled,partial-canceled,filled,canceled'
-      };
-    })];
+    checkKey(o1, ['assets']);
+    return _.map(o1.assets, ({ pair }) => ({ action: 'sub', ch: `orders#${_pair2symbol(pair)}` }));
   },
-  validate: o => o && o.topic && o.topic.startsWith('orders'),
+  validate: o => o && o.ch && o.ch.startsWith('orders#'),
   isSign: true,
-  formater: (ds) => {
-    const { data, topic } = ds;
-    if (!data) return false;
-    if (topic === 'orders.list') {
-      return _.map(data, spotUtils.formatSpotWsOrder);
-    } else if (topic.endsWith('.update')) {
-      return [spotUtils.formatSpotWsOrder(data)];
-    }
-    return false;
+  formater: (d) => {
+    if (!d || !d.data || !_.values(d.data).length) return null;
+    d = d.data;
+    const res = { asset_type: 'SPOT' };
+    if (d.orderSize) res.amount = _parse(d.orderSize);
+    if (d.execAmt) res.filled_amount = _parse(d.execAmt);
+    if (d.lastActTime) res.server_updated_at = new Date(d.lastActTime);
+    if (d.orderId) res.order_id = d.orderId;
+    if (d.orderSource) res.source = d.orderSource;
+    if (d.orderPrice) res.price = _parse(d.orderPrice);
+    if (d.clientOrderId) res.client_oid = d.clientOrderId;
+    if (d.orderStatus) res.status = orderStatusMap[d.orderStatus];
+    if (d.symbol) res.pair = symbol2pair(d.symbol);
+    return { ...res, ...spotUtils.getSpotOrderProps(d) };
   }
 };
 
 const futureOrders = {
   notNull: [],
   chanel: (o) => {
-    return [{
-      op: 'sub',
-      topic: 'orders.*',
-    }];
+    return [{ op: 'sub', topic: 'orders.*' }];
   },
   validate: o => o && o.topic && o.topic.startsWith('orders'),
   isSign: true,
@@ -205,7 +193,6 @@ const futureBalance = {
   formater: (ds) => {
     if (!ds) return false;
     const { data, topic } = ds;
-    // console.log(topic, 'future_balance_topic...');
     if (!data) return false;
     const res = futureUtils.futureBalances(data);
     return res;
@@ -215,14 +202,15 @@ const futureBalance = {
 const futureSymbolMap = {
   this_week: 'CW',
   next_week: 'NW',
-  quarter: 'CQ'
+  quarter: 'CQ',
+  next_quarter: 'NQ'
 };
 
 const rFutureSymbolMap = _.invert(futureSymbolMap);
 
 function getFutureSymbol(pair, contract_type) {
   const coin = pair2coin(pair);
-  return `${coin}_${futureSymbolMap[contract_type]}`;
+  return `${coin}_${futureSymbolMap[contract_type.toLowerCase()]}`;
 }
 
 function _futureDepthCh2pair(ch) {
@@ -230,29 +218,19 @@ function _futureDepthCh2pair(ch) {
   const arr = chs.split('_');
   const [coin, str] = arr;
   const contract_type = rFutureSymbolMap[str];
+  const asset_type = contract_type.toUpperCase();
   const pair = `${arr[0]}-USD`;
-  return { contract_type, pair, coin };
+  return { contract_type, asset_type, pair, coin };
 }
-
 
 const futureDepth = {
   name: 'futureDepth',
-  notNull: ['pairs', 'contract_type'],
+  notNull: ['assets'],
   isSign: false,
   chanel: (o) => {
-    let { contract_type, pairs } = o;
-    if (!Array.isArray(contract_type)) contract_type = [contract_type];
-    const ctrs = [];
-    _.forEach(pairs, (pair) => {
-      _.forEach(contract_type, (c) => {
-        const str = `market.${getFutureSymbol(pair, c)}.depth.${o.type || 'step0'}`;
-        ctrs.push(str);
-      });
+    return _.map(o.assets, ({ pair, asset_type }) => {
+      return _getChanelObject(`market.${getFutureSymbol(pair, asset_type)}.depth.${o.type || 'step6'}`, 'depth', 'sub');
     });
-    const res = _.map(ctrs, (ctr) => {
-      return _getChanelObject(ctr, 'depth', 'sub');
-    });
-    return res;
   },
   validate: o => o && o.ch && o.ch.startsWith('market') && o.ch.indexOf('.depth') !== -1,
   formater: (ds) => {
@@ -260,7 +238,7 @@ const futureDepth = {
     const info = _futureDepthCh2pair(ch);
     const { asks, bids } = tick;
     const res = [{
-      exchange: 'huobi',
+      exchange: 'HUOBI',
       ...info,
       time: new Date(ts),
       bids: futureUtils.formatFutureDepth(bids),

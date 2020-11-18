@@ -121,43 +121,9 @@ function direct(d) {
 // const accountTypeMapInvert = _.invert(accountTypeMap);
 
 // ////////////
-// function formatDigit(num, n) {
-//   const k = Math.pow(10, n);
-//   return Math.floor(num * k) / k;
-// }
+
 // move Balance
-// function moveBalanceO(o = {}) {
-//   const { source, target, coin, instrument_id, sub_account } = o;
-//   if (source === 'sub_account') checkKey(o, ['sub_account']);
-//   if (source === 'margin') checkKey(o, ['instrument_id']);
-//   const amount = formatDigit(o.amount, 4);// 有时候会有精度问题
-//   const from = accountTypeMap[source];
-//   if (!from) {
-//     console.log(`source: ${source}错误，找不到相应的错误码`);
-//     return false;
-//   }
-//   const to = accountTypeMap[target];
-//   if (!to) {
-//     console.log(`target: ${target}错误，找不到相应的错误码`);
-//     return false;
-//   }
-//   const currency = coin;// .toLowerCase();
-//   const opt = { from, to, currency, instrument_id, sub_account, amount };
-//   return opt;
-// }
-// function moveBalance(res, o = {}) {
-//   const success = res.result === true;
-//   const error = res.result === true ? null : res.result || res.message;
-//   return {
-//     trx_id: res.transfer_id,
-//     coin: o.coin,
-//     source: o.source,
-//     target: o.target,
-//     amount: res.amount || o.amount,
-//     success,
-//     error
-//   };
-// }
+
 
 // // 提币历史
 // function withdrawHistoryO(o = {}) {
@@ -279,14 +245,8 @@ function coins(ds) {
   });
 }
 
-function timeO() {
-  console.log(111);
-}
-
 function time(t) {
-  return {
-    time: new Date(t)
-  };
+  return { time: new Date(t) };
 }
 
 function pair2coin(pair) {
@@ -297,57 +257,59 @@ function pair2symbol(pair) {
   return pair.replace('-', '').toLowerCase();
 }
 
-let symbolMap;
+// let symbolMap;
+// function _updateSymbolMap(ps) {
+//   symbolMap = _.keyBy(ps, p => pair2symbol(p.pair));
+// }
+// _updateSymbolMap(pairsRaw);
 
-function _updateSymbolMap(ps) {
-  symbolMap = _.keyBy(ps, p => pair2symbol(p.pair));
-}
-_updateSymbolMap(pairsRaw);
+// function _formatPair(l) {
+//   return {
+//     pair: `${l['base-currency'].toUpperCase()}-${l['quote-currency'].toUpperCase()}`,
+//     group: l['symbol-partition'],
+//     status: l.state,
+//     quote_asset_precision: _parse(l['amount-precision']),
+//     base_asset_precision: _parse(l['price-precision']),
+//     amount_precision: _parse(l['amount-precision']),
+//     min_order_amout: _parse(l['min-order-amt']),
+//     max_order_amout: _parse(l['max-order-amt']),
+//     lever_rate: _parse(l['leverage-ratio'])
+//   };
+// }
 
-function _formatPair(l) {
-  return {
-    pair: `${l['base-currency'].toUpperCase()}-${l['quote-currency'].toUpperCase()}`,
-    group: l['symbol-partition'],
-    status: l.state,
-    quote_asset_precision: _parse(l['amount-precision']),
-    base_asset_precision: _parse(l['price-precision']),
-    amount_precision: _parse(l['amount-precision']),
-    min_order_amout: _parse(l['min-order-amt']),
-    max_order_amout: _parse(l['max-order-amt']),
-    lever_rate: _parse(l['leverage-ratio'])
-  };
-}
+// function pairs(res) {
+//   const ps = _.map(res, _formatPair);
+//   _updateSymbolMap(ps);
+//   return ps;
+// }
 
-function pairs(res) {
-  const ps = _.map(res, _formatPair);
-  _updateSymbolMap(ps);
-  return ps;
-}
+const baseCoins = ['USDT', 'BTC', 'ETH'];
 
 function symbol2pair(symbol) {
-  const info = symbolMap[symbol];
-  return info ? info.pair : null;
+  symbol = symbol.toUpperCase();
+  for (const baseCoin of baseCoins) {
+    if (symbol.endsWith(baseCoin)) {
+      const quoteCoin = symbol.replace(baseCoin, '');
+      return `${quoteCoin}-${baseCoin}`;
+    }
+  }
+  console.log(`symbol2pair: ${symbol}无法识别`);
 }
-
-function getPairInfo(pair) {
-  return symbolMap[pair2symbol(pair)];
-}
-// function getError(d) {
-//   if (d.code && d.message) {
-//     return d.message;
-//   }
-//   return false;
-// }
 
 const orderStatusMap = {
   all: 'ALL',
   filled: 'SUCCESS',
+  0: 'NOT_FOUND',
+  6: 'SUCCESS',
   part_filled: 'PARTIAL',
+  5: 'PARTIAL',
   open: 'UNFINISH',
   canceling: 'CANCELLING',
+  10: 'CANCELLING',
   canceled: 'CANCEL',
   cancelled: 'CANCEL',
-  submitted: 'UNFINISH'
+  7: 'CANCEL',
+  submitted: 'UNFINISH',
 };
 
 const reverseOrderStatusMap = _.invert(orderStatusMap);
@@ -417,26 +379,38 @@ const base = {
   WS_BASE: 'wss://api.huobi.pro/ws'
 };
 
+
+// /
+// 系统当前状态
+const systemStatusMap = {
+  scheduled: 'WILL',
+  'in progress': 'ING',
+  verifying: 'ING',
+  completed: 'DONE'
+};
+
+function getError(res) {
+  if (!res) return { error: '数据为空' };
+  const error = res['err-msg'] || res['err-code'];
+  return error ? { error } : null;
+}
 module.exports = {
+  baseCoins,
+  systemStatusMap,
   base,
   periodMap,
   pair2coin,
   pair2symbol,
-  pairsO: direct,
-  pairs,
   symbol2pair,
-  getPairInfo,
-  // formatOrder,
   reverseOrderStatusMap,
   // accountTypeMap,
   // ledgerMap,
   time,
-  timeO,
   coins,
   coinsO: direct,
   accountsO: direct,
   orderStatusMap,
-  // getError,
+  getError,
   // // 资金流动
   // moveBalanceO,
   // moveBalance,

@@ -6,6 +6,9 @@ const deepmerge = require('deepmerge');
 const argv = require('optimist').argv;
 const fs = require('fs');
 const path = require('path');
+const { map } = require('lodash');
+const ef = require('./../utils/formatter');
+const { upperFirst } = require('lodash');
 
 const { delay, checkKey } = Utils;
 const isProxy = !!argv.proxy || !!process.env.PROXY;
@@ -46,6 +49,7 @@ class exchange extends Event {
     this.unique_id = unique_id;
     this.proxy = isProxy ? 'http://127.0.0.1:1087' : null;
     this.resp_time_n = 500;
+    if (this.compatible) this.compatible();
   }
   // io
   getApiKey() {
@@ -224,6 +228,7 @@ class exchange extends Event {
     const { resp_time_n, apiMap } = this;
     const q = 1 / resp_time_n;
     const p = 1 - q;
+    // if (conf.name === 'coinContractOrder') console.log(resp_time, 'resp_time...');
     //
     const line = apiMap[conf.endpoint];
     line.resp_time = (line.resp_time || resp_time) * p + q * resp_time;
@@ -271,10 +276,29 @@ class exchange extends Event {
   async queryFunc({ method, endpointCompile, opt, sign, host }) {
     return await this[method](endpointCompile, opt, sign, host);
   }
+  wrapperInfo(ds) {
+    const api_key = this.apiKey;
+    const exchange = this.name.toUpperCase();
+    if (!api_key || !ds) return ds;
+    if (Array.isArray(ds)) return map(ds, d => ({ ...d, api_key, exchange }));
+    return { ...ds, api_key, exchange };
+  }
+  updateAddOnInfo(ds) {
+    if (!ds || ds.error) return ds;
+    if (!Array.isArray(ds)) ds = [ds];
+    const exchange = this.name ? this.name.toUpperCase() : null;
+    for (const d of ds) {
+      if (exchange) {
+        d.exchange = exchange;
+      }
+    }
+    return ds;
+  }
   loadFn(conf = {}, key) {
     const UtilsInst = this.utils || this.Utils;
     if (!UtilsInst) Utils.warnExit(`${this.name}: this.Utils缺失`);
     checkKey(conf, ['endpoint', 'name', 'name_cn']);
+    const resultChecker = ef.genChecker(conf);
     const { name = key, notNull: checkKeyO, endpoint, sign = true, endpointParams, delEndParams } = conf;
     const formatOFn = UtilsInst[`${key}O`] || (d => d);
     // if (!formatOFn) Utils.warnExit(`${this.name}: Utils.${key}O()不存在`);
@@ -304,7 +328,7 @@ class exchange extends Event {
           const error = UtilsInst.getError(ds);
           if (error) {
             errorO = { ...ds, error };
-            const errorEventData = { ...errorO, o, opt, url: endpointCompile, name_cn: conf.name_cn, endpoint: conf.endpoint, name: conf.name, time: new Date() };
+            const errorEventData = { ...errorO, o, error_type: 'rest_api', exchange: this.name.toUpperCase(), opt, url: endpointCompile, name_cn: conf.name_cn, endpoint: conf.endpoint, name: conf.name, time: new Date() };
             this.updateErrorInfo(errorEventData);
             this.emit('request_error', errorEventData);
           }
@@ -331,16 +355,148 @@ class exchange extends Event {
         } else {
           res = ds;
         }
+        res = this.wrapperInfo(res);
+        if (res && res.error)console.log(res.error, endpointCompile, 'response error...');
         this.addDt2Res(res, dt);
         this.updateMeanRespTime(conf, dt);
+        this.updateAddOnInfo(res);
+        if (resultChecker && res) resultChecker(res);
         return res;
       } catch (e) {
-        console.log(e, conf, 'query_error');
+        console.log(e, 'e');
         this.updateErrorInfo(conf, e ? e.message : '未知错误');
         this.cancelFnLock(conf, query_id);
         return null;
       }
     };
+  }
+  getExchangeName() {
+    return this.name ? this.name.toUpperCase() : null;
+  }
+  // 组合函数
+  registerFn({ name }, cb) {
+    const fnName = `asset${upperFirst(name)}`;
+    this[fnName] = async (o = {}) => {
+      const { assets, ...rest } = o;
+      const osGroup = _.groupBy(assets, a => this._getAssetBaseType(a));
+      let res = [];
+      for (const assetBaseType in osGroup) {
+        const _assets = osGroup[assetBaseType];
+        const ds = await cb({ ...rest, ...o, assetBaseType, assets: _assets });
+        if (Array.isArray(ds))res = [...res, ...ds];
+      }
+      return res;
+    };
+  }
+  parseAssets(o) {
+    let { assets, pair, asset_type } = o;
+    if (assets) return assets;
+    assets = [];
+    if (typeof pair === 'string') pair = [pair];
+    if (typeof asset_type === 'string') asset_type = [asset_type];
+    for (const _asset_type of asset_type) {
+      for (const _pair of pair) {
+        assets.push({ asset_type: _asset_type, pair: _pair });
+      }
+    }
+    return assets;
+  }
+  compatible() {
+    if (this._compatible) this._compatible();
+      // this.assetBatchCancelOrders = async (orders) => {
+    //   const ordersGroup = _.groupBy(orders, d => this._getAssetBaseType(d));
+    //   let res = [];
+    //   for (const baseType in ordersGroup) {
+    //     const orders = ordersGroup[baseType];
+    //     if (orders && orders.length) {
+    //       const realFnName = `${baseType}BatchCancelOrders`;
+    //       const _res = await this[realFnName](orders);
+    //       if (_res) res = [..._res];
+    //     }
+    //   }
+    //   return res;
+    // };
+    this.registerFn({ name: 'orders' }, async (o = {}) => {
+      const { status, assetBaseType, assets, ...rest } = o;
+      const fnName = status === 'UNFINISH' ? `${assetBaseType}UnfinishOrders` : `${assetBaseType}Orders`;
+      if (!this[fnName]) return console.log(`函数${fnName}不存在...`);
+      let res = [];
+      for (const asset of assets) {
+        const ds = await this[fnName]({ ...rest, ...asset });
+        if (Array.isArray(ds)) res = [...res, ...ds];
+      }
+      return res;
+    });
+    //
+    const filterBalances = (ds, o) => {
+      if (!ds || !o || !o.assets) return ds;
+      const exchange = this.getExchangeName();
+      const { assets } = o;
+      const balance_ids = _.map(assets, asset => Utils.formatter.getBalanceId({ ...asset, exchange }));
+      return _.filter(ds, d => balance_ids.includes(d.unique_id) || d.balance);
+    };
+
+    const filterByInstrumentId = (ds, o) => {
+      if (!ds || !o || !o.assets) return ds;
+      const { assets } = o;
+      const exchange = this.getExchangeName();
+      const instrument_ids = _.map(assets, asset => Utils.formatter.getInstrumentId({ ...asset, exchange }));
+      return _.filter(ds, d => instrument_ids.includes(d.instrument_id) || d.vector);
+    };
+
+    const resFns0 = ['balances', 'assets', 'positions'];
+    for (const name of resFns0) {
+      this.registerFn({ name }, async (o = {}) => {
+        const wsFnName = `wsRequest${upperFirst(o.assetBaseType)}${upperFirst(name)}`;
+        let ds;
+        if (this[wsFnName] && (name !== 'balances')) {
+          ds = await this[wsFnName]();
+        } else {
+          const restFnName = `${o.assetBaseType}${upperFirst(name)}`;
+          if (this[restFnName]) ds = await this[restFnName]();
+        }
+        if (name === 'balances') return filterBalances(ds, o);
+        if (['positions', 'assets'].includes(name)) return filterByInstrumentId(ds, o);
+        // console.log(`resFns0/name:${name} UNKNOW...`);
+      });
+    }
+
+    const restFns = ['order', 'orderInfo', 'cancelOrder'];
+    for (const name of restFns) {
+      const fnName = `asset${upperFirst(name)}`;
+      this[fnName] = async (o) => {
+        const baseType = this._getAssetBaseType(o);
+        const realFnName = `${baseType}${upperFirst(name)}`;
+        if (this[realFnName]) {
+          return await this[realFnName](o);
+        } else {
+          this.print(`compatible: rest函数${realFnName}不存在...`);
+        }
+      };
+    }
+
+        // WS
+    const wsFns = ['orders', 'positions', 'balances', 'depth', 'ticks'];
+    for (const name of wsFns) {
+      const fnName = `subscribeAsset${upperFirst(name)}`;
+      this[fnName] = async (o, cb) => {
+        const assets = this.parseAssets(o);
+        const assetsGroup = _.groupBy(assets, this._getAssetBaseType.bind(this));
+        for (const assetBaseType in assetsGroup) {
+          const realFnName = `ws${upperFirst(assetBaseType)}${upperFirst(name)}`;
+          const _assets = assetsGroup[assetBaseType];
+          if (this[realFnName]) {
+            this[realFnName]({ ...o, assets: _assets }, (ds) => {
+              if (name === 'balances') ds = filterBalances(ds, o);
+              if (name === 'positions') ds = filterByInstrumentId(ds, o);
+              cb(ds);
+            });
+          } else {
+            this.print(`compatible: ws函数${realFnName}不存在...`);
+          }
+        }
+      };
+    }
   }
 }
 

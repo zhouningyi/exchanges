@@ -52,7 +52,12 @@ const usdtContractConfig = {
 const coinContractConfig = {
   coinContractBalances: {
     name_cn: '全部币本位合约账户余额',
-    endpoint: 'dapi/v1/balance',
+    endpoint: '/dapi/v1/account',
+    sign: true
+  },
+  coinContractAssets: {
+    name_cn: '全部币本位合约品种信息',
+    endpoint: '/dapi/v1/exchangeInfo',
     sign: true
   },
   coinContractPositions: {
@@ -99,7 +104,7 @@ const coinContractConfig = {
     method: 'GET',
     sign: true
   },
-  coinContracUnfinishedtOrders: {
+  coinContractUnfinishOrders: {
     name_cn: '币本位合约未完成订单',
     endpoint: 'dapi/v1/openOrders',
     notNull: ['pair', 'asset_type'],

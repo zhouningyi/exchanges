@@ -7,9 +7,10 @@ const error = require('./../errors');
 
 const { getOrderTypeOptions, getOrderDirectionOptions, pair2symbol, asset_type2ext, parseOrderStatusOptions, parseOrderDirectionOptions, getSymbolId, parseSymbolId } = publicUtils;
 
+const exchange = 'BINANCE';
+const balance_type = 'COIN_CONTRACT';
 
 const { _parse } = Utils;
-
 
 function coinContractOrdersO(o = {}) {
   const { pair, asset_type } = o;
@@ -42,7 +43,12 @@ function _formatCoinContractOrder(d) {
   };
   if (d.commission) res.fee = _parse(d.commission);
   if (d.price_avg) res.price_avg = _parse(d.price_avg);
-  if (d.eventTime)res.event_time = new Date(d.eventTime);
+  if (d.eventTime) {
+    res.server_updated_at = new Date(d.eventTime);
+  }
+  if (d.time && !res.server_updated_at) {
+    res.server_updated_at = new Date(d.time);
+  }
   return res;
 }
 
@@ -71,37 +77,29 @@ function coinContractBatchCancelOrderO(o) {
   if (o.client_oids)opt.origClientOrderIdList = o.client_oids;
   return opt;
 }
+
 function coinContractBatchCancelOrder(ds) {
-  console.log(ds, 'ds...');
+  console.log(ds, 'coinContractBatchCancelOrder...');
 }
 
-function _formatOrderO(o) {
-  const symbol = getSymbolId(o);
-  const opt = { symbol };
-  if (o.order_id)opt.orderId = o.order_id;
-  if (o.client_oid)opt.origClientOrderId = o.client_oid;
-  return opt;
-}
 
 function _formatCoinContractOrders(ds) {
   return _.map(ds, d => _formatCoinContractOrder(d));
 }
 
-const coinContractCancelOrderO = _formatOrderO;
+const coinContractCancelOrderO = publicUtils.formatOrderO;
 const coinContractCancelOrder = _formatCoinContractOrder;
 
-const coinContractOrderInfoO = _formatOrderO;
+const coinContractOrderInfoO = publicUtils.formatOrderO;
 const coinContractOrderInfo = _formatCoinContractOrder;
 
-const coinContracUnfinishedtOrdersO = _formatOrderO;
-const coinContracUnfinishedtOrders = _formatCoinContractOrders;
+const coinContractUnfinishOrdersO = publicUtils.formatOrderO;
+const coinContractUnfinishOrders = _formatCoinContractOrders;
 
-const coinContractUnfinishedOrderHistoryO = _formatOrderO;
+const coinContractUnfinishedOrderHistoryO = publicUtils.formatOrderO;
 const coinContractUnfinishedOrderHistory = _formatCoinContractOrders;
 
-function formatCoinContractDepth(ls) {
-  return _.map(ls, l => ({ price: _parse(l[0]), volume: _parse(l[1]) }));
-}
+const formatCoinContractDepth = publicUtils.formatDepth;
 
 function coinContractPositionsO(o = {}) {
   return {};
@@ -111,16 +109,24 @@ function _formatCoinContractPosition(d) {
   const info = parseSymbolId(d);
   const res = {
     ...info,
+    exchange,
     symbol_id: d.symbol,
     position_side: d.positionSide,
-    profit_unreal: _parse(d.unrealizedProfit),
     price_avg: _parse(d.entryPrice),
-    amount: _parse(d.positionAmt) || 0
   };
+  if (d.unrealizedProfit) res.profit_unreal = _parse(d.unrealizedProfit);
+  if (d.liquidationPrice) res.liquidation_price = _parse(d.liquidationPrice);
+  if (d.marginType) res.margin_type = d.marginType;
   if (d.leverage) res.lever_rate = _parse(d.leverage);
-  if (d.maxQty) res.max_amount = _parse(d.maxQty);
-  if (d.maintMargin) res.margin = _parse(d.maintMargin);
   if (d.initialMargin) res.initial_margin = _parse(d.initialMargin);
+  if (d.positionAmt) {
+    res.vector = _parse(d.positionAmt) || 0;
+    res.amount = Math.abs(res.vector);
+  }
+  const direction = res.vector > 0 ? 'LONG' : res.amount < 0 ? 'SHORT' : null;
+  if (direction) res.direction = direction;
+  if (d.maxQty) res.max_amount = _parse(d.maxQty);
+  if (d.maintMargin) res.maint_margin = _parse(d.maintMargin);
   if (d.openOrderInitialMargin)res.open_order_initial_margin = _parse(d.openOrderInitialMargin);
   if (d.positionInitialMargin) res.position_initial_margin = _parse(d.positionInitialMargin);
 
@@ -133,7 +139,7 @@ function coinContractPositions(ds) {
 
 function coinContractPositionsRisk(ds) {
   const res = _.map(ds, (d) => {
-    return {
+    const res = {
       ...parseSymbolId(d),
       amount: _parse(d.positionAmt),
       price_avg: _parse(d.entryPrice),
@@ -145,23 +151,53 @@ function coinContractPositionsRisk(ds) {
       position_side: _parse(d.positionSide),
       margin_mode: d.marginType
     };
+    res.instrument_id = Utils.formatter.getInstrumentId(res);
+    return res;
   });
   return res;
 }
 
 function _formatCoinContractBalance(d) {
   const res = {
+    balance_type,
+    exchange,
     coin: d.asset,
-    balance: _parse(d.balance || d.crossWalletBalance),
+    balance: d.balance ? _parse(d.balance) : (_parse(d.unrealizedProfit) + _parse(d.crossWalletBalance)),
     cross_balance: _parse(d.crossWalletBalance),
     profit_unreal: _parse(d.crossUnPnl),
     avaliable_balance: _parse(d.availableBalance),
   };
+  res.unique_id = Utils.formatter.getBalanceId(res);
+  //
+  if (d.maxWithdrawAmount) res.moveable_balance = _parse(d.maxWithdrawAmount);
+  if (d.openOrderInitialMargin)res.open_order_initial_margin = _parse(d.openOrderInitialMargin);
+  if (d.positionInitialMargin) res.position_initial_margin = _parse(d.positionInitialMargin);
+  if (d.marginBalance) res.margin = _parse(d.marginBalance);
+  if (d.maintMargin) res.maint_margin = _parse(d.maintMargin);
+  if (d.initialMargin) res.initial_margin = _parse(d.initialMargin);
   return res;
 }
 
-function coinContractBalances(ds) {
-  return _.map(ds, _formatCoinContractBalance);
+function coinContractBalances(d) {
+  return (d && d.assets) ? _.map(d.assets, _formatCoinContractBalance) : { error: '返回错误' };
+}
+
+
+function _formatCoinContractAsset(d) {
+  const res = {
+    ...parseSymbolId(d),
+    pair: [d.baseAsset, d.quoteAsset].join('-')
+  };
+  if (d.deliveryDate) res.delivery_date = new Date(d.deliveryDate);
+  if (d.onboardDate) res.onboard_date = new Date(d.onboardDate);
+  if (d.contractType) res.contract_type = d.contractType;
+  if (d.underlyingType) res.underlyingType = d.underlyingType;
+  if (d.pricePrecision) res.price_precision = d.pricePrecision;
+  if (d.quantityPrecision) res.quantity_precision = d.quantityPrecision;
+  return res;
+}
+function coinContractAssets(ds) {
+  return ds ? _.map(ds.symbols, _formatCoinContractAsset) : [];
 }
 
 module.exports = {
@@ -175,8 +211,8 @@ module.exports = {
   formatCoinContractDepth,
   coinContractUnfinishedOrderHistoryO,
   coinContractUnfinishedOrderHistory,
-  coinContracUnfinishedtOrdersO,
-  coinContracUnfinishedtOrders,
+  coinContractUnfinishOrdersO,
+  coinContractUnfinishOrders,
   coinContractBatchCancelOrderO,
   coinContractBatchCancelOrder,
   coinContractCancelOrderO,
@@ -188,5 +224,6 @@ module.exports = {
   coinContractOrdersO,
   coinContractOrders,
   // coinContractPositionsRisk,
+  coinContractAssets,
   coinContractBalances,
 };

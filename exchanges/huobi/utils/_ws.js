@@ -2,7 +2,6 @@
 const WebSocket = require('ws');
 const url = require('url');
 const _ = require('lodash');
-const HttpsProxyAgent = require('https-proxy-agent');
 const pako = require('pako');
 
 const Event = require('bcore/event');
@@ -12,9 +11,7 @@ function noop() {}
 const loopInterval = 4000;
 
 function processWsData(data) {
-  // if (data && data.toString) data = data.toString('utf8');
-  // console.log(data, 'data..');
-  if (data instanceof String) {
+  if (typeof data === 'string') {
     try {
       data = JSON.parse(data);
     } catch (e) {
@@ -28,7 +25,7 @@ function processWsData(data) {
       });
       return JSON.parse(data);
     } catch (e) {
-      console.log(e, 'pako parse error...');
+      console.log(e, data, 'pako parse error...');
     }
   }
   return false;
@@ -60,7 +57,7 @@ class WS extends Event {
   }
   async init() {
     const { stream, options: o } = this;
-    const options = o.proxy ? { agent: new HttpsProxyAgent(url.parse(o.proxy)) } : {};
+    const options = {};
     try {
       const ws = this.ws = new WebSocket(stream, options);
       this.addHooks(ws, o);
