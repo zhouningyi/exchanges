@@ -5,6 +5,7 @@ const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
 const { accountTypeMap, getPairInfo } = require('./public');
+const { pair2coin, getInstrumentId } = require('./../../../utils/formatter');
 
 const exchange = 'HUOBI';
 
@@ -103,7 +104,11 @@ function futurePositions(ds, o, isws) {
       }
     });
   });
-  return _.map(res, d => _formatFuturePosition(d, isws));
+  let result = _.map(res, d => _formatFuturePosition(d, isws));
+  if (o && o.assets) {
+    result = ef.fillPositionsByAssets(result, o.assets);
+  }
+  return result;
 }
 
 function futureFeeO(o) {
@@ -170,12 +175,26 @@ const directionMap = {// /火币在这边是反过来的
 
 function getOrderProps(o) {
   const side = o.side.toUpperCase();
-  const direction = o.direction.toUpperCase();
-  if (side === 'BUY' && direction === 'UP') return { offset: 'open', direction: 'buy' };
-  if (side === 'SELL' && direction === 'UP') return { offset: 'close', direction: 'sell' };
-  if (side === 'BUY' && direction === 'DOWN') return { offset: 'open', direction: 'sell' };
-  if (side === 'SELL' && direction === 'DOWN') return { offset: 'close', direction: 'buy' };
+  if (side === 'BUY' && ef.isLong(o)) return { offset: 'open', direction: 'buy' };
+  if (side === 'SELL' && ef.isLong(o)) return { offset: 'close', direction: 'sell' };
+  if (side === 'BUY' && ef.isShort(o)) return { offset: 'open', direction: 'sell' };
+  if (side === 'SELL' && ef.isShort(o)) return { offset: 'close', direction: 'buy' };
 }
+
+function getFutureOrderType(o) {
+  const type = o.type.toUpperCase();
+  const order_type = (o.order_type || '').toUpperCase();
+  let res = null;
+  if (type === 'LIMIT') res = 'limit';
+  if (type === 'MARKET') res = 'opponent';
+  if (['POST_ONLY', 'MAKER'].includes(order_type)) res = 'post_only';
+  if (['FOK'].includes(order_type)) res = 'fok';
+  if (['IOC'].includes(order_type) && res) res = 'ioc';
+  if (!res)console.log(o, 'getOrderType: type未知...');
+  return res;
+}
+
+
 function futureOrderO(o = {}) {
   const { amount, lever_rate, asset_type, client_oid, price } = o;
   const pair = o.pair.replace('-USDT', '-USD');
@@ -190,7 +209,7 @@ function futureOrderO(o = {}) {
     volume: amount,
     lever_rate,
     ...getOrderProps(o),
-    order_price_type: 'limit'
+    order_price_type: getFutureOrderType(o)
   };
   if (client_oid) opt.client_order_id = client_oid;
   return opt;
@@ -240,10 +259,10 @@ const orderPriceTypMap = {
 function getROrderProps(o) {
   const offset = o.offset.toLowerCase();
   const direction = o.direction.toLowerCase();
-  if (offset === 'open' && direction === 'buy') return { side: 'BUY', direction: 'UP' };
-  if (offset === 'close' && direction === 'sell') return { side: 'SELL', direction: 'UP' };
-  if (offset === 'open' && direction === 'sell') return { side: 'BUY', direction: 'DOWN' };
-  if (offset === 'close' && direction === 'buy') return { side: 'SELL', direction: 'DOWN' };
+  if (offset === 'open' && direction === 'buy') return { side: 'BUY', direction: 'LONG' };
+  if (offset === 'close' && direction === 'sell') return { side: 'SELL', direction: 'LONG' };
+  if (offset === 'open' && direction === 'sell') return { side: 'BUY', direction: 'SHORT' };
+  if (offset === 'close' && direction === 'buy') return { side: 'SELL', direction: 'SHORT' };
 }
 
 
@@ -260,8 +279,8 @@ const rStatusMap = _.invert(statusMap);
 function _formatFutureOrder(l, o) {
   const { status, symbol: coin, trade, profit, price, lever_rate, volume: amount, create_date, created_at, contract_type, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
   const ct = create_date || created_at;
-  const order_id = `${l.order_id}`;
-  return {
+  const order_id = l.order_id_str || `${l.order_id}`;
+  const res = {
     coin,
     pair: `${coin}-USD`,
     unique_id: coin + contract_type + order_id,
@@ -281,6 +300,8 @@ function _formatFutureOrder(l, o) {
     status: rStatusMap[status],
     trade
   };
+  if (l.client_order_id) res.client_oid = `${l.client_order_id}`;
+  return res;
 }
 
 
@@ -302,11 +323,6 @@ function futureOrders(ds, o) {
   return _.map(orders, _formatFutureOrder);
 }
 
-function unfinishFutureOrdersO(o = {}) {
-  const symbol = o.pair.split('-')[0];
-  // console.log(symbol, 'unfinishFutureOrdersO...');
-  return { symbol };
-}
 
 // 返回单个订单信息
 function _formatDotArray(v) {
@@ -324,7 +340,9 @@ function futureOrderInfoO(o = {}) {
 }
 function futureOrderInfo(res, o) {
   if (!res || res.error) return false;
-  return _.map(res, d => _formatFutureOrder(d, o));// (, o);
+  res = _.map(res, d => _formatFutureOrder(d, o));
+  if (res && res.length === 1) res = res[0];
+  return res;
 }
 //
 function _futurePairs(line) {
@@ -402,7 +420,6 @@ function futureRiskInfo(res) {
   });
 }
 
-
 function _formatBalance(line) {
   const coin = line.symbol.toUpperCase();
   const res = {
@@ -423,7 +440,7 @@ function _formatBalance(line) {
     liquidation_price: _parse(line.liquidation_price),
     time: new Date()
   };
-  res.unique_id = Utils.formatter.getBalanceId(res);
+  res.balance_id = Utils.formatter.getBalanceId(res);
   return cleanObjectNull(res);
 }
 
@@ -455,7 +472,6 @@ function cancelAllFutureOrders(res) {
     };
   });
 }
-
 
 function futureMoveBalanceO(o) {
   const { source, target, coin, amount } = o;
@@ -543,8 +559,7 @@ function futureCancelOrderO(o) {
 }
 
 function futureCancelOrder(res, o) {
-  console.log(res, 'res....');
-  return [...processCancelOrderErrors(res, o), ...processCancelOrderSuccesses(res, o)].filter(d => d);
+  return [...processCancelOrderErrors(res, o), ...processCancelOrderSuccesses(res, o)].filter(d => d)[0];
 }
 
 function futureAssets(ds) {
@@ -561,6 +576,10 @@ function futureAssets(ds) {
     res.instrument_id = Utils.formatter.getInstrumentId(res);
     return res;
   });
+}
+
+function futureUnfinishOrdersO(o = {}) {
+  return { symbol: pair2coin(o.pair) };
 }
 
 module.exports = {
@@ -603,8 +622,8 @@ module.exports = {
   cancelAllFutureOrders,
   futureOrdersO,
   futureOrders,
-  unfinishFutureOrdersO,
-  unfinishFutureOrders: futureOrders,
+  futureUnfinishOrdersO,
+  futureUnfinishOrders: futureOrders,
   // successFutureOrdersO,
   // successFutureOrders: futureOrders,
   futureOrderInfoO,

@@ -147,7 +147,7 @@ class WS extends Event {
             const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
             if (channelF(data)) {
               data = o.formater(data, opt);
-              data = this.that.wrapperApiKey(data);
+              data = this.that.wrapperInfo(data);
               data = this._formatResult(data);
               cb(data);
             }

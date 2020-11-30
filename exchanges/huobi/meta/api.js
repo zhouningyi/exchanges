@@ -84,6 +84,13 @@ const spotConfig = {
     notNull: ['client_oid'],
     check: 'order'
   },
+  spotUnfinishOrders: {
+    method: 'GET',
+    name_cn: '获取所有未完成的订单',
+    sign: true,
+    notNull: ['pair'],
+    endpoint: 'v1/order/openOrders'
+  },
   // batchCancelSpotOrders: {
   //   method: 'POST',
   //   name: 'batchCancelSpotOrders',
@@ -164,7 +171,16 @@ const futureConfig = {
     accept: ['pair'],
     host: 'future',
     check: 'asset'
-  }
+  },
+  futureUnfinishOrders: {
+    method: 'POST',
+    name_cn: '所有未完成的期货订单',
+    endpoint: 'api/v1/contract_openorders',
+    accept: ['pair'],
+    sign: true,
+    notNull: ['pair'],
+    host: 'future',
+  },
 };
 
 const publicConfig = {
@@ -212,14 +228,6 @@ const publicConfig = {
     sign: true,
     notNull: ['pair'],
     endpoint: 'v1/order/orders'
-  },
-  unfinishSpotOrders: {
-    method: 'GET',
-    name: 'unfinishSpotOrders',
-    name_cn: '获取所有未完成的订单',
-    sign: true,
-    notNull: ['pair'],
-    endpoint: 'v1/order/openOrders'
   },
   batchCancelOpenSpotOrders: {
     method: 'POST',
@@ -278,16 +286,6 @@ const publicConfig = {
     sign: true,
     endpoint: 'api/v1/contract_hisorders',
     accept: ['client_oid'],
-    notNull: ['pair'],
-    host: 'future',
-  },
-  unfinishFutureOrders: {
-    method: 'POST',
-    name: 'unfinishFutureOrders',
-    name_cn: '所有未完成的期货订单',
-    endpoint: 'api/v1/contract_openorders',
-    accept: ['pair'],
-    sign: true,
     notNull: ['pair'],
     host: 'future',
   },
@@ -407,9 +405,9 @@ const publicConfig = {
   //   notNull: ['pair', 'order_id'],
   //   sign: true,
   // },
-  // unfinishSpotOrders: {
+  // spotUnfinishOrders: {
   //   method: 'GET',
-  //   name: 'unfinishSpotOrders',
+  //   name: 'spotUnfinishOrders',
   //   desc: '可以不区分pair地获取所有未成交订单',
   //   name_cn: '未成交订单',
   //   endpoint: 'spot/v3/orders_pending',
@@ -630,9 +628,9 @@ const publicConfig = {
   //   rateLimit: 2000 / 10,
   //   sign: true
   // },
-  // unfinishFutureOrders: {
+  // futureUnfinishOrders: {
   //   method: 'GET',
-  //   name: 'unfinishFutureOrders',
+  //   name: 'futureUnfinishOrders',
   //   name_cn: '所有未完成的期货订单',
   //   desc: '调用 ex.futureOrders()',
   //   endpointParams: ['instrument_id'],

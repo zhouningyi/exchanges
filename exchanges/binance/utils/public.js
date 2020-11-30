@@ -212,7 +212,6 @@ function _formatOrderO(o) {
   const opt = { symbol };
   if (o.order_id)opt.orderId = o.order_id;
   if (o.client_oid)opt.origClientOrderId = o.client_oid;
-  console.log(o, 'o....');
   return opt;
 }
 

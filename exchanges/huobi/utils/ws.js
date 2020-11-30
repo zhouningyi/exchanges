@@ -2,11 +2,13 @@
 
 const _ = require('lodash');
 const _ws = require('./_ws');
-const { symbol2pair, pair2coin, pair2symbol, orderStatusMap } = require('./public');
-const { checkKey } = require('./../../../utils');
+const { symbol2pair, pair2coin, pair2symbol, formatCoin, orderStatusMap } = require('./public');
+const { checkKey, formatter } = require('./../../../utils');
 const futureUtils = require('./future');
 const spotUtils = require('./spot');
 const swapUtils = require('./swap');
+
+const exchange = 'HUOBI';
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -44,7 +46,8 @@ function _pair2symbol(pair, isFuture) {
 }
 
 function _depthCh2pair(ch) {
-  return symbol2pair(ch.split('.depth')[0].replace('market.', ''));
+    // market.btcusdt.mbp.refresh.5
+  return symbol2pair(ch.split('.mbp.')[0].replace('market.', ''));
 }
 
 const spotDepth = {
@@ -52,66 +55,58 @@ const spotDepth = {
   // notNull: ['assets'],
   isSign: false,
   chanel: (o) => {
+    const { level = 5 } = o;
     return _.map(o.assets, ({ pair }) => {
-      return _getChanelObject(`market.${_pair2symbol(pair)}.depth.${o.type || 'step0'}`, 'depth', 'sub');
+      const ch = `market.${_pair2symbol(pair)}.mbp.refresh.${level}`;
+      return _getChanelObject(ch);
+      // return _getChanelObject(`market.${_pair2symbol(pair)}.depth.${o.type || 'step0'}`, 'depth', 'sub');
     });
   },
   validate: (res) => {
-    return res && res.ch && res.ch.startsWith('market.') && res.ch.indexOf('depth.step') !== -1;
+    return res && res.ch && res.ch.startsWith('market.') && res.ch.indexOf('mbp.refresh') !== -1;
   },
   formater: (res) => {
     const { ts, tick, ch } = res;
     const pair = _depthCh2pair(ch);
     const { asks, bids } = tick;
-    return [{
-      pair,
+    return formatter.wrapperInstrumentId({
       asset_type: 'SPOT',
+      exchange,
+      pair,
       time: new Date(ts),
       bids: spotUtils.formatDepth(bids),
       asks: spotUtils.formatDepth(asks),
-    }];
+    });
   }
 };
 
+
+function formatWsSpotBalance(d) {
+  if (!d || !d.currency) return null;
+  const res = {
+    exchange: 'HUOBI',
+    asset_type: 'SPOT',
+    balance: _parse(d.balance),
+    coin: formatCoin(d.currency),
+    account_id: d.accountId,
+  };
+  if (d.changeTime) res.time = new Date(d.changeTime);
+  res.balance_id = formatter.getBalanceId(res);
+  return res;
+}
 
 const spotBalance = {
   topic: 'accounts',
   notNull: [],
   chanel: (o, o1) => {
-    return [{
-      op: 'sub',
-      topic: 'accounts',
-      model: '1'
-    }, {
-      op: 'req',
-      topic: 'accounts.list',
-    }];
+    return [{ action: 'sub', ch: 'accounts.update#1' }];
   },
-  validate: o => o && o.topic && o.topic.startsWith('accounts'),
+  validate: o => o && o.ch && o.ch.startsWith('accounts'),
   isSign: true,
   formater: (ds) => {
-    const { data, topic } = ds;
-    // console.log(topic, 'balance topic...');
-    if (!data) return false;
-    let res = [];
-    if (topic === 'accounts.list') {
-      const group = _.groupBy(data, 'type');
-      const { point, spot } = group;
-      _.forEach(spot, (s) => {
-        const _res = spotUtils.processBalance(s.list);
-        res = res.concat(_res);
-      });
-      _.forEach(point, (s) => {
-        const _res = spotUtils.processBalance(s.list);
-        res = res.concat(_res);
-      });
-      return res;
-    } else if (topic === 'accounts') {
-      const result = spotUtils.processBalance(data.list);
-      // console.log(result, 'spotBalance....');
-      return result;
-    }
-    return false;
+    const { data, ch } = ds;
+    if (!data) return null;
+    return [formatWsSpotBalance(data)].filter(d => d);
   }
 };
 
@@ -135,7 +130,7 @@ const spotOrders = {
     if (d.orderId) res.order_id = d.orderId;
     if (d.orderSource) res.source = d.orderSource;
     if (d.orderPrice) res.price = _parse(d.orderPrice);
-    if (d.clientOrderId) res.client_oid = d.clientOrderId;
+    if (d.clientOrderId) res.client_oid = `${d.clientOrderId}`;
     if (d.orderStatus) res.status = orderStatusMap[d.orderStatus];
     if (d.symbol) res.pair = symbol2pair(d.symbol);
     return { ...res, ...spotUtils.getSpotOrderProps(d) };
@@ -237,13 +232,14 @@ const futureDepth = {
     const { ts, tick, ch } = ds;
     const info = _futureDepthCh2pair(ch);
     const { asks, bids } = tick;
-    const res = [{
-      exchange: 'HUOBI',
+    const res = {
+      exchange,
       ...info,
       time: new Date(ts),
       bids: futureUtils.formatFutureDepth(bids),
       asks: futureUtils.formatFutureDepth(asks),
-    }];
+    };
+    formatter.wrapperInstrumentId(res);
     return res;
   }
 };

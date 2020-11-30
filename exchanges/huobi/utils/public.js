@@ -285,11 +285,17 @@ function pair2symbol(pair) {
 
 const baseCoins = ['USDT', 'BTC', 'ETH'];
 
+function formatCoin(coin) {
+  if (!coin) return coin;
+  coin = coin.toUpperCase();
+  if (coin === 'BCHA') coin = 'BCH';
+  return coin;
+}
 function symbol2pair(symbol) {
   symbol = symbol.toUpperCase();
   for (const baseCoin of baseCoins) {
     if (symbol.endsWith(baseCoin)) {
-      const quoteCoin = symbol.replace(baseCoin, '');
+      const quoteCoin = formatCoin(symbol.replace(baseCoin, ''));
       return `${quoteCoin}-${baseCoin}`;
     }
   }
@@ -391,10 +397,11 @@ const systemStatusMap = {
 
 function getError(res) {
   if (!res) return { error: '数据为空' };
-  const error = res['err-msg'] || res['err-code'];
-  return error ? { error } : null;
+  const error = res['err-msg'] || res['err-code'] || res.error;
+  return error || null;
 }
 module.exports = {
+  formatCoin,
   baseCoins,
   systemStatusMap,
   base,

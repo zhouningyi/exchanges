@@ -23,7 +23,8 @@ const newtasks = [
     // ['spotSystemStatus', {}],
     // ['spotAssets', {}],
     // ['time', {}],
-        // ['futureMoveBalance', { source: 'SPOT', target: 'FUTURE', amount: 0.02, coin: 'BTC' }],
+        // ['futureMoveBalance', { source: 'FUTURE', target: 'SPOT', amount: 0.1, coin: 'EOS' }],
+        ['moveBalance', { source: 'FUTURE', target: 'SPOT', amount: 0.1, coin: 'EOS' }],
     // //////////////////////////////SPOT//////////////////////////////////////////////////
     // ['spotKline', { pair: 'BTC-USDT', interval: '15m' }],
     // ['spotBalances', { }],

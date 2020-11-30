@@ -1,7 +1,6 @@
 
 const Utils = require('./../utils');
 
-
 const spotConfig = {
   // // // // // // // 公共部分  // // // // // // //
   ping: {
@@ -48,16 +47,15 @@ const usdtContractConfig = {
     endpoint: 'fapi/v1/exchangeInfo'
   },
 };
-
 const coinContractConfig = {
   coinContractBalances: {
     name_cn: '全部币本位合约账户余额',
-    endpoint: '/dapi/v1/account',
+    endpoint: 'dapi/v1/account',
     sign: true
   },
   coinContractAssets: {
     name_cn: '全部币本位合约品种信息',
-    endpoint: '/dapi/v1/exchangeInfo',
+    endpoint: 'dapi/v1/exchangeInfo',
     sign: true
   },
   coinContractPositions: {
@@ -129,6 +127,12 @@ const coinContractConfig = {
     endpoint: 'dapi/v1/listenKey',
     method: 'PUT',
     sign: false
+  },
+  coinContractLedgers: {
+    name_cn: '比本位合约 交割记录',
+    endpoint: 'dapi/v1/income',
+    method: 'GET',
+    sign: true
   },
 };
 

@@ -4,6 +4,7 @@ const publicUtils = require('./public');
 const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
+const ef = require('./../../../utils/formatter');
 
 const { getOrderTypeOptions, getOrderDirectionOptions, pair2symbol, asset_type2ext, parseOrderStatusOptions, parseOrderDirectionOptions, getSymbolId, parseSymbolId } = publicUtils;
 
@@ -28,8 +29,8 @@ function _formatCoinContractOrder(d) {
   const info = parseSymbolId(d);
   const res = {
     symbol_id,
-    order_id: d.orderId,
-    client_oid: d.clientOrderId,
+    order_id: `${d.orderId}`,
+    client_oid: `${d.clientOrderId}`,
     price: _parse(d.price),
     amount: _parse(d.qty || d.origQty),
     filled_amount: _parse(d.executedQty),
@@ -167,7 +168,7 @@ function _formatCoinContractBalance(d) {
     profit_unreal: _parse(d.crossUnPnl),
     avaliable_balance: _parse(d.availableBalance),
   };
-  res.unique_id = Utils.formatter.getBalanceId(res);
+  res.balance_id = Utils.formatter.getBalanceId(res);
   //
   if (d.maxWithdrawAmount) res.moveable_balance = _parse(d.maxWithdrawAmount);
   if (d.openOrderInitialMargin)res.open_order_initial_margin = _parse(d.openOrderInitialMargin);
@@ -176,6 +177,11 @@ function _formatCoinContractBalance(d) {
   if (d.maintMargin) res.maint_margin = _parse(d.maintMargin);
   if (d.initialMargin) res.initial_margin = _parse(d.initialMargin);
   return res;
+}
+
+
+function coinContractBalancesO(d) {
+  return {};
 }
 
 function coinContractBalances(d) {
@@ -200,7 +206,35 @@ function coinContractAssets(ds) {
   return ds ? _.map(ds.symbols, _formatCoinContractAsset) : [];
 }
 
+const ledgerTypeMap = {
+  [ef.ledgerTypes.TRANSFER]: 'TRANSFER',
+  [ef.ledgerTypes.FEE]: 'COMMISSION',
+  [ef.ledgerTypes.FUNDING_RATE]: 'FUNDING_FEE'
+};
+const reverseLedgerTypeMap = _.invert(ledgerTypeMap);
+
+function coinContractLedgersO(o) {
+  const { type } = o;
+  const opt = {};
+  if (type) opt.incomeType = ledgerTypeMap[type];
+  return opt;
+}
+function coinContractLedgers(ds) {
+  return _.map(ds, (d) => {
+    return {
+      ...parseSymbolId(d),
+      type: reverseLedgerTypeMap[d.incomeType],
+      balance: _parse(d.income),
+      coin: d.asset,
+      time: new Date(d.time),
+    };
+  }).filter(d => d);
+}
+
+
 module.exports = {
+  coinContractLedgersO,
+  coinContractLedgers,
   formatCoinContractOrder: _formatCoinContractOrder,
   formatCoinContractBalance: _formatCoinContractBalance,
   formatCoinContractPosition: _formatCoinContractPosition,
@@ -226,4 +260,5 @@ module.exports = {
   // coinContractPositionsRisk,
   coinContractAssets,
   coinContractBalances,
+  coinContractBalancesO,
 };

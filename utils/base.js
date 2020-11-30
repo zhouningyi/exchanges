@@ -36,4 +36,4 @@ function checkKey(o, vs) {
     });
   } else if (isNull(o[vs])) _handelNull(vs);
 }
-module.exports = { delay, cleanObjectNull, checkKey, live };
+module.exports = { delay, cleanObjectNull, checkKey, live, isNull };

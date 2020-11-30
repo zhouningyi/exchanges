@@ -136,9 +136,9 @@ class Exchange extends Base {
       }
     }
     const _o = { wsName };
-    this.wsFutureOrders = (options, cb) => this._addChanel('futureOrders', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
-    this.wsFuturePosition = (options, cb) => this._addChanel('futurePosition', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
-    this.wsFutureBalance = (options, cb) => this._addChanel('futureBalance', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
+    this.wsFutureOrders = (options, cb) => this._addChanel('futureOrders', { ...options, ..._o }, cb);
+    this.wsFuturePositions = (options, cb) => this._addChanel('futurePosition', { ...options, ..._o }, cb);
+    this.wsFutureBalances = (options, cb) => this._addChanel('futureBalance', { ...options, ..._o }, cb);
     // this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, pairs: this.getFuturePairs(options), ..._o }, cb);
   }
   initWsFuturePublic(o = {}) {
@@ -180,7 +180,7 @@ class Exchange extends Base {
         process.exit();
       }
     }
-    this.wsSpotBalance = (options, cb) => this._addChanel('spotBalance', { wsName, options }, cb);
+    this.wsSpotBalances = (options, cb) => this._addChanel('spotBalance', { wsName, options }, cb);
     this.wsSpotOrders = (options, cb) => this._addChanel('spotOrders', { wsName, options }, cb);
   }
   _addChanel(wsName, o = {}, cb) {
@@ -242,7 +242,6 @@ class Exchange extends Base {
       }
       ws.send(data);
       ws.onLogin(() => {
-        this.print(`ws ${wsName} login...`, 'gray');
         this.isWsLogin = true;
       });
     });
@@ -250,6 +249,12 @@ class Exchange extends Base {
   getHost(hostId) {
     if (this.hostMap[hostId]) return this.hostMap[hostId];
     return REST_BASE;
+  }
+  async moveBalance(o = {}) {
+    const { source, target, coin, amount } = o;
+    if ([source, target].includes('FUTURE') && [source, target].includes('SPOT')) {
+      return await this.futureMoveBalance({ source, target, coin, amount });
+    }
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false, hostId) {
     const { options } = this;
@@ -283,6 +288,7 @@ class Exchange extends Base {
     if (method === 'POST') o.body = JSON.stringify(this._getBody(params));
     let body;
     // try {
+    // if (o.name === 'spotOrderInfoByOrderId')
     body = await request(o);
     // } catch (e) {
     //   if (e) console.log(e.message);
@@ -344,7 +350,6 @@ class Exchange extends Base {
     return 'none';
   }
   _compatible() {
-    console.log('_compatible.._compatible.....');
   }
   // calcCostFuture(o = {}) {
   //   checkKey(o, ['coin', 'side', 'amount']);

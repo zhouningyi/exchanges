@@ -6,7 +6,7 @@ const Utils = require('./../../../utils');
 const ef = require('./../../../utils/formatter');
 const publicUtils = require('./public');
 
-const { getPairInfo, systemStatusMap, checkKey, reverseOrderStatusMap, orderStatusMap, symbol2pair, pair2symbol, periodMap } = publicUtils;
+const { getPairInfo, systemStatusMap, checkKey, reverseOrderStatusMap, orderStatusMap, symbol2pair, pair2symbol, formatCoin, periodMap } = publicUtils;
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -59,7 +59,7 @@ function spotTicks(ds) {
 
 const exchange = 'HUOBI';
 function _processBalance(list) {
-  const group = _.groupBy(list, l => l.currency.toUpperCase());
+  const group = _.groupBy(list, l => formatCoin(l.currency));
   const res = [];
   _.forEach(group, (arr, coin) => {
     const map = _.groupBy(arr, d => d.type);
@@ -69,7 +69,7 @@ function _processBalance(list) {
     if (locked) l.locked_balance = _parse(locked.balance);
     if (trade) l.balance = _parse(trade.balance);
     l.asset_type = 'SPOT';
-    l.unique_id = Utils.formatter.getBalanceId(l);
+    l.balance_id = Utils.formatter.getBalanceId(l);
     // if (locked && trade) l.total_balance = l.locked_balance + l.balance;
     res.push(l);
   });
@@ -127,6 +127,7 @@ function _formatSpotOrder(l) {
   const state = l.state || l['order-state'];
   const price = state === 'canceled' ? undefined : _parse(l.price);
   const order_id = `${l.id || l['order-id']}`;
+  if (l.error) return null;
   const res = {
     unique_id: order_id,
     asset_type: 'SPOT',
@@ -170,7 +171,6 @@ function spotOrderO(o = {}, o1) {
   };
   if (o.client_oid) opt['client-order-id'] = o.client_oid;
   if (type === 'LIMIT') opt.price = `${o.price}`;
-  // opt.amount = _formatAmount(o.amount, o.pair);
   return opt;
 }
 
@@ -253,14 +253,14 @@ function spotOrders(res, o) {
   return _.map(res, d => _formatSpotOrder(d, o));
 }
 // //
-function unfinishSpotOrdersO(o = {}, o1) {
+function spotUnfinishOrdersO(o = {}, o1) {
   return {
     'account-id': o1.spotId,
     symbol: pair2symbol(o.pair),
   };
 }
 
-function unfinishSpotOrders(res, o) {
+function spotUnfinishOrders(res, o) {
   return _.map(res, d => _formatSpotOrder(d, o));
 }
 
@@ -331,6 +331,7 @@ function spotAssets(ds) {
       pair,
       asset_type,
       price_precision: d['price-precision'],
+      amount_precision: d['amount-precision'],
       base_precision: d['amount-precision'],
       lever_rate: _parse(d['leverage-ratio']),
       isable: d.state === 'online'
@@ -340,7 +341,11 @@ function spotAssets(ds) {
   });
 }
 
+
 // 按照order_id撤销订单
+function spotCancelOrderByOrderIdO(o) {
+  return { order_id: o.order_id };
+}
 function spotCancelOrderByOrderId(order_id, o) {
   return (order_id && !order_id.error) ? { ...o, order_id, status: 'CANCELING' } : null;
 }
@@ -354,6 +359,7 @@ function spotCancelOrderByClientOrderId(statusId, o) {
   return statusId;
 }
 
+const spotOrderInfoByOrderIdO = o => ({ order_id: o.order_id });
 const spotOrderInfoByOrderId = _formatSpotOrder;
 
 function spotOrderInfoByClientOrderIdO(o) {
@@ -361,11 +367,13 @@ function spotOrderInfoByClientOrderIdO(o) {
 }
 const spotOrderInfoByClientOrderId = _formatSpotOrder;
 module.exports = {
+  spotOrderInfoByOrderIdO,
   spotOrderInfoByOrderId,
   spotOrderInfoByClientOrderIdO,
   spotOrderInfoByClientOrderId,
   spotCancelOrderByClientOrderIdO,
   spotCancelOrderByClientOrderId,
+  spotCancelOrderByOrderIdO,
   spotCancelOrderByOrderId,
   // spotMoveBalanceO,
   // spotMoveBalance,
@@ -399,8 +407,8 @@ module.exports = {
   spotOrders,
   getSpotOrderProps: getOrderProps,
   //
-  unfinishSpotOrdersO,
-  unfinishSpotOrders,
+  spotUnfinishOrdersO,
+  spotUnfinishOrders,
   // cancelOrderO,
   // cancelOrder,
   batchCancelOpenSpotOrdersO,

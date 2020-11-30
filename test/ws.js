@@ -26,9 +26,9 @@ const newtasks = [
   // ['wsFutureDepth', { assets: [{ pair: 'BTC-USD', asset_type: 'QUARTER' }, { pair: 'BTC-USD', asset_type: 'NEXT_QUARTER' }] }],
   // ['wsSpotDepth', { assets: [{ pair: 'BTC-USDT' }, { pair: 'BCH-USDT' }] }],
   // ['subscribeAssetDepth', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
-  ['subscribeAssetOrders', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['SPOT', 'next_quarter'] }],
+  // ['subscribeAssetOrders', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['SPOT', 'next_quarter'] }],
   // ['subscribeAssetPositions', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
-  // ['subscribeAssetBalances', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }]
+  ['subscribeAssetBalances', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['SPOT', 'next_quarter'] }]
 ];
 
 const wsList = [

@@ -329,6 +329,7 @@ class exchange extends Event {
           if (error) {
             errorO = { ...ds, error };
             const errorEventData = { ...errorO, o, error_type: 'rest_api', exchange: this.name.toUpperCase(), opt, url: endpointCompile, name_cn: conf.name_cn, endpoint: conf.endpoint, name: conf.name, time: new Date() };
+            console.log(errorEventData, 'errorEventData....');
             this.updateErrorInfo(errorEventData);
             this.emit('request_error', errorEventData);
           }
@@ -403,19 +404,32 @@ class exchange extends Event {
   }
   compatible() {
     if (this._compatible) this._compatible();
-      // this.assetBatchCancelOrders = async (orders) => {
-    //   const ordersGroup = _.groupBy(orders, d => this._getAssetBaseType(d));
-    //   let res = [];
-    //   for (const baseType in ordersGroup) {
-    //     const orders = ordersGroup[baseType];
-    //     if (orders && orders.length) {
-    //       const realFnName = `${baseType}BatchCancelOrders`;
-    //       const _res = await this[realFnName](orders);
-    //       if (_res) res = [..._res];
-    //     }
-    //   }
-    //   return res;
-    // };
+    this.assetBatchCancelOrders = async (orders) => {
+      const ordersGroup = _.groupBy(orders, d => this._getAssetBaseType(d));
+      let res = [];
+      for (const baseType in ordersGroup) {
+        const orders = ordersGroup[baseType];
+        if (orders && orders.length) {
+          const realFnName = `${baseType}BatchCancelOrders`;
+          if (this[realFnName]) {
+            const _res = await this[realFnName](orders);
+            if (_res) res = [..._res];
+          } else {
+            const realFnName = `${baseType}CancelOrder`;
+            if (this[realFnName]) {
+              for (const order of orders) {
+                const _res = await this[realFnName](order);
+                if (_res) res.push(_res);
+              }
+            } else {
+              console.log(`缺少方法exchange.${realFnName}`);
+            }
+          }
+        }
+      }
+      return res;
+    };
+    //
     this.registerFn({ name: 'orders' }, async (o = {}) => {
       const { status, assetBaseType, assets, ...rest } = o;
       const fnName = status === 'UNFINISH' ? `${assetBaseType}UnfinishOrders` : `${assetBaseType}Orders`;
@@ -432,32 +446,37 @@ class exchange extends Event {
       if (!ds || !o || !o.assets) return ds;
       const exchange = this.getExchangeName();
       const { assets } = o;
-      const balance_ids = _.map(assets, asset => Utils.formatter.getBalanceId({ ...asset, exchange }));
-      return _.filter(ds, d => balance_ids.includes(d.unique_id) || d.balance);
+      const balance_ids = _.uniqueId([
+        _.map(assets, asset => Utils.formatter.getBalanceId({ ...asset, exchange, type: 'left' })),
+        _.map(assets, asset => Utils.formatter.getBalanceId({ ...asset, exchange, type: 'right' }))
+      ]);
+      return _.filter(ds, d => balance_ids.includes(d.balance_id));
     };
+
 
     const filterByInstrumentId = (ds, o) => {
       if (!ds || !o || !o.assets) return ds;
       const { assets } = o;
       const exchange = this.getExchangeName();
       const instrument_ids = _.map(assets, asset => Utils.formatter.getInstrumentId({ ...asset, exchange }));
-      return _.filter(ds, d => instrument_ids.includes(d.instrument_id) || d.vector);
+      return _.filter(ds, d => instrument_ids.includes(d.instrument_id));
     };
 
-    const resFns0 = ['balances', 'assets', 'positions'];
+    const resFns0 = ['balances', 'assets', 'positions', 'ledgers'];
     for (const name of resFns0) {
       this.registerFn({ name }, async (o = {}) => {
-        const wsFnName = `wsRequest${upperFirst(o.assetBaseType)}${upperFirst(name)}`;
+        const { assetBaseType, ...restOption } = o;
+        const wsFnName = `wsRequest${upperFirst(assetBaseType)}${upperFirst(name)}`;
         let ds;
         if (this[wsFnName] && (name !== 'balances')) {
-          ds = await this[wsFnName]();
+          ds = await this[wsFnName](restOption);
         } else {
           const restFnName = `${o.assetBaseType}${upperFirst(name)}`;
-          if (this[restFnName]) ds = await this[restFnName]();
+          if (this[restFnName]) ds = await this[restFnName](restOption);
         }
         if (name === 'balances') return filterBalances(ds, o);
-        if (['positions', 'assets'].includes(name)) return filterByInstrumentId(ds, o);
-        // console.log(`resFns0/name:${name} UNKNOW...`);
+        if (['positions', 'assets', 'ledgers'].includes(name)) return filterByInstrumentId(ds, o);
+        console.log(`resFns0/name:${name} UNKNOW...`);
       });
     }
 
@@ -468,7 +487,8 @@ class exchange extends Event {
         const baseType = this._getAssetBaseType(o);
         const realFnName = `${baseType}${upperFirst(name)}`;
         if (this[realFnName]) {
-          return await this[realFnName](o);
+          const res = await this[realFnName](o);
+          return res;
         } else {
           this.print(`compatible: rest函数${realFnName}不存在...`);
         }

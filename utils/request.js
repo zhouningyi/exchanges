@@ -29,6 +29,7 @@ const logrest = !!argv.logrest;
 // }
 
 
+const TIME_OUT = 8 * 1000;
 async function requestGot(o) {
   let { uri, url, method = 'GET', headers = {} } = o;
 
@@ -54,7 +55,7 @@ async function requestGot(o) {
   let res;
   //
   headers['content-type'] = headers['Content-Type'];
-  const defaultO = { headers: { ...headers }, dnsCache: true, resolveBodyOnly: true, http2: false, responseType: 'json' };
+  const defaultO = { headers: { ...headers }, dnsCache: true, resolveBodyOnly: true, http2: false, timeout: TIME_OUT, responseType: 'json' };
   let opt;
   try {
     if (method === 'GET') {
@@ -84,7 +85,7 @@ async function requestGot(o) {
 function requestPromise(o) {
   const t = new Date();
   return new Promise((resolve, reject) => {
-    if (!o.timeout) o.timeout = 10000;
+    if (!o.timeout) o.timeout = TIME_OUT;
     request(o, (e, res, body) => {
       const url = `${o.method}: ${(o.uri || o.url).substring(0, 80)}...`;
       if (logrest) {
@@ -114,4 +115,4 @@ async function requestMix(o) {
   return await requestPromise(o);
 }
 
-module.exports = requestMix;
+module.exports = requestPromise;

@@ -82,13 +82,9 @@ class WS extends Event {
   }
   checkPing(line) {
     if (!line) return;
-    if (line.ping) {
-      const msg = { pong: line.ping };
-      this.send(msg);
-    } else if (line.op === 'ping') {
-      const msg = { op: 'pong', ts: line.ts };
-      this.send(msg);
-    }
+    if (line.ping) return this.send({ pong: line.ping });
+    if (line.op === 'ping') return this.send({ op: 'pong', ts: line.ts });
+    if (line.action === 'ping') return this.send({ action: 'pong', data: { ts: _.get(line.data, 'ts') } });
   }
   onOpen(cb) {
     this._onOpen = cb;
@@ -109,11 +105,12 @@ class WS extends Event {
       if (pingInterval) loop(() => ws.tryPing(noop), pingInterval);
     });
     ws.on('pong', (e) => {
+      // console.log(e.toString(), 'pong....');
       // const data = processWsData(e);
       // console.log(e, 'pong');
     });
     ws.on('ping', (e) => {
-      console.log('ping', e.toString());
+      // console.log('ping', e.toString());
     });
     ws.on('error', (e) => {
       console.log(e, 'error');
