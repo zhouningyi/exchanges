@@ -118,6 +118,15 @@ const futureConfig = {
     rateLimit: 1000 / 10,
     check: 'moveBalance'
   },
+  futureUpdateLeverate: {
+    method: 'POST',
+    name_cn: '修改期货杠杆',
+    endpoint: 'api/v1/contract_switch_lever_rate',
+    sign: true,
+    notNull: ['coin', 'lever_rate'],
+    host: 'future',
+    rateLimit: 3000 / 1,
+  },
   futureBalances: {
     method: 'POST',
     name_cn: '账户余额',

@@ -86,7 +86,7 @@ function formatWsSpotBalance(d) {
   const res = {
     exchange: 'HUOBI',
     asset_type: 'SPOT',
-    balance: _parse(d.balance),
+    balance: _parse(d.balance || d.available),
     coin: formatCoin(d.currency),
     account_id: d.accountId,
   };
