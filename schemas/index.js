@@ -16,6 +16,8 @@ const depth = require('./depth.json');
 const order = require('./order.json');
 const tick = require('./tick.json');
 const tick_history = require('./tick_history.json');
+const coin_interest_history = require('./coin_interest_history.json');
+
 
 module.exports = {
   future_blance,
@@ -34,4 +36,6 @@ module.exports = {
   tick_history,
   order,
   depth,
+  //
+  coin_interest_history
 };

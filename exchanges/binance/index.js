@@ -12,6 +12,7 @@ const { USER_AGENT, WS_BASE, SPOT_REST_BASE, USDT_CONTRACT_REST_BASE, COIN_CONTR
 const apiConfig = require('./meta/api');
 const wsFunctionConfig = require('./meta/ws');
 const { upperFirst } = require('lodash');
+const spotUtils = require('./utils/spot');
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -45,6 +46,8 @@ class Exchange extends Base {
     super(o, options);
     this.name = 'binance';
     this.options = { ...Exchange.options, ...options };
+    this.apiKey = '6hnKjWdUAvK5ADfBaA6lbJ169uPuaczkhorjnjYYNB3q6F2IfUpfOQP4n9l39wcN';
+    this.apiSecret = 'c02HMEBTALdqxwGqyda1SyjLie3WMibm5TsQ9EqhySYS5JnYyhsqiIAaFHevlemt'
     this.init();
     this.compatible();
   }
@@ -92,6 +95,19 @@ class Exchange extends Base {
       'User-Agent': USER_AGENT,
       'X-MBX-APIKEY': this.apiKey
     };
+  }
+  async spotInterestRate(o) {
+    const opt = spotUtils.interestO(o);
+    const signature = this.getSignature('GET', endpoint, {}, false);
+    const sigStr = `signature=${signature}`;
+    const url = `https://api.binance.com/sapi/v1/margin/interestHistory?timestamp=${opt.timestamp}&${sigStr}`;
+    const ds = await request({ url });
+    if (!ds) return null;
+    const { data } = ds;
+    if (!Array.isArray(data)) return null;
+    return _.map(data.slice(1), (d) => {
+      return spotUtils.interest(d, o);
+    });
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false, host) {
     params = Utils.cleanObjectNull(params);
