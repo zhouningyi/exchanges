@@ -46,8 +46,8 @@ class Exchange extends Base {
     super(o, options);
     this.name = 'binance';
     this.options = { ...Exchange.options, ...options };
-    this.apiKey = '6hnKjWdUAvK5ADfBaA6lbJ169uPuaczkhorjnjYYNB3q6F2IfUpfOQP4n9l39wcN';
-    this.apiSecret = 'c02HMEBTALdqxwGqyda1SyjLie3WMibm5TsQ9EqhySYS5JnYyhsqiIAaFHevlemt'
+    // this.apiKey = '6hnKjWdUAvK5ADfBaA6lbJ169uPuaczkhorjnjYYNB3q6F2IfUpfOQP4n9l39wcN';
+    // this.apiSecret = 'c02HMEBTALdqxwGqyda1SyjLie3WMibm5TsQ9EqhySYS5JnYyhsqiIAaFHevlemt'
     this.init();
     this.compatible();
   }
