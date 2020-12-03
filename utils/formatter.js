@@ -23,9 +23,8 @@ const _getExchange = o => (o && o.exchange) ? upper(o.exchange) : null;
 const getCoin = (o) => {
   const { coin, type = 'left' } = o;
   if (coin) return coin;
-  if (type === 'left') return pair2coin(o.pair);
   if (type === 'right') return pair2coinRight(o.pair);
-  return null;
+  return o.pair ? pair2coin(o.pair) : null;// 有些还有传type='LIMIT'的
 };
 const getPair = o => upper(o.pair);
 //

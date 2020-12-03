@@ -293,10 +293,11 @@ function _formatFutureOrder(l, o) {
     type: orderPriceTypMap[order_price_type],
     amount: _parse(amount),
     price: _parse(price),
-    deal_amount,
+    filled_amount: deal_amount,
     fee: _parse(fee),
     ...getROrderProps(l),
     server_created_at: ct ? new Date(ct) : undefined,
+    server_updated_at: new Date(),
     status: rStatusMap[status],
     trade
   };
@@ -582,7 +583,21 @@ function futureUnfinishOrdersO(o = {}) {
   return { symbol: pair2coin(o.pair) };
 }
 
+function futureUpdateLeverateO(o = {}) {
+  const coin = ef.getCoin(o);
+  const { lever_rate } = o;
+  return { symbol: coin, lever_rate };
+}
+
+function futureUpdateLeverate(res, o) {
+  if (!res) return null;
+  const { lever_rate } = res;
+  return { ...o, lever_rate };
+}
+
 module.exports = {
+  futureUpdateLeverateO,
+  futureUpdateLeverate,
   futureAssets,
   futureCancelOrderO,
   futureCancelOrder,

@@ -138,12 +138,12 @@ function _formatSpotOrder(l) {
     price,
     server_created_at: l['created-at'] ? new Date(l['created-at']) : undefined,
     ...getOrderProps(l),
-    server_updated_at: l['finished-at'] ? new Date(l['finished-at']) : undefined,
+    server_updated_at: l['finished-at'] ? new Date(l['finished-at']) : new Date(),
     server_canceled_at: l['canceled-at'] ? new Date(l['canceled-at']) : undefined,
     source: l.source,
     status: orderStatusMap[state],
-    filled_amount: _parse(l['filled-amount']),
-    fee: _parse(l['filled-fees']),
+    filled_amount: _parse(l['filled-amount'] || l['field-amount']),
+    fee: _parse(l['filled-fees'] || l['field-fees']),
   };
   if (l['client-order-id'])res.client_oid = l['client-order-id'];
   return Utils.cleanObjectNull(res);
@@ -360,12 +360,16 @@ function spotCancelOrderByClientOrderId(statusId, o) {
 }
 
 const spotOrderInfoByOrderIdO = o => ({ order_id: o.order_id });
-const spotOrderInfoByOrderId = _formatSpotOrder;
+const spotOrderInfoByOrderId = (d) => {
+  return _formatSpotOrder(d);
+};
 
 function spotOrderInfoByClientOrderIdO(o) {
   return { clientOrderId: o.client_oid };
 }
-const spotOrderInfoByClientOrderId = _formatSpotOrder;
+const spotOrderInfoByClientOrderId = (d) => {
+  return _formatSpotOrder(d);
+};
 module.exports = {
   spotOrderInfoByOrderIdO,
   spotOrderInfoByOrderId,

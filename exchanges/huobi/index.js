@@ -350,6 +350,16 @@ class Exchange extends Base {
     return 'none';
   }
   _compatible() {
+    this.updateAssetLeverate = async (o = {}) => {
+      const baseType = this._getAssetBaseType(o);
+      const coin = ef.getCoin(o);
+      const fnName = `${baseType}UpdateLeverate`;
+      if (this[fnName]) {
+        return await this[fnName]({ ...o, coin });
+      } else {
+        console.log(`updateAssetLeverate/缺少baseType:${baseType}...`);
+      }
+    };
   }
   // calcCostFuture(o = {}) {
   //   checkKey(o, ['coin', 'side', 'amount']);
