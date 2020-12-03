@@ -329,7 +329,7 @@ class exchange extends Event {
           if (error) {
             errorO = { ...ds, error };
             const errorEventData = { ...errorO, o, error_type: 'rest_api', exchange: this.name.toUpperCase(), opt, url: endpointCompile, name_cn: conf.name_cn, endpoint: conf.endpoint, name: conf.name, time: new Date() };
-            console.log(errorEventData, 'errorEventData....');
+            // console.log(errorEventData, 'errorEventData....');
             this.updateErrorInfo(errorEventData);
             this.emit('request_error', errorEventData);
           }

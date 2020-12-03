@@ -2,7 +2,7 @@
 const request = require('request');
 const got = require('got');
 const Utils = require('./../utils');
-const { fcoin } = require('../config');
+// const { fcoin } = require('../config');
 const argv = require('optimist').argv;
 
 const logrest = !!argv.logrest;

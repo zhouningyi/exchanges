@@ -39,6 +39,11 @@ const spotConfig = {
     endpoint: 'api/v3/ticker/bookTicker',
     notNull: ['pair'],
   },
+  spotInterest: {
+    name_cn: '杠杆利率',
+    endpoint: 'sapi/v1/margin/interestHistory',
+    sign: true
+  },
 };
 
 const usdtContractConfig = {
