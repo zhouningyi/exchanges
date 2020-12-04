@@ -106,6 +106,11 @@ const spotConfig = {
   //   sign: true,
   //   notNull: ['source', 'target', 'amount', 'coin']
   // },
+  spotInterest: {
+    name_cn: '杠杆利率',
+    endpoint: '/v1/margin/loan-info',
+    sign: true
+  },
 };
 
 const futureConfig = {

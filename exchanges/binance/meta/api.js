@@ -41,7 +41,7 @@ const spotConfig = {
   },
   spotInterest: {
     name_cn: '杠杆利率',
-    endpoint: 'sapi/v1/margin/interestHistory',
+    endpoint: 'sapi/v1/margin/account',
     sign: true
   },
 };
