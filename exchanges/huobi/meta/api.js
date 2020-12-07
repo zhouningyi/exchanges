@@ -107,8 +107,9 @@ const spotConfig = {
   //   notNull: ['source', 'target', 'amount', 'coin']
   // },
   spotInterest: {
+    method: 'GET',
     name_cn: '杠杆利率',
-    endpoint: '/v1/margin/loan-info',
+    endpoint: 'v1/margin/loan-info',
     sign: true
   },
 };
