@@ -380,7 +380,7 @@ function spotInterestO(o) {
   return res;
 }
 function _formatInterest(d , o) {
-  console.log(d,o,'_formatInterest_formatInterest')
+  // console.log(d,'fatch-----> data')
   const exchange = 'HUOBI';
   const asset_type = 'SPOT';
   // const time = new Date();

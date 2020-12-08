@@ -260,8 +260,7 @@ class Exchange extends Base {
   }
   async spotInterest(o) {
     console.log('spotInterest...index')
-    const opt = spotUtils.spotInterestO(o);
-    const url = `https://api.huobi.pro/v1/margin/loan-info&symbols=${opt.symbols}`;
+    const url = `https://api.huobi.pro/v1/margin/loan-info`;
     const ds = await request({ url });
     console.log(url,'......url...........')
     if (!ds) return null;
@@ -305,7 +304,7 @@ class Exchange extends Base {
     // try {
     // if (o.name === 'spotOrderInfoByOrderId')
     body = await request(o);
-    console.log(body, o, 8888);
+    // console.log(body, o, 8888);
     // } catch (e) {
     //   if (e) console.log(e.message);
     //   return false;

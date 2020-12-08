@@ -17,5 +17,5 @@ const huobi = new Huobi({
     apiKey: 'ur2fg6h2gf-d0d2b447-6e9bcef0-e4e0f', 
     apiSecret: 'f68132eb-8523c7f6-101a54d3-c97e8'
 })
-const o = { symobols :'btcusdt' }
-huobi.spotInterest(o)
+
+huobi.spotInterest({symbols:'btcusdt'})
