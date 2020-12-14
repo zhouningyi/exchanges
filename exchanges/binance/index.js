@@ -12,6 +12,7 @@ const { USER_AGENT, WS_BASE, SPOT_REST_BASE, USDT_CONTRACT_REST_BASE, COIN_CONTR
 const apiConfig = require('./meta/api');
 const wsFunctionConfig = require('./meta/ws');
 const { upperFirst } = require('lodash');
+const spotUtils = require('./utils/spot');
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -56,7 +57,7 @@ class Exchange extends Base {
     await this.syncTime();
   }
   async syncTime() {
-    const time = await this.time();
+    const time = await this._getTime();
     this.timeOffset = time.timestamp - new Date().getTime();
   }
   getSignature(method, endpoint, params, isws = false) {
@@ -65,7 +66,7 @@ class Exchange extends Base {
     return crypto.createHmac('sha256', this.apiSecret).update(totalStr).digest('hex');// .toString('base64');
   }
   _getTime() {
-    return new Date().toISOString();
+    return {timestamp:new Date().toISOString()};
   }
   getUrlBase(o) {
     const { host = 'spot' } = o;
@@ -93,7 +94,23 @@ class Exchange extends Base {
       'X-MBX-APIKEY': this.apiKey
     };
   }
+  async spotInterest(o) {
+    console.log('spotInterest...index')
+    const opt = spotUtils.spotInterestO(o);
+    const signature = this.getSignature('GET', endpoint, {}, false);
+    const sigStr = `signature=${signature}`;
+    const url = `https://api.binance.com/sapi/v1/margin/interestHistory?timestamp=${opt.timestamp}&${sigStr}`;
+    const ds = await request({ url });
+    console.log(url,'......url...........')
+    if (!ds) return null;
+    const { data } = ds;
+    if (!Array.isArray(data)) return null;
+    return _.map(data.slice(1), (d) => {
+      return spotUtils.spotInterest(d, o);
+    });
+  }
   async request(method = 'GET', endpoint, params = {}, isSign = false, host) {
+    console.log('request...............',Utils.cleanObjectNull(params))
     params = Utils.cleanObjectNull(params);
     params = _.cloneDeep(params);
     const hour8 = 3600 * 1000 * 8;
@@ -129,6 +146,7 @@ class Exchange extends Base {
     };
 
     let body;
+    console.log(o,'...requestO........')
     // try {
     body = await request(o);
 
@@ -136,6 +154,7 @@ class Exchange extends Base {
     //   if (e) console.log(e.message);
     //   return false;
     // }
+    console.log(body,'.......body........')
     if (!body) {
       console.log(`${endpoint}: body 返回为空...`);
       return false;

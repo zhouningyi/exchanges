@@ -1,0 +1,51 @@
+{
+  "name": "coin_interest_history",
+  "desc": "coin_interest_history",
+  "columns": {
+    "unique_id": {
+      "type": ["STRING", 38],
+      "unique": true
+    },
+    "pair": {
+      "type": ["STRING", 16],
+      "index": true,
+      "comment":"币对，逐仓symbol，全仓返回margin"
+    },
+    "exchange": {
+      "type": ["STRING", 16],
+      "index": true
+    },
+    "asset_type": {
+      "type": ["STRING", 20],
+      "index": true
+    },
+    "type": {
+      "type":["STRING",20],
+      "comment": "类型"
+    },
+    "asset": {
+      "type":["STRING",20],
+      "comment": "交易对象币种"
+    },
+    "time":{
+      "type": "DATE",
+      "index": true
+    },
+    "interest": {
+      "type": "FLOAT",
+      "comment": "利率"
+    },
+    "interest_rate": {
+      "type": "FLOAT",
+      "comment": "利息"
+    },
+    "is_borrow": {
+      "type": "BOOLEAN",
+      "comment": "是否可借"
+    },
+    "principal": {
+      "type": "FLOAT",
+      "comment": "主要的"
+    }
+  }
+}

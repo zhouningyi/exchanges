@@ -13,6 +13,8 @@ const { FUTURE_BASE, REST_BASE, WS_BASE, REST_HUOBI_GROUP, WS_BASE_ACCOUNT, WS_B
 const restConfig = require('./meta/api');
 const HmacSHA256 = require('crypto-js/hmac-sha256');
 const CryptoJS = require('crypto-js');
+const spotUtils = require('./utils/spot');
+
 
 const { upperFirst } = _;
 function fixPath(v) {
@@ -256,6 +258,18 @@ class Exchange extends Base {
       return await this.futureMoveBalance({ source, target, coin, amount });
     }
   }
+  async spotInterest(o) {
+    console.log('spotInterest...index')
+    const url = `https://api.huobi.pro/v1/margin/loan-info`;
+    const ds = await request({ url });
+    console.log(url,'......url...........')
+    if (!ds) return null;
+    const { data } = ds;
+    if (!Array.isArray(data)) return null;
+    return _.map(data.slice(1), (d) => {
+      return spotUtils.spotInterest(d, o);
+    });
+  }
   async request(method = 'GET', endpoint, params = {}, isSign = false, hostId) {
     const { options } = this;
     params = Utils.cleanObjectNull(params);
@@ -290,6 +304,7 @@ class Exchange extends Base {
     // try {
     // if (o.name === 'spotOrderInfoByOrderId')
     body = await request(o);
+    // console.log(body, o, 8888);
     // } catch (e) {
     //   if (e) console.log(e.message);
     //   return false;

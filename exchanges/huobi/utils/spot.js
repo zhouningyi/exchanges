@@ -370,6 +370,38 @@ function spotOrderInfoByClientOrderIdO(o) {
 const spotOrderInfoByClientOrderId = (d) => {
   return _formatSpotOrder(d);
 };
+
+//查询借币利息及额度
+function spotInterestO(o) {
+  const { exchange,asset_type ,symbols } = o;
+  const res = { exchange ,asset_type,symbols};
+  if (o.timeStart) res.start = o.timeStart.toISOString();
+  if (o.timeEnd) res.end = o.timeEnd.toISOString();
+  return res;
+}
+function _formatInterest(d , o) {
+  // console.log(d,'fatch-----> data')
+  const exchange = 'HUOBI';
+  const asset_type = 'SPOT';
+  // const time = new Date();
+  // const pair = d.isolatedSymbol;
+  // const unique_id = `${exchange}_${asset_type}_${pair}`;
+  return d
+  // return {
+  //   time,
+  //   unique_id,
+  //   exchange,
+  //   asset_type,
+  //   interest: _parse(d.interest),
+  //   interest_rate: _parse(d.interestRate),
+  //   type: d.type,
+  //   pair,
+  //   principal:_parse(d.principal)
+  // };
+}
+function spotInterest(ds, o) {
+  return _.map(ds,l=> _formatInterest(l,o));
+}
 module.exports = {
   spotOrderInfoByOrderIdO,
   spotOrderInfoByOrderId,
@@ -420,7 +452,9 @@ module.exports = {
   batchCancelSpotOrdersO,
   batchCancelSpotOrders,
   // orderDetailO,
-  // orderDetail
+  // orderDetail,
+  spotInterestO,
+  spotInterest
 };
 
 
