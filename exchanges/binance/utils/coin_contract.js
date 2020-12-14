@@ -170,7 +170,7 @@ function _formatCoinContractBalance(d) {
   };
   res.balance_id = Utils.formatter.getBalanceId(res);
   //
-  if (d.maxWithdrawAmount) res.moveable_balance = _parse(d.maxWithdrawAmount);
+  if (d.maxWithdrawAmount) res.withdraw_available = _parse(d.maxWithdrawAmount);
   if (d.openOrderInitialMargin)res.open_order_initial_margin = _parse(d.openOrderInitialMargin);
   if (d.positionInitialMargin) res.position_initial_margin = _parse(d.positionInitialMargin);
   if (d.marginBalance) res.margin = _parse(d.marginBalance);
@@ -202,6 +202,7 @@ function _formatCoinContractAsset(d) {
   if (d.quantityPrecision) res.quantity_precision = d.quantityPrecision;
   return res;
 }
+
 function coinContractAssets(ds) {
   return ds ? _.map(ds.symbols, _formatCoinContractAsset) : [];
 }

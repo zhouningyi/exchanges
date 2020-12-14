@@ -121,7 +121,7 @@ class WS extends Event {
               console.log(`${streamName}: timeout...`);
               process.exit();
               reject([]);
-            }, 10000);
+            }, 10 * 1000);
           }
           this.registerFunc(connectionId, async (data) => {
             if (o.chanel) {
@@ -209,8 +209,8 @@ class WS extends Event {
       ws._isReady = false;
       return this.restart();
     });
-    ws.on('close', (e) => {
-      console.log(e, o, 'close');
+    ws.on('close', (e, b) => {
+      console.log(e, b, o, 'close');
       this._isReady = false;
       return this.restart();
     });
@@ -222,7 +222,7 @@ class WS extends Event {
     });
   }
   restart() {
-    console.log('restart... 111111111111111111');
+    console.log('ws restart... 111111111111111111');
     process.exit();
   }
   _onCallback(data, { connectionId }) {

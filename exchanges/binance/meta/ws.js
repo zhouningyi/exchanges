@@ -76,7 +76,6 @@ const spotConfig = {
 const usdtContractConfig = {
 };
 
-
 function wsCoinContractDepthStream(o) {
   const { assets: _assets, pair, asset_type, level = 5 } = o;
   const assets = _assets || [{ pair, asset_type, level }];

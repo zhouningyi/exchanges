@@ -32,7 +32,7 @@ const isFuture = o => FUTURE_ASSETS.includes(getAssetType(o));
 const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o));
 const isSwap = o => getAssetType(o) === SWAP_ASSET;
 const isSpot = o => getAssetType(o) === SPOT_ASSET;
-const isReverseContract = o => isContract(o) && getPair(o).endsWith('-USD');
+const isReverseContract = o => (isContract(o) && getPair(o).endsWith('-USD')) || (getBalanceType(o) === 'COIN_CONTRACT');
 const isForwardContract = o => isContract(o) && getPair(o).endsWith('-USDT');
 const pair2coin = pair => pair ? upper(pair.split('-')[0]) : null;
 const pair2coinRight = pair => pair ? upper(pair.split('-')[1]) : null;
