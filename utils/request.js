@@ -14,21 +14,6 @@ const logrest = !!argv.logrest;
 
 // test();
 
-// {
-//   uri: 'https://www.okex.com/api/futures/v3/orders/ETH-USD-200515?instrument_id=ETH-USD-200515&state=6',
-//   proxy: null,
-//   method: 'GET',
-//   headers: {
-//     'Content-Type': 'application/json',
-//     'User-Agent': 'Mozilla/4.0 (compatible; Node OKEX API)',
-//     'OK-ACCESS-KEY': '1e3209bb-a5f4-4906-b9e2-1769dc39bf6e',
-//     'OK-ACCESS-SIGN': 'nnDEFZPMHj5CaYayp0g4vTwqRvdrYTa9XxO6kkR8Auk=',
-//     'OK-ACCESS-TIMESTAMP': '2020-05-03T10:25:22.394Z',
-//     'OK-ACCESS-PASSPHRASE': 'zhouningyi1'
-//   }
-// }
-
-
 const TIME_OUT = 8 * 1000;
 async function requestGot(o) {
   let { uri, url, method = 'GET', headers = {} } = o;
@@ -114,5 +99,7 @@ async function requestMix(o) {
   }
   return await requestPromise(o);
 }
+
+exports.requestMix = requestMix;
 
 module.exports = requestPromise;

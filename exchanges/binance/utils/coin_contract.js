@@ -179,7 +179,6 @@ function _formatCoinContractBalance(d) {
   return res;
 }
 
-
 function coinContractBalancesO(d) {
   return {};
 }
@@ -231,7 +230,6 @@ function coinContractLedgers(ds) {
     };
   }).filter(d => d);
 }
-
 
 module.exports = {
   coinContractLedgersO,
