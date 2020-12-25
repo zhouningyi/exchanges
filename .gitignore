@@ -10,3 +10,4 @@ build
 static/src/libs
 config
 .vscode
+test/test_utils.js
