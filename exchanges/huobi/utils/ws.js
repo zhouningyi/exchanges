@@ -123,11 +123,11 @@ const spotOrders = {
   formater: (d) => {
     if (!d || !d.data || !_.values(d.data).length) return null;
     d = d.data;
-    const res = { asset_type: 'SPOT' };
+    const res = { asset_type: 'SPOT', exchange };
     if (d.orderSize) res.amount = _parse(d.orderSize);
     if (d.execAmt) res.filled_amount = _parse(d.execAmt);
     if (d.lastActTime) res.server_updated_at = new Date(d.lastActTime);
-    if (d.orderId) res.order_id = d.orderId;
+    if (d.orderId) res.order_id = `${d.orderId}`;
     if (d.orderSource) res.source = d.orderSource;
     if (d.orderPrice) res.price = _parse(d.orderPrice);
     if (d.clientOrderId) res.client_oid = `${d.clientOrderId}`;

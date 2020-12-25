@@ -130,6 +130,7 @@ function _formatSpotOrder(l) {
   if (l.error) return null;
   const res = {
     unique_id: order_id,
+    exchange,
     asset_type: 'SPOT',
     order_id,
     pair: symbol2pair(l.symbol),
@@ -145,7 +146,11 @@ function _formatSpotOrder(l) {
     filled_amount: _parse(l['filled-amount'] || l['field-amount']),
     fee: _parse(l['filled-fees'] || l['field-fees']),
   };
-  if (l['client-order-id'])res.client_oid = l['client-order-id'];
+  if (l['client-order-id']) {
+    res.client_oid = `${l['client-order-id']}`;
+  } else {
+    console.log(l, 9991);
+  }
   return Utils.cleanObjectNull(res);
 }
 

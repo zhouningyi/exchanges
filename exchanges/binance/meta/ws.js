@@ -1,19 +1,21 @@
 
 const _ = require('lodash');
 const Utils = require('./../utils');
+
 const { getSymbolId } = require('./../utils/public');
 const { SPOT_WS_BASE, COIN_CONTRACT_WS_BASE, USDT_CONTRACT_WS_BASE } = require('./../config');
 const coinContractUtils = require('./../utils/coin_contract');
 const spotUtils = require('./../utils/spot');
 const publicUtils = require('./../utils/public');
 const { _parse } = require('../../../utils');
+const ef = require('./../../../utils/formatter');
 
 const exchange = 'BINANCE';
 
 function wsSpotDepthStream(o) {
-  const { assets: _assets, pair, asset_type, level = 5 } = o;
+  const { assets: _assets, pair, asset_type = 'SPOT', level = 5 } = o;
   const assets = _assets || [{ pair, asset_type, level }];
-  return _.map(assets, ({ pair, asset_type, level = 5 }) => {
+  return _.map(assets, ({ pair, asset_type = 'SPOT', level = 5 }) => {
     const symbolId = getSymbolId({ pair, asset_type });
     return `${symbolId}@depth${level}@100ms`.toLowerCase();
   });
@@ -24,9 +26,9 @@ function wsSpotDepthFormater(d, o) {
   const { bids, asks } = d.data;
   const res = {
     time: new Date(),
+    exchange,
     symbol_id: symbol,
     ...getWsOptions(d),
-    exchange,
     ...publicUtils.parseSymbolId({ symbol }),
     bids: spotUtils.formatSpotContractDepth(bids),
     asks: spotUtils.formatSpotContractDepth(asks)
@@ -57,19 +59,101 @@ function wsSpotTickFormater(d, o) {
   };
 }
 
+function wsSpotBalancesFormater(res, o) {
+  const { e: eventName, ...rest } = res.data;
+  if (eventName === 'outboundAccountPosition') {
+    const server_updated_at = new Date(rest.E);
+    return _.map(rest.B, (_l) => {
+      const avaliable_balance = _parse(_l.f);
+      const locked_balance = _parse(_l.l);
+      const l = {
+        exchange,
+        asset_type: 'SPOT',
+        server_updated_at,
+        coin: _l.a,
+        balance: avaliable_balance + locked_balance,
+        avaliable_balance,
+        locked_balance
+      };
+      l.balance_id = ef.getBalanceId(l);
+      return l;
+    });
+  } else if (eventName === 'outboundAccountInfo') { // 这个后面要废弃
+  } else if (eventName === 'balanceUpdate') { // 增量 暂时不放进来
+    // const l = {
+    //   asset_type: 'SPOT',
+    //   coin: rest.a,
+    //   server_updated_at: new Date(rest.E),
+    //   balance: _parse(rest.d)
+    // };
+    // l.balance_id = ef.getBalanceId(l);
+    // return [l];
+  } else {
+    console.log('wsSpotBalancesFormater/unknown eventName...');
+  }
+}
+
+function wsSpotOrderFormater(res, o) {
+  const d = res.data;
+  const {
+    s: symbol,
+    C: clientOrderId,
+    S: side,
+    o: type,
+    q: qty,
+    p: price,
+    X: status,
+    z: executedQty,
+    i: orderId,
+    n: commission,
+    N: commissionAsset,
+    T: time,
+    m: maker,
+  } = d;
+  const orginOrder = {
+    type,
+    status,
+    time,
+    symbol,
+    orderId: `${orderId}`,
+    clientOrderId,
+    price,
+    qty,
+    executedQty,
+    commission,
+    commissionAsset,
+    maker,
+    side,
+  };
+  return spotUtils.formatSpotOrder(orginOrder, o);
+}
 
 const spotConfig = {
   wsSpotDepth: {
-    name: '币本位合约深度',
+    name: '现货深度',
     streamName: wsSpotDepthStream,
     chanel: d => d && d.stream && d.stream.indexOf('@depth') !== -1,
     formater: wsSpotDepthFormater,
   },
   wsSpotTicks: {
-    name: '币本位合约tick',
+    name: '现货tick',
     streamName: wsSpotTickStream,
     chanel: '24hrTicker',
     formater: wsSpotTickFormater,
+  },
+  wsSpotBalances: {
+    name: '币本位合约资产',
+    streamName: 'listenKey',
+    chanel: d => d && d.data && d.data.e && ['outboundAccountPosition', 'outboundAccountInfo', 'balanceUpdate'].includes(d.data.e),
+    formater: wsSpotBalancesFormater,
+    sign: true,
+  },
+  wsSpotOrders: {
+    name: '现货订单',
+    streamName: 'listenKey',
+    chanel: d => d && d.data && d.data.e === 'executionReport',
+    formater: wsSpotOrderFormater,
+    sign: true
   },
 };
 
@@ -125,7 +209,7 @@ function _parseWsOrder(d, o) {
     status,
     time,
     symbol,
-    orderId,
+    orderId: `${orderId}`,
     clientOrderId,
     price,
     price_avg,

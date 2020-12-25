@@ -427,7 +427,7 @@ class exchange extends Event {
           }
         }
       }
-      return res;
+      return _.filter(res, d => d && !d.error);
     };
     //
     this.registerFn({ name: 'orders' }, async (o = {}) => {
@@ -462,13 +462,13 @@ class exchange extends Event {
       return _.filter(ds, d => instrument_ids.includes(d.instrument_id));
     };
 
-    const resFns0 = ['balances', 'assets', 'positions', 'ledgers'];
+    const resFns0 = ['balances', 'assets', 'positions', 'ledgers', 'orderDetails'];
     for (const name of resFns0) {
       this.registerFn({ name }, async (o = {}) => {
         const { assetBaseType, ...restOption } = o;
         const wsFnName = `wsRequest${upperFirst(assetBaseType)}${upperFirst(name)}`;
         let ds;
-        if (this[wsFnName] && (name !== 'balances')) {
+        if (this[wsFnName] && (name !== 'balances')) { // 老不稳定...
           ds = await this[wsFnName](restOption);
         } else {
           const restFnName = `${o.assetBaseType}${upperFirst(name)}`;
@@ -480,7 +480,7 @@ class exchange extends Event {
       });
     }
 
-    const restFns = ['order', 'orderInfo', 'cancelOrder'];
+    const restFns = ['order', 'orderInfo', 'orderDetails', 'cancelOrder'];
     for (const name of restFns) {
       const fnName = `asset${upperFirst(name)}`;
       this[fnName] = async (o) => {

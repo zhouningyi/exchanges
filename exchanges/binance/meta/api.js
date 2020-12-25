@@ -3,6 +3,87 @@ const Utils = require('./../utils');
 
 const spotConfig = {
   // // // // // // // 公共部分  // // // // // // //
+  spotKline: {
+    method: 'GET',
+    name_cn: '现货K线数据',
+    endpoint: 'api/v3/klines',
+  },
+  spotAssets: {
+    method: 'GET',
+    name_cn: '所有资产',
+    endpoint: 'api/v3/exchangeInfo'
+  },
+  // / 私有部分
+  spotBalances: {
+    method: 'GET',
+    sign: true,
+    name_cn: '现货账户余额',
+    endpoint: 'api/v3/account',
+  },
+  spotOrder: {
+    method: 'POST',
+    name_cn: '现货下单',
+    endpoint: 'api/v3/order',
+    notNull: ['pair', 'side', 'amount'],
+    sign: true
+  },
+  spotCancelOrder: {
+    method: 'DELETE',
+    name_cn: '现货撤销下单',
+    endpoint: 'api/v3/order',
+    notNull: ['pair'],
+    sign: true
+  },
+  spotOrderInfo: {
+    name_cn: '现货订单信息',
+    endpoint: 'api/v3/order',
+    notNull: ['pair'],
+    sign: true
+  },
+  spotOrders: {
+    name_cn: '现货历史订单',
+    endpoint: 'api/v3/allOrders',
+    sign: true,
+  },
+  spotUnfinishOrders: {
+    name_cn: '现货未完成订单',
+    endpoint: 'api/v3/openOrders',
+    notNull: ['pair'],
+    method: 'GET',
+    sign: true
+  },
+  spotOrderDetails: {
+    name_cn: '撮合记录',
+    endpoint: 'api/v3/myTrades',
+    notNull: ['pair'],
+    sign: true
+  },
+  spotMoveBalance: {
+    method: 'POST',
+    name_cn: '移动资金',
+    endpoint: 'sapi/v1/futures/transfer',
+    notNull: ['coin', 'source', 'target', 'amount'],
+    sign: true,
+    check: 'moveBalance'
+  },
+  spotListenKey: {
+    name_cn: '现货_listenKey',
+    endpoint: 'api/v3/userDataStream',
+    method: 'POST',
+    sign: false
+  },
+  updateSpotListenKey: {
+    name_cn: '更新现货_listenKey',
+    endpoint: 'api/v3/userDataStream',
+    method: 'PUT',
+    sign: false
+  },
+  spotSystemStatus: {
+    name_cn: '是否维护',
+    endpoint: 'wapi/v3/systemStatus.html',
+    method: 'GET',
+  },
+  //
   ping: {
     method: 'GET',
     name_cn: 'ping',
@@ -11,10 +92,6 @@ const spotConfig = {
   time: {
     name_cn: '服务器时间',
     endpoint: 'api/v3/time'
-  },
-  spotPairs: {
-    name_cn: '现货币对信息',
-    endpoint: 'api/v3/exchangeInfo'
   },
   spotDepth: {
     name_cn: '现货深度',
@@ -114,6 +191,13 @@ const coinContractConfig = {
     method: 'GET',
     sign: true
   },
+  coinContractOrderDetails: {
+    name_cn: '币本位合约历史订单',
+    endpoint: 'dapi/v1/userTrades',
+    notNull: ['pair', 'asset_type'],
+    method: 'GET',
+    sign: true
+  },
   coinContractUnfinishedOrderHistory: {
     name_cn: '币本位合约历史订单',
     endpoint: 'dapi/v1/allOrders',
@@ -134,11 +218,18 @@ const coinContractConfig = {
     sign: false
   },
   coinContractLedgers: {
-    name_cn: '比本位合约 交割记录',
+    name_cn: '币本位合约 交割记录',
     endpoint: 'dapi/v1/income',
     method: 'GET',
     sign: true
   },
+  coinContractUpdateLeverate: {
+    name_cn: '币本位合约 调整杠杆',
+    endpoint: 'dapi/v1/leverage',
+    notNull: ['pair', 'asset_type', 'lever_rate'],
+    method: 'POST',
+    sign: true
+  }
 };
 
 function fix(config, host) {

@@ -5,6 +5,7 @@ const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
 const ef = require('./../../../utils/formatter');
+const { cleanObjectNull } = require('./../../../utils');
 
 const { getOrderTypeOptions, getOrderDirectionOptions, pair2symbol, asset_type2ext, parseOrderStatusOptions, parseOrderDirectionOptions, getSymbolId, parseSymbolId } = publicUtils;
 
@@ -24,24 +25,27 @@ function coinContractOrdersO(o = {}) {
   return res;
 }
 
-function _formatCoinContractOrder(d) {
+function _formatCoinContractOrder(d, o = {}) {
   const { symbol: symbol_id } = d;
+  const { assets, ...rest } = o;
   const info = parseSymbolId(d);
   const res = {
-    symbol_id,
-    order_id: `${d.orderId}`,
-    client_oid: `${d.clientOrderId}`,
-    price: _parse(d.price),
-    amount: _parse(d.qty || d.origQty),
-    filled_amount: _parse(d.executedQty),
-    fee_coin: d.commissionAsset,
-    position_side: d.positionSide,
-    maker: d.maker,
-    time: new Date(d.time || d.updateTime),
+    ...rest,
+    exchange,
     ...parseOrderStatusOptions(d),
     ...parseOrderDirectionOptions(d),
     ...info,
   };
+  if (symbol_id)res.symbol_id = symbol_id;
+  if (d.orderId)res.order_id = `${d.orderId}`;
+  if (d.clientOrderId)res.client_oid = `${d.clientOrderId}`;
+  if (d.time || d.updateTime) res.time = new Date(d.time || d.updateTime);
+  if (d.maker || d.maker === false)res.maker = d.maker;
+  if (d.price) res.price = _parse(d.price);
+  if (d.positionSide) res.position_side = d.positionSide;
+  if (d.commissionAsset) res.fee_coin = d.commissionAsset;
+  if (d.executedQty)res.filled_amount = _parse(d.executedQty);
+  if (d.qty || d.origQty) res.amount = _parse(d.qty || d.origQty);
   if (d.commission) res.fee = _parse(d.commission);
   if (d.price_avg) res.price_avg = _parse(d.price_avg);
   if (d.eventTime) {
@@ -50,7 +54,7 @@ function _formatCoinContractOrder(d) {
   if (d.time && !res.server_updated_at) {
     res.server_updated_at = new Date(d.time);
   }
-  return res;
+  return cleanObjectNull(res);
 }
 
 function coinContractOrders(ds) {
@@ -60,6 +64,7 @@ function coinContractOrders(ds) {
 function coinContractOrderO(o = {}) {
   const opt = {
     symbol: getSymbolId(o),
+    newOrderRespType: 'ACK',
     ...getOrderDirectionOptions(o),
     ...getOrderTypeOptions(o),
     quantity: o.amount
@@ -123,6 +128,12 @@ function _formatCoinContractPosition(d) {
   if (d.positionAmt) {
     res.vector = _parse(d.positionAmt) || 0;
     res.amount = Math.abs(res.vector);
+  } else if (d.entryPrice && d.leverage && d.initialMargin) {
+    // const amount = _parse(d.entryPrice) * _parse(d.initialMargin) * _parse(d.leverage);
+    // res.vector = amount || 0;
+    // res.amount = Math.abs(res.vector);
+  } else {
+    console.log('_formatCoinContractPosition/position 数据错误....');
   }
   const direction = res.vector > 0 ? 'LONG' : res.amount < 0 ? 'SHORT' : null;
   if (direction) res.direction = direction;
@@ -141,6 +152,7 @@ function coinContractPositions(ds) {
 function coinContractPositionsRisk(ds) {
   const res = _.map(ds, (d) => {
     const res = {
+      exchange,
       ...parseSymbolId(d),
       amount: _parse(d.positionAmt),
       price_avg: _parse(d.entryPrice),
@@ -149,7 +161,7 @@ function coinContractPositionsRisk(ds) {
       max_amount: _parse(d.maxQty),
       lever_rate: _parse(d.leverage),
       liquidation_price: _parse(d.liquidationPrice),
-      position_side: _parse(d.positionSide),
+      position_side: d.positionSide,
       margin_mode: d.marginType
     };
     res.instrument_id = Utils.formatter.getInstrumentId(res);
@@ -198,7 +210,7 @@ function _formatCoinContractAsset(d) {
   if (d.contractType) res.contract_type = d.contractType;
   if (d.underlyingType) res.underlyingType = d.underlyingType;
   if (d.pricePrecision) res.price_precision = d.pricePrecision;
-  if (d.quantityPrecision) res.quantity_precision = d.quantityPrecision;
+  if (d.quantityPrecision) res.amount_precision = d.quantityPrecision;
   return res;
 }
 
@@ -231,7 +243,52 @@ function coinContractLedgers(ds) {
   }).filter(d => d);
 }
 
+
+const coinContractOrderDetailsO = (o) => {
+  if (o.pair && o.asset_type) return coinContractOrdersO(o);
+  return { pair: o.pair };
+};
+
+function _formatCoinContractOrderDetail(d) {
+  return {
+    unique_id: `${exchange}_${d.id}`,
+    ...parseSymbolId(d),
+    order_id: `${d.orderId}`,
+    side: d.side,
+    amount: _parse(d.qty),
+    margin_asset: d.marginAsset,
+    fee: _parse(d.commission),
+    fee_coin: d.commissionAsset,
+    time: new Date(d.time),
+    position_side: d.positionSide,
+    exec_type: d.maker ? 'MAKER' : 'TAKER',
+    buyer: d.buyer
+  };
+}
+function coinContractOrderDetails(ds) {
+  return _.map(ds, _formatCoinContractOrderDetail);
+}
+
+function coinContractUpdateLeverateO(o = {}) {
+  return {
+    symbol: getSymbolId(o),
+    leverage: o.lever_rate,
+  };
+}
+function coinContractUpdateLeverate(res, o) {
+  if (res && res.leverage) return { ...o, lever_rate: res.leverage };
+  return null;
+}
+
+function empty() {
+  return {};
+}
+
 module.exports = {
+  coinContractUpdateLeverateO,
+  coinContractUpdateLeverate,
+  coinContractOrderDetailsO,
+  coinContractOrderDetails,
   coinContractLedgersO,
   coinContractLedgers,
   formatCoinContractOrder: _formatCoinContractOrder,
@@ -240,6 +297,7 @@ module.exports = {
 //
   coinContractPositionsO,
   coinContractPositions,
+  coinContractPositionsRiskO: empty,
   coinContractPositionsRisk,
   formatCoinContractDepth,
   coinContractUnfinishedOrderHistoryO,
@@ -256,7 +314,6 @@ module.exports = {
   coinContractOrder,
   coinContractOrdersO,
   coinContractOrders,
-  // coinContractPositionsRisk,
   coinContractAssets,
   coinContractBalances,
   coinContractBalancesO,

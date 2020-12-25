@@ -1,9 +1,9 @@
 
 const WebSocket = require('ws');
-const url = require('url');
 const _ = require('lodash');
 const Event = require('bcore/event');
 const Utils = require('../../../utils');
+const { upperFirst } = require('lodash');
 
 const { delay, checkKey, cleanObjectNull } = Utils;
 
@@ -72,16 +72,22 @@ class WS extends Event {
   }
   async updateListenKeys() {
     const { listenKeys } = this;
-    const coinContractListenKey = listenKeys.coinContract;
-    if (coinContractListenKey) {
-      await this.that.updateCoinContractListenKey({ listenKey: coinContractListenKey });
+    const baseTypes = ['spot', 'coinContract'];
+    for (const baseType of baseTypes) {
+      try {
+        const listenKey = listenKeys[baseType];
+        if (listenKey) await this.that[`update${upperFirst(baseType)}ListenKey`]({ listenKey });
+      } catch (e) {
+        console.log(e, '_ws/updateListenKeys error..');
+      }
     }
-    await delay(30 * 1000);
+    await delay(60 * 1000);
     await this.updateListenKeys();
   }
   async createListenKey(baseType) {
     if (baseType === 'coinContract') return await this.that.coinContractListenKey();
-    console.log('createListenKey baseType....');
+    if (baseType === 'spot') return await this.that.spotListenKey();
+    console.log(`createListenKey 不能识别的baseType:${baseType}....`);
   }
   async getMessage(opt, o) {
     const { streamName, method } = o;
@@ -118,12 +124,13 @@ class WS extends Event {
           let timeoutId;
           if (!cb) {
             timeoutId = setTimeout(() => {
-              console.log(`${streamName}: timeout...`);
+              console.log(`${o.name}, ${streamName}: timeout...`);
+              console.log(mesagage, '.mesagagemesagage....');
               process.exit();
-              reject([]);
-            }, 10 * 1000);
+              reject(`_ws: ${streamName} no return...`);
+            }, 5 * 1000);
           }
-          this.registerFunc(connectionId, async (data) => {
+          this.registerFunc(connectionId, o.name, async (data) => {
             if (o.chanel) {
               const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
               if (channelF(data)) {
@@ -134,15 +141,19 @@ class WS extends Event {
                 clearTimeout(timeoutId);
               }
             }
-          });
+          }, 1);
         });
       };
     } else {
       return async (opt, cb) => {
         const streamName = await this._getListenKey(o);
         const connectionId = `${base}_account`;
-        if (!this[connectionId]) this.createConnection({ connectionId, connectionUrl: `${o.base}/${streamName}` });
-        this.registerFunc(connectionId, async (data) => {
+        const co = { connectionId, connectionUrl: `${o.base}/${streamName}` };
+        if (o.baseType === 'spot') {
+          co.connectionUrl = `${o.base}?streams=${streamName}`;
+        }
+        if (!this[connectionId]) this.createConnection(co);
+        this.registerFunc(connectionId, o.name, async (data) => {
           if (o.chanel) {
             const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
             if (channelF(data)) {
@@ -152,13 +163,13 @@ class WS extends Event {
               cb(data);
             }
           }
-        });
+        }, 2);
       };
     }
   }
-  registerFunc(name, fn) {
-    const cbs = this.callbacks[name] = this.callbacks[name] || [];
-    cbs.push(fn);
+  registerFunc(name, streamName, fn, idx) {
+    const cbs = this.callbacks[name] = this.callbacks[name] || {};
+    cbs[streamName] = fn;
   }
   async send(connectionId, message) {
     const ws = this[connectionId];
@@ -233,8 +244,17 @@ class WS extends Event {
       console.log(`ws Parse raw message error: ${error.message}`);
       process.exit();
     }
+    // if (
+    //           !(data && data.stream && data.stream.indexOf('depth') !== -1) &&
+    //           !(data && data.e && data.e === 'depthUpdate')
+    //           ) {
+    //   console.log(data, connectionId, 'data....');
+    //   if (data.result) {
+    //             // console.log(data.result[0], 99999);
+    //   }
+    // }
     const cbs = this.callbacks[connectionId];
-    _.forEach(cbs, cb => cb(data));
+    _.forEach(_.values(cbs), cb => cb(data));
   }
 }
 

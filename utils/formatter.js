@@ -31,7 +31,7 @@ const getPair = o => upper(o.pair);
 const isFuture = o => FUTURE_ASSETS.includes(getAssetType(o));
 const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o));
 const isSwap = o => getAssetType(o) === SWAP_ASSET;
-const isSpot = o => getAssetType(o) === SPOT_ASSET;
+const isSpot = o => getAssetType(o) === SPOT_ASSET || getBalanceType(o) === SPOT_ASSET;
 const isReverseContract = o => (isContract(o) && getPair(o).endsWith('-USD')) || (getBalanceType(o) === 'COIN_CONTRACT');
 const isForwardContract = o => isContract(o) && getPair(o).endsWith('-USDT');
 const pair2coin = pair => pair ? upper(pair.split('-')[0]) : null;
@@ -61,7 +61,7 @@ function instrumentId2name(instrument_id) {
 }
 
 // ORDER
-const ORDER_DONE_STATUS = ['CANCEL', 'SUCCESS', 'FAIL', 'FILLED'];
+const ORDER_DONE_STATUS = ['CANCEL', 'CANCELLING', 'CANCELING', 'SUCCESS', 'FAIL', 'FILLED'];// CANCELLING 基本意味着cancel，而且策略有unfinished order的检查
 const isOrderDone = ({ status }) => ORDER_DONE_STATUS.includes(status);
 const getOrderVector = ({ side, direction = 'LONG', amount = 1 }) => {
   const sidev = side === 'BUY' ? 1 : side === 'SELL' ? -1 : 0;
@@ -70,12 +70,14 @@ const getOrderVector = ({ side, direction = 'LONG', amount = 1 }) => {
 };
 // 订单检查
 const formatCommonOrder = (order) => {
-  if (!order.asset_type) return console.log('order 缺少asset_type...');
+  if (!order.asset_type) return console.log(order, 'order 缺少asset_type...');
   const { pair } = order;
   if (!pair) return console.log('order 缺少pair...');
   if (!order.coin) order.coin = pair2coin(pair);
   if (!order.unique_id) order.unique_id = order.client_oid || order.order_id;
   if (!order.vector)order.vector = getOrderVector(order);
+  if (order.order_id) order.order_id = `${order.order_id}`;
+  if (order.client_oid) order.client_oid = `${order.client_oid}`;
   // if (isContract(order) && !order.lever_rate) return console.log('order(contract) 缺少lever_rate...');
   return order;
 };

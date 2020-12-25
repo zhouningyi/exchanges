@@ -1,6 +1,6 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['huobi']; // bikicoin
+const exchanges = ['binance']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
@@ -18,25 +18,32 @@ const newtasks = [
   // ['coinContracUnfinishedtOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
   // ['coinContractUnfinishedOrderHistory', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
   // ['coinContractBalances', { coin: 'BTC' }],
+  // ['coinContractOrderDetails', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
+  // ['spotMoveBalance', { target: 'SPOT', source: 'COIN_CONTRACT', coin: 'BTC', amount: 0.001 }],
   // ['updateCoinContractListenKey', {}],
     // ['coinContractPositions', {}],
     // ['spotSystemStatus', {}],
     // ['spotAssets', {}],
     // ['time', {}],
+    // ['spotListenKey', {}],
         // ['futureMoveBalance', { source: 'FUTURE', target: 'SPOT', amount: 0.1, coin: 'EOS' }],
-        ['moveBalance', { source: 'FUTURE', target: 'SPOT', amount: 0.1, coin: 'EOS' }],
+      // ['moveBalance', { source: 'SPOT', target: 'COIN_CONTRACT', amount: 0.001, coin: 'BTC' }],
     // //////////////////////////////SPOT//////////////////////////////////////////////////
     // ['spotKline', { pair: 'BTC-USDT', interval: '15m' }],
     // ['spotBalances', { }],
+    // ['spotOrders', { pair: 'BTC-USDT' }],
     // ['spotMoveBalance', { coin: 'USDT', instrument_id: 'ETH-USDT', amount: 11, source: 'spot', target: 'margin' }],
     // ['spotBalance', {}],
-    // ['spotOrder', { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BSV-USDT', type: 'LIMIT', side: 'BUY', order_type: 'MAKER', price: '90.0', amount: 0.1 }],
+    // ['spotUnfinishOrders', { pair: 'BTC-USDT' }],
+    // ['spotOrderDetails', { pair: 'BTC-USDT' }],
+  // ['spotOrder', { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BTC-USDT', type: 'LIMIT', side: 'SELL', order_type: 'MAKER', price: '30000', amount: '0.001' }],
     // ['spotCancelOrderByOrderId', { order_id: '146927075055460' }]
-  // ['spotCancelOrder', { order_id: '146927351927031' }],
+  // ['spotCancelOrder', { client_oid: 'order1584', pair: 'BTC-USDT' }],
     // ['spotCancelOrderByClientOrderId', { client_oid: 'order8072' }]
     // ['spotOrderInfoByOrderId', { order_id: 146927452656883 }],
     // ['spotOrderInfoByClientOrderId', { client_oid: 'order925' }],
-    // ['spotOrderInfo', { order_id: '146927662255048' }],
+    // 3936446392 order5520
+    // ['spotOrderInfo', { order_id: '3936446392', pair: 'BTC-USDT' }],
     //
         // //////////////////////////////FUTURE//////////////////////////////////////////////////
     // ['futureBalances', {}],

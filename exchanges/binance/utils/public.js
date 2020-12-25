@@ -105,7 +105,7 @@ function getSymbolId({ asset_type, pair }) {
   console.log('getSymbolId:没有匹配 symbolId..');
 }
 
-const baseCoins = ['USD', 'USDT', 'BTC', 'ETH', 'BNB', 'BUSD'];
+const baseCoins = ['USD', 'USDT', 'BTC', 'ETH', 'BNB', 'BUSD', 'EUR', 'KRW', 'BRL', 'ZAR', 'RUB', 'AUD', 'GBP', 'TRY', 'NGN', 'BIDR', 'UAH', 'TUAH', 'IDRT', 'VND', 'USDC', 'USDS', 'PAX', 'DAI', 'TRX', 'XRP'];
 
 function formatSymbolPair(symbol) {
   symbol = symbol.toUpperCase();
@@ -163,7 +163,7 @@ function contract_type2future_id(asset_type) {
   return reverseDeliveryMap[asset_type.toUpperCase()];
 }
 
-function getOrderDirectionOptions({ side, direction }) {
+function getOrderDirectionOptions({ side, direction = 'LONG' }) {
   side = side.toUpperCase();
   direction = direction.toUpperCase();
   const d1 = direction === 'SHORT' ? -1 : 1;
@@ -191,6 +191,7 @@ function parseOrderStatusOptions(d) {
       EXPIRED: 'CANCEL',
       NEW_INSURANCE: 'LIQUID',
       NEW_ADL: 'LIQUID',
+      REJECTED: 'FAIL'
     }[status]
   };
 }
@@ -219,8 +220,11 @@ function formatDepth(ls) {
   return _.map(ls, l => ({ price: _parse(l[0]), volume: _parse(l[1]) }));
 }
 
-
+function formatInterval({ interval = '1m' }) { // 我们的interval的规范就来自币安不用改动
+  return interval;
+}
 module.exports = {
+  formatInterval,
   formatDepth,
   formatOrderO: _formatOrderO,
   parseOrderStatusOptions,

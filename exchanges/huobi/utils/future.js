@@ -286,6 +286,7 @@ function _formatFutureOrder(l, o) {
     unique_id: coin + contract_type + order_id,
     contract_type,
     asset_type: contract_type.toUpperCase(),
+    exchange,
     order_id,
     order_source,
     benifit: profit,
@@ -308,7 +309,7 @@ function _formatFutureOrder(l, o) {
 
 function futureOrdersO(o = {}) {
   const { status = 'ALL', page_size = 50 } = o;
-  return {
+  const opt = {
     symbol: o.pair.split('-')[0],
     trade_type: 0,
     type: 1,
@@ -316,12 +317,17 @@ function futureOrdersO(o = {}) {
     create_date: 7,
     page_size
   };
+  // console.log(status, 'status....');
+  // if (status === 'ALL')console.log(opt, 'opt....');
+  return opt;
 }
 function futureOrders(ds, o) {
   if (!ds) return false;
   const { orders } = ds;
   if (!orders) return false;
-  return _.map(orders, _formatFutureOrder);
+  const res = _.map(orders, _formatFutureOrder);
+  // console.log(o, `futureOrders/${_.get(res, 'length')}`);
+  return res;
 }
 
 
@@ -530,19 +536,21 @@ function batchCancelFutureOrders(res) {
 }
 
 // /
-function processCancelOrderErrors(d) {
+function processCancelOrderErrors(d, o = {}) {
+  const { assets, asset, ...rest } = o;
   return _.map(d.errors, (e) => {
-    const res = {};
+    const res = { ...rest };
     if (e.order_id) res.order_id = e.order_id;
     res.status = 'FAIL';
     return res;
   });
 }
 
-function processCancelOrderSuccesses(res, o) {
+function processCancelOrderSuccesses(res, o = {}) {
+  const { assets, asset, ...rest } = o;
   if (res && res.successes && typeof res.successes === 'string') {
     return res.successes.split(',').map((v) => {
-      const res = { status: 'CANCEL' };
+      const res = { ...rest, status: 'CANCEL' };
       if (o.order_id) res.order_id = v;
       if (o.client_oid) res.client_oid = v;
       return res;

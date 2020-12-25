@@ -2,17 +2,20 @@
 // const deepmerge = require('deepmerge');
 const crypto = require('crypto');
 const _ = require('lodash');
+
 const error = require('./errors');
+
 const Base = require('./../base');
+
 const kUtils = require('./utils');
+const ef = require('./../../utils/formatter');
+
 const Utils = require('./../../utils');
 const request = require('./../../utils/request');
 // const { exchangePairs } = require('./../data');
 const { USER_AGENT, WS_BASE, SPOT_REST_BASE, USDT_CONTRACT_REST_BASE, COIN_CONTRACT_REST_BASE } = require('./config');
 const apiConfig = require('./meta/api');
 const wsFunctionConfig = require('./meta/ws');
-const { upperFirst } = require('lodash');
-const spotUtils = require('./utils/spot');
 
 function _parse(v) {
   return parseFloat(v, 10);
@@ -95,7 +98,6 @@ class Exchange extends Base {
     };
   }
   async request(method = 'GET', endpoint, params = {}, isSign = false, host) {
-    // console.log('request...............', Utils.cleanObjectNull(params));
     params = Utils.cleanObjectNull(params);
     params = _.cloneDeep(params);
     const hour8 = 3600 * 1000 * 8;
@@ -112,9 +114,8 @@ class Exchange extends Base {
     }
     if (method !== 'POST' && qstr) url += `?${qstr}`;
     if (isSign) {
-      // console.log(method, endpoint, params, 'method, endpoint, params....');
       const signature = this.getSignature(method, endpoint, params, false);
-      const sigStr = `signature=${signature}`;
+      const sigStr = '';// `signature=${signature}`;
       params.signature = signature;
       if (url.indexOf('?') !== -1) {
         url += `&${sigStr}`;
@@ -132,7 +133,7 @@ class Exchange extends Base {
 
     let body;
     // try {
-    body = await request(o);
+    body = await request(o);// , { type: 'http2' }
 
     // } catch (e) {
     //   if (e) console.log(e.message);
@@ -194,6 +195,14 @@ class Exchange extends Base {
     if (this._isSpot(o)) return 'spot';
     return 'none';
   }
+  async moveBalance(o = {}) {
+    const { source, target } = o;
+    if ([source, target].includes('SPOT')) {
+      return await this.spotMoveBalance(o);
+    } else {
+      console.log('binance/index.js: moveBalance 错误...');
+    }
+  }
   parseAssets(o) {
     let { assets, pair, asset_type } = o;
     if (assets) return assets;
@@ -207,8 +216,47 @@ class Exchange extends Base {
     }
     return assets;
   }
+  // async systemStatus() {
+  //   return this.spotSystemStatus();
+  // }
   _compatible() {
-    // REST
+    // 更新杠杆
+    this.updateAssetLeverate = async (o = {}) => {
+      const coin = ef.getCoin(o);
+      const baseType = this._getAssetBaseType(o);
+      const fnName = `${baseType}UpdateLeverate`;
+      if (this[fnName]) {
+        return await this[fnName]({ ...o, coin });
+      } else {
+        console.log(`updateAssetLeverate/缺少baseType:${baseType}...`);
+      }
+    };
+    // 更新
+    this.assetPositionsRisk = async (o = {}) => {
+      const { assets } = o;
+      const assetsGroup = _.groupBy(assets, this._getAssetBaseType.bind(this));
+      let res = [];
+      for (const assetBaseType in assetsGroup) {
+        const realFnName = `${assetBaseType}PositionsRisk`;
+        const _assets = assetsGroup[assetBaseType];
+        if (this[realFnName]) {
+          const _res = await this[realFnName]({ assets: _assets });
+          res = [...res, ..._res];
+        } else {
+          this.print(`compatible: ws函数${realFnName}不存在...`);
+        }
+        return res;
+      }
+
+      const baseType = this._getAssetBaseType(o);
+      const fnName = `${baseType}PositionsRisk`;
+      if (this[fnName]) {
+        return await this[fnName](o);
+      } else {
+        console.log(`assetPositionsRisk/缺少baseType:${baseType}...`);
+      }
+    };
+    //
   }
 }
 

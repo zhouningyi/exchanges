@@ -100,6 +100,11 @@ async function requestMix(o) {
   return await requestPromise(o);
 }
 
-exports.requestMix = requestMix;
 
-module.exports = requestPromise;
+async function requestMain(o, opt = {}) {
+  const { type = 'http1' } = opt;
+  if (type === 'http1') return await requestPromise(o);
+  if (type === 'http2') return await requestMix(o);
+  console.log('requestMain/错误❌.........');
+}
+module.exports = requestMain;

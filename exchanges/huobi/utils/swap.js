@@ -19,7 +19,6 @@ function inst2pair(symbol) {
   return symbol.replace('-SWAP', '').replace('_', '-');
 }
 
-
 function swapTicksO(o = {}) {
   return o;
 }

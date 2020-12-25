@@ -259,10 +259,8 @@ class Exchange extends Base {
     }
   }
   async spotInterest(o) {
-    console.log('spotInterest...index')
-    const url = `https://api.huobi.pro/v1/margin/loan-info`;
+    const url = 'https://api.huobi.pro/v1/margin/loan-info';
     const ds = await request({ url });
-    console.log(url,'......url...........')
     if (!ds) return null;
     const { data } = ds;
     if (!Array.isArray(data)) return null;
@@ -372,6 +370,7 @@ class Exchange extends Base {
       if (this[fnName]) {
         return await this[fnName]({ ...o, coin });
       } else {
+        console.log(999);
         console.log(`updateAssetLeverate/缺少baseType:${baseType}...`);
       }
     };
