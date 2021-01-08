@@ -60,7 +60,7 @@ class WS extends Event {
     const options = {};
     try {
       const ws = this.ws = new WebSocket(stream, options);
-      this.addHooks(ws, o);
+      this.addHooks(ws, o, stream);
     } catch (e) {
       console.log(e, '建立ws出错 重启中...');
       await this.init(stream, o);
@@ -89,7 +89,7 @@ class WS extends Event {
   onOpen(cb) {
     this._onOpen = cb;
   }
-  addHooks(ws, o = {}) {
+  addHooks(ws, o = {}, stream) {
     const { pingInterval = 1000 } = o;
     ws.tryPing = (noop) => {
       try {

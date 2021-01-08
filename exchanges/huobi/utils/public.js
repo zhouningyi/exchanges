@@ -4,6 +4,7 @@ const md5 = require('md5');
 const Utils = require('./../../../utils');
 const config = require('./../config');
 const pairsRaw = require('./../meta/pairs.json');
+const ef = require('./../../../utils/formatter');
 
 const { checkKey } = Utils;
 
@@ -400,7 +401,104 @@ function getError(res) {
   const error = res['err-msg'] || res['err-code'] || res.error;
   return error || null;
 }
+
+
+function getContractOrderType(o) {
+  const type = o.type.toUpperCase();
+  const order_type = (o.order_type || '').toUpperCase();
+  let res = null;
+  if (type === 'LIMIT') res = 'limit';
+  if (type === 'MARKET') res = 'opponent';
+  if (['POST_ONLY', 'MAKER'].includes(order_type)) res = 'post_only';
+  if (['FOK'].includes(order_type)) res = 'fok';
+  if (['IOC'].includes(order_type) && res) res = 'ioc';
+  if (!res)console.log(o, 'getOrderType: type未知...');
+  return res;
+}
+
+
+function getContractOrderProps(o) {
+  const side = o.side.toUpperCase();
+  if (side === 'BUY' && ef.isLong(o)) return { offset: 'open', direction: 'buy' };
+  if (side === 'SELL' && ef.isLong(o)) return { offset: 'close', direction: 'sell' };
+  if (side === 'BUY' && ef.isShort(o)) return { offset: 'open', direction: 'sell' };
+  if (side === 'SELL' && ef.isShort(o)) return { offset: 'close', direction: 'buy' };
+}
+
+
+function processContractCancelOrderSuccesses(res, o = {}) {
+  const { assets, asset, ...rest } = o;
+  if (res && res.successes && typeof res.successes === 'string') {
+    return res.successes.split(',').map((v) => {
+      const res = { ...rest, status: 'CANCEL' };
+      if (o.order_id) res.order_id = v;
+      if (o.client_oid) res.client_oid = v;
+      return res;
+    });
+  }
+  return [];
+}
+function processContractCancelOrderErrors(d, o = {}) {
+  const { assets, asset, ...rest } = o;
+  return _.map(d.errors, (e) => {
+    const res = { ...rest };
+    if (e.order_id) res.order_id = e.order_id;
+    res.status = 'FAIL';
+    return res;
+  });
+}
+
+function formatDotArray(v) {
+  if (Array.isArray(v)) return v.join(',');
+  return `${v}`;
+}
+
+const contractOrderPriceTypeMap = {
+  limit: 'LIMIT',
+  opponent: 'OPPONENT',
+  lightning: 'LIGHTNING',
+  post_only: 'MAKER_ONLY'
+};
+
+
+function getRContractOrderProps(o) {
+  const offset = o.offset.toLowerCase();
+  const direction = o.direction.toLowerCase();
+  if (offset === 'open' && direction === 'buy') return { side: 'BUY', direction: 'LONG' };
+  if (offset === 'close' && direction === 'sell') return { side: 'SELL', direction: 'LONG' };
+  if (offset === 'open' && direction === 'sell') return { side: 'BUY', direction: 'SHORT' };
+  if (offset === 'close' && direction === 'buy') return { side: 'SELL', direction: 'SHORT' };
+}
+
+const contractStatusMap = {
+  ALL: 0,
+  UNFINISH: 3,
+  PARTIAL: 4,
+  CANCELLING: 5,
+  SUCCESS: 6,
+  CANCEL: 7
+};
+const rContractStatusMap = _.invert(contractStatusMap);
+
+
+function _formatDepth(ds) {
+  return _.map(ds, (d) => {
+    return {
+      price: _parse(d[0]),
+      volume: _parse(d[1]),
+    };
+  });
+}
+
 module.exports = {
+  formatDepth: _formatDepth,
+  contractStatusMap,
+  rContractStatusMap,
+  getRContractOrderProps,
+  contractOrderPriceTypeMap,
+  formatDotArray,
+  processContractCancelOrderSuccesses,
+  processContractCancelOrderErrors,
   formatCoin,
   baseCoins,
   systemStatusMap,
@@ -410,6 +508,8 @@ module.exports = {
   pair2symbol,
   symbol2pair,
   reverseOrderStatusMap,
+  getContractOrderType,
+  getContractOrderProps,
   // accountTypeMap,
   // ledgerMap,
   time,

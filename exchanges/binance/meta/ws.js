@@ -158,15 +158,43 @@ const spotConfig = {
 };
 
 const usdtContractConfig = {
+  wsUsdtContractDepth: {
+    name: 'USDT合约深度',
+    streamName: wsCoinContractDepthStream,
+    chanel: 'depthUpdate',
+    formater: wsUsdtContractDepthFormater,
+  },
+  wsUsdtContractOrders: {
+    name: '币本位合约订单',
+    streamName: 'listenKey',
+    chanel: 'ORDER_TRADE_UPDATE',
+    formater: wsCoinContractOrderFormater,
+    sign: true
+  },
+  wsUsdtContractPositions: {
+    name: 'USDT合约仓位',
+    streamName: 'listenKey',
+    chanel: 'ACCOUNT_UPDATE',
+    formater: wsCoinContractPositionsFormater,
+    sign: true
+  },
+  wsUsdtContractBalances: {
+    name: 'USDT合约资产',
+    streamName: 'listenKey',
+    chanel: 'ACCOUNT_UPDATE',
+    formater: wsCoinContractBalancesFormater,
+    sign: true,
+  },
 };
 
 function wsCoinContractDepthStream(o) {
   const { assets: _assets, pair, asset_type, level = 5 } = o;
   const assets = _assets || [{ pair, asset_type, level }];
-  return _.map(assets, ({ pair, asset_type, level = 5 }) => {
+  const res = _.map(assets, ({ pair, asset_type, level = 5 }) => {
     const symbolId = getSymbolId({ pair, asset_type });
     return `${symbolId}@depth${level}@100ms`.toLowerCase();
   });
+  return res;
 }
 
 function getWsOptions(o) {
@@ -175,9 +203,23 @@ function getWsOptions(o) {
   if (o.T)opt.time = new Date(o.T);
   return opt;
 }
+
+function wsUsdtContractDepthFormater(d, o) {
+  const { s: symbol, b: bids, a: asks } = d;
+  if (Math.random() < 0.1) console.log(new Date() - new Date(d.T));
+  return {
+    symbol_id: symbol,
+    ...getWsOptions(d),
+    exchange,
+    ...publicUtils.parseSymbolId({ symbol: `${symbol}_PERP` }),
+    bids: coinContractUtils.formatCoinContractDepth(bids),
+    asks: coinContractUtils.formatCoinContractDepth(asks)
+  };
+}
+
 function wsCoinContractDepthFormater(d, o) {
   const { s: symbol, b: bids, a: asks } = d;
-  return {
+  const res = {
     symbol_id: symbol,
     ...getWsOptions(d),
     exchange,
@@ -185,6 +227,7 @@ function wsCoinContractDepthFormater(d, o) {
     bids: coinContractUtils.formatCoinContractDepth(bids),
     asks: coinContractUtils.formatCoinContractDepth(asks)
   };
+  return res;
 }
 
 function _parseWsOrder(d, o) {
@@ -245,7 +288,7 @@ function wsCoinContractBalancesFormater(d) {
   return _.map(account.B, (b) => {
     const { a: asset, wb: walletBalance, cw: crossWalletBalance } = b;
     const originBalance = { asset, walletBalance, crossWalletBalance };
-    return { ...coinContractUtils.formatCoinContractBalance(originBalance) };
+    return { ...coinContractUtils.formatCoinContractBalance(originBalance, {}, 'wsCoinContractBalancesFormater') };
   });
 }
 
@@ -264,9 +307,9 @@ function wsCoinContractPositionsFormater(d) {
   });
 }
 
-function wsRequestCoinContractBalancesFormater(d) {
+function wsRequestCoinContractBalancesFormater(d, o) {
   const bs = _.get(d, 'result.0.res.balances');
-  return bs ? _.map(bs, coinContractUtils.formatCoinContractBalance).filter(d => d) : null;
+  return bs ? _.map(bs, b => coinContractUtils.formatCoinContractBalance(b, o, 'wsRequestCoinContractBalancesFormater')).filter(d => d) : null;
 }
 
 const coinContractConfig = {

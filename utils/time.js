@@ -77,6 +77,66 @@ function getFutureSettlementDay(t, type = 'QUARTER') {
   return getTimeString(time, 'day');
 }
 
+
+function getClosetNextWeek5(t) {
+  const tlong = t.getTime();
+  for (i = 0; i <= 7; i += 1) {
+    const newt = new Date(tlong + i * DAY);
+    if (getWeekDay(newt) === 5) {
+      const year = t.getFullYear();
+      const month = _fix10(t.getMonth() + 1);
+      const day = _fix10(t.getDate());
+      const timestring = `${year}-${month}-${day} 16:00:00`;
+      return new Date(timestring);
+    }
+  }
+}
+
+function getMonthDeliveryTime(t, type) {
+  let year = t.getFullYear();
+  let month = t.getMonth() + 1;
+  if (type === 'NEXT_MONTH_1') {
+    if (month === 12) {
+      year += 1;
+      month = 1;
+    } else {
+      month += 1;
+    }
+    const day_str = `${year}-${_fix10(month)}-01`;
+    t = new Date(`${day_str} 12:00:00`);
+  }
+  const month_str = _fix10(month);
+
+  const day = 21;
+  const tLongStart = new Date(`${year}-${month_str}-${day} 16:00:00`).getTime();
+  let deliver_time = null;
+  for (let i = 0; i <= 10; i += 1) {
+    const _t = new Date(tLongStart + i * DAY);
+    const _month = _t.getMonth() + 1;
+    if (getWeekDay(_t) === 5) deliver_time = _t;
+    if (_month > month) return deliver_time;
+  }
+  return deliver_time;
+}
+
+function getFutureSettlementTime2(t = new Date(), type = 'MONTH-0') {
+  let delta_month = 0;
+  let month_n = parseInt(type.split('-')[1], 10);
+  if (type.startsWith('MONTH')) {
+    if (month_n > 1) {
+      delta_month = month_n - 1;
+      month_n = 1;
+    }
+  }
+  t = new Date(t.getTime() + delta_month * 30 * DAY);
+  const m_type = month_n > 0 ? 'NEXT_MONTH_1' : null;
+  const current_dilivery_time = getMonthDeliveryTime(t, m_type);
+  if (current_dilivery_time - t > 0) return current_dilivery_time;
+  const next_t = new Date(t.getTime() + delta_month * 30 * DAY);
+  return getMonthDeliveryTime(next_t, 'NEXT_MONTH_1');
+}
+
+
 function getFutureSettlementTime(t, type = 'QUARTER', mode = 'okex') {
   t = fixTime(t);
   const setts = getSettlementTimes(t, type);
@@ -138,6 +198,7 @@ module.exports = {
   prevWeek,
   WEEK,
   //
+  getFutureSettlementTime2,
   getSettlementTimes,
   getFutureSettlementDay,
   getFutureSettlementTime,

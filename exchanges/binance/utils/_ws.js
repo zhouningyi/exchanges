@@ -72,7 +72,7 @@ class WS extends Event {
   }
   async updateListenKeys() {
     const { listenKeys } = this;
-    const baseTypes = ['spot', 'coinContract'];
+    const baseTypes = ['spot', 'coinContract', 'usdtContract'];
     for (const baseType of baseTypes) {
       try {
         const listenKey = listenKeys[baseType];
@@ -86,6 +86,7 @@ class WS extends Event {
   }
   async createListenKey(baseType) {
     if (baseType === 'coinContract') return await this.that.coinContractListenKey();
+    if (baseType === 'usdtContract') return await this.that.usdtContractListenKey();
     if (baseType === 'spot') return await this.that.spotListenKey();
     console.log(`createListenKey 不能识别的baseType:${baseType}....`);
   }
@@ -128,7 +129,7 @@ class WS extends Event {
               console.log(mesagage, '.mesagagemesagage....');
               process.exit();
               reject(`_ws: ${streamName} no return...`);
-            }, 5 * 1000);
+            }, 3 * 1000);
           }
           this.registerFunc(connectionId, o.name, async (data) => {
             if (o.chanel) {
@@ -192,7 +193,7 @@ class WS extends Event {
     }
   }
   addWsHooks(ws, o = {}) {
-    const { pingInterval = 1000 } = o;
+    const { pingInterval = 60 * 1000 } = o;
     ws.tryPing = (noop) => {
       try {
         ws.ping(noop);
@@ -239,6 +240,7 @@ class WS extends Event {
   _onCallback(data, { connectionId }) {
     try {
       data = processWsData(data);
+      // process.exit();
       checkError(data);
     } catch (error) {
       console.log(`ws Parse raw message error: ${error.message}`);

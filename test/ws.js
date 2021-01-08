@@ -17,20 +17,26 @@ const newtasks = [
   // ['wsAssetAnyChange', { pair: 'BTC-USD', asset_type: 'SWAP' }],
   // ['wsCoinContractDepth', { pair: 'BTC-USD', asset_type: 'QUARTER', level: 10 }],
   // ['wsCoinContractOrder', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
-  // ['wsCoinContractPositions', {}],
-  // ['wsCoinContractBalances', { }]
+  // ['wsCoinSwapDepth', { assets: [{ pair: 'EOS-USD', asset_type: 'QUARTER' }] }],
+  // ['wsCoinContractOrders', { assets: [{ pair: 'EOS-USD', asset_type: 'QUARTER' }] }],
+  // ['wsCoinContractBalance', { assets: [{ pair: 'EOS-USD', asset_type: 'QUARTER' }] }],
+  // ['wsCoinContractPosition', { assets: [{ pair: 'EOS-USD', asset_type: 'QUARTER' }] }],
   // ['wsFutureOrders', {}],
   // ['wsFuturePosition', {}],
   // ['wsSpotBalance', {}],
   // ['wsSpotOrders', { assets: [{ pair: 'BTC-USDT' }] }],
   // ['wsFutureDepth', { assets: [{ pair: 'BTC-USD', asset_type: 'QUARTER' }, { pair: 'BTC-USD', asset_type: 'NEXT_QUARTER' }] }],
   // ['wsSpotDepth', { assets: [{ pair: 'BTC-USDT', asset_type: 'SPOT' }] }],
-  // ['subscribeAssetDepth', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
-  // ['subscribeAssetOrders', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['SPOT', 'next_quarter'] }],
+  // ['subscribeAssetDepth', { pair: ['EOS-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
+  // ['subscribeAssetOrders', { pair: ['EOS-USD', 'BTC-USD'], asset_type: ['SPOT', 'SWAP', 'next_quarter'] }],
   // ['subscribeAssetPositions', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['swap', 'next_quarter'] }],
-  // ['subscribeAssetBalances', { pair: ['ETH-USD', 'BTC-USD'], asset_type: ['SPOT', 'next_quarter'] }],
+  // ['subscribeAssetBalances', { pair: ['EOS-USD'], asset_type: ['SPOT', 'SWAP', 'next_quarter'] }],
   // ['wsSpotOrders', {}],
-  ['wsRequestCoinContractPositions', {}],
+  // ['wsRequestCoinContractPositions', {}],
+  // ['wsUsdtContractPositions', {}],
+  // ['wsUsdtContractDepth', { assets: [{ pair: 'BTC-USDT', asset_type: 'SWAP' }] }],
+  // ['wsUsdtContractOrders', { assets: [{ pair: 'BTC-USDT', asset_type: 'SWAP' }] }],
+  // ['wsUsdtContractBalances', { assets: [{ pair: 'BTC-USDT', asset_type: 'SWAP' }] }]
 ];
 
 const wsList = [
@@ -237,7 +243,7 @@ function testOneExchangeWs(exName, list) {
   });
 }
 
-const exchangeName = 'binance';
+const exchangeName = 'huobi';
 // const exchangeName = 'okexV3';
 
 console.log(`=============【${exchangeName}...】=============`);

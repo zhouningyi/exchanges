@@ -2,11 +2,11 @@
 
 const _ = require('lodash');
 const _ws = require('./_ws');
-const { symbol2pair, pair2coin, pair2symbol, formatCoin, orderStatusMap } = require('./public');
+const { symbol2pair, pair2coin, pair2symbol, formatCoin, orderStatusMap, formatDepth } = require('./public');
 const { checkKey, formatter } = require('./../../../utils');
 const futureUtils = require('./future');
 const spotUtils = require('./spot');
-const swapUtils = require('./swap');
+const coinSwapUtils = require('./coin_swap');
 
 const exchange = 'HUOBI';
 
@@ -59,7 +59,6 @@ const spotDepth = {
     return _.map(o.assets, ({ pair }) => {
       const ch = `market.${_pair2symbol(pair)}.mbp.refresh.${level}`;
       return _getChanelObject(ch);
-      // return _getChanelObject(`market.${_pair2symbol(pair)}.depth.${o.type || 'step0'}`, 'depth', 'sub');
     });
   },
   validate: (res) => {
@@ -74,8 +73,8 @@ const spotDepth = {
       exchange,
       pair,
       time: new Date(ts),
-      bids: spotUtils.formatDepth(bids),
-      asks: spotUtils.formatDepth(asks),
+      bids: formatDepth(bids),
+      asks: formatDepth(asks),
     });
   }
 };
@@ -278,25 +277,98 @@ const futureTicks = {
   }
 };
 
-// const swapTicks = {
-//   name: 'swap/ticker',
-//   isSign: false,
-//   notNull: ['pairs'],
-//   chanel: o => _.map(o.pairs, pair => `swap/ticker:${pair}-SWAP`),
-//   formater: ds => _.map(ds.data, final(swapUtils.formatTick))
-// };
 
-// const swapDepth = {
-//   name: 'swap/depth5',
-//   isSign: false,
-//   notNull: ['pairs'],
-//   chanel: o => _.map(o.pairs, pair => `swap/depth5:${pair}-SWAP`),
-//   formater: res => futureUtils.formatFutureDepth(res.data, 'swap')
-// };
+function _depthCh2SwapPair(ch) {
+  return ch.split('.depth.')[0].replace('market.', '');
+}
 
+const coinSwapDepth = {
+  name: 'coinSwapDepth',
+  // notNull: ['assets'],
+  isSign: false,
+  chanel: (o) => {
+    return _.map(o.assets, ({ pair }) => {
+      const ch = `market.${pair}.depth.step6`;
+      const res = _getChanelObject(ch, 'coinSwapDepth');
+      return res;
+    });
+  },
+  validate: (res) => {
+    return res && res.ch && res.ch.startsWith('market.') && res.ch.indexOf('depth') !== -1;
+  },
+  formater: (res) => {
+    const { ts, tick, ch } = res;
+    const pair = _depthCh2SwapPair(ch);
+    const { asks, bids } = tick;
+    return formatter.wrapperInstrumentId({
+      asset_type: 'SWAP',
+      exchange,
+      pair,
+      time: new Date(ts),
+      bids: formatDepth(bids),
+      asks: formatDepth(asks),
+    });
+  }
+};
+
+
+const coinSwapOrders = {
+  notNull: [],
+  chanel: (o) => {
+    return [{ op: 'sub', topic: 'orders.*' }];
+  },
+  validate: (o) => {
+    return o && o.topic && o.topic.startsWith('orders');
+  },
+  isSign: true,
+  formater: (ds) => {
+    if (!ds) return null;
+    return coinSwapUtils.formatCoinSwapOrder(ds);
+  }
+};
+
+
+const coinSwapBalance = {
+  notNull: [],
+  chanel: o => [{ op: 'sub', topic: 'accounts.*' }],
+  validate: o => o && o.topic && o.topic.startsWith('accounts'),
+  isSign: true,
+  formater: (ds) => {
+    if (!ds) return false;
+    const { data, topic } = ds;
+    if (!data) return false;
+    const res = _.map(data, coinSwapUtils.formatCoinSwapBalance);
+    return res;
+  }
+};
+
+const coinSwapPosition = {
+  notNull: [],
+  chanel: (o) => {
+    return [{ op: 'sub', cid: uuid('position'), topic: 'positions.*' }];
+  },
+  validate: o => o && o.topic && o.topic.startsWith('positions'),
+  isSign: true,
+  formater: (ds) => {
+    if (!ds) return null;
+    const { data, topic } = ds;
+    if (!data) return null;
+    const res = coinSwapUtils.formatSwapCoinPositions(data);
+    if (topic === 'positions') {
+      _.forEach(res, (d) => {
+        delete d.lever_rate;// 第一次订阅的时候 lever rate是错的。。
+      });
+    }
+    return res;
+  }
+};
 
 module.exports = {
   ..._ws,
+  coinSwapBalance,
+  coinSwapPosition,
+  coinSwapOrders,
+  coinSwapDepth,
   // spot
   // ticks,
   spotDepth,
@@ -304,6 +376,7 @@ module.exports = {
   futureOrders,
   spotBalance,
   getChanelObject: _getChanelObject,
+  // coinSwapOrders,
   futureDepth,
   futureTicks,
   // // reqBalance,

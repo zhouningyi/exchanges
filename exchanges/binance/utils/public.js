@@ -63,6 +63,13 @@ function usdtContractPairs(ds) {
   });
 }
 
+function getPrecision(v) {
+  v = _parse(v);
+  if (v === 0) return 0;
+  return Math.log10(1 / v);
+}
+
+
 function getOrderTypeOptions(o) {
   let { order_type } = o;
   const type = (o.type || 'LIMIT').toUpperCase();
@@ -97,6 +104,7 @@ function getSymbolId({ asset_type, pair }) {
   asset_type = asset_type.toUpperCase();
   const symbol = pair2symbol(pair);
   if (asset_type === 'SPOT') return symbol;
+  if (asset_type === 'SWAP' && pair && pair.endsWith('-USDT')) return symbol;// USDT合约
   if (asset_type === 'SWAP') return `${symbol}_PERP`;
   if (isFutureType(asset_type)) {
     const ext = contract_type2future_id(asset_type);
@@ -109,6 +117,7 @@ const baseCoins = ['USD', 'USDT', 'BTC', 'ETH', 'BNB', 'BUSD', 'EUR', 'KRW', 'BR
 
 function formatSymbolPair(symbol) {
   symbol = symbol.toUpperCase();
+  if (symbol === 'BTCBUSD') return 'BTC-BUSD';
   for (const baseCoin of baseCoins) {
     if (symbol.endsWith(baseCoin)) return symbol.replace(baseCoin, `-${baseCoin}`);
   }
@@ -208,6 +217,7 @@ function getOrderStatusOptions(d) {
   };
 }
 
+
 function _formatOrderO(o) {
   const symbol = getSymbolId(o);
   const opt = { symbol };
@@ -234,6 +244,7 @@ module.exports = {
   asset_type2ext,
   parseSymbolId,
   getSymbolId,
+  getPrecision,
   pair2symbol,
   getOrderTypeOptions,
   parseOrderTypeOptions,
@@ -241,6 +252,7 @@ module.exports = {
   usdtContractPairs,
   pair2coin,
   coin2pair,
+  parse: _parse,
   formatSymbolPair,
   intervalMap,
   timeO: () => ({}),

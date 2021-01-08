@@ -453,7 +453,6 @@ class exchange extends Event {
       return _.filter(ds, d => balance_ids.includes(d.balance_id));
     };
 
-
     const filterByInstrumentId = (ds, o) => {
       if (!ds || !o || !o.assets) return ds;
       const { assets } = o;
@@ -466,16 +465,23 @@ class exchange extends Event {
     for (const name of resFns0) {
       this.registerFn({ name }, async (o = {}) => {
         const { assetBaseType, ...restOption } = o;
-        const wsFnName = `wsRequest${upperFirst(assetBaseType)}${upperFirst(name)}`;
+        const { filter_by_asset = true } = restOption;
+        // const wsFnName = `wsRequest${upperFirst(assetBaseType)}${upperFirst(name)}`;
         let ds;
-        if (this[wsFnName] && (name !== 'balances')) { // 老不稳定...
-          ds = await this[wsFnName](restOption);
-        } else {
-          const restFnName = `${o.assetBaseType}${upperFirst(name)}`;
-          if (this[restFnName]) ds = await this[restFnName](restOption);
+        // if (this[wsFnName] && (name !== 'balances')) { // 老不稳定...
+        //   ds = await this[wsFnName](restOption);
+        // } else {
+        const restFnName = `${o.assetBaseType}${upperFirst(name)}`;
+        if (name === 'orderDetails') console.log(restFnName, 'restFnName...');
+        if (this[restFnName]) {
+          ds = await this[restFnName](restOption);
         }
+        // }
         if (name === 'balances') return filterBalances(ds, o);
-        if (['positions', 'assets', 'ledgers'].includes(name)) return filterByInstrumentId(ds, o);
+        if (['positions', 'assets', 'ledgers'].includes(name)) {
+          const res = filter_by_asset ? filterByInstrumentId(ds, o) : ds;
+          return res;
+        }
         console.log(`resFns0/name:${name} UNKNOW...`);
       });
     }

@@ -232,30 +232,30 @@ class Exchange extends Base {
       }
     };
     // 更新
-    this.assetPositionsRisk = async (o = {}) => {
-      const { assets } = o;
-      const assetsGroup = _.groupBy(assets, this._getAssetBaseType.bind(this));
-      let res = [];
-      for (const assetBaseType in assetsGroup) {
-        const realFnName = `${assetBaseType}PositionsRisk`;
-        const _assets = assetsGroup[assetBaseType];
-        if (this[realFnName]) {
-          const _res = await this[realFnName]({ assets: _assets });
-          res = [...res, ..._res];
-        } else {
-          this.print(`compatible: ws函数${realFnName}不存在...`);
-        }
-        return res;
-      }
+    // this.assetPositionsRisk = async (o = {}) => {
+    //   const { assets } = o;
+    //   const assetsGroup = _.groupBy(assets, this._getAssetBaseType.bind(this));
+    //   let res = [];
+    //   for (const assetBaseType in assetsGroup) {
+    //     const realFnName = `${assetBaseType}PositionsRisk`;
+    //     const _assets = assetsGroup[assetBaseType];
+    //     if (this[realFnName]) {
+    //       const _res = await this[realFnName]({ assets: _assets });
+    //       res = [...res, ..._res];
+    //     } else {
+    //       this.print(`compatible: ws函数${realFnName}不存在...`);
+    //     }
+    //     return res;
+    //   }
 
-      const baseType = this._getAssetBaseType(o);
-      const fnName = `${baseType}PositionsRisk`;
-      if (this[fnName]) {
-        return await this[fnName](o);
-      } else {
-        console.log(`assetPositionsRisk/缺少baseType:${baseType}...`);
-      }
-    };
+    //   const baseType = this._getAssetBaseType(o);
+    //   const fnName = `${baseType}PositionsRisk`;
+    //   if (this[fnName]) {
+    //     return await this[fnName](o);
+    //   } else {
+    //     console.log(`assetPositionsRisk/缺少baseType:${baseType}...`);
+    //   }
+    // };
     //
   }
 }

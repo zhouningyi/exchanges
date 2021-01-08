@@ -9,7 +9,7 @@ const ef = require('./../../utils/formatter');
 const moment = require('moment');
 const request = require('./../../utils/request');
 const futureUtils = require('./utils/future');
-const { FUTURE_BASE, REST_BASE, WS_BASE, REST_HUOBI_GROUP, WS_BASE_ACCOUNT, WS_BASE_FUTURE, WS_BASE_ACCOUNT_V2, WS_BASE_FUTURE_ACCOUNT } = require('./config');
+const { FUTURE_BASE, REST_BASE, WS_BASE, REST_HUOBI_GROUP, WS_BASE_ACCOUNT, WS_BASE_COIN_SWAP_ACCOUNT, WS_BASE_COIN_SWAP, WS_BASE_FUTURE, WS_BASE_ACCOUNT_V2, WS_BASE_FUTURE_ACCOUNT } = require('./config');
 const restConfig = require('./meta/api');
 const HmacSHA256 = require('crypto-js/hmac-sha256');
 const CryptoJS = require('crypto-js');
@@ -45,6 +45,7 @@ class Exchange extends Base {
     this.version = 'v1';
     this.name = 'huobi';
     this.hostMap = {
+      spot: REST_BASE,
       future: FUTURE_BASE,
       huobigroup: REST_HUOBI_GROUP
     };
@@ -53,10 +54,15 @@ class Exchange extends Base {
   async init() {
     this.Utils = kUtils;
     this.loadFnFromConfig(restConfig);
+    //
     this.initWsPublic();
     this.initWsSpotAccount();
+    //
     this.initWsFuturePublic();
     this.initWsFutureAccount();
+    //
+    this.initWsCoinSwapPublic();
+    this.initWsCoinSwapAccount();
     await Promise.all([this.updateAccount()]);
   }
   getFutureCoins() {
@@ -156,6 +162,34 @@ class Exchange extends Base {
     const _o = { wsName };
     this.wsFutureDepth = (options, cb) => this._addChanel('futureDepth', { ...options, ..._o }, cb);
     this.wsFutureTicks = (options, cb) => this._addChanel('futureTicks', { ...options, ..._o }, cb);
+  }
+  initWsCoinSwapPublic(o = {}) {
+    const wsName = 'wsCoinSwapPublic';
+    if (!this[wsName]) {
+      try {
+        this[wsName] = kUtils.ws.genWs(WS_BASE_COIN_SWAP, { proxy: this.proxy });
+      } catch (e) {
+        console.log(e, 'initWs error');
+        process.exit();
+      }
+    }
+    const _o = { wsName };
+    this.wsCoinSwapDepth = (options, cb) => this._addChanel('coinSwapDepth', { ...options, ..._o }, cb);
+  }
+  initWsCoinSwapAccount(o = {}) {
+    const wsName = 'wsCoinSwapAccount';
+    if (!this[wsName]) {
+      try {
+        this[wsName] = kUtils.ws.genWs(WS_BASE_COIN_SWAP_ACCOUNT, { proxy: this.proxy });
+        this.loginWs({ url: 'api.hbdm.com', path: '/swap-notification', wsName, options: { type: 'api' } });
+      } catch (e) {
+        console.log(e, 'initWs error');
+        process.exit();
+      }
+    }
+    this.wsCoinSwapOrders = (options, cb) => this._addChanel('coinSwapOrders', { wsName, options }, cb);
+    this.wsCoinSwapBalances = (options, cb) => this._addChanel('coinSwapBalance', { wsName, options }, cb);
+    this.wsCoinSwapPositions = (options, cb) => this._addChanel('coinSwapPosition', { wsName, options }, cb);
   }
   //
   initWsPublic(o = {}) {
@@ -296,7 +330,6 @@ class Exchange extends Base {
         ...DEFAULT_HEADERS,
       },
     };
-
     if (method === 'POST') o.body = JSON.stringify(this._getBody(params));
     let body;
     // try {
@@ -313,6 +346,10 @@ class Exchange extends Base {
     }
     if (body.code === 500) {
       console.log(`${endpoint}: code 500, 服务拒绝...`);
+      return false;
+    }
+    if (body.code === 600) {
+      console.log(body.message, 'message....');
       return false;
     }
     if (body.code === -1) {
@@ -357,7 +394,9 @@ class Exchange extends Base {
   }
   _getAssetBaseType(o) {
     if (ef.isFuture(o) && ef.isUsdPair(o)) return 'future';
-    if (ef.isSwap(o) && ef.isUsdPair(o)) return 'coinSwap';
+    if (ef.isSwap(o) && ef.isUsdPair(o)) {
+      return 'coinSwap';
+    }
     if (ef.isSwap(o) && ef.isUsdtPair(o)) return 'usdtContract';
     if (ef.isSpot(o)) return 'spot';
     return 'none';

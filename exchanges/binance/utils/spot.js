@@ -2,9 +2,8 @@ const publicUtils = require('./public');
 const _ = require('lodash');
 
 const formatSpotContractDepth = publicUtils.formatDepth;
-const { getSymbolId, formatInterval, parseSymbolId, getOrderDirectionOptions, parseOrderStatusOptions, getOrderTypeOptions, parseOrderDirectionOptions } = publicUtils;
+const { getSymbolId, getPrecision, formatInterval, parseSymbolId, getOrderDirectionOptions, parseOrderStatusOptions, getOrderTypeOptions, parseOrderDirectionOptions } = publicUtils;
 const ef = require('./../../../utils/formatter');
-const { symbol2pair } = require('../../okex/utils');
 const { cleanObjectNull } = require('../../../utils');
 
 const exchange = 'BINANCE';
@@ -130,11 +129,6 @@ function spotOrders(ds, o) {
   return _.map(ds, d => _formatSpotOrder(d, o));
 }
 
-function getPrecision(v) {
-  v = _parse(v);
-  if (v === 0) return 0;
-  return Math.log10(1 / v);
-}
 
 function _formatSpotAsset(d) {
   const res = { ...parseSymbolId(d), pair: [d.baseAsset, d.quoteAsset].join('-') };
@@ -211,7 +205,7 @@ function _formatSpotOrderDetail(d) {
     fee_coin: d.commissionAsset,
     time: new Date(d.time),
     side: d.isBuyer ? 'BUY' : 'SELL',
-    exec_type: d.maker ? 'MAKER' : 'TAKER',
+    exec_type: d.isMaker ? 'MAKER' : 'TAKER',
   };
   return res;
 }

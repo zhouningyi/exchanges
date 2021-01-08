@@ -2,7 +2,9 @@
 const time = require('./time');
 const base = require('./base');
 
+const DAY = 3600 * 24 * 1000;
 function main() {
+  base.live();
   const now = new Date();
   console.log(`今天是星期${time.getWeekDay()}`);
   const pre5 = time.prevWeek(now, 5, 1);
@@ -41,9 +43,15 @@ function main() {
   console.log(`当前的次周->当周换仓日是${thisNsettleDayMove}`);
   const thisTsettleDay = time.getFutureSettlementDay(now, 'THIS_WEEK');
   console.log(`当前的当周交割日是${thisTsettleDay}`);
+  //
+  const current_month_delivery = time.getFutureSettlementTime2(now, 'MONTH-0');
+  const next_month_delivery = time.getFutureSettlementTime2(now, 'MONTH-1');
+  console.log(current_month_delivery, '当月交割...', next_month_delivery, '次月交割...');
+  const t = '2021-01-29 16:02:00.000';
+  console.log(t, '的当月合约交割日:', time.getFutureSettlementTime2(new Date(t), 'MONTH0'));
 
   //
-  base.live();
 }
-main()
+main();
+console.log(2222);
 module.exports = main;

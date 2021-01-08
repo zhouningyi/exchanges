@@ -4,7 +4,7 @@ const ef = require('./../../../utils/formatter');
 const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
-const { accountTypeMap, getPairInfo } = require('./public');
+const { accountTypeMap, getPairInfo, contractStatusMap, rContractStatusMap, getRContractOrderProps, contractOrderPriceTypeMap, getContractOrderProps, getContractOrderType, processContractCancelOrderErrors, processContractCancelOrderSuccesses, formatDotArray } = require('./public');
 const { pair2coin, getInstrumentId } = require('./../../../utils/formatter');
 
 const exchange = 'HUOBI';
@@ -163,37 +163,11 @@ function getFutureInstrumentId(pair, contract_type, t = new Date()) {
   const res = `${_formatPair(pair)}-${tstr}`;
   return res;
 }
-function getCurFutureInstrumentId(o) {
-  const { pair, contract_type } = o;
-  return getFutureInstrumentId(pair, contract_type, new Date());
-}
 
 const directionMap = {// /火币在这边是反过来的
   up: 'sell',
   down: 'buy'
 };
-
-function getOrderProps(o) {
-  const side = o.side.toUpperCase();
-  if (side === 'BUY' && ef.isLong(o)) return { offset: 'open', direction: 'buy' };
-  if (side === 'SELL' && ef.isLong(o)) return { offset: 'close', direction: 'sell' };
-  if (side === 'BUY' && ef.isShort(o)) return { offset: 'open', direction: 'sell' };
-  if (side === 'SELL' && ef.isShort(o)) return { offset: 'close', direction: 'buy' };
-}
-
-function getFutureOrderType(o) {
-  const type = o.type.toUpperCase();
-  const order_type = (o.order_type || '').toUpperCase();
-  let res = null;
-  if (type === 'LIMIT') res = 'limit';
-  if (type === 'MARKET') res = 'opponent';
-  if (['POST_ONLY', 'MAKER'].includes(order_type)) res = 'post_only';
-  if (['FOK'].includes(order_type)) res = 'fok';
-  if (['IOC'].includes(order_type) && res) res = 'ioc';
-  if (!res)console.log(o, 'getOrderType: type未知...');
-  return res;
-}
-
 
 function futureOrderO(o = {}) {
   const { amount, lever_rate, asset_type, client_oid, price } = o;
@@ -208,8 +182,8 @@ function futureOrderO(o = {}) {
     price,
     volume: amount,
     lever_rate,
-    ...getOrderProps(o),
-    order_price_type: getFutureOrderType(o)
+    ...getContractOrderProps(o),
+    order_price_type: getContractOrderType(o)
   };
   if (client_oid) opt.client_order_id = client_oid;
   return opt;
@@ -226,25 +200,14 @@ function futureOrder(line, o = {}) {
     ...o
   };
   if (line.client_order_id)res.client_oid = line.client_order_id;
+  line.instrument_id = ef.getInstrumentId(line);
 
   return res;
 }
 // 返回所有订单信息
-const futureStatusMap = {
-  UNFINISH: 0,
-  PARTIAL: 1,
-  SUCCESS: 2,
-  CANCELLING: 3,
-  CANCEL: -1
-};
+
 
 // 订单报价类型 "limit":限价 "opponent":对手价 "post_only":只做maker单,post only下单只受用户持仓数量限制,optimal_5：最优5档、optimal_10：最优10档、optimal_20：最优20档
-const orderPriceTypMap = {
-  limit: 'LIMIT',
-  opponent: 'OPPONENT',
-  lightning: 'LIGHTNING',
-  post_only: 'MAKER_ONLY'
-};
 
 // const rDirectionMap = {
 //   buy: 'UP',
@@ -256,26 +219,9 @@ const orderPriceTypMap = {
 // };
 
 
-function getROrderProps(o) {
-  const offset = o.offset.toLowerCase();
-  const direction = o.direction.toLowerCase();
-  if (offset === 'open' && direction === 'buy') return { side: 'BUY', direction: 'LONG' };
-  if (offset === 'close' && direction === 'sell') return { side: 'SELL', direction: 'LONG' };
-  if (offset === 'open' && direction === 'sell') return { side: 'BUY', direction: 'SHORT' };
-  if (offset === 'close' && direction === 'buy') return { side: 'SELL', direction: 'SHORT' };
-}
-
-
 // 0:全部,3:未成交, 4: 部分成交,5: 部分成交已撤单,6: 全部成交,7:已撤单
-const statusMap = {
-  ALL: 0,
-  UNFINISH: 3,
-  PARTIAL: 4,
-  CANCELLING: 5,
-  SUCCESS: 6,
-  CANCEL: 7
-};
-const rStatusMap = _.invert(statusMap);
+
+
 function _formatFutureOrder(l, o) {
   const { status, symbol: coin, trade, profit, price, lever_rate, volume: amount, create_date, created_at, contract_type, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
   const ct = create_date || created_at;
@@ -291,18 +237,19 @@ function _formatFutureOrder(l, o) {
     order_source,
     benifit: profit,
     lever_rate,
-    type: orderPriceTypMap[order_price_type],
+    type: contractOrderPriceTypeMap[order_price_type],
     amount: _parse(amount),
     price: _parse(price),
     filled_amount: deal_amount,
     fee: _parse(fee),
-    ...getROrderProps(l),
+    ...getRContractOrderProps(l),
     server_created_at: ct ? new Date(ct) : undefined,
     server_updated_at: new Date(),
-    status: rStatusMap[status],
+    status: rContractStatusMap[status],
     trade
   };
   if (l.client_order_id) res.client_oid = `${l.client_order_id}`;
+  res.instrument_id = ef.getInstrumentId(res);
   return res;
 }
 
@@ -313,7 +260,7 @@ function futureOrdersO(o = {}) {
     symbol: o.pair.split('-')[0],
     trade_type: 0,
     type: 1,
-    status: statusMap[status],
+    status: contractStatusMap[status],
     create_date: 7,
     page_size
   };
@@ -331,18 +278,13 @@ function futureOrders(ds, o) {
 }
 
 
-// 返回单个订单信息
-function _formatDotArray(v) {
-  if (Array.isArray(v)) return v.join(',');
-  return `${v}`;
-}
 function futureOrderInfoO(o = {}) {
   const symbol = _pair2coin(o.pair);
   const res = {
     symbol
   };
-  if (o.order_id) res.order_id = _formatDotArray(o.order_id);
-  if (o.client_oid) res.client_order_id = _formatDotArray(o.client_oid);
+  if (o.order_id) res.order_id = formatDotArray(o.order_id);
+  if (o.client_oid) res.client_order_id = formatDotArray(o.client_oid);
   return res;
 }
 function futureOrderInfo(res, o) {
@@ -536,28 +478,7 @@ function batchCancelFutureOrders(res) {
 }
 
 // /
-function processCancelOrderErrors(d, o = {}) {
-  const { assets, asset, ...rest } = o;
-  return _.map(d.errors, (e) => {
-    const res = { ...rest };
-    if (e.order_id) res.order_id = e.order_id;
-    res.status = 'FAIL';
-    return res;
-  });
-}
 
-function processCancelOrderSuccesses(res, o = {}) {
-  const { assets, asset, ...rest } = o;
-  if (res && res.successes && typeof res.successes === 'string') {
-    return res.successes.split(',').map((v) => {
-      const res = { ...rest, status: 'CANCEL' };
-      if (o.order_id) res.order_id = v;
-      if (o.client_oid) res.client_oid = v;
-      return res;
-    });
-  }
-  return [];
-}
 
 function futureCancelOrderO(o) {
   const { pair } = o;
@@ -568,7 +489,7 @@ function futureCancelOrderO(o) {
 }
 
 function futureCancelOrder(res, o) {
-  return [...processCancelOrderErrors(res, o), ...processCancelOrderSuccesses(res, o)].filter(d => d)[0];
+  return [...processContractCancelOrderErrors(res, o), ...processContractCancelOrderSuccesses(res, o)].filter(d => d)[0];
 }
 
 function futureAssets(ds) {
@@ -603,7 +524,37 @@ function futureUpdateLeverate(res, o) {
   return { ...o, lever_rate };
 }
 
+
+function futureOrderDetailsO(o = {}) {
+  return { symbol: pair2coin(o.pair), trade_type: 0, create_date: 1 };
+}
+
+function _formatOrderDetail(d, o) {
+  const res = {
+    exchange,
+    unique_id: `${d.match_id}`,
+    order_id: `${d.order_id_str}`,
+    pair: `${o.pair}`,
+    asset_type: d.contract_type.toUpperCase(),
+    exec_type: d.role.toUpperCase(),
+    direction: d.direction === 'buy' ? 'LONG' : 'SHORT',
+    side: d.offset === 'open' ? 'BUY' : 'SELL',
+    amount: d.trade_volume,
+    price: d.trade_price,
+    fee: -1 * d.trade_fee,
+    time: new Date(d.create_date),
+    fee_coin: d.fee_asset,
+  };
+  res.instrument_id = ef.getInstrumentId(res);
+  return res;
+}
+function futureOrderDetails(ds, o) {
+  return _.map(ds.trades, d => _formatOrderDetail(d, o));
+}
+
 module.exports = {
+  futureOrderDetailsO,
+  futureOrderDetails,
   futureUpdateLeverateO,
   futureUpdateLeverate,
   futureAssets,

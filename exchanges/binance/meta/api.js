@@ -123,11 +123,97 @@ const spotConfig = {
   },
 };
 
+// usdtContract
 const usdtContractConfig = {
-  usdtContractPairs: {
+  usdtContractAssets: {
     name_cn: 'usdt本位合约交易对',
     endpoint: 'fapi/v1/exchangeInfo'
   },
+  usdtContractKline: {
+    method: 'GET',
+    name_cn: 'USDT合约K线数据',
+    endpoint: 'fapi/v1/continuousKlines',
+    notNull: ['pair', 'interval'],
+  },
+  //
+  usdtContractBalances: {
+    method: 'GET',
+    name_cn: 'USDT合约K线资产',
+    endpoint: 'fapi/v2/balance',
+    notNull: [],
+    sign: true
+  },
+  usdtContractPositions: {
+    name_cn: 'USDT合约持仓',
+    endpoint: 'fapi/v2/positionRisk',
+    sign: true
+  },
+  usdtContractOrders: {
+    name_cn: 'USDT合约交易记录',
+    endpoint: 'fapi/v1/allOrders',
+    notNull: ['pair', 'asset_type'],
+    sign: true
+  },
+  usdtContractOrder: {
+    name_cn: 'USDT合约下单',
+    endpoint: 'fapi/v1/order',
+    notNull: ['pair', 'asset_type', 'side', 'direction', 'amount'],
+    method: 'POST',
+    sign: true
+  },
+  usdtContractCancelOrder: {
+    name_cn: '撤销USDT合约下单',
+    endpoint: 'fapi/v1/order',
+    notNull: ['pair', 'asset_type'],
+    method: 'DELETE',
+    sign: true
+  },
+  usdtContractOrderInfo: {
+    name_cn: 'USDT合约订单详情',
+    endpoint: 'fapi/v1/order',
+    notNull: ['pair', 'asset_type'],
+    method: 'GET',
+    sign: true
+  },
+  usdtContractUnfinishOrders: {
+    name_cn: 'USDT合约未完成订单',
+    endpoint: 'fapi/v1/openOrders',
+    notNull: ['pair', 'asset_type'],
+    method: 'GET',
+    sign: true
+  },
+  usdtContractOrderDetails: {
+    name_cn: 'USDT合约历史订单',
+    endpoint: 'fapi/v1/userTrades',
+    notNull: ['pair', 'asset_type'],
+    method: 'GET',
+    sign: true
+  },
+  usdtContractLedgers: {
+    name_cn: 'USDT合约 交割记录',
+    endpoint: 'fapi/v1/income',
+    method: 'GET',
+    sign: true
+  },
+  usdtContractListenKey: {
+    name_cn: 'USDT合约_listenKey',
+    endpoint: 'fapi/v1/listenKey',
+    method: 'POST',
+    sign: false
+  },
+  updateUsdtContractListenKey: {
+    name_cn: 'USDT合约_listenKey',
+    endpoint: 'fapi/v1/listenKey',
+    method: 'PUT',
+    sign: false
+  },
+  usdtContractUpdateLeverate: {
+    name_cn: 'USDT合约 调整杠杆',
+    endpoint: 'fapi/v1/leverage',
+    notNull: ['pair', 'asset_type', 'lever_rate'],
+    method: 'POST',
+    sign: true
+  }
 };
 const coinContractConfig = {
   coinContractBalances: {
@@ -140,19 +226,19 @@ const coinContractConfig = {
     endpoint: 'dapi/v1/exchangeInfo',
     sign: true
   },
-  coinContractPositions: {
+  coinContractPositionsBase: {
     name_cn: '全部币本位合约账户仓位',
     endpoint: 'dapi/v1/account',
     sign: true
   },
-  coinContractPositionsRisk: {
-    name_cn: '全部币本位合约持仓风险',
+  coinContractPositions: {
+    name_cn: '全部币本位合约持仓(风险)',
     endpoint: 'dapi/v1/positionRisk',
     sign: true
   },
   coinContractOrders: {
     name_cn: '币本位合约交易记录',
-    endpoint: 'dapi/v1/userTrades',
+    endpoint: 'dapi/v1/allOrders',
     notNull: ['pair', 'asset_type'],
     sign: true
   },
@@ -194,13 +280,6 @@ const coinContractConfig = {
   coinContractOrderDetails: {
     name_cn: '币本位合约历史订单',
     endpoint: 'dapi/v1/userTrades',
-    notNull: ['pair', 'asset_type'],
-    method: 'GET',
-    sign: true
-  },
-  coinContractUnfinishedOrderHistory: {
-    name_cn: '币本位合约历史订单',
-    endpoint: 'dapi/v1/allOrders',
     notNull: ['pair', 'asset_type'],
     method: 'GET',
     sign: true

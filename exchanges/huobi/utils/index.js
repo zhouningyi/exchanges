@@ -4,8 +4,8 @@ const future = require('./future');
 const spot = require('./spot');
 const margin = require('./margin');
 const ws = require('./ws');
-const swap = require('./swap');
+const coin_swap = require('./coin_swap');
 
 module.exports = {
-  ...pub, ...future, ...spot, ...margin, ...swap, ws
+  ...pub, ...future, ...spot, ...margin, ...coin_swap, ws
 };

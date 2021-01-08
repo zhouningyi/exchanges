@@ -28,17 +28,18 @@ const getCoin = (o) => {
 };
 const getPair = o => upper(o.pair);
 //
-const isFuture = o => FUTURE_ASSETS.includes(getAssetType(o));
-const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o));
-const isSwap = o => getAssetType(o) === SWAP_ASSET;
+const coin_contract_bases = ['COIN_CONTRACT', 'COIN_SWAP', 'FUTURE'];
 const isSpot = o => getAssetType(o) === SPOT_ASSET || getBalanceType(o) === SPOT_ASSET;
-const isReverseContract = o => (isContract(o) && getPair(o).endsWith('-USD')) || (getBalanceType(o) === 'COIN_CONTRACT');
+const isFuture = o => FUTURE_ASSETS.includes(getAssetType(o));
+const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o)) || (o && ['USDT_CONTRACT', 'COIN_CONTRACT', 'COIN_SWAP', 'FUTURE'].includes(o.balance_type));
+const isSwap = o => getAssetType(o) === SWAP_ASSET;
+const isReverseContract = o => (isContract(o) && (coin_contract_bases.includes(getBalanceType(o)) && isUsdPair(o)));
 const isForwardContract = o => isContract(o) && getPair(o).endsWith('-USDT');
 const pair2coin = pair => pair ? upper(pair.split('-')[0]) : null;
 const pair2coinRight = pair => pair ? upper(pair.split('-')[1]) : null;
-const isUSDX = o => getPair(o).indexOf('-USD') !== -1;
-const isUsdPair = o => getPair(o).endsWith('-USD');
-const isUsdtPair = o => getPair(o).endsWith('-USDT');
+const isUSDX = o => getPair(o) && getPair(o).indexOf('-USD') !== -1;
+const isUsdPair = o => getPair(o) && getPair(o).endsWith('-USD');
+const isUsdtPair = o => getPair(o) && getPair(o).endsWith('-USDT');
 const getAssetTypeName = asset_type => assetMap[asset_type] || asset_type;
 const isLong = ({ direction }) => direction && ['LONG', 'UP'].includes(direction.toUpperCase());
 const isShort = ({ direction }) => direction && ['SHORT', 'DOWN'].includes(direction.toUpperCase());
@@ -61,11 +62,27 @@ function instrumentId2name(instrument_id) {
 }
 
 // ORDER
-const ORDER_DONE_STATUS = ['CANCEL', 'CANCELLING', 'CANCELING', 'SUCCESS', 'FAIL', 'FILLED'];// CANCELLING 基本意味着cancel，而且策略有unfinished order的检查
+const ORDER_DONE_STATUS = ['CANCEL', 'CANCELLING', 'CANCELING', 'SUCCESS', 'FILLED'];// CANCELLING 基本意味着cancel，而且策略有unfinished order的检查
 const isOrderDone = ({ status }) => ORDER_DONE_STATUS.includes(status);
 const getOrderVector = ({ side, direction = 'LONG', amount = 1 }) => {
-  const sidev = side === 'BUY' ? 1 : side === 'SELL' ? -1 : 0;
-  const directionv = direction === 'LONG' ? 1 : direction === 'SHORT' ? -1 : 0;
+  side = upper(side);
+  direction = upper(direction);
+  let sidev = 0;
+  let directionv = 0;
+  if (side === 'BUY') {
+    sidev = 1;
+  } else if (side === 'SELL') {
+    sidev = -1;
+  } else if (!['MID', 'mid'].includes(side)) {
+    console.log(`getOrderVector/side:${side}...`);
+  }
+  if (direction === 'LONG') {
+    directionv = 1;
+  } else if (direction === 'SHORT') {
+    directionv = -1;
+  } else {
+    console.log(`getOrderVector/directionv:${direction}...`);
+  }
   return sidev * directionv * amount;
 };
 // 订单检查
@@ -75,7 +92,7 @@ const formatCommonOrder = (order) => {
   if (!pair) return console.log('order 缺少pair...');
   if (!order.coin) order.coin = pair2coin(pair);
   if (!order.unique_id) order.unique_id = order.client_oid || order.order_id;
-  if (!order.vector)order.vector = getOrderVector(order);
+  if (!order.vector) order.vector = getOrderVector(order);
   if (order.order_id) order.order_id = `${order.order_id}`;
   if (order.client_oid) order.client_oid = `${order.client_oid}`;
   // if (isContract(order) && !order.lever_rate) return console.log('order(contract) 缺少lever_rate...');
@@ -101,7 +118,7 @@ function getVolumeUsd(o) {
     if (isReverseContract(asset)) {
       return _volume * getReverseContractSize(asset);
     } else if (isForwardContract(asset)) {
-      return console.log('getVolumeUsd/isForwardContract:TODO.....');
+      return _volume * price;
     }
   }
   return console.log(o, 'getVolumeUsd:TODO.....');
@@ -133,7 +150,9 @@ function getBalanceType(asset) {
 }
 function getBalanceId(asset) {
   const coin = getCoin(asset);
+  if (!coin) console.log(asset, 'ef.getBalanceId: coin lost...');
   const exchange = _getExchange(asset);
+  if (!exchange) console.log(asset, 'ef.getBalanceId: exchange lost...');
   const balance_type = getBalanceType(asset);
   if (balance_type === 'SPOT') {
     if (!coin) console.log(asset, 'Asset无法提取coin 字段');
@@ -141,7 +160,10 @@ function getBalanceId(asset) {
   }
   if (exchange === 'BINANCE') {
     if (balance_type === 'COIN_CONTRACT') return makeArrayId([exchange, balance_type, coin]);
-    if (balance_type === 'USDT_CONTRACT') return makeArrayId([exchange, balance_type, 'USDT']);
+    if (balance_type === 'USDT_CONTRACT') {
+      if (['USDT', 'BUSD', 'BNB'].includes(coin)) return makeArrayId([exchange, balance_type, coin]);
+      return makeArrayId([exchange, balance_type, 'USDT']);
+    }
   }
   if (exchange === 'HUOBI') {
     return makeArrayId([exchange, balance_type, asset.pair]);
@@ -199,6 +221,8 @@ function getContractPositionCoinBalance(p) { // 获取币量
   if (isReverseContract(p)) {
     const usd = getVolumeUsd(p);
     return usd / p.price;
+  } else if (isForwardContract(p)) {
+    return p.volume;
   }
   console.log('getContractPositionCoinBalance: 未知情况...');
 }
@@ -255,6 +279,7 @@ module.exports = {
   getCoin,
   getAssetType,
   pair2coin,
+  getExchange: _getExchange,
   // asset
   FUTURE_ASSETS,
   SWAP_ASSET,

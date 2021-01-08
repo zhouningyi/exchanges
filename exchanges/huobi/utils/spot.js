@@ -407,7 +407,42 @@ function _formatInterest(d, o) {
 function spotInterest(ds, o) {
   return _.map(ds, l => _formatInterest(l, o));
 }
+
+
+function spotOrderDetailsO(o = {}) {
+  return {
+    symbol: pair2symbol(o.pair),
+  };
+}
+
+function _formatSpotOrderDetail(d) {
+  const fee_coin = d['fee-currency'].toUpperCase();
+  const res = {
+    ...getOrderProps({ type: d.type }),
+    exchange,
+    direction: 'LONG',
+    asset_type: 'SPOT',
+    fee_coin,
+    unique_id: `${d.id}`,
+    price: _parse(d.price),
+    pair: symbol2pair(d.symbol),
+    order_id: `${d['order-id']}`,
+    exec_type: d.role.toUpperCase(),
+    time: new Date(d['created-at']),
+    amount: _parse(d['filled-amount']),
+    fee: _parse(d['filled-fees']),
+  };
+  res.instrument_id = ef.getInstrumentId(res);
+  return res;
+}
+
+function spotOrderDetails(ds) {
+  return _.map(ds, _formatSpotOrderDetail);
+}
+
 module.exports = {
+  spotOrderDetailsO,
+  spotOrderDetails,
   spotOrderInfoByOrderIdO,
   spotOrderInfoByOrderId,
   spotOrderInfoByClientOrderIdO,

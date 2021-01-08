@@ -1,6 +1,6 @@
 const { testRest, live } = require('./utils');
 
-const exchanges = ['binance']; // bikicoin
+const exchanges = ['huobi']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
 
@@ -10,7 +10,7 @@ const futureOrderO = { pair: 'BTC-USD', asset_type: 'THIS_WEEK', client_oid: Mat
 const newtasks = [
   // ['cancelAssetOrder', { order_id: '22074158437' }],
   // ['volatilityHistory', { coin: 'BTC' }],
-  // ['coinContractOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }]
+  // ['coinContractOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
   // ['coinContractOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', type: 'limit', direction: 'LONG', side: 'BUY', price: 10000, amount: 1, client_oid: 'x2xfffs' }],
   // ['coinContractBatchCancelOrder', { pair: 'BTC-USD', asset_type: 'QUARTER', order_ids: [562672879, 562673242] }],
   // ['coinContractCancelOrder', { pair: 'BTC-USD', asset_type: 'SWAP', client_oid: 'HLpkQ3lMl9qziInAabQ7cn' }],
@@ -19,6 +19,20 @@ const newtasks = [
   // ['coinContractUnfinishedOrderHistory', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
   // ['coinContractBalances', { coin: 'BTC' }],
   // ['coinContractOrderDetails', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
+  // ['coinContractPositionsRisk', {}],
+  //
+  // ['usdtContractAssets', {}],
+  // ['usdtContractKline', { pair: 'BTC-USDT', interval: '1m' }],
+  // ['usdtContractBalances', {}],
+    // ['usdtContractPositions', {}],
+    // ['usdtContractOrders', { pair: 'BTC-USDT', asset_type: 'SWAP' }],
+    // ['usdtContractOrder', { pair: 'BTC-USDT', asset_type: 'SWAP', type: 'limit', direction: 'LONG', side: 'BUY', price: 10000, amount: 0.001, client_oid: 'x2xff23fs' }],
+    // ['usdtContractCancelOrder', { order_id: '10977489552', pair: 'BTC-USDT', asset_type: 'SWAP' }],
+      // ['usdtContractOrderInfo', { order_id: '10981094762', pair: 'BTC-USDT', asset_type: 'SWAP' }],
+      // ['usdtContractUnfinishOrders', { pair: 'BTC-USDT', asset_type: 'SWAP' }],
+      // ['usdtContractOrderDetails', { pair: 'BTC-USDT', asset_type: 'SWAP' }],
+      // ['usdtContractListenKey', {}],
+      // ['usdtContractUpdateLeverate', { asset_type: 'SWAP', pair: 'BTC-USDT', lever_rate: 6 }],
   // ['spotMoveBalance', { target: 'SPOT', source: 'COIN_CONTRACT', coin: 'BTC', amount: 0.001 }],
   // ['updateCoinContractListenKey', {}],
     // ['coinContractPositions', {}],
@@ -35,7 +49,9 @@ const newtasks = [
     // ['spotMoveBalance', { coin: 'USDT', instrument_id: 'ETH-USDT', amount: 11, source: 'spot', target: 'margin' }],
     // ['spotBalance', {}],
     // ['spotUnfinishOrders', { pair: 'BTC-USDT' }],
-    // ['spotOrderDetails', { pair: 'BTC-USDT' }],
+    // ['spotOrderDetails', { pair: 'EOS-USDT' }],
+    // ['assetOrderDetails', { pair: 'EOS-USDT', exchange: 'HUOBI', asset_type: 'SPOT' }],
+    // ['assetOrderDetails', { pair: 'EOS-USD', exchange: 'HUOBI', asset_type: 'QUARTER' }],
   // ['spotOrder', { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BTC-USDT', type: 'LIMIT', side: 'SELL', order_type: 'MAKER', price: '30000', amount: '0.001' }],
     // ['spotCancelOrderByOrderId', { order_id: '146927075055460' }]
   // ['spotCancelOrder', { client_oid: 'order1584', pair: 'BTC-USDT' }],
@@ -46,22 +62,35 @@ const newtasks = [
     // ['spotOrderInfo', { order_id: '3936446392', pair: 'BTC-USDT' }],
     //
         // //////////////////////////////FUTURE//////////////////////////////////////////////////
+      //  ['futureOrderDetails', { pair: 'EOS-USD' }],
     // ['futureBalances', {}],
     // ['futurePositions', {}],
     // ['futureOrder', { pair: 'BTC-USD', asset_type: 'THIS_WEEK', client_oid: Math.round(Math.random() * 1000000), lever_rate: 5, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 10000 }],
     // ['futureCancelOrder', { order_id: '778103238384988160', asset_type: 'THIS_WEEK', pair: 'BTC-USD', }],
     // ['futureOrderInfo', { order_id: '778103238384988160', asset_type: 'THIS_WEEK', pair: 'BTC-USD', }],
     // ['futureAssets', {}],
+        // //////////////////////////////SWAP//////////////////////////////////////////////////
+        // ['coinSwapAssets', {}],
+        // ['coinSwapBalances', {}],
+        // ['coinSwapPositions', {}],
+        // ['coinSwapOrder', { pair: 'EOS-USD', amount: 1, lever_rate: 20, side: 'BUY', price: 2, direction: 'LONG', type: 'LIMIT' }],
+        // ['coinSwapCancelOrder', { pair: 'EOS-USD', client_oid: '222313231' }],
+        // ['coinSwapOrderInfo', { pair: 'EOS-USD', client_oid: '222313231' }],
+        // ['coinSwapUnfinishOrders', { pair: 'EOS-USD' }],
+        // ['coinSwapOrderDetails', { pair: 'EOS-USD' }],
+        // ['coinSwapUpdateLeverate', { pair: 'EOS-USD', lever_rate: 10 }],
+        // ['coinSwapFundingHistory', { pair: 'EOS-USD' }],
+        // ['coinSwapMoveBalance', { coin: 'EOS', target: 'SPOT', source: 'COIN_SWAP', amount: 0.8 }],
   // ////////////////////////////// 综合 //////////////////////////////////////////////////
     //
       // ['assetOrder', { pair: 'BTC-USD', asset_type: 'SWAP', side: 'OPEN', direction: 'LONG', price: 10000, amount: 1, type: 'LIMIT', order_type: 'NORMAL' }],
       // ['assetOrders', { assets: [{ pair: 'BTC-USD', asset_type: 'THIS_WEEK' }, { pair: 'BTC-USDT', asset_type: 'SPOT' }] }], //,
       // ['assetPositions', { assets }],
       // ['assetBalances', { assets }],
-        // ['assetAssets', { assets }],
-        // ['assetOrder', futureOrderO],
-        // ['assetOrderInfo', { asset_type: 'SPOT', client_oid: 'order7452' }],
-        // ['assetCancelOrder', { asset_type: 'THIS_WEEK', pair: 'BTC-USD', order_id: '778558223040516096' }]
+      // ['assetAssets', { assets }],
+      // ['assetOrder', futureOrderO],
+      // ['assetOrderInfo', { asset_type: 'SPOT', client_oid: 'order7452' }],
+      // ['assetCancelOrder', { asset_type: 'THIS_WEEK', pair: 'BTC-USD', order_id: '778558223040516096' }],
 ];
 
 const tasks = [
@@ -89,24 +118,13 @@ const tasks = [
   //   fn: 'time',
   //   params: {}
   // },
-  // {
-  //   fn: 'usdtContractPairs',
-  //   params: {},
-  //   name: '现货交易对信息'
-  // },
+
   // {
   //   fn: 'coinContractPositions',
   //   params: {
   //     // coin: 'BTC'
   //   },
   //   name: '币本位资产仓位'
-  // },
-  // {
-  //   fn: 'coinContractPositionsRisk',
-  //   params: {
-  //     // coin: 'BTC'
-  //   },
-  //   name: '币本位资产仓位风险'
   // },
 
 

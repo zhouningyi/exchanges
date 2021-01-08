@@ -47,9 +47,9 @@ function _formatCoinContractOrder(d, o = {}) {
   if (d.executedQty)res.filled_amount = _parse(d.executedQty);
   if (d.qty || d.origQty) res.amount = _parse(d.qty || d.origQty);
   if (d.commission) res.fee = _parse(d.commission);
-  if (d.price_avg) res.price_avg = _parse(d.price_avg);
-  if (d.eventTime) {
-    res.server_updated_at = new Date(d.eventTime);
+  if (d.avgPrice) res.price_avg = _parse(d.avgPrice);
+  if (d.eventTime || d.updateTime) {
+    res.server_updated_at = new Date(d.eventTime || d.updateTime);
   }
   if (d.time && !res.server_updated_at) {
     res.server_updated_at = new Date(d.time);
@@ -107,10 +107,6 @@ const coinContractUnfinishedOrderHistory = _formatCoinContractOrders;
 
 const formatCoinContractDepth = publicUtils.formatDepth;
 
-function coinContractPositionsO(o = {}) {
-  return {};
-}
-
 function _formatCoinContractPosition(d) {
   const info = parseSymbolId(d);
   const res = {
@@ -125,15 +121,13 @@ function _formatCoinContractPosition(d) {
   if (d.marginType) res.margin_type = d.marginType;
   if (d.leverage) res.lever_rate = _parse(d.leverage);
   if (d.initialMargin) res.initial_margin = _parse(d.initialMargin);
+  if (d.positionSide) res.position_side = d.positionSide;
   if (d.positionAmt) {
     res.vector = _parse(d.positionAmt) || 0;
     res.amount = Math.abs(res.vector);
-  } else if (d.entryPrice && d.leverage && d.initialMargin) {
-    // const amount = _parse(d.entryPrice) * _parse(d.initialMargin) * _parse(d.leverage);
-    // res.vector = amount || 0;
-    // res.amount = Math.abs(res.vector);
-  } else {
-    console.log('_formatCoinContractPosition/position 数据错误....');
+    if (d.positionSide === 'SHORT') {
+      res.vector *= -1;
+    }
   }
   const direction = res.vector > 0 ? 'LONG' : res.amount < 0 ? 'SHORT' : null;
   if (direction) res.direction = direction;
@@ -145,16 +139,31 @@ function _formatCoinContractPosition(d) {
   return res;
 }
 
-function coinContractPositions(ds) {
-  return _.map(ds.positions, _formatCoinContractPosition);
+function coinContractPositionsBase(ds, o) {
+  const res = _.map(ds, d => _formatCoinContractPosition(d, o));
+  const resGroup = _.groupBy(res, d => d.instrument_id);
+  const result = [];
+  for (const instrument_id in resGroup) {
+    const arr = resGroup[instrument_id];
+    if (arr.length === 1) {
+      result.push(arr[0]);// positionSide = BOTH
+    } else {
+      const arrg = _.keyBy(arr, d => d.position_side);
+      const long_vector = arrg.LONG.vector;
+      const short_vector = arrg.SHORT.vector;
+      const vector = long_vector + short_vector;
+      const _res = { ...arrg.LONG, position_side: 'LONG_SHORT', vector, amount: Math.abs(vector), long_vector, short_vector };
+      result.push(_res);
+    }
+  }
+  return res;
 }
 
-function coinContractPositionsRisk(ds) {
-  const res = _.map(ds, (d) => {
+function coinContractPositions(ds) {
+  const result = _.map(ds, (d) => {
     const res = {
       exchange,
       ...parseSymbolId(d),
-      amount: _parse(d.positionAmt),
       price_avg: _parse(d.entryPrice),
       mark_price: _parse(d.markPrice),
       avaliable_balance: _parse(d.unrealizedProfit),
@@ -164,24 +173,27 @@ function coinContractPositionsRisk(ds) {
       position_side: d.positionSide,
       margin_mode: d.marginType
     };
+    if (d.positionAmt) {
+      res.vector = _parse(d.positionAmt) || 0;
+      res.amount = Math.abs(res.vector);
+    }
     res.instrument_id = Utils.formatter.getInstrumentId(res);
     return res;
   });
-  return res;
+  return result;
 }
 
-function _formatCoinContractBalance(d) {
+function _formatCoinContractBalance(d, o, source) {
   const res = {
     balance_type,
     exchange,
     coin: d.asset,
-    balance: d.balance ? _parse(d.balance) : (_parse(d.unrealizedProfit) + _parse(d.crossWalletBalance)),
-    cross_balance: _parse(d.crossWalletBalance),
-    profit_unreal: _parse(d.crossUnPnl),
-    avaliable_balance: _parse(d.availableBalance),
   };
   res.balance_id = Utils.formatter.getBalanceId(res);
   //
+  if (d.walletBalance || d.crossWalletBalance) res.wallet_balance = _parse(d.walletBalance || d.crossWalletBalance);
+  if (d.availableBalance) res.avaliable_balance = _parse(d.availableBalance);
+  if (d.unrealizedProfit || d.crossUnPnl) res.profit_unreal = _parse(d.unrealizedProfit || d.crossUnPnl);
   if (d.maxWithdrawAmount) res.withdraw_available = _parse(d.maxWithdrawAmount);
   if (d.openOrderInitialMargin)res.open_order_initial_margin = _parse(d.openOrderInitialMargin);
   if (d.positionInitialMargin) res.position_initial_margin = _parse(d.positionInitialMargin);
@@ -195,8 +207,8 @@ function coinContractBalancesO(d) {
   return {};
 }
 
-function coinContractBalances(d) {
-  return (d && d.assets) ? _.map(d.assets, _formatCoinContractBalance) : { error: '返回错误' };
+function coinContractBalances(d, o) {
+  return (d && d.assets) ? _.map(d.assets, _d => _formatCoinContractBalance(_d, o, 'coinContractBalances')) : { error: '返回错误' };
 }
 
 
@@ -254,7 +266,7 @@ function _formatCoinContractOrderDetail(d) {
     unique_id: `${exchange}_${d.id}`,
     ...parseSymbolId(d),
     order_id: `${d.orderId}`,
-    side: d.side,
+    // side: d.side,
     amount: _parse(d.qty),
     margin_asset: d.marginAsset,
     fee: _parse(d.commission),
@@ -262,7 +274,8 @@ function _formatCoinContractOrderDetail(d) {
     time: new Date(d.time),
     position_side: d.positionSide,
     exec_type: d.maker ? 'MAKER' : 'TAKER',
-    buyer: d.buyer
+    buyer: d.buyer,
+    side: d.buyer ? 'BUY' : 'SELL'
   };
 }
 function coinContractOrderDetails(ds) {
@@ -295,10 +308,10 @@ module.exports = {
   formatCoinContractBalance: _formatCoinContractBalance,
   formatCoinContractPosition: _formatCoinContractPosition,
 //
-  coinContractPositionsO,
+  coinContractPositionsBaseO: empty,
+  coinContractPositionsBase,
+  coinContractPositionsO: empty,
   coinContractPositions,
-  coinContractPositionsRiskO: empty,
-  coinContractPositionsRisk,
   formatCoinContractDepth,
   coinContractUnfinishedOrderHistoryO,
   coinContractUnfinishedOrderHistory,
