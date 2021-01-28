@@ -308,8 +308,10 @@ class exchange extends Event {
     const defaultOptions = conf.defaultOptions || {};
     this[name] = async (o, cb) => {
       const query_id = this.uuid();
+      let queryOption;
       try {
         o = Object.assign({}, defaultOptions, o);
+        const t0 = new Date();
         if (checkKeyO) checkKey(o, checkKeyO);
           // 顺序不要调换
         let opt = formatOFn ? _.cloneDeep(formatOFn(o, this.queryOptions)) : _.cloneDeep(o);
@@ -318,12 +320,15 @@ class exchange extends Event {
         opt = Utils.cleanObjectNull(opt);
         const tStart = new Date();
         this.addFnLock(conf, query_id);
-        const queryOption = { method, name, endpointCompile, opt, o, sign, host: conf.host };
+        queryOption = { method, name, endpointCompile, opt, o, sign, host: conf.host };
         if (conf.type === 'ws') return await this.wsSubscribe(queryOption, cb, { formatFn });
         const ds = await this.queryFunc(queryOption);
+        // if (name === 'coinSwapUnfinishOrders') console.log(ds, '==>>>');
+        // console.log(name, ds && ds.length, new Date() - t0, 'name....');
         this.cancelFnLock(conf, query_id);
         const dt = new Date() - tStart;
         let errorO;
+        // console.log(name, 'api name .....');
         if (UtilsInst.getError && ds) {
           const error = UtilsInst.getError(ds);
           if (error) {
@@ -364,7 +369,7 @@ class exchange extends Event {
         if (resultChecker && res) resultChecker(res);
         return res;
       } catch (e) {
-        console.log(e, 'e');
+        console.log(e, queryOption, 'ee...');
         this.updateErrorInfo(conf, e ? e.message : '未知错误');
         this.cancelFnLock(conf, query_id);
         return null;
@@ -403,7 +408,6 @@ class exchange extends Event {
     return assets;
   }
   compatible() {
-    if (this._compatible) this._compatible();
     this.assetBatchCancelOrders = async (orders) => {
       const ordersGroup = _.groupBy(orders, d => this._getAssetBaseType(d));
       let res = [];
@@ -472,9 +476,10 @@ class exchange extends Event {
         //   ds = await this[wsFnName](restOption);
         // } else {
         const restFnName = `${o.assetBaseType}${upperFirst(name)}`;
-        if (name === 'orderDetails') console.log(restFnName, 'restFnName...');
         if (this[restFnName]) {
           ds = await this[restFnName](restOption);
+        } else if (!['spotPositions', 'spotLedgers'].includes(restFnName)) {
+          console.log(`registerFn/${restFnName}不存在...`);
         }
         // }
         if (name === 'balances') return filterBalances(ds, o);
@@ -502,7 +507,7 @@ class exchange extends Event {
     }
 
         // WS
-    const wsFns = ['orders', 'positions', 'balances', 'depth', 'ticks'];
+    const wsFns = ['orders', 'positions', 'balances', 'depth', 'ticks', 'estimateFunding'];
     for (const name of wsFns) {
       const fnName = `subscribeAsset${upperFirst(name)}`;
       this[fnName] = async (o, cb) => {
@@ -523,6 +528,8 @@ class exchange extends Event {
         }
       };
     }
+    //
+    if (this._compatible) this._compatible();
   }
 }
 

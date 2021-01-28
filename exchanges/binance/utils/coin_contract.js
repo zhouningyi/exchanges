@@ -246,6 +246,7 @@ function coinContractLedgersO(o) {
 function coinContractLedgers(ds) {
   return _.map(ds, (d) => {
     return {
+      exchange,
       ...parseSymbolId(d),
       type: reverseLedgerTypeMap[d.incomeType],
       balance: _parse(d.income),

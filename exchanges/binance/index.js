@@ -131,9 +131,32 @@ class Exchange extends Base {
       ...(method === 'POST' ? { form: params } : { qs: params })
     };
 
-    let body;
+    // console.log(o);
     // try {
-    body = await request(o);// , { type: 'http2' }
+    if (this.overWeight === 2) {
+      await Utils.delay(1000);
+    } else if (this.overWeight === 1) {
+      await Utils.delay(150);
+    }
+    const { data: body, headers: respHeaders } = await request(o, { header: true });// ,type: 'http2'
+    // console.log(respHeaders, 'respHeaders...');
+    if (respHeaders) {
+      let weight = respHeaders['x-mbx-used-weight-1m'];
+      if (weight) {
+        weight = parseFloat(weight, 10);
+        if (weight > 1200) {
+          this.overWeight = 2;
+        } else if (weight > 800) {
+          this.overWeight = 1;
+        } else {
+          this.overWeight = false;
+        }
+      } else {
+        console.log('1m weight缺失...');
+      }
+    } else {
+      console.log('respHeader缺失...');
+    }
 
     // } catch (e) {
     //   if (e) console.log(e.message);

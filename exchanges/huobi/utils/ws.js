@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const _ws = require('./_ws');
 const { symbol2pair, pair2coin, pair2symbol, formatCoin, orderStatusMap, formatDepth } = require('./public');
-const { checkKey, formatter } = require('./../../../utils');
+const { checkKey, formatter, getSwapFundingTime } = require('./../../../utils');
 const futureUtils = require('./future');
 const spotUtils = require('./spot');
 const coinSwapUtils = require('./coin_swap');
@@ -79,12 +79,12 @@ const spotDepth = {
   }
 };
 
-
 function formatWsSpotBalance(d) {
   if (!d || !d.currency) return null;
   const res = {
     exchange: 'HUOBI',
     asset_type: 'SPOT',
+    balance_type: 'SPOT',
     balance: _parse(d.balance || d.available),
     coin: formatCoin(d.currency),
     account_id: d.accountId,
@@ -105,7 +105,10 @@ const spotBalance = {
   formater: (ds) => {
     const { data, ch } = ds;
     if (!data) return null;
-    return [formatWsSpotBalance(data)].filter(d => d);
+    const res = [formatWsSpotBalance(data)].filter(d => d);
+    // const btc = _.filter(res, d => d.coin === 'BTC')[0];
+    // if (btc)console.log(_.get(btc, 'balance'), 'spot ws...');
+    return res;
   }
 };
 
@@ -189,6 +192,9 @@ const futureBalance = {
     const { data, topic } = ds;
     if (!data) return false;
     const res = futureUtils.futureBalances(data);
+    // console.log(data, res, 'res.....');
+    // const btc = _.filter(res, d => d.coin === 'BTC')[0];
+    // if (btc)console.log(btc.balance, 'future ws...');
     return res;
   }
 };
@@ -223,7 +229,7 @@ const futureDepth = {
   isSign: false,
   chanel: (o) => {
     return _.map(o.assets, ({ pair, asset_type }) => {
-      return _getChanelObject(`market.${getFutureSymbol(pair, asset_type)}.depth.${o.type || 'step6'}`, 'depth', 'sub');
+      return _getChanelObject(`market.${getFutureSymbol(pair, asset_type)}.depth.${o.type || 'step0'}`, 'depth', 'sub');
     });
   },
   validate: o => o && o.ch && o.ch.startsWith('market') && o.ch.indexOf('.depth') !== -1,
@@ -288,7 +294,7 @@ const coinSwapDepth = {
   isSign: false,
   chanel: (o) => {
     return _.map(o.assets, ({ pair }) => {
-      const ch = `market.${pair}.depth.step6`;
+      const ch = `market.${pair}.depth.step0`;
       const res = _getChanelObject(ch, 'coinSwapDepth');
       return res;
     });
@@ -311,6 +317,40 @@ const coinSwapDepth = {
   }
 };
 
+// const coinSwapIndex
+
+function _estfundingCh2SwapPair(ch) {
+  return ch.split('.estimated_rate.')[0].replace('market.', '');
+}
+const coinSwapEstimateFunding = {
+  name: 'coinSwapEstimateFunding',
+  isSign: false,
+  chanel: (o) => {
+    return _.map(o.assets, ({ pair }) => {
+      const ch = `market.${pair}.estimated_rate.1min`;
+      return _getChanelObject(ch, 'coinSwapDepth');
+    });
+  },
+  validate: (res) => {
+    return res && res.ch && res.ch.startsWith('market.') && res.ch.indexOf('estimated_rate') !== -1;
+  },
+  formater: (res) => {
+    const { ts, tick, ch } = res;
+    const pair = _estfundingCh2SwapPair(ch);
+    const h8 = 3600 * 1000 * 8;
+    const current_funding_time = getSwapFundingTime({ exchange, asset_type: 'SWAP', pair });
+    const next_funding_time = new Date(current_funding_time.getTime() + h8 * 2);
+    return formatter.wrapperInstrumentId({
+      asset_type: 'SWAP',
+      exchange,
+      pair,
+      time: new Date(ts),
+      estimated_rate: _parse(tick.close),
+      next_funding_time
+    });
+  }
+};
+
 
 const coinSwapOrders = {
   notNull: [],
@@ -326,7 +366,6 @@ const coinSwapOrders = {
     return coinSwapUtils.formatCoinSwapOrder(ds);
   }
 };
-
 
 const coinSwapBalance = {
   notNull: [],
@@ -359,12 +398,15 @@ const coinSwapPosition = {
         delete d.lever_rate;// 第一次订阅的时候 lever rate是错的。。
       });
     }
+    // const p = _.filter(res, d => d.pair === 'CRV-USD')[0];
+    // if (p) console.log(p, 'ws position....');
     return res;
   }
 };
 
 module.exports = {
   ..._ws,
+  coinSwapEstimateFunding,
   coinSwapBalance,
   coinSwapPosition,
   coinSwapOrders,

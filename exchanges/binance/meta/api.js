@@ -3,6 +3,20 @@ const Utils = require('./../utils');
 
 const spotConfig = {
   // // // // // // // 公共部分  // // // // // // //
+  bulkHistoryData: {
+    method: 'POST',
+    name_cn: '现货K线数据',
+    sign: true,
+    endpoint: 'sapi/v1/futuresHistDataId',
+    notNull: ['time_start', 'time_end', 'data_type', 'asset_type', 'pair'],
+  },
+  loadHistoryData: {
+    method: 'GET',
+    name_cn: '下载k线数据',
+    sign: true,
+    endpoint: 'sapi/v1/downloadLink',
+    notNull: ['id'],
+  },
   spotKline: {
     method: 'GET',
     name_cn: '现货K线数据',
@@ -315,7 +329,7 @@ function fix(config, host) {
   for (const name in config) {
     const l = config[name];
     l.name = name;
-    l.host = host;
+    if (!l.host)l.host = host;
     if (!l.sign)l.sign = false;
     if (!l.method) l.method = 'GET';
   }

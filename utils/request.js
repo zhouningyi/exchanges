@@ -67,7 +67,8 @@ async function requestGot(o) {
   return res || null;
 }
 
-function requestPromise(o) {
+function requestPromise(o, opt = {}) {
+  const { header = false } = opt;
   const t = new Date();
   return new Promise((resolve, reject) => {
     if (!o.timeout) o.timeout = TIME_OUT;
@@ -80,7 +81,9 @@ function requestPromise(o) {
       try {
         if (typeof body === 'string') {
           if (body === '') return reject();
-          return resolve(JSON.parse(body));
+          let data = JSON.parse(body);
+          if (header) data = { data, headers: res.headers };
+          return resolve(data);
         }
         reject();
       } catch (e) {
@@ -93,18 +96,18 @@ function requestPromise(o) {
   });
 }
 
-async function requestMix(o) {
+async function requestMix(o, opt) {
   if (['GET', 'POST'].includes(o.method)) {
-    return await requestGot(o);
+    return await requestGot(o, opt);
   }
-  return await requestPromise(o);
+  return await requestPromise(o, opt);
 }
 
 
 async function requestMain(o, opt = {}) {
   const { type = 'http1' } = opt;
-  if (type === 'http1') return await requestPromise(o);
-  if (type === 'http2') return await requestMix(o);
+  if (type === 'http1') return await requestPromise(o, opt);
+  if (type === 'http2') return await requestMix(o, opt);
   console.log('requestMain/错误❌.........');
 }
 module.exports = requestMain;

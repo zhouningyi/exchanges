@@ -189,7 +189,21 @@ function getFutureSettlementMoveDay(t = new Date(), type = 'QUARTER') {
   return getTimeString(time, 'day');
 }
 
+
+function getSwapFundingTime(asset, time = new Date()) {
+  const { exchange } = asset;
+  if (!['FTX', 'DERIBIT'].includes(exchange)) {
+    const day = getTimeString(time, 'day');
+    const hour = time.getHours();
+    if (hour > 16) return new Date(`${day} 16:00:00`);
+    if (hour > 8) return new Date(`${day} 08:00:00`);
+    return new Date(`${day} 00:00:00`);
+  }
+}
+
+
 module.exports = {
+  getSwapFundingTime,
   SETTLEMENT_QUARTER_MONTHES,
   getTimeString,
   getWeekDay,

@@ -6,6 +6,7 @@ const config = require('./../config');
 const Utils = require('./utils');
 
 const newtasks = [
+  ['wsCoinSwapEstimateFunding', { assets: ['BTC', 'EOS', 'ETC'].map(coin => ({ pair: `${coin}-USD`, asset_type: 'SWAP', exchange: 'HUOBI' })) }],
   // ['wsFutureIndex', { pair: 'BTC-USD' }],
   // ['wsOptionMarkPrice', { pair: 'BTC-USD' }],
   // ['wsAssetTrades', { pair: 'BTC-USD', asset_type: 'SWAP' }],

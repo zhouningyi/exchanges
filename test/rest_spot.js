@@ -8,6 +8,7 @@ const assets = [{ pair: 'BTC-USD', asset_type: 'QUARTER' }, { pair: 'BTC-USDT', 
 const orderO = { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BSV-USDT', asset_type: 'SPOT', type: 'LIMIT', side: 'BUY', order_type: 'MAKER', price: '90.0', amount: 0.1 };
 const futureOrderO = { pair: 'BTC-USD', asset_type: 'THIS_WEEK', client_oid: Math.round(Math.random() * 1000000), lever_rate: 5, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 10000 };
 const newtasks = [
+  ['accountBalance', { base_coin: 'BTC', account_type: 'spot' }],
   // ['cancelAssetOrder', { order_id: '22074158437' }],
   // ['volatilityHistory', { coin: 'BTC' }],
   // ['coinContractOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
@@ -52,9 +53,9 @@ const newtasks = [
     // ['spotOrderDetails', { pair: 'EOS-USDT' }],
     // ['assetOrderDetails', { pair: 'EOS-USDT', exchange: 'HUOBI', asset_type: 'SPOT' }],
     // ['assetOrderDetails', { pair: 'EOS-USD', exchange: 'HUOBI', asset_type: 'QUARTER' }],
-  // ['spotOrder', { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BTC-USDT', type: 'LIMIT', side: 'SELL', order_type: 'MAKER', price: '30000', amount: '0.001' }],
+    // ['spotOrder', { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BTC-USDT', type: 'LIMIT', side: 'SELL', order_type: 'MAKER', price: '30000', amount: '0.001' }],
     // ['spotCancelOrderByOrderId', { order_id: '146927075055460' }]
-  // ['spotCancelOrder', { client_oid: 'order1584', pair: 'BTC-USDT' }],
+    // ['spotCancelOrder', { client_oid: 'order1584', pair: 'BTC-USDT' }],
     // ['spotCancelOrderByClientOrderId', { client_oid: 'order8072' }]
     // ['spotOrderInfoByOrderId', { order_id: 146927452656883 }],
     // ['spotOrderInfoByClientOrderId', { client_oid: 'order925' }],
@@ -64,6 +65,11 @@ const newtasks = [
         // //////////////////////////////FUTURE//////////////////////////////////////////////////
       //  ['futureOrderDetails', { pair: 'EOS-USD' }],
     // ['futureBalances', {}],
+    // 17157
+    // 17158
+    // ['bulkHistoryData', { data_type: 'T_TRADE', time_start: '2020-09-10 12:00:00', time_end: '2020-09-11 00:00:00', pair: 'BTC-USDT', asset_type: 'SPOT' }],
+    // ['bulkHistoryData', { data_type: 'S_DEPTH', time_start: '2020-12-10 22:00:00', time_end: '2020-12-11 00:00:00', pair: 'BTC-USD', asset_type: 'SWAP' }],
+    // ['loadHistoryData', { id: 18301 }],
     // ['futurePositions', {}],
     // ['futureOrder', { pair: 'BTC-USD', asset_type: 'THIS_WEEK', client_oid: Math.round(Math.random() * 1000000), lever_rate: 5, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 10000 }],
     // ['futureCancelOrder', { order_id: '778103238384988160', asset_type: 'THIS_WEEK', pair: 'BTC-USD', }],

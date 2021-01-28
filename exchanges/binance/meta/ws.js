@@ -206,7 +206,7 @@ function getWsOptions(o) {
 
 function wsUsdtContractDepthFormater(d, o) {
   const { s: symbol, b: bids, a: asks } = d;
-  if (Math.random() < 0.1) console.log(new Date() - new Date(d.T));
+  // if (Math.random() < 0.1) console.log(new Date() - new Date(d.T));
   return {
     symbol_id: symbol,
     ...getWsOptions(d),

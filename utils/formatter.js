@@ -33,7 +33,12 @@ const isSpot = o => getAssetType(o) === SPOT_ASSET || getBalanceType(o) === SPOT
 const isFuture = o => FUTURE_ASSETS.includes(getAssetType(o));
 const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o)) || (o && ['USDT_CONTRACT', 'COIN_CONTRACT', 'COIN_SWAP', 'FUTURE'].includes(o.balance_type));
 const isSwap = o => getAssetType(o) === SWAP_ASSET;
-const isReverseContract = o => (isContract(o) && (coin_contract_bases.includes(getBalanceType(o)) && isUsdPair(o)));
+const isReverseContract = (o) => {
+  const balance_type = getBalanceType(o);
+  if (balance_type && coin_contract_bases.includes(balance_type)) return true;
+  if (isContract(o) && isUsdPair(o)) return true;
+  return false;
+};
 const isForwardContract = o => isContract(o) && getPair(o).endsWith('-USDT');
 const pair2coin = pair => pair ? upper(pair.split('-')[0]) : null;
 const pair2coinRight = pair => pair ? upper(pair.split('-')[1]) : null;
@@ -141,7 +146,7 @@ function getBalanceType(asset) {
       if (isUsdPair(asset)) return 'COIN_CONTRACT';
     }
   }
-  if (exchange === 'HUOBI') {
+  if (['HUOBI', 'OKEX'].includes(exchange)) {
     if (isFuture(asset) && isUsdPair(asset)) return 'FUTURE';
     if (isSwap(asset) && isUsdPair(asset)) return 'COIN_SWAP';
     if (isSwap(asset) && isUsdtPair(asset)) return 'USDT_SWAP';

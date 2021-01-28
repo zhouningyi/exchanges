@@ -9,7 +9,7 @@ const ef = require('./../../utils/formatter');
 const moment = require('moment');
 const request = require('./../../utils/request');
 const futureUtils = require('./utils/future');
-const { FUTURE_BASE, REST_BASE, WS_BASE, REST_HUOBI_GROUP, WS_BASE_ACCOUNT, WS_BASE_COIN_SWAP_ACCOUNT, WS_BASE_COIN_SWAP, WS_BASE_FUTURE, WS_BASE_ACCOUNT_V2, WS_BASE_FUTURE_ACCOUNT } = require('./config');
+const { FUTURE_BASE, REST_BASE, WS_BASE, REST_HUOBI_GROUP, WS_BASE_COIN_SWAP_INDEX, WS_BASE_ACCOUNT, WS_BASE_COIN_SWAP_ACCOUNT, WS_BASE_COIN_SWAP, WS_BASE_FUTURE, WS_BASE_ACCOUNT_V2, WS_BASE_FUTURE_ACCOUNT } = require('./config');
 const restConfig = require('./meta/api');
 const HmacSHA256 = require('crypto-js/hmac-sha256');
 const CryptoJS = require('crypto-js');
@@ -62,6 +62,7 @@ class Exchange extends Base {
     this.initWsFutureAccount();
     //
     this.initWsCoinSwapPublic();
+    this.initWsCoinSwapIndex();
     this.initWsCoinSwapAccount();
     await Promise.all([this.updateAccount()]);
   }
@@ -176,6 +177,19 @@ class Exchange extends Base {
     const _o = { wsName };
     this.wsCoinSwapDepth = (options, cb) => this._addChanel('coinSwapDepth', { ...options, ..._o }, cb);
   }
+  initWsCoinSwapIndex(o = {}) {
+    const wsName = 'wsCoinSwapIndex';
+    if (!this[wsName]) {
+      try {
+        this[wsName] = kUtils.ws.genWs(WS_BASE_COIN_SWAP_INDEX, { proxy: this.proxy });
+      } catch (e) {
+        console.log(e, 'initWs error');
+        process.exit();
+      }
+    }
+    const _o = { wsName };
+    this.wsCoinSwapEstimateFunding = (options, cb) => this._addChanel('coinSwapEstimateFunding', { ...options, ..._o }, cb);
+  }
   initWsCoinSwapAccount(o = {}) {
     const wsName = 'wsCoinSwapAccount';
     if (!this[wsName]) {
@@ -288,8 +302,11 @@ class Exchange extends Base {
   }
   async moveBalance(o = {}) {
     const { source, target, coin, amount } = o;
+    console.log(`api ${source}, ${target}, ${coin} ${amount} moveBalance.....`);
     if ([source, target].includes('FUTURE') && [source, target].includes('SPOT')) {
       return await this.futureMoveBalance({ source, target, coin, amount });
+    } else if ([source, target].includes('COIN_SWAP') && [source, target].includes('SPOT')) {
+      return await this.coinSwapMoveBalance({ source, target, coin, amount });
     }
   }
   async spotInterest(o) {
@@ -409,9 +426,33 @@ class Exchange extends Base {
       if (this[fnName]) {
         return await this[fnName]({ ...o, coin });
       } else {
-        console.log(999);
-        console.log(`updateAssetLeverate/缺少baseType:${baseType}...`);
+        console.log(`huobi.updateAssetLeverate/缺少baseType:${baseType}...`);
       }
+    };
+    //
+    ['currentFunding', 'fundingHistory'].forEach((name) => {
+      this[name] = async (o = {}) => {
+        const baseType = this._getAssetBaseType(o);
+        const fnName = `${baseType}${upperFirst(name)}`;
+        if (this[fnName]) {
+          return await this[fnName]({ ...o });
+        } else {
+          console.log(999);
+          console.log(`huobi.${name}/缺少baseType:${baseType}...`);
+        }
+      };
+    });
+    this.assetLedgers = async ({ assets, type }) => {
+      let res = [];
+      for (const asset of assets) {
+        const baseType = this._getAssetBaseType(asset);
+        const fnName = `${baseType}Ledger`;
+        if (this[fnName]) {
+          const _res = await this[fnName]({ pair: asset.pair, type });
+          if (_res && _res.length) res = [...res, ..._res];
+        }
+      }
+      return res;
     };
   }
   // calcCostFuture(o = {}) {

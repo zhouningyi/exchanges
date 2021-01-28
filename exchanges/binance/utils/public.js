@@ -2,6 +2,7 @@ const _ = require('lodash');
 const md5 = require('md5');
 
 const Utils = require('./../../../utils');
+const ef = require('./../../../utils/formatter');
 const meta = require('./../../../utils/meta');
 
 const config = require('./../config');
@@ -233,7 +234,33 @@ function formatDepth(ls) {
 function formatInterval({ interval = '1m' }) { // 我们的interval的规范就来自币安不用改动
   return interval;
 }
+
+function _getTimeLong(t) {
+  if (typeof t === 'string') t = new Date(t);
+  return t.getTime();
+}
+
+function bulkHistoryDataO(o = {}) {
+  return {
+    symbol: getSymbolId(o),
+    startTime: _getTimeLong(o.time_start),
+    endTime: _getTimeLong(o.time_end),
+    dataType: o.data_type,
+    timestamp: _getTimeLong(new Date())
+  };
+}
+function bulkHistoryData(ds) {
+  console.log(ds, '=====>>>>');
+}
+
+function loadHistoryDataO(o = {}) {
+  return { downloadId: o.id };
+}
+
 module.exports = {
+  loadHistoryDataO,
+  bulkHistoryDataO,
+  bulkHistoryData,
   formatInterval,
   formatDepth,
   formatOrderO: _formatOrderO,

@@ -108,6 +108,11 @@ function futurePositions(ds, o, isws) {
   if (o && o.assets) {
     result = ef.fillPositionsByAssets(result, o.assets);
   }
+  // console.log('futurePositions...');
+
+  // const btc = _.filter(result, d => d.pair === 'BTC-USD')[0];
+  // if (btc) console.log(btc.vector, 'rest position....');
+
   return result;
 }
 
@@ -394,7 +399,14 @@ function _formatBalance(line) {
 }
 
 function futureBalances(res) {
-  return _.map(res, _formatBalance);
+  res = _.map(res, _formatBalance);
+  // const btc = _.get(_.filter(res, d => d.coin === 'BTC'), '0.balance');
+  // if (btc) {
+  //   console.log(btc, 'future rest...');
+  // } else {
+  //   // console.log(res, 'futureBalances no btc...');
+  // }
+  return res;
 }
 
 function _pair2coin(pair) {

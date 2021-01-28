@@ -14,6 +14,13 @@ function fix(config, host) {
 }
 
 const spotConfig = {
+  accountBalance: {
+    name_cn: '账户总资产',
+    endpoint: 'v2/account/asset-valuation',
+    sign: true,
+    desc: '账户总资产',
+    notNull: ['base_coin', 'account_type'],
+  },
   // // // // // // // 公共部分  // // // // // // //
   spotSystemStatus: {
     name_cn: '系统当前状态',
@@ -403,6 +410,14 @@ const coinSwapConfig = {
     notNull: ['pair'],
     host: 'future',
   },
+  coinSwapOrders: {
+    method: 'POST',
+    name_cn: '所有永续订单',
+    endpoint: 'swap-api/v1/swap_hisorders',
+    sign: true,
+    notNull: ['pair'],
+    host: 'future',
+  },
   coinSwapOrderDetails: {
     method: 'POST',
     name_cn: '永续成交明细',
@@ -425,6 +440,19 @@ const coinSwapConfig = {
     method: 'GET',
     name_cn: '资金费率历史',
     endpoint: 'swap-api/v1/swap_historical_funding_rate',
+    notNull: ['pair'],
+  },
+  coinSwapCurrentFunding: {
+    method: 'GET',
+    name_cn: '当前资金费率',
+    endpoint: 'swap-api/v1/swap_funding_rate',
+    notNull: ['pair'],
+  },
+  coinSwapLedger: {
+    method: 'POST',
+    sign: true,
+    name_cn: '结算记录',
+    endpoint: 'swap-api/v1/swap_financial_record',
     notNull: ['pair'],
   },
   coinSwapMoveBalance: {

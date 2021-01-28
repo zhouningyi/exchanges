@@ -457,7 +457,9 @@ const contractOrderPriceTypeMap = {
   limit: 'LIMIT',
   opponent: 'OPPONENT',
   lightning: 'LIGHTNING',
-  post_only: 'MAKER_ONLY'
+  post_only: 'MAKER_ONLY',
+  1: 'LIMIT',
+  2: 'MARKET'
 };
 
 
@@ -490,7 +492,17 @@ function _formatDepth(ds) {
   });
 }
 
+function accountBalanceO(o = {}) {
+  return { valuationCurrency: o.base_coin, accountType: o.account_type };
+}
+
+function accountBalance(res, o) {
+  return { time: new Date(res.timestamp), balance: _parse(res.balance), ...o };
+}
+
 module.exports = {
+  accountBalanceO,
+  accountBalance,
   formatDepth: _formatDepth,
   contractStatusMap,
   rContractStatusMap,

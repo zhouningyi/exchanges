@@ -24,7 +24,7 @@ function _parse(v) {
 
 function _formatCoinSwapAsset(d) {
   const pair = `${d.symbol}-USD`;
-  return {
+  const res = {
     exchange,
     pair,
     asset_type,
@@ -32,6 +32,8 @@ function _formatCoinSwapAsset(d) {
     isable: d.contract_status === 1,
     price_precision: d.price_tick
   };
+  res.instrument_id = Utils.formatter.getInstrumentId(res);
+  return res;
 }
 
 function coinSwapAssets(ds) {
@@ -43,6 +45,7 @@ function _formatCoinSwapBalance(d) {
   const res = {
     exchange,
     asset_type,
+    balance_type: 'COIN_SWAP',
     coin: d.symbol,
     pair,
     account_rights: _parse(d.margin_balance),
@@ -111,11 +114,15 @@ function formatSwapCoinPositions(ds, o) {
     _res.amount = amount;
     _res.time = new Date();
     _res.coin = pair2coin(_res.pair);
-    res.profit_unreal = profit_unreal;
+    _res.profit_unreal = profit_unreal;
+    _res.instrument_id = ef.getInstrumentId(_res);
   });
   return res;
 }
 
+function coinSwapPositionsO(o) {
+  return {};
+}
 function coinSwapPositions(ds, o) {
   return formatSwapCoinPositions(ds);
 }
@@ -179,9 +186,9 @@ function _formatCoinSwapOrder(l, o) {
     ...getRContractOrderProps(l),
     server_created_at: ct ? new Date(ct) : undefined,
     server_updated_at: new Date(),
-    status: rContractStatusMap[status],
-    trade
+    status: rContractStatusMap[status]
   };
+  if (trade)res.trade = trade;
   if (l.client_order_id) res.client_oid = `${l.client_order_id}`;
   res.instrument_id = ef.getInstrumentId(res);
   return res;
@@ -271,6 +278,19 @@ function coinSwapFundingHistory(res, o) {
   return _.map(res.data, d => _formatFundingRate(d, o));
 }
 
+function coinSwapCurrentFunding(d, o) {
+  return {
+    exchange,
+    asset_type,
+    time: new Date(),
+    pair: o.pair,
+    estimated_rate: _parse(d.estimated_rate),
+    next_funding_time: new Date(_parse(d.next_funding_time)),
+    funding_rate: _parse(d.funding_rate),
+    funding_time: new Date(_parse(d.funding_time)),
+  };
+}
+
 function coinSwapMoveBalanceO(o = {}) {
   const opt = { currency: o.coin, amount: o.amount };
   const source = o.source.toUpperCase();
@@ -291,7 +311,59 @@ function coinSwapMoveBalance(res, o) {
   if (typeof res === 'number' || typeof res === 'string') return { success: true, txid: `${res}`, ...o };
   return false;
 }
+
+
+const ledgerTypeMap = {
+  [ef.ledgerTypes.FUNDING_RATE]: '30,31',
+};
+const reverseLedgerTypeMap = {
+  30: ef.ledgerTypes.FUNDING_RATE,
+  31: ef.ledgerTypes.FUNDING_RATE,
+};
+
+function coinSwapLedgerO(o) {
+  const { type, pair } = o;
+  const opt = { contract_code: pair };
+  if (type) opt.type = ledgerTypeMap[type];
+  return opt;
+}
+
+function _formatCoinSwapLedger(d) {
+  return {
+    id: d.id,
+    asset_type: 'SWAP',
+    pair: `${d.symbol}-USD`,
+    exchange,
+    type: reverseLedgerTypeMap[d.type],
+    balance: d.amount,
+    coin: d.symbol,
+    time: new Date(d.ts),
+  };
+}
+function coinSwapLedger(ds) {
+  return ds ? _.map(ds.financial_record, _formatCoinSwapLedger) : [];
+}
+
+function coinSwapOrdersO(o = {}) {
+  const opt = { contract_code: o.pair, trade_type: 0, status: 0, type: 0, create_date: 0 };
+  return opt;
+}
+
+function coinSwapOrders(ds) {
+  const res = _.map(ds.orders, _formatCoinSwapOrder);
+  return res;
+}
+
+function empty() {
+  return {};
+}
+// coinSwapOrders;
+
 module.exports = {
+  coinSwapOrdersO,
+  coinSwapOrders,
+  coinSwapLedgerO,
+  coinSwapLedger,
   formatCoinSwapBalance: _formatCoinSwapBalance,
   formatCoinSwapOrder: _formatCoinSwapOrder,
   formatSwapCoinPositions,
@@ -299,6 +371,8 @@ module.exports = {
   coinSwapMoveBalance,
   coinSwapFundingHistoryO,
   coinSwapFundingHistory,
+  coinSwapCurrentFundingO: coinSwapFundingHistoryO,
+  coinSwapCurrentFunding,
   coinSwapUpdateLeverateO,
   coinSwapUpdateLeverate,
   coinSwapOrderDetailsO,
@@ -307,8 +381,10 @@ module.exports = {
   coinSwapUnfinishOrders,
   coinSwapOrderInfoO,
   coinSwapOrderInfo,
+  coinSwapAssetsO: empty,
   coinSwapAssets,
   coinSwapBalances,
+  coinSwapPositionsO,
   coinSwapPositions,
   coinSwapOrderO,
   coinSwapOrder,

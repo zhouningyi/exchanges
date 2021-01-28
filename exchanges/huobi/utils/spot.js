@@ -84,7 +84,9 @@ function pointBalances(res, o) {
 function spotBalances(res, o) {
   if (!res) return null;
   const { list } = res;
-  return _processBalance(list);
+  res = _processBalance(list);
+  // console.log(_.get(_.filter(res, d => d.coin === 'BTC'), '0.balance'), 'spot rest...');
+  return res;
 }
 
 // buy-market, sell-market, buy-limit, sell-limit, buy-ioc, sell-ioc, buy-limit-maker, sell-limit-maker（
@@ -149,7 +151,7 @@ function _formatSpotOrder(l) {
   if (l['client-order-id']) {
     res.client_oid = `${l['client-order-id']}`;
   } else {
-    console.log(l, 9991);
+    // console.log(l, '交易没有client_id...');
   }
   return Utils.cleanObjectNull(res);
 }
@@ -440,6 +442,10 @@ function spotOrderDetails(ds) {
   return _.map(ds, _formatSpotOrderDetail);
 }
 
+function empty() {
+  return {};
+}
+
 module.exports = {
   spotOrderDetailsO,
   spotOrderDetails,
@@ -453,6 +459,7 @@ module.exports = {
   spotCancelOrderByOrderId,
   // spotMoveBalanceO,
   // spotMoveBalance,
+  spotAssetsO: empty,
   spotAssets,
   spotSystemStatus,
   ...publicUtils,
@@ -467,6 +474,7 @@ module.exports = {
   spotTicks,
   spotKlineO,
   spotKline,
+  spotBalancesO: empty,
   spotBalances,
   spotBalance: spotBalances,
   pointBalances,

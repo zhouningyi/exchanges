@@ -8,6 +8,7 @@ module.exports = {
   WS_BASE_FUTURE: 'wss://www.hbdm.com/ws',
   WS_BASE_FUTURE_ACCOUNT: 'wss://api.hbdm.com/notification',
   WS_BASE_COIN_SWAP: 'wss://api.hbdm.com/swap-ws',
+  WS_BASE_COIN_SWAP_INDEX: 'wss://api.hbdm.com/ws_index',
   WS_BASE_COIN_SWAP_ACCOUNT: 'wss://api.hbdm.com/swap-notification',
   FUTURE_BASE: 'api.hbdm.com',
   REST_BASE: 'api.huobi.pro',
