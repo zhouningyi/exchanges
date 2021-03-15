@@ -67,10 +67,9 @@ function _processBalance(list) {
     const trade = _.get(map.trade, '0');
     const l = { coin, exchange };
     if (locked) l.locked_balance = _parse(locked.balance);
-    if (trade) l.balance = _parse(trade.balance);
+    if (trade) l.balance = _parse(trade.balance) + _parse(locked.balance);
     l.asset_type = 'SPOT';
     l.balance_id = Utils.formatter.getBalanceId(l);
-    // if (locked && trade) l.total_balance = l.locked_balance + l.balance;
     res.push(l);
   });
   return res;// _.filter(res, l => l.locked_balance || l.balance); 不要用

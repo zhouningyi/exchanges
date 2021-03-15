@@ -2,6 +2,7 @@ const _ = require('lodash');
 const md5 = require('md5');
 
 const Utils = require('./../../../utils');
+const ef = require('./../../../utils/formatter');
 const config = require('./../config');
 
 const { checkKey } = Utils;
@@ -154,7 +155,9 @@ function formatDigit(num, n) {
 }
 // move Balance
 function moveBalanceO(o = {}) {
-  const { source, target, coin, instrument_id, source_pair, to_instrument_id, target_pair, sub_account } = o;
+  const { coin, instrument_id, source_pair, to_instrument_id, target_pair, sub_account } = o;
+  const source = o.source.toLowerCase();
+  const target = o.target.toLowerCase();
   if (source === 'sub_account') checkKey(o, ['sub_account']);
   if (source === 'margin') checkKey(o, ['source_pair']);
   const amount = formatDigit(o.amount, 4);// 有时候会有精度问题
@@ -370,7 +373,8 @@ function formatOrder(d, o = {}, error) {
   }
   const { from, to, limit, ...rest } = o;
   const pps = {};
-  if (d.created_at) pps.server_created_at = new Date(d.created_at);
+  if (d.created_at || d.timestamp) pps.server_created_at = new Date(d.created_at || d.timestamp);
+  if (d.last_fill_time) pps.server_updated_at = new Date(d.last_fill_time);
   const res = {
     instrument_id: d.instrument_id,
     side: (d.side || o.side || '').toUpperCase(),
@@ -386,10 +390,10 @@ function formatOrder(d, o = {}, error) {
     status: orderStatusMap[d.status] || orderStateMap[d.state] || 'UNFINISH',
     price: _parse(d.price),
     order_type: reverseOrderTypeMap[d.order_type],
-    price_avg: _parse(d.price_avg),
     ...pps,
     ...rest
   };
+  if (d.price_avg) res.price_avg = _parse(d.price_avg);
   if (d.margin_trading) {
     if (d.margin_trading === 2 || d.margin_trading === '2') {
       res.instrument = 'margin';
@@ -459,7 +463,7 @@ function formatFill(d, o) {
     fee: _parse(d.fee),
     time: d.created_at ? new Date(d.created_at) : new Date(d.timestamp),
     exec_type: orderFillTypeMap[d.exec_type],
-    direction: d.side ? directionFillMap[d.side] : null,
+    direction: d.side ? directionFillMap[d.side.toLowerCase()] : null,
     side: d.side ? d.side.toUpperCase() : null,
     coin: d.currency || d.instrument_id ? d.instrument_id.split('-')[0] : null,
     ...o
@@ -487,13 +491,13 @@ function formatAssetLedger(d, o) {
   // }
 
   const res = {
-    ledger_id: d.ledger_id,
+    id: d.ledger_id,
     order_id: d.order_id || _.get(d.details, 'order_id'),
     instrument_id: d.instrument_id || _.get(d.details, 'instrument_id'),
-    amount: ['margin', 'spot'].includes(o.instrument) ? _parse(d.amount) : _parse(d.balance),
-    balance: ['margin', 'spot'].includes(o.instrument) ? _parse(d.balance) : _parse(d.amount),
+    balance: ef.isSpot(o) ? _parse(d.amount) : _parse(d.balance),
+    // balance: ef.isSpot(o) ? _parse(d.balance) : _parse(d.amount),
     time: new Date(d.timestamp),
-    type: d.type || o.type,
+    type: o.type || d.type,
     coin,
     ...o
   };
@@ -529,7 +533,13 @@ function systemStatus(res) {
   return res;
 }
 
+function getPrecision(v) {
+  v = _parse(v);
+  return Math.log10(1 / v);
+}
+
 module.exports = {
+  getPrecision,
   assetTotalBalanceO,
   assetTotalBalance,
   orderTypeMap,

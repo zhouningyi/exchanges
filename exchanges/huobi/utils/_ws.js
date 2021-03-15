@@ -62,7 +62,7 @@ class WS extends Event {
       const ws = this.ws = new WebSocket(stream, options);
       this.addHooks(ws, o, stream);
     } catch (e) {
-      console.log(e, '建立ws出错 重启中...');
+      console.log(e, stream, '建立ws出错 重启中...');
       await this.init(stream, o);
     }
   }

@@ -3,12 +3,13 @@ const { testRest, live } = require('./utils');
 const exchanges = ['huobi']; // bikicoin
 // Bikicoin
 // , 'okex'. 'hitbtc' 'bittrex'， fcoin coinall
-
-const assets = [{ pair: 'BTC-USD', asset_type: 'QUARTER' }, { pair: 'BTC-USDT', asset_type: 'SPOT' }];
-const orderO = { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'BSV-USDT', asset_type: 'SPOT', type: 'LIMIT', side: 'BUY', order_type: 'MAKER', price: '90.0', amount: 0.1 };
-const futureOrderO = { pair: 'BTC-USD', asset_type: 'THIS_WEEK', client_oid: Math.round(Math.random() * 1000000), lever_rate: 5, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 10000 };
+//
+const assets = [{ pair: 'ETH-USD', asset_type: 'SWAP' }, { pair: 'ETC-USD', asset_type: 'NEXT_QUARTER' }, { pair: 'BTC-USDT', asset_type: 'SPOT' }];
+const spotOrderO = { client_oid: `order${Math.floor(Math.random() * 10000)}`, pair: 'ETH-USDT', asset_type: 'SPOT', type: 'LIMIT', side: 'SELL', order_type: 'MAKER', price: '2290.0', amount: 0.1 };
+const futureOrderO = { pair: 'ETH-USD', asset_type: 'THIS_WEEK', client_oid: `OKEX${Math.round(Math.random() * 1000000)}`, lever_rate: 5, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 1000 };
+const swapOrderO = { pair: 'ETH-USD', asset_type: 'SWAP', client_oid: `OKEX${Math.round(Math.random() * 1000000)}`, side: 'BUY', direction: 'UP', amount: 1, type: 'LIMIT', price: 1000 };
 const newtasks = [
-  ['accountBalance', { base_coin: 'BTC', account_type: 'spot' }],
+  // ['accountBalance', { base_coin: 'BTC', account_type: 'spot' }],
   // ['cancelAssetOrder', { order_id: '22074158437' }],
   // ['volatilityHistory', { coin: 'BTC' }],
   // ['coinContractOrders', { pair: 'BTC-USD', asset_type: 'QUARTER' }],
@@ -87,16 +88,29 @@ const newtasks = [
         // ['coinSwapUpdateLeverate', { pair: 'EOS-USD', lever_rate: 10 }],
         // ['coinSwapFundingHistory', { pair: 'EOS-USD' }],
         // ['coinSwapMoveBalance', { coin: 'EOS', target: 'SPOT', source: 'COIN_SWAP', amount: 0.8 }],
+        // ['usdtSwapAssets', {}],
+        // ['usdtSwapBalances', {}],
+        // ['usdtSwapPositions', {}],
+        // ['usdtSwapOrder', { pair: 'EOS-USDT', amount: 1, lever_rate: 5, side: 'BUY', price: 2, direction: 'LONG', type: 'LIMIT' }],
+        // ['usdtSwapCancelOrder', { pair: 'EOS-USDT', order_id: '817631371580616704' }],
+        // ['usdtSwapOrderInfo', { pair: 'EOS-USDT', order_id: '817630846725988352' }],
+        // ['usdtSwapUnfinishOrders', { pair: 'EOS-USDT' }],
+        // ['usdtSwapOrderDetails', { pair: 'GRT-USDT' }],
+        // ['usdtSwapUpdateLeverate', { pair: 'EOS-USDT', lever_rate: 10 }],
+        // ['usdtSwapFundingHistory', { pair: 'EOS-USDT' }],
+        // ['usdtSwapCurrentFunding', { pair: 'EOS-USDT' }],
+        // ['usdtSwapLedger', { pair: 'GRT-USDT', type: 'FUNDING_RATE' }],
+        ['usdtSwapMoveBalance', { coin: 'USDT', target: 'SPOT', source: 'USDT_SWAP', amount: 1 }],
   // ////////////////////////////// 综合 //////////////////////////////////////////////////
     //
       // ['assetOrder', { pair: 'BTC-USD', asset_type: 'SWAP', side: 'OPEN', direction: 'LONG', price: 10000, amount: 1, type: 'LIMIT', order_type: 'NORMAL' }],
-      // ['assetOrders', { assets: [{ pair: 'BTC-USD', asset_type: 'THIS_WEEK' }, { pair: 'BTC-USDT', asset_type: 'SPOT' }] }], //,
+      // ['assetOrders', { status: 'SUCCESS', assets: [{ pair: 'BTC-USD', asset_type: 'QUARTER' }] }], //,, { pair: 'BTC-USDT', asset_type: 'SPOT' }
       // ['assetPositions', { assets }],
       // ['assetBalances', { assets }],
       // ['assetAssets', { assets }],
-      // ['assetOrder', futureOrderO],
-      // ['assetOrderInfo', { asset_type: 'SPOT', client_oid: 'order7452' }],
-      // ['assetCancelOrder', { asset_type: 'THIS_WEEK', pair: 'BTC-USD', order_id: '778558223040516096' }],
+      // ['assetOrder', spotOrderO],
+      // ['assetOrderInfo', { pair: 'ETH-USDT', asset_type: 'SPOT', order_id: '6478280687898624' }],
+      // ['assetCancelOrder', { asset_type: 'SPOT', pair: 'ETH-USDT', order_id: '6478280687898624' }],
 ];
 
 const tasks = [

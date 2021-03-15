@@ -31,7 +31,7 @@ const getPair = o => upper(o.pair);
 const coin_contract_bases = ['COIN_CONTRACT', 'COIN_SWAP', 'FUTURE'];
 const isSpot = o => getAssetType(o) === SPOT_ASSET || getBalanceType(o) === SPOT_ASSET;
 const isFuture = o => FUTURE_ASSETS.includes(getAssetType(o));
-const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o)) || (o && ['USDT_CONTRACT', 'COIN_CONTRACT', 'COIN_SWAP', 'FUTURE'].includes(o.balance_type));
+const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o)) || (o && ['USDT_CONTRACT', 'COIN_CONTRACT', 'SWAP', 'COIN_SWAP', 'FUTURE'].includes(o.balance_type));
 const isSwap = o => getAssetType(o) === SWAP_ASSET;
 const isReverseContract = (o) => {
   const balance_type = getBalanceType(o);
@@ -68,7 +68,9 @@ function instrumentId2name(instrument_id) {
 
 // ORDER
 const ORDER_DONE_STATUS = ['CANCEL', 'CANCELLING', 'CANCELING', 'SUCCESS', 'FILLED'];// CANCELLING 基本意味着cancel，而且策略有unfinished order的检查
+const ORDER_CANCEL_STATUS = ['CANCEL', 'CANCELLING', 'CANCELING'];
 const isOrderDone = ({ status }) => ORDER_DONE_STATUS.includes(status);
+const isOrderCancel = ({ status }) => ORDER_CANCEL_STATUS.includes(status);
 const getOrderVector = ({ side, direction = 'LONG', amount = 1 }) => {
   side = upper(side);
   direction = upper(direction);
@@ -81,9 +83,9 @@ const getOrderVector = ({ side, direction = 'LONG', amount = 1 }) => {
   } else if (!['MID', 'mid'].includes(side)) {
     console.log(`getOrderVector/side:${side}...`);
   }
-  if (direction === 'LONG') {
+  if (isLong({ direction })) {
     directionv = 1;
-  } else if (direction === 'SHORT') {
+  } else if (isShort({ direction })) {
     directionv = -1;
   } else {
     console.log(`getOrderVector/directionv:${direction}...`);
@@ -108,14 +110,13 @@ const formatCommonOrder = (order) => {
 const isBalanceValid = (balance) => {
   checkKey(balance, ['unique_id', 'balance', 'api_key']);
 };
-function getVolumeUsd(o) {
+function getVolumeUsd(o, source) {
   const { volume, price, ...asset } = o;
   const _volume = isNull(volume) ? 1 : volume;
   const exchange = _getExchange(asset);
-  const coin = getCoin(asset);
   if (isSpot(asset)) {
     if (isUSDX(asset)) return _volume * price;
-    return console.log('getVolumeUsd/isSpot:TODO.....');
+    return null;// console.log(asset, 'getVolumeUsd/isSpot:TODO.....');
   }
   if (exchange === 'BITMEX') {
     if (isSwap(asset)) return _volume * 1;
@@ -126,7 +127,18 @@ function getVolumeUsd(o) {
       return _volume * price;
     }
   }
-  return console.log(o, 'getVolumeUsd:TODO.....');
+  return console.log(o, source, 'getVolumeUsd:TODO.....');
+}
+
+
+function getBalanceUsd(o) {
+  const { volume, spot_price, ...asset } = o;
+  if (isSpot(asset)) return volume * spot_price;
+  if (isContract(asset)) {
+    if (isReverseContract(asset)) return volume * spot_price;
+    if (isForwardContract(asset)) return volume;
+  }
+  console.log('getBalanceUsd/未知的资产....');
 }
 
 function getReverseContractSize(asset) {
@@ -148,16 +160,23 @@ function getBalanceType(asset) {
   }
   if (['HUOBI', 'OKEX'].includes(exchange)) {
     if (isFuture(asset) && isUsdPair(asset)) return 'FUTURE';
-    if (isSwap(asset) && isUsdPair(asset)) return 'COIN_SWAP';
-    if (isSwap(asset) && isUsdtPair(asset)) return 'USDT_SWAP';
+    if (isFuture(asset) && isUsdtPair(asset)) return 'USDT_FUTURE';
+    if (exchange === 'OKEX') {
+      if (isSwap(asset)) return 'SWAP';
+    } else if (exchange === 'HUOBI') {
+      if (isSwap(asset) && isUsdPair(asset)) return 'COIN_SWAP';
+      if (isSwap(asset) && isUsdtPair(asset)) return 'USDT_SWAP';
+    }
   }
-  console.log('getBalanceType: UNKNOW...');
+  console.log(asset, 'getBalanceType: UNKNOW...');
 }
-function getBalanceId(asset) {
+function getBalanceId(asset, source) {
   const coin = getCoin(asset);
   if (!coin) console.log(asset, 'ef.getBalanceId: coin lost...');
   const exchange = _getExchange(asset);
-  if (!exchange) console.log(asset, 'ef.getBalanceId: exchange lost...');
+  if (!exchange) {
+    console.log(asset, 'ef.getBalanceId: exchange lost...');
+  }
   const balance_type = getBalanceType(asset);
   if (balance_type === 'SPOT') {
     if (!coin) console.log(asset, 'Asset无法提取coin 字段');
@@ -166,18 +185,32 @@ function getBalanceId(asset) {
   if (exchange === 'BINANCE') {
     if (balance_type === 'COIN_CONTRACT') return makeArrayId([exchange, balance_type, coin]);
     if (balance_type === 'USDT_CONTRACT') {
-      if (['USDT', 'BUSD', 'BNB'].includes(coin)) return makeArrayId([exchange, balance_type, coin]);
+      if (asset.pair && asset.pair.endsWith('USDT')) return makeArrayId([exchange, balance_type, 'USDT']);
+      if (['BUSD', 'BNB'].includes(coin)) return makeArrayId([exchange, balance_type, coin]);
       return makeArrayId([exchange, balance_type, 'USDT']);
     }
   }
-  if (exchange === 'HUOBI') {
-    return makeArrayId([exchange, balance_type, asset.pair]);
+  if (['HUOBI', 'OKEX'].includes(exchange)) {
+    if (exchange === 'HUOBI' && asset.asset_type === 'SWAP' && asset.pair && asset.pair.endsWith('USDT')) {
+      return makeArrayId([exchange, balance_type, 'USDT']);
+    }
+    if (asset.pair) return makeArrayId([exchange, balance_type, asset.pair]);
+    return makeArrayId([exchange, balance_type, 'USDT']);
   }
-  return console.log('getBalanceId: TODO....');
+  return console.log(asset, 'getBalanceId: TODO....');
 }
 
 function isValidOrderId(order_id) {
   return order_id && order_id !== 'false' && order_id !== 'null' && order_id !== 'undefined';
+}
+
+function reverseOrderO(o) {
+  const opt = { ...o };
+  if (o.side === 'BUY') opt.side = 'SELL';
+  if (o.side === 'SELL') opt.side = 'BUY';
+  if (isLong(o)) opt.direction = 'SHORT';
+  if (isShort(o)) opt.direction = 'LONG';
+  return opt;
 }
 function checkOrderError(order) {
   const errors = [];
@@ -186,7 +219,12 @@ function checkOrderError(order) {
   }
   return errors.length ? errors : null;
 }
-
+function getAssetInstanceId(asset) {
+  const instrument_id = asset.instrument_id || getInstrumentId(asset);
+  const { api_key } = asset;
+  if (!api_key) return console.log('getAssetInstanceId/没有api_key...');
+  return [instrument_id, api_key].join('_');
+}
 
 function createEmptyPosition(asset) {
   const res = {
@@ -224,7 +262,7 @@ const getPositionVector = ({ direction, amount }) => {
 
 function getContractPositionCoinBalance(p) { // 获取币量
   if (isReverseContract(p)) {
-    const usd = getVolumeUsd(p);
+    const usd = getVolumeUsd(p, 'getContractPositionCoinBalance');
     return usd / p.price;
   } else if (isForwardContract(p)) {
     return p.volume;
@@ -297,9 +335,11 @@ module.exports = {
   isUsdPair,
   isUsdtPair,
   // balance等
+  getAssetInstanceId,
   getBalanceType,
   isBalanceValid,
   getBalanceId,
+  getBalanceUsd,
   getVolumeUsd,
   // position
   createEmptyPosition,
@@ -309,7 +349,9 @@ module.exports = {
   getPositionVector,
   // order
   ORDER_DONE_STATUS,
+  reverseOrderO,
   isOrderDone,
+  isOrderCancel,
   getOrderVector,
   formatCommonOrder
 }

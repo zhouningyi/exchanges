@@ -168,7 +168,7 @@ const usdtContractConfig = {
     name: '币本位合约订单',
     streamName: 'listenKey',
     chanel: 'ORDER_TRADE_UPDATE',
-    formater: wsCoinContractOrderFormater,
+    formater: d => wsCoinContractOrderFormater(d, { asset_type: 'SWAP' }),
     sign: true
   },
   wsUsdtContractPositions: {
@@ -246,9 +246,11 @@ function _parseWsOrder(d, o) {
     ps: positionSide,
     m: maker,
     T: time,
-    rp: realizedPnl
+    rp: realizedPnl,
+    ot: type
    } = d;
   const orginOrder = {
+    type,
     status,
     time,
     symbol,
@@ -278,7 +280,7 @@ function wsCoinContractOrderFormater(d, o) {
   return [{
     ...getWsOptions(d),
     ...publicUtils.parseSymbolId({ symbol }),
-    ..._parseWsCoinContractOrder(order, o),
+    ..._parseWsCoinContractOrder(order, { ...o }),
   }];
 }
 
@@ -300,11 +302,12 @@ function wsRequestCoinContractPositionsFormater(d) {
 function wsCoinContractPositionsFormater(d) {
   const account = d.a;
   if (!account) return null;
-  return _.map(account.P, (p) => {
+  const res = _.map(account.P, (p) => {
     const { s: symbol, pa: positionAmt, ep: entryPrice, up: unrealizedProfit, ps: positionSide } = p;
-    const originPosition = { symbol, positionAmt, entryPrice, unrealizedProfit, positionSide };
+    const originPosition = { symbol, positionAmt, asset_type: 'SWAP', entryPrice, unrealizedProfit, positionSide };
     return { ...coinContractUtils.formatCoinContractPosition(originPosition) };
   });
+  return res;
 }
 
 function wsRequestCoinContractBalancesFormater(d, o) {

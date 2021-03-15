@@ -38,9 +38,11 @@ function isEmptyObject(o) {
 class exchange extends Event {
   constructor(config = {}, options = {}) {
     super();
-    const { apiKey, apiSecret, passphrase, unique_id, otc_id, spot_id } = config;
+    const { apiKey, apiSecret, passphrase, unique_id, otc_id, name_cn, role, spot_id } = config;
     this.config = config;
     this.options = deepmerge(defaultOptions, options);
+    this.role = role;
+    this.name_cn = name_cn || unique_id;
     this.passphrase = passphrase;
     this.apiSecret = apiSecret;
     this.apiKey = apiKey;
@@ -228,7 +230,6 @@ class exchange extends Event {
     const { resp_time_n, apiMap } = this;
     const q = 1 / resp_time_n;
     const p = 1 - q;
-    // if (conf.name === 'coinContractOrder') console.log(resp_time, 'resp_time...');
     //
     const line = apiMap[conf.endpoint];
     line.resp_time = (line.resp_time || resp_time) * p + q * resp_time;
@@ -312,7 +313,8 @@ class exchange extends Event {
       try {
         o = Object.assign({}, defaultOptions, o);
         const t0 = new Date();
-        if (checkKeyO) checkKey(o, checkKeyO);
+        // console.log(conf, o, 'ccc....');
+        if (checkKeyO) checkKey(o, checkKeyO, name);
           // 顺序不要调换
         let opt = formatOFn ? _.cloneDeep(formatOFn(o, this.queryOptions)) : _.cloneDeep(o);
         const endO = { ...opt, ...(this.queryOptions || {}) };
@@ -323,12 +325,9 @@ class exchange extends Event {
         queryOption = { method, name, endpointCompile, opt, o, sign, host: conf.host };
         if (conf.type === 'ws') return await this.wsSubscribe(queryOption, cb, { formatFn });
         const ds = await this.queryFunc(queryOption);
-        // if (name === 'coinSwapUnfinishOrders') console.log(ds, '==>>>');
-        // console.log(name, ds && ds.length, new Date() - t0, 'name....');
         this.cancelFnLock(conf, query_id);
         const dt = new Date() - tStart;
         let errorO;
-        // console.log(name, 'api name .....');
         if (UtilsInst.getError && ds) {
           const error = UtilsInst.getError(ds);
           if (error) {
@@ -436,11 +435,16 @@ class exchange extends Event {
     //
     this.registerFn({ name: 'orders' }, async (o = {}) => {
       const { status, assetBaseType, assets, ...rest } = o;
-      const fnName = status === 'UNFINISH' ? `${assetBaseType}UnfinishOrders` : `${assetBaseType}Orders`;
-      if (!this[fnName]) return console.log(`函数${fnName}不存在...`);
+      const baseFnName = `${assetBaseType}Orders`;
+      const fnName = status === 'UNFINISH' ? `${assetBaseType}UnfinishOrders` : baseFnName;
+      let fn = this[fnName] || this[baseFnName];
+      if (!fn) return console.log(`函数${fnName}不存在...`);
+      fn = fn.bind(this);
       let res = [];
       for (const asset of assets) {
-        const ds = await this[fnName]({ ...rest, ...asset });
+        const opt = { ...rest, ...asset };
+        if (status) opt.status = status;
+        const ds = await fn(opt);
         if (Array.isArray(ds)) res = [...res, ...ds];
       }
       return res;
@@ -491,13 +495,14 @@ class exchange extends Event {
       });
     }
 
-    const restFns = ['order', 'orderInfo', 'orderDetails', 'cancelOrder'];
+    const restFns = ['order', 'orderInfo', 'kline', 'position', 'balance', 'orderDetails', 'cancelOrder'];
     for (const name of restFns) {
       const fnName = `asset${upperFirst(name)}`;
       this[fnName] = async (o) => {
         const baseType = this._getAssetBaseType(o);
         const realFnName = `${baseType}${upperFirst(name)}`;
         if (this[realFnName]) {
+          // if (name === 'order') console.log(name, o, '====name.....');
           const res = await this[realFnName](o);
           return res;
         } else {
@@ -506,7 +511,7 @@ class exchange extends Event {
       };
     }
 
-        // WS
+    // WS
     const wsFns = ['orders', 'positions', 'balances', 'depth', 'ticks', 'estimateFunding'];
     for (const name of wsFns) {
       const fnName = `subscribeAsset${upperFirst(name)}`;
@@ -517,6 +522,7 @@ class exchange extends Event {
           const realFnName = `ws${upperFirst(assetBaseType)}${upperFirst(name)}`;
           const _assets = assetsGroup[assetBaseType];
           if (this[realFnName]) {
+            // if (name === 'balances')console.log(realFnName, 'realFnName...');
             this[realFnName]({ ...o, assets: _assets }, (ds) => {
               if (name === 'balances') ds = filterBalances(ds, o);
               if (name === 'positions') ds = filterByInstrumentId(ds, o);

@@ -402,16 +402,21 @@ function getError(res) {
   return error || null;
 }
 
+function _getOrderType(o = {}) {
+  const order_type = (o.order_type || '').toUpperCase();
+  if (['FOK'].includes(order_type)) return 'fok';
+  if (['IOC'].includes(order_type)) return 'ioc';
+}
 
 function getContractOrderType(o) {
   const type = o.type.toUpperCase();
-  const order_type = (o.order_type || '').toUpperCase();
-  let res = null;
-  if (type === 'LIMIT') res = 'limit';
-  if (type === 'MARKET') res = 'opponent';
-  if (['POST_ONLY', 'MAKER'].includes(order_type)) res = 'post_only';
-  if (['FOK'].includes(order_type)) res = 'fok';
-  if (['IOC'].includes(order_type) && res) res = 'ioc';
+  const order_type = _getOrderType(o);
+  const res = null;
+  if (['POST_ONLY', 'MAKER'].includes(order_type)) return 'post_only';// 本质上也是个limit
+  if (type === 'LIMIT') return ['limit', order_type].filter(d => d).join('_');
+  if (type === 'MARKET') return ['optimal_20', order_type].filter(d => d).join('_');
+  if (['FOK'].includes(order_type)) return 'fok';
+  if (['IOC'].includes(order_type)) return 'ioc';
   if (!res)console.log(o, 'getOrderType: type未知...');
   return res;
 }
@@ -454,6 +459,12 @@ function formatDotArray(v) {
 }
 
 const contractOrderPriceTypeMap = {
+  optimal_20_fok: 'MARKET',
+  optimal_20_ioc: 'MARKET',
+  optimal_10_fok: 'MARKET',
+  optimal_10_ioc: 'MARKET',
+  optimal_5_fok: 'MARKET',
+  optimal_5_ioc: 'MARKET',
   limit: 'LIMIT',
   opponent: 'OPPONENT',
   lightning: 'LIGHTNING',
@@ -481,7 +492,6 @@ const contractStatusMap = {
   CANCEL: 7
 };
 const rContractStatusMap = _.invert(contractStatusMap);
-
 
 function _formatDepth(ds) {
   return _.map(ds, (d) => {

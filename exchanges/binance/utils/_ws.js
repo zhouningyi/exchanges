@@ -252,11 +252,15 @@ class WS extends Event {
     //           ) {
     //   console.log(data, connectionId, 'data....');
     //   if (data.result) {
-    //             // console.log(data.result[0], 99999);
     //   }
     // }
     const cbs = this.callbacks[connectionId];
-    _.forEach(_.values(cbs), cb => cb(data));
+    // if (connectionId === 'wss://fstream.binance.com/ws_account') {
+    //   console.log(connectionId, cbs, 'connectionId....');
+    // }
+    _.forEach(_.values(cbs), (cb) => {
+      cb(data);
+    });
   }
 }
 

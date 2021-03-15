@@ -59,8 +59,9 @@ function getTimeString(t, type = 'day') {
 
 //
 const SETTLE_TIME = '16:10:00';
-const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27', '2020-06-26', '2020-09-25', '2020-12-25', '2021-03-26', '2021-06-25'];
+const SETTLEMENT_QUARTER_MONTHES = ['2019-03-29', '2019-06-28', '2019-09-27', '2019-12-27', '2020-03-27', '2020-06-26', '2020-09-25', '2020-12-25', '2021-03-26', '2021-06-25', '2021-09-24'];
 function getSettlementTimes(t = new Date(), type = 'QUARTER') { // 今年4个季度以及明年三个季度
+  type = type.toUpperCase();
   t = fixTime(t);
   if (type === 'QUARTER' || type === 'NEXT_QUARTER') {
     return SETTLEMENT_QUARTER_MONTHES
@@ -138,6 +139,7 @@ function getFutureSettlementTime2(t = new Date(), type = 'MONTH-0') {
 
 
 function getFutureSettlementTime(t, type = 'QUARTER', mode = 'okex') {
+  type = type.toUpperCase();
   t = fixTime(t);
   const setts = getSettlementTimes(t, type);
   const preDeliveryInterval = mode === 'okex' ? WEEK : 0;

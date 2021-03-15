@@ -6,11 +6,14 @@ const md5 = require('md5');
 const error = require('./../errors');
 const ef = require('./../../../utils/formatter');
 const { cleanObjectNull } = require('./../../../utils');
+const { coin2pair } = require('./public');
+const { pair2coin } = require('./../../../utils/formatter');
 
 const { getOrderTypeOptions, getOrderDirectionOptions, pair2symbol, asset_type2ext, parseOrderStatusOptions, parseOrderDirectionOptions, getSymbolId, parseSymbolId } = publicUtils;
 
 const exchange = 'BINANCE';
 const balance_type = 'COIN_CONTRACT';
+const asset_type = 'SWAP';
 
 const { _parse } = Utils;
 
@@ -28,7 +31,7 @@ function coinContractOrdersO(o = {}) {
 function _formatCoinContractOrder(d, o = {}) {
   const { symbol: symbol_id } = d;
   const { assets, ...rest } = o;
-  const info = parseSymbolId(d);
+  const info = parseSymbolId(d, o);
   const res = {
     ...rest,
     exchange,
@@ -54,6 +57,7 @@ function _formatCoinContractOrder(d, o = {}) {
   if (d.time && !res.server_updated_at) {
     res.server_updated_at = new Date(d.time);
   }
+  if (d.type && !res.type) res.type = d.type;
   return cleanObjectNull(res);
 }
 
@@ -294,11 +298,53 @@ function coinContractUpdateLeverate(res, o) {
   return null;
 }
 
+
+function coinContractFundingHistoryO(o = {}) {
+  return { symbol: `${pair2symbol(o.pair)}_PERP` };
+}
+
+function coinContractFundingHistory(ds, o = {}) {
+  const res = _.map(ds, (d) => {
+    return {
+      exchange,
+      asset_type,
+      pair: o.pair,
+      time: new Date(d.fundingTime),
+      funding_rate: _parse(d.fundingRate),
+      realized_rate: _parse(d.fundingRate),
+      fee_asset: pair2coin(o.pair)
+    };
+  });
+  return res;
+}
+
+function coinContractCurrentFundingO(o = {}) {
+  return { symbol: `${pair2symbol(o.pair)}_PERP` };
+}
+function coinContractCurrentFunding(ds, o) {
+  return _.map(ds, (d) => {
+    return {
+      exchange,
+      asset_type,
+      pair: o.pair,
+      mark_price: _parse(d.markPrice),
+      index_price: _parse(d.indexPrice),
+      interest_rate: _parse(d.interestRate),
+      estimated_rate: _parse(d.lastFundingRate),
+      next_funding_time: new Date(_parse(d.nextFundingTime)),
+    };
+  });
+}
+
 function empty() {
   return {};
 }
 
 module.exports = {
+  coinContractFundingHistoryO,
+  coinContractFundingHistory,
+  coinContractCurrentFundingO,
+  coinContractCurrentFunding,
   coinContractUpdateLeverateO,
   coinContractUpdateLeverate,
   coinContractOrderDetailsO,

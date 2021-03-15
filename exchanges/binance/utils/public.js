@@ -74,10 +74,11 @@ function getPrecision(v) {
 function getOrderTypeOptions(o) {
   let { order_type } = o;
   const type = (o.type || 'LIMIT').toUpperCase();
-  const opt = { type, timeInForce: 'GTC' };
+  const opt = { type };
+  if (type !== 'MARKET') opt.timeInForce = 'GTC';
   if (order_type) {
     order_type = order_type.toUpperCase();
-    if (['FOK', 'IOC', 'GTX', 'GTC'].includes(order_type)) opt.timeInForce = order_type;
+    if (['FOK', 'IOC', 'GTX', 'GTC'].includes(order_type) && type !== 'MARKET') opt.timeInForce = order_type;
     if (order_type === 'POST_ONLY') opt.timeInForce = 'GTX';
   }
   return opt;
@@ -125,11 +126,11 @@ function formatSymbolPair(symbol) {
   console.log(`formatSymbolPair:${symbol} 无法标准化...`);
 }
 
-function parseSymbolId(o) {
+function parseSymbolId(o, opt = {}) {
   const [symbol, ext] = o.symbol.split('_');
   const pair = formatSymbolPair(symbol);
   const coin = pair ? pair.split('-')[0] : null;
-  const asset_type = ext2asset_type(ext);
+  const asset_type = opt.asset_type || o.asset_type || ext2asset_type(ext);
   const instrument_id = getInstrumentId({ exchange: 'BINANCE', pair, asset_type });
   return { coin, pair, asset_type, instrument_id };
 }

@@ -504,6 +504,7 @@ function futureCancelOrder(res, o) {
   return [...processContractCancelOrderErrors(res, o), ...processContractCancelOrderSuccesses(res, o)].filter(d => d)[0];
 }
 
+
 function futureAssets(ds) {
   return _.map(ds, (d) => {
     const res = {

@@ -3,24 +3,36 @@ const _ = require('lodash');
 const md5 = require('md5');
 //
 const Utils = require('./../../../utils');
+const { pair2coin } = require('./../../../utils/formatter');
+const ef = require('./../../../utils/formatter');
 const publicUtils = require('./public');
 
-const { formatOrder, formatLedger, reverseOrderStatusMap, intervalMap } = publicUtils;
-
+const { formatOrder, formatLedger, reverseOrderStatusMap, intervalMap, getPrecision } = publicUtils;
+const asset_type = 'SPOT';
 function direct(d) {
   return d;
+}
+function formatSpotOrder(d, o) {
+  const res = { ...formatOrder(d, o), asset_type };
+  res.instrument_id = ef.getInstrumentId(res);
+  return res;
 }
 
 function _parse(v) {
   return parseFloat(v, 10);
 }
 function _wallet(d) {
-  return {
+  const res = {
+    exchange,
+    balance_type,
     total_balance: _parse(d.balance),
+    balance: _parse(d.balance),
     locked_balance: _parse(d.hold),
-    balance: _parse(d.available),
+    balance_available: _parse(d.available),
     coin: d.currency
   };
+  res.balance_id = ef.getBalanceId(res);
+  return res;
 }
 function wallet(ds, o) {
   let res = _.map(ds, _wallet);
@@ -29,11 +41,8 @@ function wallet(ds, o) {
   }
   return res;
 }
-
-function spotBalancesO(o = {}) {
-  return o;
-}
-
+const exchange = 'OKEX';
+const balance_type = 'SPOT';
 function spotBalances(ds, o = {}) {
   let res = wallet(ds, o);
   if (!o.coins) return res;
@@ -41,19 +50,23 @@ function spotBalances(ds, o = {}) {
   res = _.filter(res, d => d.coin in coinMap);
   const resmap = _.keyBy(res, d => d.coin);
   const newmap = {};
+  // console.log(o, 333);
   _.forEach(o.coins, (coin) => {
     newmap[coin] = resmap[coin] || {
+      balance_type,
+      exchange,
       coin,
       total_balance: 0,
       locked_balance: 0,
       balance: 0,
     };
   });
-  return _.values(newmap);
+  const resp = _.values(newmap);
+  return resp;
 }
 
 function spotBalanceO(o = {}) {
-  return o;
+  return { coin: o.coin || pair2coin(o.pair) };
 }
 
 function spotBalance(ds, o = {}) {
@@ -64,15 +77,16 @@ function spotBalance(ds, o = {}) {
 
 // 下单
 function spotOrderO(o = {}) {
-  return {
+  const opt = {
     ...publicUtils.orderO(o),
     margin_trading: 1
   };
+  return opt;
 }
 
 function spotOrder(res, o = {}) {
   if (!res || !res.result) return false;
-  return formatOrder(res, o);
+  return formatSpotOrder(res, o);
 }
 
 // 撤单
@@ -125,18 +139,19 @@ function batchCancelSpotOrders(ds) {
 
 // 所有订单
 function spotOrdersO(o = {}) {
-  const { pair, status, ...rest } = o;
+  const { ...rest } = o;
   const client_oid = o.client_oid || o.oid;
+  const status = o.status || o.state || 'SUCCESS';
   const res = {
-    instrument_id: pair,
+    // ...rest,
+    instrument_id: o.instrument_id || o.pair,
     status: reverseOrderStatusMap[status],
-    ...rest
   };
   if (client_oid) res.client_oid = client_oid;
   return res;
 }
 function spotOrders(res, o) {
-  return _.map(res, d => formatOrder(d, o));
+  return _.map(res, d => formatSpotOrder(d, o));
 }
 //
 function unfinishSpotOrdersO(o = {}) {
@@ -145,13 +160,13 @@ function unfinishSpotOrdersO(o = {}) {
 }
 
 function unfinishSpotOrders(res, o) {
-  return _.map(res, d => formatOrder(d, o));
+  return _.map(res, d => formatSpotOrder(d, o));
 }
 
 function spotOrderInfoO(o = {}) {
   return {
     instrument_id: o.pair,
-    order_id: o.order_id
+    order_id: o.order_id || o.client_oid
   };
 }
 function spotOrderInfo(res, o, error) {
@@ -160,7 +175,8 @@ function spotOrderInfo(res, o, error) {
     if (o.client_oid) res.client_oid = o.client_oid;
     return res;
   }
-  return formatOrder(res, o);
+  if (res.error) return { ...o };
+  return formatSpotOrder(res, o);
 }
 
 //
@@ -239,38 +255,101 @@ function spotKline(res, o) {
 }
 
 function spotLedgerO(o = {}) {
-  return { ...o };
+  return { ...o, coin: o.coin || pair2coin(o.pair) };
 }
 
 function spotLedger(ds, o = {}) {
-  return _.map(ds, d => publicUtils.formatAssetLedger(d, { instrument: 'spot', asset_type: 'spot' }));
+  return _.map(ds, d => publicUtils.formatAssetLedger(d, { instrument: 'spot', asset_type }));
 }
 
 
-function spotFillsO(o) {
+function spotAssets(ds) {
+  return _.map(ds, (d) => {
+    const res = {
+      exchange,
+      pair: d.instrument_id,
+      asset_type,
+      min_size: _parse(d.min_size),
+      price_precision: getPrecision(d.tick_size),
+      amount_precision: getPrecision(d.size_increment),
+    };
+    res.instrument_id = ef.getInstrumentId(res);
+    return res;
+  });
+}
+
+
+function spotCancelOrderO(o = {}) {
+  return { cancel_order_id: o.order_id || o.client_oid, instrument_id: o.pair };
+}
+
+function spotCancelOrder(res, o) {
+  const resp = { ...o };
+  if (res) {
+    const { order_id, client_oid, error_code } = res;
+    if (error_code === '0') resp.status = 'CANCEL';
+    if (client_oid) resp.client_oid = client_oid;
+    if (order_id) resp.order_id = order_id;
+  }
+  return resp;
+}
+
+
+function empty() {
+  return {};
+}
+function spotOrderDetailsO(o) {
   return { instrument_id: o.pair };
 }
 
-function spotFills(ds, o) {
-  return _.map(ds, d => publicUtils.formatFill(d, { ...o, instrument: 'spot', asset_type: 'spot' }));
+function formatSpotOrderDetail(d, o) {
+  const pair = d.instrument_id;
+  const fee_coin = d.currency;
+  const exec_type = { M: 'MAKER', T: 'TAKER' }[d.exec_type];
+  const res = {
+    ...o,
+    exchange,
+    asset_type,
+    unique_id: `${d.trade_id}`,
+    order_id: `${d.order_id}`,
+    pair,
+    exec_type,
+    direction: 'LONG',
+    side: d.side.toUpperCase(),
+    amount: _parse(d.size),
+    price: _parse(d.price),
+    fee: _parse(d.fee),
+    time: new Date(d.timestamp),
+    fee_coin,
+  };
+  res.instrument_id = ef.getInstrumentId(res);
+  return res;
 }
 
+function spotOrderDetails(ds, o) {
+  return _.map(ds, d => formatSpotOrderDetail(d, { ...o, asset_type }));
+}
 
 module.exports = {
+  spotCancelOrderO,
+  spotCancelOrder,
+  spotAssetsO: empty,
+  spotAssets,
   formatSpotKline: _formatSpotKline,
   spotKlineO,
   spotKline,
   formatTick: _formatTick,
   formatDepth: _formatDepth,
   formatOrder,
+  formatSpotOrder,
   formatBalance: _wallet,
   wallet,
   pairsO: direct,
   pairs,
-  spotFillsO,
-  spotFills,
+  spotOrderDetailsO,
+  spotOrderDetails,
   // order
-  spotBalancesO,
+  spotBalancesO: empty,
   spotBalances,
   spotBalance,
   spotBalanceO,

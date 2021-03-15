@@ -160,10 +160,11 @@ const usdtContractPositions = (ds, o) => {
       result.push(_res);
     }
   }
-  return res;
+  return result;
 };
 
 function _formatUsdtContractOrder(d, o = {}) {
+  // console.log(d, 'ddd....');
   const { symbol: symbol_id } = d;
   const { assets, ...rest } = o;
   const info = parseSymbolId(d);
@@ -190,7 +191,7 @@ function _formatUsdtContractOrder(d, o = {}) {
   if (d.positionSide) res.position_side = d.positionSide;
   if (d.commissionAsset) res.fee_coin = d.commissionAsset;
 
-
+  if (d.type && !res.type) res.type = d.type;
   if (d.commission) res.fee = _parse(d.commission);
   if (d.eventTime || d.updateTime) {
     res.server_updated_at = new Date(d.eventTime || d.updateTime);
@@ -198,6 +199,7 @@ function _formatUsdtContractOrder(d, o = {}) {
   if (d.time && !res.server_updated_at) {
     res.server_updated_at = new Date(d.time);
   }
+  if (['STOP_MARKET', 'TAKE_PROFIT_MARKET'].includes(res.type) && !['UNFINISH', 'CANCEL'].includes(res.status)) console.log(res, 'res....');
   return cleanObjectNull(res);
 }
 
@@ -314,7 +316,47 @@ function usdtContractUpdateLeverate(res, o) {
   return null;
 }
 
+
+function usdtContractFundingHistoryO(o = {}) {
+  return { symbol: pair2symbol(o.pair) };
+}
+function usdtContractFundingHistory(ds, o = {}) {
+  return _.map(ds, (d) => {
+    return {
+      exchange,
+      asset_type,
+      pair: o.pair,
+      time: new Date(d.fundingTime),
+      funding_rate: _parse(d.fundingRate),
+      realized_rate: _parse(d.fundingRate),
+      fee_asset: 'USDT'
+    };
+  });
+}
+
+function usdtContractCurrentFundingO(o = {}) {
+  return { symbol: pair2symbol(o.pair) };
+}
+function usdtContractCurrentFunding(ds, o) {
+  return _.map(ds, (d) => {
+    return {
+      exchange,
+      asset_type,
+      pair: o.pair,
+      mark_price: _parse(d.markPrice),
+      index_price: _parse(d.indexPrice),
+      interest_rate: _parse(d.interestRate),
+      estimated_rate: _parse(d.lastFundingRate),
+      next_funding_time: new Date(_parse(d.nextFundingTime)),
+    };
+  });
+}
+
 module.exports = {
+  usdtContractCurrentFundingO,
+  usdtContractCurrentFunding,
+  usdtContractFundingHistoryO,
+  usdtContractFundingHistory,
   usdtContractUpdateLeverateO,
   usdtContractUpdateLeverate,
   usdtContractLedgersO,

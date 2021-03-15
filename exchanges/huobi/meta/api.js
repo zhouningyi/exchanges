@@ -467,10 +467,126 @@ const coinSwapConfig = {
   },
 };
 
+const usdtSwapConfig = {
+  usdtSwapAssets: {
+    name_cn: '所有USDT本位永续交易对',
+    endpoint: 'linear-swap-api/v1/swap_contract_info',
+    desc: '所有USDT本位永续交易对',
+    notNull: [],
+  },
+  usdtSwapBalances: {
+    method: 'POST',
+    name_cn: '账户余额',
+    endpoint: 'linear-swap-api/v1/swap_cross_account_info',
+    sign: true,
+    notNull: [],
+    // check: 'balance'
+  },
+  usdtSwapPositions: {
+    method: 'POST',
+    name_cn: '永续持仓',
+    endpoint: 'linear-swap-api/v1/swap_cross_position_info',
+    sign: true,
+    notNull: []
+  },
+  usdtSwapOrder: {
+    method: 'POST',
+    name_cn: '永续下单',
+    sign: true,
+    endpoint: 'linear-swap-api/v1/swap_cross_order',
+    accept: ['client_oid'],
+    notNull: ['pair', 'side', 'type', 'direction', 'lever_rate'],
+    host: 'future',
+  },
+  usdtSwapCancelOrder: {
+    method: 'POST',
+    name_cn: '永续撤单',
+    sign: true,
+    endpoint: 'linear-swap-api/v1/swap_cross_cancel',
+    accept: ['client_oid'],
+    notNull: ['pair'],
+    host: 'future',
+  },
+  usdtSwapOrderInfo: {
+    method: 'POST',
+    name_cn: '永续订单信息',
+    desc: '通过订单ID获取单个订单信息',
+    endpoint: 'linear-swap-api/v1/swap_cross_order_info',
+    sign: true,
+    accept: ['order_id', 'client_oid'],
+    notNull: ['pair'],
+    host: 'future',
+  },
+  usdtSwapUnfinishOrders: {
+    method: 'POST',
+    name_cn: '所有未完成的永续订单',
+    endpoint: 'linear-swap-api/v1/swap_cross_openorders',
+    sign: true,
+    notNull: ['pair'],
+    host: 'future',
+  },
+  usdtSwapOrders: {
+    method: 'POST',
+    name_cn: '所有永续订单',
+    endpoint: 'linear-swap-api/v1/swap_cross_hisorders',
+    sign: true,
+    notNull: ['pair'],
+    host: 'future',
+  },
+  usdtSwapOrderDetails: {
+    method: 'POST',
+    name_cn: '永续成交明细',
+    endpoint: 'linear-swap-api/v1/swap_cross_matchresults',
+    accept: ['pair'],
+    sign: true,
+    notNull: ['pair'],
+    host: 'future',
+  },
+  usdtSwapUpdateLeverate: {
+    method: 'POST',
+    name_cn: '修改期货杠杆',
+    endpoint: 'linear-swap-api/v1/swap_cross_switch_lever_rate',
+    sign: true,
+    notNull: ['pair', 'lever_rate'],
+    host: 'future',
+    rateLimit: 3000 / 1,
+  },
+  usdtSwapFundingHistory: {
+    method: 'GET',
+    name_cn: '资金费率历史',
+    endpoint: 'linear-swap-api/v1/swap_historical_funding_rate',
+    notNull: ['pair'],
+  },
+  usdtSwapCurrentFunding: {
+    method: 'GET',
+    name_cn: '当前资金费率',
+    endpoint: 'linear-swap-api/v1/swap_funding_rate',
+    notNull: ['pair'],
+  },
+  usdtSwapLedger: {
+    method: 'POST',
+    sign: true,
+    name_cn: '结算记录',
+    endpoint: 'linear-swap-api/v1/swap_financial_record',
+    notNull: ['pair'],
+  },
+  usdtSwapMoveBalance: {
+    method: 'POST',
+    name_cn: '期货现货划转',
+    endpoint: 'v2/account/transfer',
+    sign: true,
+    notNull: ['coin', 'source', 'target', 'amount'],
+    rateLimit: 1000 / 10,
+    check: 'moveBalance',
+    host: 'spot',
+  },
+};
+
 const config = {
   ...fix(spotConfig),
   ...fix(futureConfig),
   ...fix(coinSwapConfig, 'future'),
+  ...fix(usdtSwapConfig, 'future'),
   ...fix(publicConfig),
 };
 

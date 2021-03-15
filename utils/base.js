@@ -23,16 +23,16 @@ function live() {
 function isNull(v) {
   return v === undefined || v === null || v === '';
 }
-function _handelNull(k) {
-  Console.print(`${k}的值不能为空`, 'red');
+function _handelNull(k, text) {
+  Console.print(`${text || ''}: ${k}的值不能为空`, 'red');
   process.exit();
 }
 
-function checkKey(o, vs) {
+function checkKey(o, vs, text) {
   if (Array.isArray(vs)) {
     vs = _.keyBy(vs, v => v);
     _.forEach(vs, (k) => {
-      if (isNull(o[k])) _handelNull(k);
+      if (isNull(o[k])) _handelNull(k, text);
     });
   } else if (isNull(o[vs])) _handelNull(vs);
 }

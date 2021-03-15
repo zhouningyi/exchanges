@@ -222,12 +222,26 @@ const usdtContractConfig = {
     sign: false
   },
   usdtContractUpdateLeverate: {
-    name_cn: 'USDT合约 调整杠杆',
+    name_cn: 'USDT合约调整杠杆',
     endpoint: 'fapi/v1/leverage',
     notNull: ['pair', 'asset_type', 'lever_rate'],
     method: 'POST',
     sign: true
-  }
+  },
+  usdtContractFundingHistory: {
+    name_cn: 'USDT合约资金费率',
+    endpoint: 'fapi/v1/fundingRate',
+    notNull: ['pair'],
+    method: 'GET',
+    sign: false
+  },
+  usdtContractCurrentFunding: {
+    name_cn: 'USDT合约当前资金费率',
+    endpoint: 'fapi/v1/premiumIndex',
+    notNull: ['pair'],
+    method: 'GET',
+    sign: false
+  },
 };
 const coinContractConfig = {
   coinContractBalances: {
@@ -322,7 +336,21 @@ const coinContractConfig = {
     notNull: ['pair', 'asset_type', 'lever_rate'],
     method: 'POST',
     sign: true
-  }
+  },
+  coinContractFundingHistory: {
+    name_cn: '币本位合约资金费率',
+    endpoint: 'dapi/v1/fundingRate',
+    notNull: ['pair'],
+    method: 'GET',
+    sign: false
+  },
+  coinContractCurrentFunding: {
+    name_cn: '币本位合约当前资金费率',
+    endpoint: 'dapi/v1/premiumIndex',
+    notNull: ['pair'],
+    method: 'GET',
+    sign: false
+  },
 };
 
 function fix(config, host) {

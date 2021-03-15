@@ -98,9 +98,9 @@ module.exports = {
     endpoint: 'account/v3/ledger',
   },
   // // // // // // // 现货部分  // // // // // // //
-  spotFills: {
+  spotOrderDetails: {
     method: 'GET',
-    name: 'spotFills',
+    name: 'spotOrderDetails',
     name_cn: '现货交易明细',
     endpoint: 'spot/v3/fills',
     notNull: ['pair'],
@@ -121,7 +121,7 @@ module.exports = {
     sign: true,
     endpoint: 'spot/v3/accounts/{coin}',
     endpointParams: ['coin'],
-    notNull: ['coin']
+    notNull: []
   },
   spotBalances: {
     name: 'spotBalances',
@@ -136,15 +136,22 @@ module.exports = {
     name_cn: '币对信息',
     endpoint: 'spot/v3/instruments',
   },
-  spotLedger: {
-    name: 'spotLedger',
-    name_cn: '现货账单流水查询',
-    sign: true,
-    endpoint: 'spot/v3/accounts/{coin}/ledger',
-    endpointParams: ['coin'],
-    access: ['from', 'to', 'limit'],
-    notNull: ['coin']
+  spotAssets: {
+    name: 'spotAssets',
+    name_cn: '资产基础信息',
+    sign: false,
+    endpoint: 'spot/v3/instruments',
+    notNull: []
   },
+  // spotLedger: {
+  //   name: 'spotLedger',
+  //   name_cn: '现货账单流水查询',
+  //   sign: true,
+  //   endpoint: 'spot/v3/accounts/{coin}/ledger',
+  //   endpointParams: ['coin'],
+  //   access: ['from', 'to', 'limit'],
+  //   notNull: []
+  // },
   spotOrder: {
     method: 'POST',
     name: 'spotOrder',
@@ -153,6 +160,16 @@ module.exports = {
     sign: true,
     endpoint: 'spot/v3/orders',
     notNull: ['type', 'side', 'pair'],
+    rateLimit: 2000 / 100
+  },
+  spotCancelOrder: {
+    method: 'POST',
+    name: 'spotCancelOrder',
+    name_cn: '撤销订单',
+    endpoint: 'spot/v3/cancel_orders/{cancel_order_id}',
+    endpointParams: ['cancel_order_id'],
+    notNull: ['pair'],
+    sign: true,
     rateLimit: 2000 / 100
   },
   cancelOrder: {
@@ -208,7 +225,7 @@ module.exports = {
     name_cn: '现货订单',
     desc: '区分pair地获取订单',
     endpoint: 'spot/v3/orders',
-    notNull: ['pair'],
+    notNull: [],
     sign: true,
   },
   // // // // // // // 杠杆交易  // // // // // // //
@@ -352,8 +369,15 @@ module.exports = {
     name_cn: '期货单个tick',
     endpoint: 'futures/v3/instruments/{instrument_id}/ticker',
     endpointParams: ['instrument_id'],
-    notNull: ['contract_type', 'pair'],
+    notNull: ['pair'],
     rateLimit: 2000 / 20
+  },
+  futureAssets: {
+    name: 'futureAssets',
+    name_cn: '资产基础信息',
+    sign: false,
+    endpoint: 'futures/v3/instruments',
+    notNull: []
   },
   futureIndex: {
     method: 'GET',
@@ -361,7 +385,7 @@ module.exports = {
     name_cn: '期货指数',
     endpoint: 'futures/v3/instruments/{instrument_id}/index',
     endpointParams: ['instrument_id'],
-    notNull: ['contract_type', 'pair'],
+    notNull: ['pair'],
     rateLimit: 2000 / 20
   },
   futureLiquidation: {
@@ -370,7 +394,7 @@ module.exports = {
     name_cn: '爆仓单信息',
     endpoint: 'futures/v3/instruments/{instrument_id}/liquidation',
     endpointParams: ['instrument_id'],
-    notNull: ['contract_type', 'pair', 'status'],
+    notNull: ['pair', 'status'],
   },
   futureTotalAmount: {
     method: 'GET',
@@ -378,7 +402,7 @@ module.exports = {
     name_cn: '平台总持仓',
     endpoint: 'futures/v3/instruments/{instrument_id}/open_interest',
     endpointParams: ['instrument_id'],
-    notNull: ['contract_type', 'pair'],
+    notNull: ['pair'],
   },
   futureTotalHoldAmount: {
     method: 'GET',
@@ -386,7 +410,7 @@ module.exports = {
     name_cn: '平台总持仓未挂单量',
     endpoint: 'futures/v3/accounts/{instrument_id}/holds',
     endpointParams: ['instrument_id'],
-    notNull: ['contract_type', 'pair'],
+    notNull: ['pair'],
   },
   // 合约私有接口
   futureFills: {
@@ -394,7 +418,7 @@ module.exports = {
     name: 'futureFills',
     name_cn: '期货交易明细',
     endpoint: 'futures/v3/fills',
-    notNull: ['pair', 'contract_type'],
+    notNull: ['pair'],
     rateLimit: 2000 / 5
   },
   futurePositions: {
@@ -410,7 +434,15 @@ module.exports = {
     name_cn: '单个期货仓位',
     endpointParams: ['instrument_id'],
     endpoint: 'futures/v3/{instrument_id}/position',
-    notNull: ['contract_type'],
+    notNull: [],
+  },
+  futureUpdateLeverate: {
+    method: 'POST',
+    name: 'futureUpdateLeverate',
+    name_cn: '修改期货合约杠杆',
+    endpointParams: ['pair'],
+    endpoint: 'futures/v3/accounts/{pair}/leverage',
+    notNull: [],
   },
   lerverate: {
     method: 'GET',
@@ -420,13 +452,12 @@ module.exports = {
     endpointParams: ['underlying'],
     notNull: ['pair'],
   },
-
-  setLerverate: {
+  swapUpdateLeverate: {
     method: 'POST',
-    name: 'setLerverate',
+    name: 'swapUpdateLeverate',
     name_cn: '设置币种的杠杆数',
-    endpoint: 'futures/v3/accounts/{underlying}/leverage',
-    endpointParams: ['underlying'],
+    endpoint: 'swap/v3/accounts/{instrument_id}/leverage',
+    endpointParams: ['instrument_id'],
     notNull: ['pair', 'lever_rate'],
   },
   setMarginMode: {
@@ -461,6 +492,16 @@ module.exports = {
     notNull: ['pair'],
     rateLimit: 2000 / 5
   },
+  futureCancelOrder: {
+    method: 'POST',
+    name: 'futureCancelOrder',
+    name_cn: '期货撤单',
+    sign: true,
+    endpoint: 'futures/v3/cancel_order/{instrument_id}/{cancel_order_id}',
+    endpointParams: ['instrument_id', 'cancel_order_id'],
+    notNull: ['pair', 'side'],
+    rateLimit: 2000 / 20
+  },
   futureOrder: {
     method: 'POST',
     name: 'futureOrder',
@@ -468,25 +509,15 @@ module.exports = {
     sign: true,
     endpoint: 'futures/v3/order',
     accept: ['client_oid'],
-    notNull: ['pair', 'contract_type', 'side', 'type', 'direction'],
+    notNull: ['pair', 'side', 'type', 'direction'],
     rateLimit: 2000 / 20
   },
-  // cancelFutureOrder: {
-  //   method: 'POST',
-  //   name: 'cancelFutureOrder',
-  //   name_cn: '期货撤单',
-  //   endpoint: 'futures/v3/cancel_order/{instrument_id}/{order_id}',
-  //   endpointParams: ['order_id', 'instrument_id'],
-  //   notNull: ['pair', 'contract_type', 'order_id'],
-  //   rateLimit: 2000 / 10
-  // },
   batchCancelFutureOrders: {
     method: 'POST',
     name: 'batchCancelFutureOrders',
     name_cn: '批量撤销期货订单',
     endpoint: 'futures/v3/cancel_batch_orders/{instrument_id}',
     endpointParams: ['instrument_id'],
-    // notNull: ['pair', 'contract_type', 'order_ids'],
     rateLimit: 2000 / 5
   },
   futureOrders: {
@@ -497,7 +528,7 @@ module.exports = {
     endpointParams: ['instrument_id'],
     endpoint: 'futures/v3/orders/{instrument_id}',
     accept: ['from', 'to', 'limit'],
-    notNull: ['status', 'pair', 'contract_type'],
+    notNull: ['pair'],
     rateLimit: 2000 / 10,
     sign: true
   },
@@ -509,7 +540,7 @@ module.exports = {
     endpointParams: ['instrument_id'],
     endpoint: 'futures/v3/orders/{instrument_id}',
     accept: ['from', 'to', 'limit'],
-    notNull: ['pair', 'contract_type'],
+    notNull: ['pair'],
     rateLimit: 2000 / 10
   },
   successFutureOrders: {
@@ -520,7 +551,7 @@ module.exports = {
     endpointParams: ['instrument_id'],
     endpoint: 'futures/v3/orders/{instrument_id}',
     accept: ['from', 'to', 'limit'],
-    notNull: ['pair', 'contract_type'],
+    notNull: ['pair'],
     rateLimit: 2000 / 10
   },
   futureOrderInfo: {
@@ -531,6 +562,15 @@ module.exports = {
     endpoint: 'futures/v3/orders/{instrument_id}/{order_id}',
     endpointParams: ['instrument_id', 'order_id'],
     rateLimit: 2000 / 10
+  },
+  futureOrderDetails: {
+    method: 'GET',
+    name: 'futureOrderDetails',
+    name_cn: '期货账户交易明细',
+    endpoint: 'futures/v3/fills',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+    rateLimit: 2000 / 5
   },
   futurePairs: {
     method: 'GET',
@@ -546,7 +586,7 @@ module.exports = {
     name_cn: '期货限价',
     endpoint: 'futures/v3/instruments/{instrument_id}/price_limit',
     endpointParams: ['instrument_id'],
-    notNull: ['pair', 'contract_type'],
+    notNull: ['pair'],
     rateLimit: 2000 / 20
   },
   futureKline: {
@@ -555,7 +595,7 @@ module.exports = {
     name_cn: '期货K线图',
     endpoint: 'futures/v3/instruments/{instrument_id}/candles',
     endpointParams: ['instrument_id'],
-    notNull: ['pair', 'contract_type'],
+    notNull: ['pair'],
     rateLimit: 2000 / 20
   },
   // 永续合约部分
@@ -568,18 +608,18 @@ module.exports = {
     notNull: ['pair'],
     sign: false,
   },
-  swapLedger: {
+  swapLedgers: {
     method: 'GET',
-    name: 'swapLedger',
+    name: 'swapLedgers',
     name_cn: '永续账户流水',
     endpoint: 'swap/v3/accounts/{instrument_id}/ledger',
     endpointParams: ['instrument_id'],
     notNull: ['pair'],
     rateLimit: 2000 / 5
   },
-  swapFills: {
+  swapOrderDetails: {
     method: 'GET',
-    name: 'swapFills',
+    name: 'swapOrderDetails',
     name_cn: '永续账户交易明细',
     endpoint: 'swap/v3/fills',
     endpointParams: ['instrument_id'],
@@ -593,9 +633,24 @@ module.exports = {
     endpoint: 'swap/v3/instruments/ticker',
     rateLimit: 2000 / 20
   },
-  swapFundingRateHistory: {
+  swapAssets: {
+    name: 'swapAssets',
+    name_cn: '资产基础信息',
+    sign: false,
+    endpoint: 'swap/v3/instruments',
+    notNull: []
+  },
+  swapCurrentFunding: {
     method: 'GET',
-    name: 'swapFundingRateHistory',
+    name: 'swapCurrentFunding',
+    name_cn: '永续合约资金当前费率',
+    endpoint: 'swap/v3/instruments/{instrument_id}/funding_time',
+    endpointParams: ['instrument_id'],
+    notNull: ['pair'],
+  },
+  swapFundingHistory: {
+    method: 'GET',
+    name: 'swapFundingHistory',
     name_cn: '永续合约资金费率历史',
     endpoint: 'swap/v3/instruments/{instrument_id}/historical_funding_rate',
     endpointParams: ['instrument_id'],
@@ -670,9 +725,17 @@ module.exports = {
     endpointParams: ['instrument_id'],
     endpoint: 'swap/v3/orders/{instrument_id}',
     accept: ['from', 'to', 'limit'],
-    notNull: ['status', 'pair'],
+    notNull: [],
     rateLimit: 2000 / 20,
     sign: true
+  },
+  swapCancelOrder: {
+    method: 'POST',
+    name: 'swapCancelOrder',
+    name_cn: '永续账户资产',
+    endpoint: 'swap/v3/cancel_order/{instrument_id}/{cancel_order_id}',
+    endpointParams: ['cancel_order_id', 'instrument_id'],
+    notNull: ['pair']
   },
   unfinishSwapOrders: {
     method: 'GET',

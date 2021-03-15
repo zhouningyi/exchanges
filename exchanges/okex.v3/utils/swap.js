@@ -3,14 +3,17 @@ const _ = require('lodash');
 // const md5 = require('md5');
 //
 const Utils = require('./../../../utils');
-const { intervalMap, pair2coin, orderTypeMap, reverseOrderTypeMap } = require('./public');
+const ef = require('./../../../utils/formatter');
+const { intervalMap, pair2coin, orderTypeMap, getPrecision, reverseOrderTypeMap } = require('./public');
 const futureApiUtils = require('./future');
 const deepmerge = require('deepmerge');
 const publicUtils = require('./public');
 
+const balance_type = 'SWAP';
+const asset_type = 'SWAP';
+const exchange = 'OKEX';
 
 const { checkKey, throwError, cleanObjectNull } = Utils;
-
 
 function direct(d) {
   return d;
@@ -48,32 +51,7 @@ function swapTicks(ds) {
   return _.map(ds, formatTick);
 }
 
-function swapFundingRateHistoryO(o) {
-  const { pair, ...rest } = o;
-  return {
-    instrument_id: getInstrumentId(pair),
-    ...rest
-  };
-}
 
-function swapFundingRateHistory(ds, o) {
-  const { pair } = o;
-  return _.map(ds, (d) => {
-    const time = new Date(d.funding_time);
-    const tstr = Math.floor(time.getTime() / 1000);
-    return {
-      unique_id: `${pair}_${tstr}`,
-      pair,
-      funding_rate: _parse(d.funding_rate),
-      realized_rate: _parse(d.realized_rate),
-      interest_rate: _parse(d.interest_rate),
-      time
-    };
-  });
-}
-
-
-//
 function swapKlineO(o) {
   const { pair, interval = '15m' } = o;
   const granularity = intervalMap[interval];
@@ -82,6 +60,7 @@ function swapKlineO(o) {
   if (o.timeEnd) res.end = o.timeEnd;
   return res;
 }
+
 function _formatSwapKline(l, o) {
   const { pair, interval } = o;
   const time = new Date(l[0]);
@@ -131,21 +110,42 @@ function batchCancelSwapOrders(res, o) {
   }));
 }
 
+function swapCancelOrderO(o = {}) {
+  const { instrument_id } = _getInstrumentO(o);
+  const cancel_order_id = o.order_id || o.client_oid;
+  return { instrument_id, cancel_order_id };
+}
+
+function swapCancelOrder(res, o = {}) {
+  const resp = { ...o };
+  if (res) {
+    const { order_id, client_oid, error_code } = res;
+    if (error_code === '0')resp.status = 'CANCEL';
+    if (client_oid) resp.client_oid = client_oid;
+    if (order_id) resp.order_id = order_id;
+  }
+  return resp;
+}
+
 function swapOrderInfoO(o) {
-  return { ..._getInstrumentO(o), order_id: o.order_id };
+  return { ..._getInstrumentO(o), order_id: o.order_id || o.client_oid };
 }
 
 function swapOrderInfo(ds, o) {
+  if (ds.error) return { ...o };
   const res = formatSwapOrder(ds, o);
   res.pair = inst2pair(ds.instrument_id);
   return res;
 }
+
 
 function _formatSwapPosition(l) {
   const { instrument_id } = l;
   const pair = inst2pair(instrument_id);
   const { side } = l;
   const res = {
+    exchange,
+    asset_type,
     unique_id: instrument_id,
     instrument_id,
     pair,
@@ -169,6 +169,7 @@ function _formatSwapPosition(l) {
     time: new Date(),
   };
   if (l.margin_ratio) res.margin_ratio = _parse(l.margin_ratio);
+  res.instrument_id = ef.getInstrumentId(res);
   return res;
 }
 
@@ -191,7 +192,12 @@ function formatSwapPosition(res) {
       resMap[instrument_id] = newl;
     });
   });
-  return _.values(resMap);
+  const resp = _.values(resMap);
+  _.forEach(resp, (l) => {
+    l.vector = (l.long_amount || 0) - (l.short_amount || 0);
+    l.amount = Math.abs(l.vector);
+  });
+  return resp;
 }
 
 function swapPosition(ds, o) {
@@ -214,13 +220,15 @@ function _formatBalance(line) {
   const { instrument_id } = line;
   const pair = inst2pair(instrument_id);
   const coin = pair2coin(pair);
-  return cleanObjectNull({
+  // console.log(line, 'line...');
+  const res = cleanObjectNull({
+    exchange,
+    balance_type,
     coin,
     pair,
-    instrument_id,
     margin_mode: line.margin_mode,
     account_rights: _parse(line.equity),
-    balance: _parse(line.total_avail_balance), //	账户余额
+    balance: _parse(line.equity), // _parse(line.total_avail_balance), //	账户余额
     margin: _parse(line.margin),
     profit_real: _parse(line.realized_pnl),
     profit_unreal: _parse(line.unrealized_pnl),
@@ -228,9 +236,15 @@ function _formatBalance(line) {
     margin_used: _parse(line.margin_frozen),
     server_updated_at: new Date(line.timestamp),
     maint_margin_ratio: _parse(line.maint_margin_ratio),
-    can_withdraw: _parse(line.max_withdraw),
+    withdraw_available: _parse(line.max_withdraw),
     time: new Date()
   });
+  res.balance_id = ef.getBalanceId(res);
+  return res;
+}
+
+function swapBalancesO() {
+  return {};
 }
 
 function swapBalances(res) {
@@ -246,21 +260,23 @@ function swapBalanceO(o) {
 
 function swapBalance(res, o) {
   const info = _.get(res, 'info');
-  return [_formatBalance(info)];
+  return _formatBalance(info);
 }
 
 function _getInstrumentO(o) {
   const pair = o.pair || `${o.coin}-USD`;
-  const instrument_id = getInstrumentId(pair);
-  return { instrument_id };
+  return { instrument_id: [pair, 'SWAP'].join('-') };
 }
 
 function swapOrdersO(o) {
   const client_oid = o.client_oid || o.oid;
   const { order_type } = o;
+  const status = o.state || o.status || 'SUCCESS';
   const res = {
+    exchange,
+    asset_type,
     ..._getInstrumentO(o),
-    state: futureApiUtils.futureStatusMap[o.state || o.status],
+    state: futureApiUtils.futureStatusMap[status],
     from: o.from,
     to: o.to,
     limit: o.limit
@@ -273,7 +289,9 @@ function swapOrdersO(o) {
 function formatSwapOrder(d, o) {
   const res = futureApiUtils.formatContractOrder(d, o);
   if (d.instrument_id) res.pair = inst2pair(d.instrument_id);
+  res.asset_type = asset_type;
   res.instrument = 'swap';
+  res.instrument_id = ef.getInstrumentId(res);
   return res;
 }
 
@@ -299,16 +317,19 @@ function getSwapConfig(res, o) {
   }];
 }
 
-function setSwapLeverateO(o) {
+function swapUpdateLeverateO(o) {
   const side = o.side || 3;
   return { ..._getInstrumentO(o), leverage: o.lever_rate, side };
 }
-function setSwapLeverate(res, o) {
-  return [res];
+function swapUpdateLeverate(res, o) {
+  const short_leverage = _parse(res.short_leverage);
+  const long_leverage = _parse(res.long_leverage);
+  return { ...o, long_leverage, short_leverage };
 }
 
 const swapLedgerTypeMap = {
-  funding: 14
+  funding: 14,
+  [ef.ledgerTypes.FUNDING_RATE]: 14
 };
 
 function swapLedgerO(o) {
@@ -317,19 +338,132 @@ function swapLedgerO(o) {
   return opt;
 }
 
-function swapLedger(ds, o) {
-  return _.map(ds, d => publicUtils.formatAssetLedger(d, { ...o, instrument: 'swap', asset_type: 'swap' }));
+function formatSwapLedger(d, o) {
+  const res = publicUtils.formatAssetLedger(d, { ...o, instrument: asset_type, asset_type });
+  return { ...res, asset_type, exchange };
 }
 
-function swapFillsO(o) {
+function swapLedger(ds, o) {
+  const res = _.map(ds, d => formatSwapLedger(d, o));
+  return res;
+}
+
+function instrument_id2pair(instrument_id) {
+  return instrument_id.replace('-SWAP', '');
+}
+function _formatSwapOrderDetail(d, o) {
+  const pair = instrument_id2pair(d.instrument_id);
+  let fee_coin = pair2coin(pair);
+  if (ef.isUsdtPair(pair)) fee_coin = 'USDT';
+  const exec_type = { M: 'MAKER', T: 'TAKER' }[d.exec_type];
+  const res = {
+    ...o,
+    exchange,
+    asset_type,
+    unique_id: `${d.trade_id}`,
+    order_id: `${d.order_id}`,
+    pair,
+    exec_type,
+    direction: d.direction === 'buy' ? 'LONG' : 'SHORT',
+    side: d.side.toUpperCase(),
+    amount: _parse(d.order_qty),
+    price: _parse(d.price),
+    fee: _parse(d.fee),
+    time: new Date(d.timestamp),
+    fee_coin,
+  };
+  res.instrument_id = ef.getInstrumentId(res);
+  return res;
+}
+
+function swapOrderDetailsO(o) {
   return { instrument_id: getInstrumentId(o.pair), };
 }
 
-function swapFills(ds, o) {
-  return _.map(ds, d => publicUtils.formatFill(d, { ...o, instrument: 'swap', asset_type: 'swap' }));
+function swapOrderDetails(ds, o) {
+  return _.map(ds, d => _formatSwapOrderDetail(d, { ...o, asset_type, exchange }));
 }
 
+
+function swapAssets(ds) {
+  return _.map(ds, (d) => {
+    const res = {
+      exchange,
+      asset_type,
+      pair: d.underlying,
+      min_size: _parse(d.size_increment),
+      price_precision: getPrecision(d.tick_size),
+      delivery: d.delivery
+    };
+    res.instrument_id = ef.getInstrumentId(res);
+    return res;
+  });
+}
+
+
+function empty() {
+  return {};
+}
+
+function swapCurrentFundingO(o = {}) {
+  const { pair, kline, ...rest } = o;
+  return { instrument_id: getInstrumentId(pair), ...rest };
+}
+function swapCurrentFunding(res) {
+  const pair = res.instrument_id.replace('-SWAP', '');
+  const funding_time = new Date(_parse(res.funding_time));
+  const hour8 = 8 * 3600 * 1000;
+  const next_funding_time = new Date(funding_time.getTime() + hour8);
+  return {
+    exchange,
+    asset_type,
+    time: new Date(),
+    pair,
+    estimated_rate: _parse(res.estimated_rate),
+    next_funding_time,
+    funding_rate: _parse(res.funding_rate),
+    funding_time
+  };
+}
+
+function swapFundingHistoryO(o) {
+  const { pair, kline, ...rest } = o;
+  return { instrument_id: getInstrumentId(pair), ...rest };
+}
+
+function swapFundingHistory(ds, o) {
+  const { pair } = o;
+  return _.map(ds, (d) => {
+    const time = new Date(d.funding_time);
+    const tlong = time.getTime();
+    let fee_asset = pair2coin(pair);
+    if (ef.isUsdtPair(pair)) fee_asset = 'USDT';
+    const res = {
+      exchange,
+      asset_type,
+      pair,
+      funding_rate: _parse(d.funding_rate),
+      realized_rate: _parse(d.realized_rate),
+      interest_rate: _parse(d.interest_rate),
+      time,
+      fee_asset
+    };
+    res.instrument_id = ef.getInstrumentId(res);
+    res.unique_id = [res.instrument_id, tlong].join('_');
+    return res;
+  });
+}
+
+
 module.exports = {
+  swapLedgerO,
+  swapLedger,
+  swapCurrentFundingO,
+  swapCurrentFunding,
+  swapCancelOrderO,
+  swapCancelOrder,
+  swapAssetsO: empty,
+  swapAssets,
   formatSwapOrder,
   getSwapInstrumentId: getInstrumentId,
   inst2pair,
@@ -337,8 +471,8 @@ module.exports = {
   formatSwapPosition,
   swapKline,
   swapKlineO,
-  swapFundingRateHistoryO,
-  swapFundingRateHistory,
+  swapFundingHistoryO,
+  swapFundingHistory,
   formatTick,
   swapTicksO,
   swapTicks,
@@ -350,7 +484,9 @@ module.exports = {
   swapOrderInfo,
   swapPositionO: _getInstrumentO,
   swapPosition,
+  swapPositionsO: empty,
   swapPositions,
+  swapBalancesO,
   swapBalances,
   formatSwapBalance: _formatBalance,
   swapBalanceO,
@@ -361,10 +497,8 @@ module.exports = {
   unfinishSwapOrdersO,
   getSwapConfigO: _getInstrumentO,
   getSwapConfig,
-  swapFillsO,
-  swapFills,
-  swapLedgerO,
-  swapLedger,
-  setSwapLeverateO,
-  setSwapLeverate,
+  swapOrderDetailsO,
+  swapOrderDetails,
+  swapUpdateLeverateO,
+  swapUpdateLeverate,
 };

@@ -7,6 +7,7 @@ const { checkKey, formatter, getSwapFundingTime } = require('./../../../utils');
 const futureUtils = require('./future');
 const spotUtils = require('./spot');
 const coinSwapUtils = require('./coin_swap');
+const usdtSwapUtils = require('./usdt_swap');
 
 const exchange = 'HUOBI';
 
@@ -351,7 +352,6 @@ const coinSwapEstimateFunding = {
   }
 };
 
-
 const coinSwapOrders = {
   notNull: [],
   chanel: (o) => {
@@ -367,6 +367,20 @@ const coinSwapOrders = {
   }
 };
 
+const usdtSwapOrders = {
+  ...coinSwapOrders,
+  chanel: (o) => {
+    return [{ op: 'sub', topic: 'orders_cross.*' }];
+  },
+  validate: (o) => {
+    return o && o.topic && o.topic.startsWith('orders_cross');
+  },
+  formater: (ds) => {
+    if (!ds) return null;
+    return usdtSwapUtils.formatUsdtSwapOrder(ds);
+  }
+};
+
 const coinSwapBalance = {
   notNull: [],
   chanel: o => [{ op: 'sub', topic: 'accounts.*' }],
@@ -377,6 +391,19 @@ const coinSwapBalance = {
     const { data, topic } = ds;
     if (!data) return false;
     const res = _.map(data, coinSwapUtils.formatCoinSwapBalance);
+    return res;
+  }
+};
+
+const usdtSwapBalance = {
+  ...coinSwapBalance,
+  chanel: o => [{ op: 'sub', topic: 'accounts_cross.*' }],
+  validate: o => o && o.topic && o.topic.startsWith('accounts_cross'),
+  formater: (ds) => {
+    if (!ds) return false;
+    const { data, topic } = ds;
+    if (!data) return false;
+    const res = _.map(data, usdtSwapUtils.formatUsdtSwapBalance);
     return res;
   }
 };
@@ -398,19 +425,42 @@ const coinSwapPosition = {
         delete d.lever_rate;// 第一次订阅的时候 lever rate是错的。。
       });
     }
-    // const p = _.filter(res, d => d.pair === 'CRV-USD')[0];
-    // if (p) console.log(p, 'ws position....');
+    return res;
+  }
+};
+
+const usdtSwapPosition = {
+  ...coinSwapPosition,
+  chanel: (o) => {
+    return [{ op: 'sub', cid: uuid('positions_cross'), topic: 'positions_cross.*' }];
+  },
+  validate: o => o && o.topic && o.topic.startsWith('positions_cross'),
+  formater: (ds) => {
+    if (!ds) return null;
+    const { data, topic } = ds;
+    if (!data) return null;
+    const res = usdtSwapUtils.formatUsdtSwapPositions(data);
+    if (topic === 'positions') {
+      _.forEach(res, (d) => {
+        delete d.lever_rate;// 第一次订阅的时候 lever rate是错的。。
+      });
+    }
     return res;
   }
 };
 
 module.exports = {
   ..._ws,
+  usdtSwapEstimateFunding: coinSwapEstimateFunding,
   coinSwapEstimateFunding,
   coinSwapBalance,
+  usdtSwapBalance,
   coinSwapPosition,
+  usdtSwapPosition,
   coinSwapOrders,
+  usdtSwapOrders,
   coinSwapDepth,
+  usdtSwapDepth: coinSwapDepth,
   // spot
   // ticks,
   spotDepth,

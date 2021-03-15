@@ -17,6 +17,8 @@ const { USER_AGENT, WS_BASE, SPOT_REST_BASE, USDT_CONTRACT_REST_BASE, COIN_CONTR
 const apiConfig = require('./meta/api');
 const wsFunctionConfig = require('./meta/ws');
 
+const { upperFirst } = _;
+
 function _parse(v) {
   return parseFloat(v, 10);
 }
@@ -254,6 +256,19 @@ class Exchange extends Base {
         console.log(`updateAssetLeverate/缺少baseType:${baseType}...`);
       }
     };
+
+    ['currentFunding', 'fundingHistory'].forEach((name) => {
+      this[name] = async (o = {}) => {
+        const baseType = this._getAssetBaseType(o);
+        const fnName = `${baseType}${upperFirst(name)}`;
+        if (this[fnName]) {
+          return await this[fnName]({ ...o });
+        } else {
+          console.log(999);
+          console.log(`binance.${name}/缺少baseType:${baseType}...`);
+        }
+      };
+    });
     // 更新
     // this.assetPositionsRisk = async (o = {}) => {
     //   const { assets } = o;

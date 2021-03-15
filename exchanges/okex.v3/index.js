@@ -14,6 +14,7 @@ const future_pairs = require('./meta/future_pairs.json');
 const swapUtils = require('./utils/swap');
 const spotUtils = require('./utils/spot');
 const futureUtils = require('./utils/future');
+const ef = require('./../../utils/formatter');
 
 //
 function _parse(v) {
@@ -60,7 +61,9 @@ class Exchange extends Base {
     return new Date().toISOString();
   }
   getPairs(o = {}) {
-    return o.pairs || future_pairs;
+    const { assets, pairs } = o;
+    if (assets) return _.map(assets, a => a.pair);
+    return pairs || future_pairs;
   }
   //
   initWs(o = {}) {
@@ -77,18 +80,19 @@ class Exchange extends Base {
     this.wsTicks = (o, cb) => this._addChanelV3('ticks', { pairs: this.getPairs(o) }, cb);
     this.wsFutureDepth = (o, cb) => this._addChanelV3('futureDepth', { ...o, pairs: this.getPairs(o) }, cb);
     this.wsFutureTicks = (o, cb) => this._addChanelV3('futureTicks', { pairs: this.getPairs(o), contract_type: o.contract_type }, cb);
-    this.wsFuturePosition = (o, cb) => this._addChanelV3('futurePosition', o, cb);
-    this.wsFutureBalance = (o, cb) => this._addChanelV3('futureBalance', o, cb);
+    this.wsFuturePositions = (o, cb) => this._addChanelV3('futurePositions', o, cb);
+    this.wsFutureBalances = (o, cb) => this._addChanelV3('futureBalances', o, cb);
     this.wsFutureOrders = (o, cb) => this._addChanelV3('futureOrders', o, cb);
     this.wsSpotOrders = (o, cb) => this._addChanelV3('spotOrders', o, cb);
     this.wsSpotDepth = (o, cb) => this._addChanelV3('spotDepth', { pairs: this.getPairs(o) }, cb);
-    this.wsSpotBalance = (o, cb) => this._addChanelV3('spotBalance', o, cb);
+    this.wsSpotBalances = (o, cb) => this._addChanelV3('spotBalances', o, cb);
     this.wsSwapTicks = (o, cb) => this._addChanelV3('swapTicks', o, cb);
     this.wsSwapDepth = (o, cb) => this._addChanelV3('swapDepth', o, cb);
     this.wsSwapFundRate = (o, cb) => this._addChanelV3('swapFundRate', o, cb);
+    this.wsSwapEstimateFunding = (o, cb) => this._addChanelV3('swapEstimateFunding', o, cb);
     this.wsMarginBalance = (o, cb) => this._addChanelV3('marginBalance', o, cb);
-    this.wsSwapBalance = (o, cb) => this._addChanelV3('swapBalance', o, cb);
-    this.wsSwapPosition = (o, cb) => this._addChanelV3('swapPosition', o, cb);
+    this.wsSwapBalances = (o, cb) => this._addChanelV3('swapBalances', o, cb);
+    this.wsSwapPositions = (o, cb) => this._addChanelV3('swapPositions', o, cb);
     this.wsSwapOrders = (o, cb) => this._addChanelV3('swapOrders', o, cb);
   }
   _addChanelV3(wsName, o = {}, cb) {
@@ -104,7 +108,7 @@ class Exchange extends Base {
     const validate = res => _.get(res, 'table') === fns.name;
     //
     ws.send(chanel);
-    const callback = this.genWsDataCallBack(cb, fns.formater);
+    const callback = this.genWsDataCallBack(cb, fns.formater, wsName);
     ws.onData(validate, callback);
   }
   genWsDataCallBack(cb, formater) {
@@ -115,7 +119,9 @@ class Exchange extends Base {
         const str = `${ds.error_message || error.getErrorFromCode(error_code)} | [ws]`;
         throw new Error(str);
       }
-      cb(formater(ds));
+      ds = formater(ds);
+      ds = this.wrapperInfo(ds);
+      cb(ds);
     };
   }
   loginWs() {
@@ -270,7 +276,15 @@ class Exchange extends Base {
     // }
     return body.data || body || false;
   }
-
+  _getAssetBaseType(o) {
+    if (ef.isFuture(o)) return 'future';
+    if (ef.isSwap(o) && ef.isUsdPair(o)) {
+      return 'swap';
+    }
+    if (ef.isSwap(o) && ef.isUsdtPair(o)) return 'usdtContract';
+    if (ef.isSpot(o)) return 'spot';
+    return 'none';
+  }
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);
     let { source, target, amount } = o;
@@ -279,6 +293,42 @@ class Exchange extends Base {
     target = target.toUpperCase();
     if ((source === 'OKB' && !(target in outs)) || (target === 'OKB' && !(source in outs))) return 0;
     return 0.002 * amount;
+  }
+  _compatible() {
+    this.updateAssetLeverate = async (o = {}) => {
+      const baseType = this._getAssetBaseType(o);
+      const coin = ef.getCoin(o);
+      const fnName = `${baseType}UpdateLeverate`;
+      if (this[fnName]) {
+        return await this[fnName]({ ...o, coin });
+      } else {
+        console.log(`updateAssetLeverate/缺少:${fnName}...`);
+      }
+    };
+    //
+    ['currentFunding', 'fundingHistory'].forEach((name) => {
+      this[name] = async (o = {}) => {
+        const baseType = this._getAssetBaseType(o);
+        const fnName = `${baseType}${_.upperFirst(name)}`;
+        if (this[fnName]) {
+          return await this[fnName]({ ...o });
+        } else {
+          console.log(`${name}/缺少函数:${fnName}...`);
+        }
+      };
+    });
+    this.assetLedgers = async ({ assets, type }) => {
+      let res = [];
+      for (const asset of assets) {
+        const baseType = this._getAssetBaseType(asset);
+        const fnName = `${baseType}Ledger`;
+        if (this[fnName]) {
+          const _res = await this[fnName]({ pair: asset.pair, type });
+          if (_res && _res.length) res = [...res, ..._res];
+        }
+      }
+      return res;
+    };
   }
 }
 

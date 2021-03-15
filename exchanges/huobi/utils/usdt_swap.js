@@ -22,8 +22,14 @@ function _parse(v) {
 }
 
 
-function _formatCoinSwapAsset(d) {
-  const pair = `${d.symbol}-USD`;
+function empty() {
+  return {};
+}
+// coinSwapOrders;
+
+
+function _formatUsdtSwapAsset(d) {
+  const pair = `${d.symbol}-USDT`;
   const res = {
     exchange,
     pair,
@@ -36,41 +42,61 @@ function _formatCoinSwapAsset(d) {
   return res;
 }
 
-function coinSwapAssets(ds) {
-  return _.map(ds, _formatCoinSwapAsset);
+function usdtSwapAssets(ds) {
+  const res = _.map(ds, _formatUsdtSwapAsset);
+  return res;
 }
 
-function _formatCoinSwapBalance(d) {
-  const pair = `${d.symbol}-USD`;
+function _formatUsdtSwapBalanceDetail(d) {
+  const res = {
+    coin: d.symbol,
+    pair: d.contract_code,
+    margin_used: _parse(d.margin_position),
+    margin: _parse(d.margin || d.margin_position),
+    margin_available: _parse(d.margin_available),
+    margin_locked: _parse(d.margin_frozen),
+    adjust_factor: _parse(d.adjust_factor),
+    profit_real: _parse(d.profit_real),
+    profit_unreal: _parse(d.profit_unreal),
+  };
+  if (d.liquidation_price) d.liquidation_price = _parse(d.liquidation_price);
+  if (d.lever_rate) res.lever_rate = _parse(d.lever_rate);
+  return res;
+}
+function _formatUsdtSwapBalance(d) {
   const res = {
     exchange,
     asset_type,
-    balance_type: 'COIN_SWAP',
-    coin: d.symbol,
-    pair,
+    balance_type: 'USDT_SWAP',
+    coin: 'USDT',
     account_rights: _parse(d.margin_balance),
     balance: _parse(d.margin_balance),
     risk_rate: d.risk_rate ? _parse(d.risk_rate) : null, // 保证金率
-    lever_rate: _parse(d.lever_rate),
     profit_real: _parse(d.profit_real),
     profit_unreal: _parse(d.profit_unreal),
     withdraw_available: _parse(d.withdraw_available),
-    adjust_factor: _parse(d.adjust_factor),
     margin_used: _parse(d.margin_position),
+    margin_locked: _parse(d.margin_frozen),
     margin: _parse(d.margin || d.margin_position),
-    liquidation_price: d.liquidation_price ? _parse(d.liquidation_price) : null,
     time: new Date()
   };
+
+  if (d.margin_available) res.margin_available = _parse(d.margin_available);
+  if (d.adjust_factor) res.adjust_factor = _parse(d.adjust_factor);
+  if (d.liquidation_price) d.liquidation_price = _parse(d.liquidation_price);
+  if (d.lever_rate) res.lever_rate = _parse(d.lever_rate);
+  if (d.contract_detail) res.detail = _.map(d.contract_detail, _formatUsdtSwapBalanceDetail);
   res.balance_id = ef.getBalanceId(res);
   return res;
 }
 
-function coinSwapBalances(ds) {
-  return _.map(ds, _formatCoinSwapBalance);
+function usdtSwapBalances(ds) {
+  const res = _.map(ds, _formatUsdtSwapBalance);
+  return res;
 }
 
 // 仓位
-function formatSwapCoinPositions(ds, o) {
+function formatUsdtSwapPositions(ds, o) {
   const group = _.groupBy(ds, d => d.contract_code);
   const res = [];
   _.forEach(group, (arr, contract_code) => {
@@ -120,16 +146,13 @@ function formatSwapCoinPositions(ds, o) {
   return res;
 }
 
-function coinSwapPositionsO(o) {
-  return {};
-}
-function coinSwapPositions(ds, o) {
-  return formatSwapCoinPositions(ds);
+function usdtSwapPositions(ds) {
+  return formatUsdtSwapPositions(ds);
 }
 
 
-function coinSwapOrderO(o = {}) {
-  const { amount, lever_rate, asset_type, client_oid, price, pair } = o;
+function usdtSwapOrderO(o = {}) {
+  const { amount, lever_rate, client_oid, price, pair } = o;
   o.direction = o.direction.toLowerCase();
   o.side = o.side.toUpperCase();
   //
@@ -144,14 +167,15 @@ function coinSwapOrderO(o = {}) {
   if (client_oid) opt.client_order_id = client_oid;
   return opt;
 }
-function coinSwapOrder(d, o) {
+
+function usdtSwapOrder(d, o) {
   const res = { ...o, order_id: d.order_id_str };
   if (d.client_order_id) res.client_oid = `${d.client_order_id}`;
   return res;
 }
 
 
-function coinSwapCancelOrderO(o) {
+function usdtSwapCancelOrderO(o) {
   const { pair } = o;
   const opt = { contract_code: pair };
   if (o.order_id) opt.order_id = `${o.order_id}`;
@@ -159,14 +183,14 @@ function coinSwapCancelOrderO(o) {
   return opt;
 }
 
-function coinSwapCancelOrder(res, o) {
+function usdtSwapCancelOrder(res, o) {
   return [...processContractCancelOrderErrors(res, o), ...processContractCancelOrderSuccesses(res, o)].filter(d => d)[0];
 }
 
-function _formatCoinSwapOrder(l, o) {
+function _formatUsdtSwapOrder(l, o) {
   const { status, symbol: coin, trade, profit, price, lever_rate, volume: amount, create_date, created_at, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
   const ct = create_date || created_at;
-  const pair = l.contract_code || `${coin}-USD`;
+  const pair = l.contract_code || `${coin}-USDT`;
   const order_id = l.order_id_str || `${l.order_id}`;
   const res = {
     coin,
@@ -195,7 +219,7 @@ function _formatCoinSwapOrder(l, o) {
 }
 
 
-function coinSwapOrderInfoO(o = {}) {
+function usdtSwapOrderInfoO(o = {}) {
   const res = {
     contract_code: o.pair
   };
@@ -203,24 +227,26 @@ function coinSwapOrderInfoO(o = {}) {
   if (o.client_oid) res.client_order_id = formatDotArray(o.client_oid);
   return res;
 }
-function coinSwapOrderInfo(res, o) {
+function usdtSwapOrderInfo(res, o) {
   if (!res || res.error) return false;
-  res = _.map(res, d => _formatCoinSwapOrder(d, o));
+  res = _.map(res, d => _formatUsdtSwapOrder(d, o));
   if (res && res.length === 1) res = res[0];
   return res;
 }
 
-function coinSwapUnfinishOrdersO(o = {}) {
+
+function usdtSwapUnfinishOrdersO(o = {}) {
   return { contract_code: o.pair };
 }
-function coinSwapUnfinishOrders(ds, o) {
-  return _.map(ds.orders, d => _formatCoinSwapOrder(d, o));
+function usdtSwapUnfinishOrders(ds, o) {
+  return _.map(ds.orders, d => _formatUsdtSwapOrder(d, o));
 }
 
-function coinSwapOrderDetailsO(o = {}) {
+
+function usdtSwapOrderDetailsO(o = {}) {
   return { contract_code: o.pair, trade_type: 0, create_date: 1 };
 }
-function _formatCoinSwapOrderDetail(d, o) {
+function _formatUsdtSwapOrderDetail(d, o) {
   const res = {
     exchange,
     asset_type: 'SWAP',
@@ -239,21 +265,22 @@ function _formatCoinSwapOrderDetail(d, o) {
   res.instrument_id = ef.getInstrumentId(res);
   return res;
 }
-function coinSwapOrderDetails(ds, o) {
-  return _.map(ds.trades, d => _formatCoinSwapOrderDetail(d, o));
+function usdtSwapOrderDetails(ds, o) {
+  return _.map(ds.trades, d => _formatUsdtSwapOrderDetail(d, o));
 }
 
-function coinSwapUpdateLeverateO(o) {
+function usdtSwapUpdateLeverateO(o) {
   const { lever_rate, pair } = o;
   return { contract_code: pair, lever_rate };
 }
-function coinSwapUpdateLeverate(res, o) {
+function usdtSwapUpdateLeverate(res, o) {
   if (!res) return null;
   const { lever_rate } = res;
   return { ...o, lever_rate };
 }
 
-function coinSwapFundingHistoryO(o = {}) {
+
+function usdtSwapFundingHistoryO(o = {}) {
   return { contract_code: o.pair };
 }
 function _formatFundingRate(d, o) {
@@ -274,11 +301,10 @@ function _formatFundingRate(d, o) {
   return res;
 }
 
-function coinSwapFundingHistory(res, o) {
+function usdtSwapFundingHistory(res, o) {
   return _.map(res.data, d => _formatFundingRate(d, o));
 }
-
-function coinSwapCurrentFunding(d, o) {
+function usdtSwapCurrentFunding(d, o) {
   return {
     exchange,
     asset_type,
@@ -291,28 +317,6 @@ function coinSwapCurrentFunding(d, o) {
   };
 }
 
-function coinSwapMoveBalanceO(o = {}) {
-  const opt = { currency: o.coin, amount: o.amount };
-  const source = o.source.toUpperCase();
-  const target = o.target.toUpperCase();
-  if (source === 'COIN_SWAP' && target === 'SPOT') {
-    opt.from = 'swap';
-    opt.to = 'spot';
-  } else if (source === 'SPOT' && target === 'COIN_SWAP') {
-    opt.from = 'spot';
-    opt.to = 'swap';
-  } else {
-    console.log('coinSwapMoveBalanceO/from | to 错误...');
-  }
-  return opt;
-}
-
-function coinSwapMoveBalance(res, o) {
-  if (typeof res === 'number' || typeof res === 'string') return { success: true, txid: `${res}`, ...o };
-  return false;
-}
-
-
 const ledgerTypeMap = {
   [ef.ledgerTypes.FUNDING_RATE]: '30,31',
 };
@@ -321,18 +325,18 @@ const reverseLedgerTypeMap = {
   31: ef.ledgerTypes.FUNDING_RATE,
 };
 
-function coinSwapLedgerO(o) {
+function usdtSwapLedgerO(o) {
   const { type, pair } = o;
-  const opt = { contract_code: pair };
+  const opt = { contract_code: pair, margin_account: 'USDT' };
   if (type) opt.type = ledgerTypeMap[type];
   return opt;
 }
 
-function _formatCoinSwapLedger(d) {
+function _formatUsdtSwapLedger(d) {
   return {
     id: d.id,
     asset_type: 'SWAP',
-    pair: `${d.symbol}-USD`,
+    pair: d.contract_code,
     exchange,
     type: reverseLedgerTypeMap[d.type],
     balance: d.amount,
@@ -340,54 +344,75 @@ function _formatCoinSwapLedger(d) {
     time: new Date(d.ts),
   };
 }
-function coinSwapLedger(ds) {
-  return ds ? _.map(ds.financial_record, _formatCoinSwapLedger) : [];
+
+function usdtSwapLedger(ds) {
+  return ds ? _.map(ds.financial_record, _formatUsdtSwapLedger) : [];
 }
 
-function coinSwapOrdersO(o = {}) {
+function usdtSwapMoveBalanceO(o = {}) {
+  const opt = { currency: o.coin, amount: o.amount, 'margin-account': 'USDT' };
+  const source = o.source.toUpperCase();
+  const target = o.target.toUpperCase();
+  if (source === 'USDT_SWAP' && target === 'SPOT') {
+    opt.from = 'linear-swap';
+    opt.to = 'spot';
+  } else if (source === 'SPOT' && target === 'USDT_SWAP') {
+    opt.from = 'spot';
+    opt.to = 'linear-swap';
+  } else {
+    console.log('coinSwapMoveBalanceO/from | to 错误...');
+  }
+  opt.currency = 'USDT';
+  return opt;
+}
+
+function usdtSwapMoveBalance(res, o) {
+  if (typeof res === 'number' || typeof res === 'string') return { success: true, txid: `${res}`, ...o };
+  return false;
+}
+
+
+function usdtSwapOrdersO(o = {}) {
   const opt = { contract_code: o.pair, trade_type: 0, status: 0, type: 0, create_date: 0 };
   return opt;
 }
 
-function coinSwapOrders(ds) {
-  const res = _.map(ds.orders, _formatCoinSwapOrder);
+function usdtSwapOrders(ds) {
+  const res = _.map(ds.orders, _formatUsdtSwapOrder);
   return res;
 }
 
-function empty() {
-  return {};
-}
-// coinSwapOrders;
-
 module.exports = {
-  coinSwapOrderO,
-  coinSwapOrder,
-  coinSwapOrdersO,
-  coinSwapOrders,
-  coinSwapLedgerO,
-  coinSwapLedger,
-  formatCoinSwapBalance: _formatCoinSwapBalance,
-  formatCoinSwapOrder: _formatCoinSwapOrder,
-  formatSwapCoinPositions,
-  coinSwapMoveBalanceO,
-  coinSwapMoveBalance,
-  coinSwapFundingHistoryO,
-  coinSwapFundingHistory,
-  coinSwapCurrentFundingO: coinSwapFundingHistoryO,
-  coinSwapCurrentFunding,
-  coinSwapUpdateLeverateO,
-  coinSwapUpdateLeverate,
-  coinSwapOrderDetailsO,
-  coinSwapOrderDetails,
-  coinSwapUnfinishOrdersO,
-  coinSwapUnfinishOrders,
-  coinSwapOrderInfoO,
-  coinSwapOrderInfo,
-  coinSwapAssetsO: empty,
-  coinSwapAssets,
-  coinSwapBalances,
-  coinSwapPositionsO,
-  coinSwapPositions,
-  coinSwapCancelOrderO,
-  coinSwapCancelOrder
+  usdtSwapOrdersO,
+  usdtSwapOrders,
+  formatUsdtSwapBalance: _formatUsdtSwapBalance,
+  formatUsdtSwapOrder: _formatUsdtSwapOrder,
+  usdtSwapMoveBalanceO,
+  usdtSwapMoveBalance,
+  usdtSwapLedgerO,
+  usdtSwapLedger,
+  usdtSwapCurrentFundingO: usdtSwapFundingHistoryO,
+  usdtSwapCurrentFunding,
+  usdtSwapFundingHistoryO,
+  usdtSwapFundingHistory,
+  usdtSwapUpdateLeverateO,
+  usdtSwapUpdateLeverate,
+  usdtSwapOrderDetailsO,
+  usdtSwapOrderDetails,
+  usdtSwapUnfinishOrdersO,
+  usdtSwapUnfinishOrders,
+  usdtSwapOrderInfoO,
+  usdtSwapOrderInfo,
+  usdtSwapCancelOrderO,
+  usdtSwapCancelOrder,
+  usdtSwapOrderO,
+  usdtSwapOrder,
+  formatUsdtSwapPositions,
+  //
+  usdtSwapAssetsO: empty,
+  usdtSwapAssets,
+  usdtSwapBalancesO: empty,
+  usdtSwapBalances,
+  usdtSwapPositionsO: empty,
+  usdtSwapPositions
 };
