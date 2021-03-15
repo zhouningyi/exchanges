@@ -52,6 +52,6 @@ function main() {
 
   //
 }
-main();
+// main();
 console.log(2222);
 module.exports = main;

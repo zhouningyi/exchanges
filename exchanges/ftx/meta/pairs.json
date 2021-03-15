@@ -1,0 +1,38 @@
+{
+  "btcusdt": {
+    "pair": "BTC-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "btcusdt"
+  },
+  "ethusdt": {
+    "pair": "ETH-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "ethusdt"
+  },
+  "bchusdt": {
+    "pair": "BCH-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "bchusdt"
+  },
+  "ltcusdt": {
+    "pair": "LTC-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "ltcusdt"
+  },
+  "etcusdt": {
+    "pair": "ETC-USDT",
+    "price_decimal": 2,
+    "amount_decimal": 4,
+    "symbol": "etcusdt"
+  },
+  "xrpusdt": {
+    "pair": "XRP-USDT",
+    "price_decimal": 6,
+    "amount_decimal": 4,
+    "symbol": "xrpusdt"
+  }
+}
