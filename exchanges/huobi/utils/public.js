@@ -470,7 +470,7 @@ const contractOrderPriceTypeMap = {
   lightning: 'LIGHTNING',
   post_only: 'MAKER_ONLY',
   1: 'LIMIT',
-  2: 'MARKET'
+  2: 'MARKET',
 };
 
 

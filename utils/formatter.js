@@ -21,6 +21,7 @@ const CONTRACT_ASSETS = [SWAP_ASSET, ...FUTURE_ASSETS];
 const getAssetType = o => (o && o.asset_type) ? upper(o.asset_type) : null;
 const _getExchange = o => (o && o.exchange) ? upper(o.exchange) : null;
 const getCoin = (o) => {
+  if (!o) return null;
   const { coin, type = 'left' } = o;
   if (coin) return coin;
   if (type === 'right') return pair2coinRight(o.pair);

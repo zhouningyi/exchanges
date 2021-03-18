@@ -208,7 +208,8 @@ function _formatUsdtContractOrders(ds) {
   return _.map(ds, d => _formatUsdtContractOrder(d));
 }
 
-function usdtContractOrders(ds) {
+function usdtContractOrders(ds, o) {
+  console.log(_.filter(ds, d => d.symbol === 'BTCUSDT'), 999999);
   return _.map(ds, _formatUsdtContractOrder);
 }
 
