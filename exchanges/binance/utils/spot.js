@@ -241,7 +241,7 @@ function spotMoveBalance(res, o) {
 }
 
 function spotSystemStatus(ds) {
-  console.log(ds, 'ds....');
+  // console.log(ds, 'ds....');
 }
 
 module.exports = {

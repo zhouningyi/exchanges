@@ -223,8 +223,11 @@ function getOrderStatusOptions(d) {
 function _formatOrderO(o) {
   const symbol = getSymbolId(o);
   const opt = { symbol };
-  if (o.order_id)opt.orderId = o.order_id;
-  if (o.client_oid)opt.origClientOrderId = o.client_oid;
+  if (o.order_id) {
+    opt.orderId = o.order_id;
+  } else if (o.client_oid) {
+    opt.origClientOrderId = o.client_oid;
+  }
   return opt;
 }
 

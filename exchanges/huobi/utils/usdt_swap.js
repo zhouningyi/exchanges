@@ -12,7 +12,6 @@ const asset_type = 'SWAP';
 
 const { checkKey } = Utils;
 
-
 function direct(d) {
   return d;
 }

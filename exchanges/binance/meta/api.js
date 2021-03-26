@@ -182,6 +182,19 @@ const usdtContractConfig = {
     method: 'DELETE',
     sign: true
   },
+  usdtContractPositionMode: {
+    name_cn: 'usdt合约持仓模式查询(所有symbol)',
+    endpoint: 'fapi/v1/positionSide/dual',
+    method: 'GET',
+    sign: true
+  },
+  usdtContractUpdatePositionMode: {
+    name_cn: '变换用户的持仓模式(所有symbol)',
+    endpoint: 'fapi/v1/positionSide/dual',
+    method: 'POST',
+    notNull: ['position_mode'],
+    sign: true
+  },
   usdtContractOrderInfo: {
     name_cn: 'USDT合约订单详情',
     endpoint: 'fapi/v1/order',
@@ -350,6 +363,19 @@ const coinContractConfig = {
     notNull: ['pair'],
     method: 'GET',
     sign: false
+  },
+  coinContractPositionMode: {
+    name_cn: '币本位合约持仓模式查询(所有symbol)',
+    endpoint: 'dapi/v1/positionSide/dual',
+    method: 'GET',
+    sign: true
+  },
+  coinContractUpdatePositionMode: {
+    name_cn: '币本位变换用户的持仓模式(所有symbol)',
+    endpoint: 'dapi/v1/positionSide/dual',
+    method: 'POST',
+    notNull: ['position_mode'],
+    sign: true
   },
 };
 

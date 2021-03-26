@@ -219,7 +219,7 @@ function swapPositions(ds, o) {
 function _formatBalance(line) {
   const { instrument_id } = line;
   const pair = inst2pair(instrument_id);
-  const coin = pair2coin(pair);
+  const coin = pair.endsWith('USDT') ? 'USDT' : pair2coin(pair);
   // console.log(line, 'line...');
   const res = cleanObjectNull({
     exchange,
@@ -289,6 +289,7 @@ function swapOrdersO(o) {
 function formatSwapOrder(d, o) {
   const res = futureApiUtils.formatContractOrder(d, o);
   if (d.instrument_id) res.pair = inst2pair(d.instrument_id);
+  res.exchange = exchange;
   res.asset_type = asset_type;
   res.instrument = 'swap';
   res.instrument_id = ef.getInstrumentId(res);

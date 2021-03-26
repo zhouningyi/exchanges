@@ -210,7 +210,7 @@ class WS extends Event {
       // console.log('pong');
     });
     ws.on('ping', () => {
-      console.log('ping');
+      // console.log('ping');
     });
     // ws.on('connection', (socket) => {
     //   console.log(socket, 'socket...');

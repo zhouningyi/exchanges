@@ -269,6 +269,22 @@ class Exchange extends Base {
         }
       };
     });
+
+    const fns = ['updatePostionMode', 'positionMode'];
+    for (const name of fns) {
+      const fnName = `asset${upperFirst(name)}`;
+      this[fnName] = async (o = {}) => {
+        let res = [];
+        const { assets, ...rest } = o;
+        const osGroup = _.groupBy(assets, a => this._getAssetBaseType(a));
+        for (const assetBaseType in osGroup) {
+          const baseFnName = `${assetBaseType}${upperFirst(name)}`;
+          const _res = await this[baseFnName]();
+          res = [...res, ..._res];
+        }
+        return res;
+      };
+    }
     // 更新
     // this.assetPositionsRisk = async (o = {}) => {
     //   const { assets } = o;

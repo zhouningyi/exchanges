@@ -278,10 +278,7 @@ class Exchange extends Base {
   }
   _getAssetBaseType(o) {
     if (ef.isFuture(o)) return 'future';
-    if (ef.isSwap(o) && ef.isUsdPair(o)) {
-      return 'swap';
-    }
-    if (ef.isSwap(o) && ef.isUsdtPair(o)) return 'usdtContract';
+    if (ef.isSwap(o)) return 'swap';
     if (ef.isSpot(o)) return 'spot';
     return 'none';
   }

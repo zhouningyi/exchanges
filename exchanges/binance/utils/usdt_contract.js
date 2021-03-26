@@ -1,7 +1,7 @@
 const publicUtils = require('./public');
 const ef = require('./../../../utils/formatter');
 const _ = require('lodash');
-const { cleanObjectNull, getFutureSettlementTime2, getTimeString } = require('./../../../utils');
+const { cleanObjectNull, getFutureSettlementTime2, getTimeString, isNull } = require('./../../../utils');
 
 const { getOrderTypeOptions, formatInterval, getPrecision, formatSymbolPair, parse: _parse, getOrderDirectionOptions, pair2symbol, parseOrderStatusOptions, parseOrderDirectionOptions, getSymbolId } = publicUtils;
 
@@ -118,6 +118,7 @@ function _formatUsdtContractBalanace(d, o) {
 const usdtContractBalances = (ds, o = {}) => _.map(ds, d => _formatUsdtContractBalanace(d, o));
 
 function _formatUsdtContractPosition(d) {
+  console.log(d, 'd....d.....');
   const info = parseSymbolId(d);
   const res = {
     exchange,
@@ -154,7 +155,7 @@ const usdtContractPositions = (ds, o) => {
     } else {
       const arrg = _.keyBy(arr, d => d.position_side);
       const long_vector = arrg.LONG.vector;
-      const short_vector = arrg.SHORT.vector;
+      const short_vector = -arrg.SHORT.vector;
       const vector = long_vector + short_vector;
       const _res = { ...arrg.LONG, position_side: 'LONG_SHORT', vector, amount: Math.abs(vector), long_vector, short_vector };
       result.push(_res);
@@ -185,7 +186,7 @@ function _formatUsdtContractOrder(d, o = {}) {
 
   if (d.executedQty)res.filled_amount = _parse(d.executedQty);
 
-  if (d.time || d.updateTime) res.time = new Date(d.time || d.updateTime);
+  if (d.updateTime || d.time) res.time = new Date(d.updateTime || d.time);
   if (d.maker || d.maker === false)res.maker = d.maker;
   if (d.price) res.price = _parse(d.price);
   if (d.positionSide) res.position_side = d.positionSide;
@@ -193,12 +194,20 @@ function _formatUsdtContractOrder(d, o = {}) {
 
   if (d.type && !res.type) res.type = d.type;
   if (d.commission) res.fee = _parse(d.commission);
-  if (d.eventTime || d.updateTime) {
-    res.server_updated_at = new Date(d.eventTime || d.updateTime);
+  if (d.updateTime) {
+    res.server_updated_at = new Date(d.updateTime);
   }
   if (d.time && !res.server_updated_at) {
     res.server_updated_at = new Date(d.time);
   }
+
+  if (!isNull(d.reduceOnly)) res.reduce_only = d.reduceOnly;
+  if (!isNull(d.activatePrice)) res.event_activate_price = _parse(d.activatePrice);
+  if (!isNull(d.stopPrice)) res.event_stop_price = _parse(d.stopPrice);
+  if (!isNull(d.priceRate)) res.event_price_rate = _parse(d.priceRate);
+  if (!isNull(d.workingType))res.order_working_type = d.workingType;
+  if (!isNull(d.origType))res.origin_type = d.origType;
+
   if (['STOP_MARKET', 'TAKE_PROFIT_MARKET'].includes(res.type) && !['UNFINISH', 'CANCEL'].includes(res.status)) console.log(res, 'res....');
   return cleanObjectNull(res);
 }
@@ -209,7 +218,6 @@ function _formatUsdtContractOrders(ds) {
 }
 
 function usdtContractOrders(ds, o) {
-  console.log(_.filter(ds, d => d.symbol === 'BTCUSDT'), 999999);
   return _.map(ds, _formatUsdtContractOrder);
 }
 
@@ -353,7 +361,27 @@ function usdtContractCurrentFunding(ds, o) {
   });
 }
 
+function usdtContractPositionMode(o) {
+  let position_side = null;
+  if (o.dualSidePosition === false) {
+    position_side = 'BOTH';
+  } else if (o.dualSidePosition === true) {
+    position_side = 'LONG_SHORT';
+  }
+  return [{ balance_type, position_side }];
+}
+
+function usdtContractUpdatePositionModeO(o) {
+}
+
+function usdtContractUpdatePositionMode(d) {
+  console.log(d, 'usdtContractUpdatePositionMode..');
+}
 module.exports = {
+  usdtContractPositionModeO: empty,
+  usdtContractUpdatePositionModeO,
+  usdtContractUpdatePositionMode,
+  usdtContractPositionMode,
   usdtContractCurrentFundingO,
   usdtContractCurrentFunding,
   usdtContractFundingHistoryO,

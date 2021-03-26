@@ -175,7 +175,10 @@ const usdtContractConfig = {
     name: 'USDT合约仓位',
     streamName: 'listenKey',
     chanel: 'ACCOUNT_UPDATE',
-    formater: wsCoinContractPositionsFormater,
+    formater: (d) => {
+      const res = wsCoinContractPositionsFormater(d);
+      return res;
+    },
     sign: true
   },
   wsUsdtContractBalances: {
@@ -247,10 +250,17 @@ function _parseWsOrder(d, o) {
     m: maker,
     T: time,
     rp: realizedPnl,
-    ot: type
+    R: reduceOnly,
+    o: type,
+    ot: origType,
+    AP: activatePrice,
+    cr: priceRate,
+    wt: workingType,
    } = d;
+
   const orginOrder = {
     type,
+    origType,
     status,
     time,
     symbol,
@@ -266,7 +276,12 @@ function _parseWsOrder(d, o) {
     maker,
     side,
     realizedPnl,
+    reduceOnly,
+    activatePrice,
+    priceRate,
+    workingType,
   };
+  if (o.asset_type) orginOrder.asset_type = o.asset_type;
   return coinContractUtils.formatCoinContractOrder(orginOrder, o);
 }
 
@@ -274,14 +289,22 @@ function _parseWsCoinContractOrder(d, o) {
   return _parseWsOrder(d, o);
 }
 
+function prefixUsdtSwapSymbol({ symbol }) {
+  if (symbol && symbol.endsWith('USDT')) {
+    return `${symbol}_PERP`;
+  }
+  return symbol;
+}
+
 function wsCoinContractOrderFormater(d, o) {
   const { o: order } = d;
-  const { s: symbol } = order;
-  return [{
+  const symbol = prefixUsdtSwapSymbol({ symbol: order.s });
+  const res = [{
     ...getWsOptions(d),
-    ...publicUtils.parseSymbolId({ symbol }),
+    ...publicUtils.parseSymbolId({ ...o, symbol }),
     ..._parseWsCoinContractOrder(order, { ...o }),
   }];
+  return res;
 }
 
 function wsCoinContractBalancesFormater(d) {
@@ -302,11 +325,11 @@ function wsRequestCoinContractPositionsFormater(d) {
 function wsCoinContractPositionsFormater(d) {
   const account = d.a;
   if (!account) return null;
-  const res = _.map(account.P, (p) => {
+  const originPositions = _.map(account.P, (p) => {
     const { s: symbol, pa: positionAmt, ep: entryPrice, up: unrealizedProfit, ps: positionSide } = p;
-    const originPosition = { symbol, positionAmt, asset_type: 'SWAP', entryPrice, unrealizedProfit, positionSide };
-    return { ...coinContractUtils.formatCoinContractPosition(originPosition) };
+    return { symbol, positionAmt, asset_type: 'SWAP', entryPrice, unrealizedProfit, positionSide };
   });
+  const res = coinContractUtils.coinContractPositionsBase(originPositions);
   return res;
 }
 

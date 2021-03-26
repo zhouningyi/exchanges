@@ -30,6 +30,7 @@ const getCoin = (o) => {
 const getPair = o => upper(o.pair);
 //
 const coin_contract_bases = ['COIN_CONTRACT', 'COIN_SWAP', 'FUTURE'];
+const usdt_contract_bases = ['USDT_SWAP', 'USDT_CONTRACT'];
 const isSpot = o => getAssetType(o) === SPOT_ASSET || getBalanceType(o) === SPOT_ASSET;
 const isFuture = o => FUTURE_ASSETS.includes(getAssetType(o));
 const isContract = o => CONTRACT_ASSETS.includes(getAssetType(o)) || (o && ['USDT_CONTRACT', 'COIN_CONTRACT', 'SWAP', 'COIN_SWAP', 'FUTURE'].includes(o.balance_type));
@@ -40,7 +41,7 @@ const isReverseContract = (o) => {
   if (isContract(o) && isUsdPair(o)) return true;
   return false;
 };
-const isForwardContract = o => isContract(o) && getPair(o).endsWith('-USDT');
+const isForwardContract = o => isContract(o) && ((getPair(o) && getPair(o).endsWith('-USDT')) || usdt_contract_bases.includes(o.balance_type));
 const pair2coin = pair => pair ? upper(pair.split('-')[0]) : null;
 const pair2coinRight = pair => pair ? upper(pair.split('-')[1]) : null;
 const isUSDX = o => getPair(o) && getPair(o).indexOf('-USD') !== -1;

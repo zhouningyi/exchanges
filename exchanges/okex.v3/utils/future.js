@@ -139,6 +139,7 @@ function futurePositionO(o) {
 const balance_type = 'FUTURE';
 //
 function _formatBalance(line, coin) {
+  coin = coin || line.currency;
   coin = coin.toUpperCase();
   const res = cleanObjectNull({
     exchange,
@@ -170,10 +171,10 @@ function futureBalances(ds) {
 }
 
 function futureBalanceO(o = {}) {
-  return o;
+  return { pair: o.pair };
 }
 function futureBalance(d, o) {
-  return _formatBalance(d, o.coin);
+  return _formatBalance(d, ef.getCoin(o));
 }
 
 // function futureLedgerO(o = {}) {
@@ -339,6 +340,7 @@ const reverseFutureStatusMap = _.invert(futureStatusMap);
 
 function formatContractOrder(l, o) {
   const res = {
+    exchange,
     instrument_id: l.instrument_id,
     amount: _parse(l.size),
     filled_amount: _parse(l.filled_qty),

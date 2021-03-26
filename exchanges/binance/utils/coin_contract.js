@@ -5,7 +5,7 @@ const md5 = require('md5');
 // const moment = require('moment');
 const error = require('./../errors');
 const ef = require('./../../../utils/formatter');
-const { cleanObjectNull } = require('./../../../utils');
+const { cleanObjectNull, isNull } = require('./../../../utils');
 const { coin2pair } = require('./public');
 const { pair2coin } = require('./../../../utils/formatter');
 
@@ -58,6 +58,14 @@ function _formatCoinContractOrder(d, o = {}) {
     res.server_updated_at = new Date(d.time);
   }
   if (d.type && !res.type) res.type = d.type;
+
+  if (!isNull(d.reduceOnly)) res.reduce_only = d.reduceOnly;
+  if (!isNull(d.activatePrice)) res.event_activate_price = _parse(d.activatePrice);
+  if (!isNull(d.stopPrice)) res.event_stop_price = _parse(d.stopPrice);
+  if (!isNull(d.priceRate)) res.event_price_rate = _parse(d.priceRate);
+  if (!isNull(d.workingType))res.order_working_type = d.workingType;
+  if (!isNull(d.origType))res.origin_type = d.origType;
+
   return cleanObjectNull(res);
 }
 
@@ -154,13 +162,13 @@ function coinContractPositionsBase(ds, o) {
     } else {
       const arrg = _.keyBy(arr, d => d.position_side);
       const long_vector = arrg.LONG.vector;
-      const short_vector = arrg.SHORT.vector;
+      const short_vector = -arrg.SHORT.vector;
       const vector = long_vector + short_vector;
       const _res = { ...arrg.LONG, position_side: 'LONG_SHORT', vector, amount: Math.abs(vector), long_vector, short_vector };
       result.push(_res);
     }
   }
-  return res;
+  return result;
 }
 
 function coinContractPositions(ds) {
@@ -340,7 +348,27 @@ function empty() {
   return {};
 }
 
+function coinContractPositionMode(o = {}) {
+  let position_side = null;
+  if (o.dualSidePosition === false) {
+    position_side = 'BOTH';
+  } else if (o.dualSidePosition === true) {
+    position_side = 'LONG_SHORT';
+  }
+  return [{ balance_type, position_side }];
+}
+
+function coinContractUpdatePositionModeO(o) {
+}
+
+function coinContractUpdatePositionMode(d) {
+  console.log(d, 'usdtContractUpdatePositionMode..');
+}
+
 module.exports = {
+  coinContractPositionMode,
+  coinContractUpdatePositionModeO,
+  coinContractUpdatePositionMode,
   coinContractFundingHistoryO,
   coinContractFundingHistory,
   coinContractCurrentFundingO,
