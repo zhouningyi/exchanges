@@ -134,7 +134,8 @@ class WS extends Event {
           this.registerFunc(connectionId, o.name, async (data) => {
             if (o.chanel) {
               const channelF = typeof (o.chanel) === 'function' ? o.chanel : d => d.e === o.chanel;
-              if (channelF(data)) {
+              const cdata = Array.isArray(data) ? data[0] : data;
+              if (channelF(cdata)) {
                 data = o.formater(data, opt);
                 data = this._formatResult(data);
                 if (cb) cb(data);
@@ -240,6 +241,10 @@ class WS extends Event {
   _onCallback(data, { connectionId }) {
     try {
       data = processWsData(data);
+      // if ((data && data.e !== 'depthUpdate') && !(data.stream && data.stream.indexOf('depth') !== -1)) {
+      //   console.log(data, 999999);
+      // }
+      // console.log(data, '====');
       // process.exit();
       checkError(data);
     } catch (error) {

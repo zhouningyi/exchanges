@@ -91,11 +91,23 @@ module.exports = {
     endpoint: 'account/v3/withdrawal/history',
     sign: true,
   },
+  depositHistory: {
+    name: 'depositHistory',
+    name_cn: '充值历史',
+    endpoint: 'account/v3/deposit/history',
+    sign: true,
+  },
   walletLedger: {
     name: 'walletLedger',
     name_cn: '流水',
     sign: true,
     endpoint: 'account/v3/ledger',
+  },
+  walletBalances: {
+    name: 'walletBalances',
+    name_cn: '钱包余额',
+    sign: true,
+    endpoint: 'account/v3/wallet',
   },
   // // // // // // // 现货部分  // // // // // // //
   spotOrderDetails: {

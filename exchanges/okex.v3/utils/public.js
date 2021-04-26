@@ -194,19 +194,6 @@ function moveBalance(res, o = {}) {
   };
 }
 
-// 提币历史
-function withdrawHistoryO(o = {}) {
-  return o;
-}
-
-function _formatWithDrawHistory(d) {
-  const { fee, amount, timestamp, from: source, to: target, txid, tag, currency: coin, payment_id } = d;
-  const time = new Date(timestamp);
-  return { unique_id: md5(`${time.getTime()}_${coin}_${source}_${target}`), txid, tag, payment_id, time, fee, amount, coin, source, target };
-}
-function withdrawHistory(ds, o) {
-  return _.map(ds, _formatWithDrawHistory);
-}
 
 // 流水
 const ledgerMap = {
@@ -424,9 +411,16 @@ function orderO(o) {
       price: o.price,
       size: o.amount
     };
-  } else {
+  } else if (type.toUpperCase() === 'MARKET') {
+    res = {
+      ...res,
+      type: 'market',
+      instrument_id: o.pair,
+      size: o.amount
+    };
     // checkKey(o, ['price', 'amount']);
-    console.log('市价单还没做...');
+  } else {
+    console.log('public.orderO/下单不明情况...');
     process.exit();
   }
   return res;
@@ -561,8 +555,6 @@ module.exports = {
   // 资金流动
   moveBalanceO,
   moveBalance,
-  withdrawHistoryO,
-  withdrawHistory,
   walletLedgerO,
   walletLedger,
   orderO,

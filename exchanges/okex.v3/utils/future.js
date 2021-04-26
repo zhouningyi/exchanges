@@ -103,7 +103,6 @@ function _formatFuturePosition(line) {
 function futurePositions(ds) {
   if (!ds || !ds.result) throwError('futurePositions 返回错误');
   const res = _.map(_.flatten(ds.holding), _formatFuturePosition);
-  // console.log(res, 'res....');
   return res;
 }
 
@@ -267,6 +266,7 @@ function futureOrderO(o = {}) {
   };
   if (client_oid) res.client_oid = `${client_oid}`;
   if (order_type) res.order_type = orderTypeMap[order_type.toUpperCase()];
+  if (o.type && o.type.toUpperCase() === 'MARKET') res.order_type = 4;
   return res;
 }
 function futureOrder(line, o = {}) {

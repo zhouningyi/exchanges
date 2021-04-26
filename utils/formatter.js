@@ -41,17 +41,30 @@ const isReverseContract = (o) => {
   if (isContract(o) && isUsdPair(o)) return true;
   return false;
 };
-const isForwardContract = o => isContract(o) && ((getPair(o) && getPair(o).endsWith('-USDT')) || usdt_contract_bases.includes(o.balance_type));
+
+const isForwardContract = (o) => { // 是否正向合约
+  if (isContract(o)) {
+    const { exchange } = o;
+    if (['HUOBI', 'BINANCE', 'OKEX'].includes(exchange)) {
+      if (usdt_contract_bases.includes(o.balance_type)) return true;
+      if (isUsdtPair(o)) return true;
+    } else {
+      console.log(`isForwardContract/未知的交易所:${exchange}`);
+    }
+  }
+  return false;
+};
 const pair2coin = pair => pair ? upper(pair.split('-')[0]) : null;
 const pair2coinRight = pair => pair ? upper(pair.split('-')[1]) : null;
 const isUSDX = o => getPair(o) && getPair(o).indexOf('-USD') !== -1;
 const isUsdPair = o => getPair(o) && getPair(o).endsWith('-USD');
 const isUsdtPair = o => getPair(o) && getPair(o).endsWith('-USDT');
+const isUsdxPair = o => getPair(o) && getPair(o).endsWith('-BUSD');
 const getAssetTypeName = asset_type => assetMap[asset_type] || asset_type;
 const isLong = ({ direction }) => direction && ['LONG', 'UP'].includes(direction.toUpperCase());
 const isShort = ({ direction }) => direction && ['SHORT', 'DOWN'].includes(direction.toUpperCase());
 
-function getInstrumentId({ exchange = '', asset_type, pair }) {
+function getInstrumentId({ exchange = '', asset_type, pair, instrument_id }) {
   return [exchange, asset_type, pair].filter(d => d).join('_').toUpperCase();
 }
 function parseInstrumentId(instrument_id) {
@@ -120,14 +133,14 @@ function getVolumeUsd(o, source) {
     if (isUSDX(asset)) return _volume * price;
     return null;// console.log(asset, 'getVolumeUsd/isSpot:TODO.....');
   }
-  if (exchange === 'BITMEX') {
-    if (isSwap(asset)) return _volume * 1;
-  } else if (['BINANCE', 'HUOBI', 'OKEX'].includes(exchange)) {
+  if (['BINANCE', 'HUOBI', 'OKEX'].includes(exchange)) {
     if (isReverseContract(asset)) {
       return _volume * getReverseContractSize(asset);
     } else if (isForwardContract(asset)) {
       return _volume * price;
     }
+  } else if (exchange === 'BITMEX') {
+    if (isSwap(asset)) return _volume * 1;
   }
   return console.log(o, source, 'getVolumeUsd:TODO.....');
 }
@@ -157,6 +170,7 @@ function getBalanceType(asset) {
   if (exchange === 'BINANCE') {
     if (isContract(asset)) {
       if (isUsdtPair(asset)) return 'USDT_CONTRACT';
+      if (isUsdxPair(asset)) return 'USDT_CONTRACT';
       if (isUsdPair(asset)) return 'COIN_CONTRACT';
     }
   }
@@ -181,7 +195,11 @@ function getBalanceId(asset, source) {
   }
   const balance_type = getBalanceType(asset);
   if (balance_type === 'SPOT') {
-    if (!coin) console.log(asset, 'Asset无法提取coin 字段');
+    if (!coin) console.log(asset, 'SPOT Asset无法提取coin 字段');
+    return makeArrayId([exchange, balance_type, coin]);
+  }
+  if (balance_type === 'WALLET') {
+    if (!coin) console.log(asset, 'WALLET Asset无法提取coin 字段');
     return makeArrayId([exchange, balance_type, coin]);
   }
   if (exchange === 'BINANCE') {
@@ -307,7 +325,28 @@ const ledgerTypes = {
   REALIZED_PNL: 'REALIZED_PNL'
 };
 
+
+const HOUR = 3600 * 1000;
+const HOUR8 = HOUR * 8;
+function getFundingInterval(asset) {
+  if (!asset) return null;
+  if (!isSwap(asset)) return console.log('getFundingInterval/asset非swap...');
+  if (['BINANCE'].includes(asset.exchange)) return HOUR8;
+  if (['OKEX', 'HUOBI'].includes(asset.exchange)) return HOUR8 * 2;
+  console.log(`getFundingInterval/未知的交易所: ${asset.exchange}...`);
+}
+
+function getFundingDelayPeriod(asset) {
+  if (!asset) return null;
+  if (!isSwap(asset)) return console.log('getFundingDelayPeriod/asset非swap...');
+  if (['BINANCE'].includes(asset.exchange)) return 0;
+  if (['OKEX', 'HUOBI'].includes(asset.exchange)) return 1;
+  console.log(`getFundingDelayPeriod/未知的交易所: ${asset.exchange}...`);
+}
+
 module.exports = {
+  getFundingDelayPeriod,
+  getFundingInterval,
   ledgerTypes,
   isLong,
   isShort,

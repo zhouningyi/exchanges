@@ -153,8 +153,8 @@ class Exchange extends Base {
         } else {
           this.overWeight = false;
         }
-      } else {
-        console.log('1m weight缺失...');
+      } else if (url && url.indexOf('fundingRate') === -1) {
+        console.log(url, 'binance 1m weight缺失...');
       }
     } else {
       console.log('respHeader缺失...');
@@ -278,9 +278,16 @@ class Exchange extends Base {
         const { assets, ...rest } = o;
         const osGroup = _.groupBy(assets, a => this._getAssetBaseType(a));
         for (const assetBaseType in osGroup) {
-          const baseFnName = `${assetBaseType}${upperFirst(name)}`;
-          const _res = await this[baseFnName]();
-          res = [...res, ..._res];
+          // if (assetBaseType !== 'spot')
+          if (['coinContract', 'usdtContract'].includes(assetBaseType)) {
+            const baseFnName = `${assetBaseType}${upperFirst(name)}`;
+            const _res = await this[baseFnName]();
+            if (_res && Array.isArray(_res)) {
+              res = [...res, ..._res];
+            } else {
+              console.log(`${baseFnName}返回异常:`, _res);
+            }
+          }
         }
         return res;
       };

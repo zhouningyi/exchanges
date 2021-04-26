@@ -101,28 +101,40 @@ function _formatUsdtContractKline(d, o) {
 }
 const usdtContractKline = ds => _.map(ds, _formatUsdtContractKline);
 
-function _formatUsdtContractBalanace(d, o) {
+function _formatUsdtContractBalance(d, o, source) {
   const res = {
     balance_type,
     exchange,
     coin: d.asset,
   };
   res.balance_id = ef.getBalanceId(res);
-  if (d.balance || d.crossWalletBalance) res.wallet_balance = _parse(d.balance || d.crossWalletBalance);
-  if (d.crossUnPnl) res.profit_unreal = _parse(d.crossUnPnl);
-  if (d.availableBalance) res.avaliable_balance = _parse(d.availableBalance);
+  if (!isNull(d.walletBalance)) {
+    res.wallet_balance = _parse(d.walletBalance);
+  } else if (!isNull(d.crossWalletBalance)) {
+    res.wallet_balance = _parse(d.crossWalletBalance);
+  } else if (!isNull(d.balance)) {
+    res.wallet_balance = _parse(d.balance);
+  }
+  // if (d.balance || d.crossWalletBalance || d.walletBalance) res.wallet_balance = _parse(d.balance || d.crossWalletBalance || d.walletBalance);
+  if (d.marginBalance) res.balance = _parse(d.marginBalance);
+  if (d.availableBalance) res.avaliable_balance = res.balance_available = _parse(d.availableBalance);
+  if (d.unrealizedProfit || d.crossUnPnl) res.profit_unreal = _parse(d.unrealizedProfit || d.crossUnPnl);
   if (d.maxWithdrawAmount) res.withdraw_available = _parse(d.maxWithdrawAmount);
-
+  if (d.positionInitialMargin) res.position_initial_margin = _parse(d.positionInitialMargin);
+  if (d.marginBalance) res.margin = _parse(d.marginBalance);
+  if (d.maintMargin) res.maint_margin = _parse(d.maintMargin);
+  if (d.initialMargin) res.initial_margin = _parse(d.initialMargin);
+  // if (res.coin === 'BNB')console.log(res, d, source, 'profit_unreal...');
   return res;
 }
-const usdtContractBalances = (ds, o = {}) => _.map(ds, d => _formatUsdtContractBalanace(d, o));
+const usdtContractBalances = (ds, o = {}) => _.map(ds ? ds.assets : [], d => _formatUsdtContractBalance(d, o, 'usdtContractBalances'));
 
 function _formatUsdtContractPosition(d) {
-  console.log(d, 'd....d.....');
   const info = parseSymbolId(d);
   const res = {
-    exchange,
     ...info,
+    exchange,
+    asset_type,
   };
   if (d.liquidationPrice) res.liquidation_price = _parse(d.liquidationPrice);
   if (d.isAutoAddMargin) res.is_auto_add_margin = d.isAutoAddMargin !== 'false';
@@ -154,17 +166,19 @@ const usdtContractPositions = (ds, o) => {
       result.push(arr[0]);// positionSide = BOTH
     } else {
       const arrg = _.keyBy(arr, d => d.position_side);
-      const long_vector = arrg.LONG.vector;
-      const short_vector = -arrg.SHORT.vector;
-      const vector = long_vector + short_vector;
-      const _res = { ...arrg.LONG, position_side: 'LONG_SHORT', vector, amount: Math.abs(vector), long_vector, short_vector };
+      const long_vector = arrg.LONG ? arrg.LONG.vector : 0;
+      const short_vector = -(arrg.SHORT ? arrg.SHORT.vector : 0);
+      const both_vector = arrg.BOTH ? arrg.BOTH.vector : 0;
+      const vector = long_vector + short_vector + both_vector;
+      const _res = { ...arrg.LONG, position_side: 'LONG_SHORT', vector, amount: Math.abs(vector), long_vector, short_vector, exchange, asset_type };
       result.push(_res);
     }
   }
   return result;
 };
 
-function _formatUsdtContractOrder(d, o = {}) {
+function _formatUsdtContractOrder(d, o = {}, source) {
+  // if (d && ['17585244961', 17585244961].includes(d.orderId)) console.log(d, source, '1dddd....');
   // console.log(d, 'ddd....');
   const { symbol: symbol_id } = d;
   const { assets, ...rest } = o;
@@ -178,6 +192,7 @@ function _formatUsdtContractOrder(d, o = {}) {
     ...info,
   };
   if (d.avgPrice) res.price_avg = _parse(d.avgPrice);
+  // console.log(res.price_avg, 'res.price_avg ...');
   if (d.clientOrderId)res.client_oid = `${d.clientOrderId}`;
   if (d.orderId)res.order_id = `${d.orderId}`;
   if (d.qty || d.origQty) res.amount = _parse(d.qty || d.origQty);
@@ -212,13 +227,12 @@ function _formatUsdtContractOrder(d, o = {}) {
   return cleanObjectNull(res);
 }
 
-
-function _formatUsdtContractOrders(ds) {
-  return _.map(ds, d => _formatUsdtContractOrder(d));
+function _formatUsdtContractOrders(ds, o, source) {
+  return _.map(ds, d => _formatUsdtContractOrder(d, o, source));
 }
 
 function usdtContractOrders(ds, o) {
-  return _.map(ds, _formatUsdtContractOrder);
+  return _.map(ds, d => _formatUsdtContractOrder(d, o, 'usdtContractOrders'));
 }
 
 function usdtContractOrdersO(o = {}) {
@@ -241,6 +255,7 @@ function usdtContractOrderO(o = {}) {
   };
   if (o.client_oid) opt.newClientOrderId = o.client_oid;
   if (o.price) opt.price = o.price;
+  if (o.reduce_only) opt.reduceOnly = true;
   return opt;
 }
 
@@ -255,7 +270,7 @@ const usdtContractOrderInfo = _formatUsdtContractOrder;
 
 const usdtContractUnfinishOrdersO = publicUtils.formatOrderO;
 const usdtContractUnfinishOrders = (ds, o) => {
-  return _formatUsdtContractOrders(ds, o);
+  return _formatUsdtContractOrders(ds, o, 'usdtContractUnfinishOrders');
 };
 
 function _formatUsdtContractOrderDetail(d) {
@@ -346,19 +361,25 @@ function usdtContractFundingHistory(ds, o = {}) {
 function usdtContractCurrentFundingO(o = {}) {
   return { symbol: pair2symbol(o.pair) };
 }
-function usdtContractCurrentFunding(ds, o) {
-  return _.map(ds, (d) => {
-    return {
-      exchange,
-      asset_type,
-      pair: o.pair,
-      mark_price: _parse(d.markPrice),
-      index_price: _parse(d.indexPrice),
-      interest_rate: _parse(d.interestRate),
-      estimated_rate: _parse(d.lastFundingRate),
-      next_funding_time: new Date(_parse(d.nextFundingTime)),
-    };
-  });
+
+function formatCurrentFunding(d, o) {
+  if (!d.nextFundingTime) return null;
+  const res = {
+    exchange,
+    asset_type,
+    pair: o ? o.pair : formatSymbolPair(d.symbol),
+    mark_price: _parse(d.markPrice),
+    index_price: _parse(d.indexPrice),
+    estimated_rate: _parse(d.lastFundingRate),
+    next_funding_time: new Date(_parse(d.nextFundingTime)),
+    time: new Date(d.time),
+  };
+  if (d.interestRate) res.interest_rate = _parse(d.interestRate);
+  res.instrument_id = ef.getInstrumentId(res);
+  return res;
+}
+function usdtContractCurrentFunding(d, o) {
+  return formatCurrentFunding(d, o);
 }
 
 function usdtContractPositionMode(o) {
@@ -377,6 +398,10 @@ function usdtContractUpdatePositionModeO(o) {
 function usdtContractUpdatePositionMode(d) {
   console.log(d, 'usdtContractUpdatePositionMode..');
 }
+
+function usdtContractAdl() {
+}
+
 module.exports = {
   usdtContractPositionModeO: empty,
   usdtContractUpdatePositionModeO,
@@ -397,6 +422,7 @@ module.exports = {
   usdtContractOrderInfoO,
   usdtContractOrderInfo,
   usdtContractCancelOrderO,
+  formatCurrentFunding,
   usdtContractCancelOrder,
   usdtContractOrderO,
   usdtContractOrder,
@@ -405,7 +431,7 @@ module.exports = {
   usdtContractAssetsO: empty,
   usdtContractAssets,
   //
-  formatUsdtContractBalanace: _formatUsdtContractBalanace,
+  formatUsdtContractBalance: _formatUsdtContractBalance,
   usdtContractBalancesO: empty,
   usdtContractBalances,
   usdtContractPositionsO: empty,

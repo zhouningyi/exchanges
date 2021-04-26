@@ -119,7 +119,7 @@ class WS extends Event {
       return this.restart();
     });
     ws.on('close', (e) => {
-      console.log(e, 'close');
+      console.log(e, stream, 'close');
       this._isReady = false;
       return this.restart();
     });

@@ -82,7 +82,7 @@ function spotKline(ds, o) {
 
 // //私有
 function spotBalances(ds, o) {
-  return _.map(ds.balances, (d) => {
+  const resp = _.map(ds.balances, (d) => {
     const res = {
       exchange,
       balance_type,
@@ -90,9 +90,11 @@ function spotBalances(ds, o) {
       balance: d.balance ? _parse(d.balance) : (_parse(d.free) + _parse(d.locked)),
       locked_balance: _parse(d.locked)
     };
+    res.balance_available = res.avaliable_balance = res.balance - res.locked_balance;
     res.balance_id = ef.getBalanceId(res);
     return res;
   });
+  return resp;
 }
 
 function _formatSpotOrder(d, o = {}) {

@@ -153,13 +153,19 @@ const usdtContractConfig = {
   usdtContractBalances: {
     method: 'GET',
     name_cn: 'USDT合约K线资产',
-    endpoint: 'fapi/v2/balance',
+    // endpoint: 'fapi/v2/balance',
+    endpoint: 'fapi/v2/account',
     notNull: [],
     sign: true
   },
   usdtContractPositions: {
     name_cn: 'USDT合约持仓',
     endpoint: 'fapi/v2/positionRisk',
+    sign: true
+  },
+  usdtContractAdl: {
+    name_cn: '合约的ADL序列',
+    endpoint: 'fapi/v1/adlQuantile',
     sign: true
   },
   usdtContractOrders: {

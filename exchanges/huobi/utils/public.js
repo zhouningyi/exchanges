@@ -413,7 +413,10 @@ function getContractOrderType(o) {
   const order_type = _getOrderType(o);
   const res = null;
   if (['POST_ONLY', 'MAKER'].includes(order_type)) return 'post_only';// 本质上也是个limit
-  if (type === 'LIMIT') return ['limit', order_type].filter(d => d).join('_');
+  if (type === 'LIMIT') {
+    if (order_type === 'ioc') return 'ioc';
+    return ['limit', order_type].filter(d => d).join('_');
+  }
   if (type === 'MARKET') return ['optimal_20', order_type].filter(d => d).join('_');
   if (['FOK'].includes(order_type)) return 'fok';
   if (['IOC'].includes(order_type)) return 'ioc';
@@ -471,8 +474,13 @@ const contractOrderPriceTypeMap = {
   post_only: 'MAKER_ONLY',
   1: 'LIMIT',
   2: 'MARKET',
+  3: 'MARKET',
+  4: 'MARKET',
+  6: 'MAKER',
+  10: 'FOK',
+  11: 'IOC',
+  16: 'MARKET',
 };
-
 
 function getRContractOrderProps(o) {
   const offset = o.offset.toLowerCase();

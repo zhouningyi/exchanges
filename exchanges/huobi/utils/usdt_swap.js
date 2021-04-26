@@ -187,7 +187,7 @@ function usdtSwapCancelOrder(res, o) {
 }
 
 function _formatUsdtSwapOrder(l, o) {
-  const { status, symbol: coin, trade, profit, price, lever_rate, volume: amount, create_date, created_at, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
+  const { status, symbol: coin, update_time, trade, profit, price, lever_rate, volume: amount, create_date, created_at, order_source, offset, trade_volume: deal_amount, order_price_type, trade_avg_price, fee } = l;
   const ct = create_date || created_at;
   const pair = l.contract_code || `${coin}-USDT`;
   const order_id = l.order_id_str || `${l.order_id}`;
@@ -207,10 +207,11 @@ function _formatUsdtSwapOrder(l, o) {
     filled_amount: deal_amount,
     fee: _parse(fee),
     ...getRContractOrderProps(l),
-    server_created_at: ct ? new Date(ct) : undefined,
-    server_updated_at: new Date(),
     status: rContractStatusMap[status]
   };
+  if (trade_avg_price) res.price_avg = trade_avg_price;
+  if (ct)res.server_created_at = new Date(ct);
+  if (update_time)res.server_updated_at = new Date(update_time);
   if (trade)res.trade = trade;
   if (l.client_order_id) res.client_oid = `${l.client_order_id}`;
   res.instrument_id = ef.getInstrumentId(res);

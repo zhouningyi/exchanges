@@ -115,20 +115,21 @@ function getSymbolId({ asset_type, pair }) {
   console.log('getSymbolId:没有匹配 symbolId..');
 }
 
-const baseCoins = ['USD', 'USDT', 'BTC', 'ETH', 'BNB', 'BUSD', 'EUR', 'KRW', 'BRL', 'ZAR', 'RUB', 'AUD', 'GBP', 'TRY', 'NGN', 'BIDR', 'UAH', 'TUAH', 'IDRT', 'VND', 'USDC', 'USDS', 'PAX', 'DAI', 'TRX', 'XRP'];
+const baseCoins = ['USD', 'USDT', 'BTC', 'ETH', 'BNB', 'BUSD', 'EUR', 'KRW', 'BRL', 'VAI', 'ZAR', 'RUB', 'AUD', 'GBP', 'TRY', 'NGN', 'BIDR', 'UAH', 'TUAH', 'IDRT', 'VND', 'USDC', 'USDS', 'PAX', 'DAI', 'TRX', 'XRP'];
 
-function formatSymbolPair(symbol) {
+function formatSymbolPair(symbol, o) {
   symbol = symbol.toUpperCase();
   if (symbol === 'BTCBUSD') return 'BTC-BUSD';
   for (const baseCoin of baseCoins) {
     if (symbol.endsWith(baseCoin)) return symbol.replace(baseCoin, `-${baseCoin}`);
   }
-  console.log(`formatSymbolPair:${symbol} 无法标准化...`);
+  console.log(`formatSymbolPair:${symbol} 无法标准化....`);
+  // console.log(o, 'o....');
 }
 
 function parseSymbolId(o, opt = {}) {
   const [symbol, ext] = o.symbol.split('_');
-  const pair = formatSymbolPair(symbol);
+  const pair = formatSymbolPair(symbol, o);
   const coin = pair ? pair.split('-')[0] : null;
   const asset_type = opt.asset_type || o.asset_type || ext2asset_type(ext);
   const instrument_id = getInstrumentId({ exchange: 'BINANCE', pair, asset_type });
@@ -182,8 +183,14 @@ function getOrderDirectionOptions({ side, direction = 'LONG' }) {
   return { side: d1 * s1 > 0 ? 'BUY' : 'SELL' };
 }
 
-function parseOrderDirectionOptions({ side, realizedPnl }) {
+function parseOrderDirectionOptions(d = {}) {
+  let { side, reduceOnly, realizedPnl } = d;
+  // console.log(d, 'dd....');
   realizedPnl = parseFloat(realizedPnl, 10);
+  if (reduceOnly) {
+    if (side === 'SELL') return { side: 'SELL', direction: 'LONG' };
+    if (side === 'BUY') return { side: 'SELL', direction: 'SHORT' };
+  }
   if (!realizedPnl) {
     if (side === 'SELL') return { side: 'BUY', direction: 'SHORT' };
     if (side === 'BUY') return { side: 'BUY', direction: 'LONG' };
@@ -224,7 +231,7 @@ function _formatOrderO(o) {
   const symbol = getSymbolId(o);
   const opt = { symbol };
   if (o.order_id) {
-    opt.orderId = o.order_id;
+    opt.orderId = parseInt(o.order_id, 10);
   } else if (o.client_oid) {
     opt.origClientOrderId = o.client_oid;
   }

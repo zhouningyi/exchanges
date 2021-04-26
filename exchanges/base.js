@@ -486,7 +486,7 @@ class exchange extends Event {
           console.log(`registerFn/${restFnName}不存在...`);
         }
         // }
-        if (name === 'balances') return filterBalances(ds, o);
+        if (name === 'balances') return filter_by_asset ? filterBalances(ds, o) : ds;
         if (['positions', 'assets', 'ledgers'].includes(name)) {
           const res = filter_by_asset ? filterByInstrumentId(ds, o) : ds;
           return res;
@@ -517,14 +517,14 @@ class exchange extends Event {
       const fnName = `subscribeAsset${upperFirst(name)}`;
       this[fnName] = async (o, cb) => {
         const assets = this.parseAssets(o);
+        const { filter_by_asset = true } = o;
         const assetsGroup = _.groupBy(assets, this._getAssetBaseType.bind(this));
         for (const assetBaseType in assetsGroup) {
           const realFnName = `ws${upperFirst(assetBaseType)}${upperFirst(name)}`;
           const _assets = assetsGroup[assetBaseType];
           if (this[realFnName]) {
-            // if (name === 'balances')console.log(realFnName, 'realFnName...');
             this[realFnName]({ ...o, assets: _assets }, (ds) => {
-              if (name === 'balances') ds = filterBalances(ds, o);
+              if (name === 'balances') ds = filter_by_asset ? filterBalances(ds, o) : ds;
               if (name === 'positions') ds = filterByInstrumentId(ds, o);
               cb(ds);
             });

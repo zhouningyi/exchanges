@@ -265,10 +265,8 @@ class Exchange extends Base {
       console.log(`${msg} | ${endpoint}`, endpoint, params);
       return { error: msg };
     }
-    if (body.error_message) {
-      return {
-        error: body.error_message
-      };
+    if (body.error_message || body.code) {
+      return { error: body.error_message || body.code };
       // return Utils.throwError(body.error_message);
     }
     // if (url && url.indexOf('margin/v3/cancel_batch_orders') !== -1) {

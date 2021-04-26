@@ -29,6 +29,7 @@ function _wallet(d) {
     balance: _parse(d.balance),
     locked_balance: _parse(d.hold),
     balance_available: _parse(d.available),
+    avaliable_balance: _parse(d.available),
     coin: d.currency
   };
   res.balance_id = ef.getBalanceId(res);
@@ -144,7 +145,7 @@ function spotOrdersO(o = {}) {
   const status = o.status || o.state || 'SUCCESS';
   const res = {
     // ...rest,
-    instrument_id: o.instrument_id || o.pair,
+    instrument_id: o.pair || o.instrument_id,
     status: reverseOrderStatusMap[status],
   };
   if (client_oid) res.client_oid = client_oid;

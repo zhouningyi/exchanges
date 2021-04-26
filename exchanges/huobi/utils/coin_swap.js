@@ -50,6 +50,9 @@ function _formatCoinSwapBalance(d) {
     pair,
     account_rights: _parse(d.margin_balance),
     balance: _parse(d.margin_balance),
+    balance_available: _parse(d.margin_available),
+    avaliable_balance: _parse(d.margin_available),
+    locked_balance: _parse(d.margin_frozen),
     risk_rate: d.risk_rate ? _parse(d.risk_rate) : null, // 保证金率
     lever_rate: _parse(d.lever_rate),
     profit_real: _parse(d.profit_real),
@@ -164,7 +167,7 @@ function coinSwapCancelOrder(res, o) {
 }
 
 function _formatCoinSwapOrder(l, o) {
-  const { status, symbol: coin, trade, profit, price, lever_rate, volume: amount, create_date, created_at, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
+  const { status, symbol: coin, trade, profit, trade_avg_price, price, lever_rate, volume: amount, create_date, created_at, order_source, offset, trade_volume: deal_amount, order_price_type, fee } = l;
   const ct = create_date || created_at;
   const pair = l.contract_code || `${coin}-USD`;
   const order_id = l.order_id_str || `${l.order_id}`;
@@ -188,6 +191,7 @@ function _formatCoinSwapOrder(l, o) {
     server_updated_at: new Date(),
     status: rContractStatusMap[status]
   };
+  if (trade_avg_price) res.price_avg = trade_avg_price;
   if (trade)res.trade = trade;
   if (l.client_order_id) res.client_oid = `${l.client_order_id}`;
   res.instrument_id = ef.getInstrumentId(res);

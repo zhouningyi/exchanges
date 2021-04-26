@@ -13,7 +13,6 @@ const { getOrderTypeOptions, getOrderDirectionOptions, pair2symbol, asset_type2e
 
 const exchange = 'BINANCE';
 const balance_type = 'COIN_CONTRACT';
-const asset_type = 'SWAP';
 
 const { _parse } = Utils;
 
@@ -124,9 +123,11 @@ function _formatCoinContractPosition(d) {
   const res = {
     ...info,
     exchange,
+    // asset_type,
     symbol_id: d.symbol,
     position_side: d.positionSide,
     price_avg: _parse(d.entryPrice),
+    mark_price: _parse(d.markPrice),
   };
   if (d.unrealizedProfit) res.profit_unreal = _parse(d.unrealizedProfit);
   if (d.liquidationPrice) res.liquidation_price = _parse(d.liquidationPrice);
@@ -134,6 +135,7 @@ function _formatCoinContractPosition(d) {
   if (d.leverage) res.lever_rate = _parse(d.leverage);
   if (d.initialMargin) res.initial_margin = _parse(d.initialMargin);
   if (d.positionSide) res.position_side = d.positionSide;
+  if (d.leverage)res.lever_rate = _parse(d.leverage);
   if (d.positionAmt) {
     res.vector = _parse(d.positionAmt) || 0;
     res.amount = Math.abs(res.vector);
@@ -141,6 +143,9 @@ function _formatCoinContractPosition(d) {
       res.vector *= -1;
     }
   }
+  if (d.maxQty)res.max_amount = _parse(d.maxQty);
+  if (d.unrealizedProfit) res.avaliable_balance = _parse(d.unrealizedProfit);
+
   const direction = res.vector > 0 ? 'LONG' : res.amount < 0 ? 'SHORT' : null;
   if (direction) res.direction = direction;
   if (d.maxQty) res.max_amount = _parse(d.maxQty);
@@ -151,7 +156,28 @@ function _formatCoinContractPosition(d) {
   return res;
 }
 
-function coinContractPositionsBase(ds, o) {
+// function coinContractPositions(ds) {
+//   const result = _.map(ds, (d) => {
+//     const res = {
+//       exchange,
+//       ...parseSymbolId(d),
+//       liquidation_price: _parse(d.liquidationPrice),
+//       position_side: d.positionSide,
+//       margin_mode: d.marginType
+//     };
+//     if (d.positionAmt) {
+//       res.vector = _parse(d.positionAmt) || 0;
+//       res.amount = Math.abs(res.vector);
+//     }
+//     res.instrument_id = Utils.formatter.getInstrumentId(res);
+//     return res;
+//   });
+//   return result;
+// }
+
+const coinContractPositions = contractPositionsBase;
+
+function contractPositionsBase(ds, o) {
   const res = _.map(ds, d => _formatCoinContractPosition(d, o));
   const resGroup = _.groupBy(res, d => d.instrument_id);
   const result = [];
@@ -160,40 +186,25 @@ function coinContractPositionsBase(ds, o) {
     if (arr.length === 1) {
       result.push(arr[0]);// positionSide = BOTH
     } else {
-      const arrg = _.keyBy(arr, d => d.position_side);
-      const long_vector = arrg.LONG.vector;
-      const short_vector = -arrg.SHORT.vector;
-      const vector = long_vector + short_vector;
-      const _res = { ...arrg.LONG, position_side: 'LONG_SHORT', vector, amount: Math.abs(vector), long_vector, short_vector };
-      result.push(_res);
+      const _arr = _.filter(arr, l => l.vector);
+      if (_arr.length === 1) {
+        result.push(_arr[0]);
+      } else if (_arr.length === 0) {
+        result.push(arr[0]);
+      } else {
+        const arrg = _.keyBy(_arr, d => d.position_side);
+        const long_vector = arrg.LONG ? arrg.LONG.vector : 0;
+        const short_vector = -(arrg.SHORT ? arrg.SHORT.vector : 0);
+        const both_vector = arrg.BOTH ? arrg.BOTH.vector : 0;
+        const vector = long_vector + short_vector + both_vector;
+        const _res = { ...arrg.LONG, position_side: 'LONG_SHORT', vector, amount: Math.abs(vector), long_vector, short_vector, exchange };
+        result.push(_res);
+      }
     }
   }
   return result;
 }
 
-function coinContractPositions(ds) {
-  const result = _.map(ds, (d) => {
-    const res = {
-      exchange,
-      ...parseSymbolId(d),
-      price_avg: _parse(d.entryPrice),
-      mark_price: _parse(d.markPrice),
-      avaliable_balance: _parse(d.unrealizedProfit),
-      max_amount: _parse(d.maxQty),
-      lever_rate: _parse(d.leverage),
-      liquidation_price: _parse(d.liquidationPrice),
-      position_side: d.positionSide,
-      margin_mode: d.marginType
-    };
-    if (d.positionAmt) {
-      res.vector = _parse(d.positionAmt) || 0;
-      res.amount = Math.abs(res.vector);
-    }
-    res.instrument_id = Utils.formatter.getInstrumentId(res);
-    return res;
-  });
-  return result;
-}
 
 function _formatCoinContractBalance(d, o, source) {
   const res = {
@@ -202,10 +213,13 @@ function _formatCoinContractBalance(d, o, source) {
     coin: d.asset,
   };
   res.balance_id = Utils.formatter.getBalanceId(res);
+
   //
   if (d.walletBalance || d.crossWalletBalance) res.wallet_balance = _parse(d.walletBalance || d.crossWalletBalance);
-  if (d.availableBalance) res.avaliable_balance = _parse(d.availableBalance);
-  if (d.unrealizedProfit || d.crossUnPnl) res.profit_unreal = _parse(d.unrealizedProfit || d.crossUnPnl);
+  if (d.availableBalance) res.avaliable_balance = res.balance_available = _parse(d.availableBalance);
+  if (d.unrealizedProfit || d.crossUnPnl) {
+    res.profit_unreal = _parse(d.unrealizedProfit || d.crossUnPnl);
+  }
   if (d.maxWithdrawAmount) res.withdraw_available = _parse(d.maxWithdrawAmount);
   if (d.openOrderInitialMargin)res.open_order_initial_margin = _parse(d.openOrderInitialMargin);
   if (d.positionInitialMargin) res.position_initial_margin = _parse(d.positionInitialMargin);
@@ -315,7 +329,7 @@ function coinContractFundingHistory(ds, o = {}) {
   const res = _.map(ds, (d) => {
     return {
       exchange,
-      asset_type,
+      asset_type: 'SWAP',
       pair: o.pair,
       time: new Date(d.fundingTime),
       funding_rate: _parse(d.fundingRate),
@@ -333,7 +347,7 @@ function coinContractCurrentFunding(ds, o) {
   return _.map(ds, (d) => {
     return {
       exchange,
-      asset_type,
+      asset_type: 'SWAP',
       pair: o.pair,
       mark_price: _parse(d.markPrice),
       index_price: _parse(d.indexPrice),
@@ -347,7 +361,6 @@ function coinContractCurrentFunding(ds, o) {
 function empty() {
   return {};
 }
-
 function coinContractPositionMode(o = {}) {
   let position_side = null;
   if (o.dualSidePosition === false) {
@@ -384,7 +397,8 @@ module.exports = {
   formatCoinContractPosition: _formatCoinContractPosition,
 //
   coinContractPositionsBaseO: empty,
-  coinContractPositionsBase,
+  coinContractPositionsBase: contractPositionsBase,
+  contractPositionsBase,
   coinContractPositionsO: empty,
   coinContractPositions,
   formatCoinContractDepth,

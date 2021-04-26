@@ -193,7 +193,6 @@ const futureBalance = {
     const { data, topic } = ds;
     if (!data) return false;
     const res = futureUtils.futureBalances(data);
-    // console.log(data, res, 'res.....');
     // const btc = _.filter(res, d => d.coin === 'BTC')[0];
     // if (btc)console.log(btc.balance, 'future ws...');
     return res;

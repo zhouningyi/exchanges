@@ -408,9 +408,13 @@ function empty() {
 
 function swapCurrentFundingO(o = {}) {
   const { pair, kline, ...rest } = o;
-  return { instrument_id: getInstrumentId(pair), ...rest };
+  const instrument_id = getInstrumentId(pair);
+  // console.log(instrument_id, 'instrument_id....');
+  return { ...rest, instrument_id };
 }
+
 function swapCurrentFunding(res) {
+  if (res && res.error) return null;
   const pair = res.instrument_id.replace('-SWAP', '');
   const funding_time = new Date(_parse(res.funding_time));
   const hour8 = 8 * 3600 * 1000;
@@ -429,7 +433,7 @@ function swapCurrentFunding(res) {
 
 function swapFundingHistoryO(o) {
   const { pair, kline, ...rest } = o;
-  return { instrument_id: getInstrumentId(pair), ...rest };
+  return { ...rest, instrument_id: getInstrumentId(pair) };
 }
 
 function swapFundingHistory(ds, o) {

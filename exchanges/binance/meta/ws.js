@@ -5,6 +5,7 @@ const Utils = require('./../utils');
 const { getSymbolId } = require('./../utils/public');
 const { SPOT_WS_BASE, COIN_CONTRACT_WS_BASE, USDT_CONTRACT_WS_BASE } = require('./../config');
 const coinContractUtils = require('./../utils/coin_contract');
+const usdtContractUtils = require('./../utils/usdt_contract');
 const spotUtils = require('./../utils/spot');
 const publicUtils = require('./../utils/public');
 const { _parse } = require('../../../utils');
@@ -157,7 +158,29 @@ const spotConfig = {
   },
 };
 
+function wsUsdtContractEstimateFundingFormatter(ds) {
+  return _.map(ds, (d) => {
+    const origin = {
+      time: d.E,
+      symbol: d.s,
+      markPrice: d.p,
+      indexPrice: d.i,
+      lastFundingRate: d.r,
+      nextFundingTime: d.T
+    };
+    return usdtContractUtils.formatCurrentFunding(origin);
+  }).filter(d => d);
+}
+
 const usdtContractConfig = {
+  wsUsdtContractEstimateFunding: {
+    name: '预估资金费率',
+    streamName: () => {
+      return ['!markPrice@arr'];
+    },
+    chanel: 'markPriceUpdate',
+    formater: wsUsdtContractEstimateFundingFormatter
+  },
   wsUsdtContractDepth: {
     name: 'USDT合约深度',
     streamName: wsCoinContractDepthStream,
@@ -176,7 +199,7 @@ const usdtContractConfig = {
     streamName: 'listenKey',
     chanel: 'ACCOUNT_UPDATE',
     formater: (d) => {
-      const res = wsCoinContractPositionsFormater(d);
+      const res = wsUsdtContractPositionsFormater(d);
       return res;
     },
     sign: true
@@ -185,7 +208,7 @@ const usdtContractConfig = {
     name: 'USDT合约资产',
     streamName: 'listenKey',
     chanel: 'ACCOUNT_UPDATE',
-    formater: wsCoinContractBalancesFormater,
+    formater: wsUsdtContractBalancesFormater,
     sign: true,
   },
 };
@@ -209,7 +232,10 @@ function getWsOptions(o) {
 
 function wsUsdtContractDepthFormater(d, o) {
   const { s: symbol, b: bids, a: asks } = d;
-  // if (Math.random() < 0.1) console.log(new Date() - new Date(d.T));
+  const now = new Date();
+  const interval = now - t;
+  if (interval > 800) console.log(now, interval, 9999);
+  t = now;
   return {
     symbol_id: symbol,
     ...getWsOptions(d),
@@ -220,6 +246,7 @@ function wsUsdtContractDepthFormater(d, o) {
   };
 }
 
+let t = new Date();
 function wsCoinContractDepthFormater(d, o) {
   const { s: symbol, b: bids, a: asks } = d;
   const res = {
@@ -317,6 +344,17 @@ function wsCoinContractBalancesFormater(d) {
   });
 }
 
+function wsUsdtContractBalancesFormater(d) {
+  const account = d.a;
+  if (!account) return null;
+  return _.map(account.B, (b) => {
+    const { a: asset, wb: walletBalance, cw: crossWalletBalance } = b;
+    const originBalance = { asset, walletBalance, crossWalletBalance };
+    return { ...usdtContractUtils.formatUsdtContractBalance(originBalance, {}, 'wsCoinContractBalancesFormater') };
+  });
+}
+
+
 function wsRequestCoinContractPositionsFormater(d) {
   const ps = _.get(d, 'result.0.res.positions');
   return ps ? _.map(ps, coinContractUtils.formatCoinContractPosition).filter(d => d) : null;
@@ -330,6 +368,17 @@ function wsCoinContractPositionsFormater(d) {
     return { symbol, positionAmt, asset_type: 'SWAP', entryPrice, unrealizedProfit, positionSide };
   });
   const res = coinContractUtils.coinContractPositionsBase(originPositions);
+  return res;
+}
+
+function wsUsdtContractPositionsFormater(d) {
+  const account = d.a;
+  if (!account) return null;
+  const originPositions = _.map(account.P, (p) => {
+    const { s: symbol, pa: positionAmt, ep: entryPrice, up: unrealizedProfit, ps: positionSide } = p;
+    return { symbol, positionAmt, asset_type: 'SWAP', entryPrice, unrealizedProfit, positionSide };
+  });
+  const res = usdtContractUtils.usdtContractPositions(originPositions);
   return res;
 }
 
