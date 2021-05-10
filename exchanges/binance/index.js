@@ -141,7 +141,8 @@ class Exchange extends Base {
       await Utils.delay(150);
     }
     const { data: body, headers: respHeaders } = await request(o, { header: true });// ,type: 'http2'
-    // console.log(respHeaders, 'respHeaders...');
+    if (endpoint === 'sapi/v1/system/status')console.log(body, 'sapi/v1/system/status....');
+
     if (respHeaders) {
       let weight = respHeaders['x-mbx-used-weight-1m'];
       if (weight) {
@@ -154,7 +155,7 @@ class Exchange extends Base {
           this.overWeight = false;
         }
       } else if (url && url.indexOf('fundingRate') === -1) {
-        console.log(url, 'binance 1m weight缺失...');
+        // console.log(url, 'binance 1m weight缺失...');
       }
     } else {
       console.log('respHeader缺失...');
@@ -164,7 +165,7 @@ class Exchange extends Base {
     //   if (e) console.log(e.message);
     //   return false;
     // }
-    // console.log(body, '.......body........');
+    //
     if (!body) {
       console.log(`${endpoint}: body 返回为空...`);
       return false;
@@ -182,16 +183,18 @@ class Exchange extends Base {
       console.log(`${msg} | ${endpoint}`, endpoint, params);
       return { error: msg };
     }
-    if (body.msg) {
+    if (body.msg && body.msg !== 'success') {
       return {
         error: body.msg
+
       };
       // return Utils.throwError(body.error_message);
     }
     // if (url && url.indexOf('margin/v3/cancel_batch_orders') !== -1) {
     //   console.log(o, body.data || body || false, '0o2032');
     // }
-    return body.data || body || false;
+    const resp = body.data || body || false;
+    return resp;
   }
   calcCost(o = {}) {
     checkKey(o, ['source', 'target', 'amount']);
@@ -281,7 +284,7 @@ class Exchange extends Base {
           // if (assetBaseType !== 'spot')
           if (['coinContract', 'usdtContract'].includes(assetBaseType)) {
             const baseFnName = `${assetBaseType}${upperFirst(name)}`;
-            const _res = await this[baseFnName]();
+            const _res = await this[baseFnName](rest);
             if (_res && Array.isArray(_res)) {
               res = [...res, ..._res];
             } else {

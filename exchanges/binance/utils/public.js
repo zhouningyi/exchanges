@@ -18,6 +18,8 @@ const d14 = d7 * 2;
 const d90 = d1 * 365 / 4;
 // d1 * 90;
 
+const exchange = 'BINANCE';
+
 
 function time(o) {
   return {
@@ -132,7 +134,7 @@ function parseSymbolId(o, opt = {}) {
   const pair = formatSymbolPair(symbol, o);
   const coin = pair ? pair.split('-')[0] : null;
   const asset_type = opt.asset_type || o.asset_type || ext2asset_type(ext);
-  const instrument_id = getInstrumentId({ exchange: 'BINANCE', pair, asset_type });
+  const instrument_id = getInstrumentId({ exchange, pair, asset_type });
   return { coin, pair, asset_type, instrument_id };
 }
 
@@ -268,7 +270,29 @@ function loadHistoryDataO(o = {}) {
   return { downloadId: o.id };
 }
 
+
+function empty() {
+  return {};
+}
+
+function _walletAsset(d) {
+  const { networkList, coin } = d;
+  let deposit = true;
+  let withdraw = true;
+  for (const chain of networkList) {
+    const { depositEnable, withdrawEnable } = chain;
+    if (withdrawEnable === false) withdraw = false;
+    if (depositEnable === false) deposit = false;
+  }
+  return { coin, exchange, deposit, withdraw };
+}
+function walletAssets(ds) {
+  return _.map(ds, _walletAsset).filter(d => d);
+}
+
 module.exports = {
+  walletAssetsO: empty,
+  walletAssets,
   loadHistoryDataO,
   bulkHistoryDataO,
   bulkHistoryData,

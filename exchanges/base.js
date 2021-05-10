@@ -406,6 +406,9 @@ class exchange extends Event {
     }
     return assets;
   }
+  getName() {
+    return this.name ? this.name.toUpperCase() : null;
+  }
   compatible() {
     this.assetBatchCancelOrders = async (orders) => {
       const ordersGroup = _.groupBy(orders, d => this._getAssetBaseType(d));

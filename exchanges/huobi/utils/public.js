@@ -8,6 +8,8 @@ const ef = require('./../../../utils/formatter');
 
 const { checkKey } = Utils;
 
+
+const exchange = 'HUOBI';
 // function _parse(v) {
 //   return parseFloat(v, 10);
 // }
@@ -518,7 +520,36 @@ function accountBalance(res, o) {
   return { time: new Date(res.timestamp), balance: _parse(res.balance), ...o };
 }
 
+function empty() {
+  return {};
+}
+
+function _walletAsset(d) {
+  const { chains, currency } = d;
+  if (!currency) return null;
+  let deposit = false;
+  let withdraw = false;
+  for (const chain of chains) {
+    const { depositStatus, withdrawStatus } = chain;
+    if (withdrawStatus === 'allowed') withdraw = true;
+    if (depositStatus === 'allowed') deposit = true;
+  }
+  const res = {
+    exchange,
+    coin: currency.toUpperCase(),
+    deposit,
+    withdraw
+  };
+  return res;
+}
+
+function walletAssets(ds) {
+  return _.map(ds, _walletAsset).filter(d => d);
+}
+
 module.exports = {
+  walletAssetsO: empty,
+  walletAssets,
   accountBalanceO,
   accountBalance,
   formatDepth: _formatDepth,

@@ -375,7 +375,7 @@ function coinContractUpdatePositionModeO(o) {
 }
 
 function coinContractUpdatePositionMode(d) {
-  console.log(d, 'usdtContractUpdatePositionMode..');
+  console.log(d, 'coinContractUpdatePositionMode..');
 }
 
 module.exports = {

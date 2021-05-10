@@ -45,7 +45,6 @@ async function requestGot(o) {
   try {
     if (method === 'GET') {
       opt = { ...defaultO };
-      // console.log(opt, 'GET start......');
       res = await got(url, opt);
     } else if (method === 'POST') {
       opt = { ...defaultO, ...dataO };

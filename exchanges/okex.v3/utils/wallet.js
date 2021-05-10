@@ -72,7 +72,24 @@ const withdrawHistory = ds => _.map(ds, d => _formatWithDrawHistory(d, 'WITHDRAW
 
 const depositHistory = ds => _.map(ds, d => _formatWithDrawHistory(d, 'DEPOSIT'));
 
+function walletAssets(ds) {
+  return _.map(ds, (d) => {
+    let deposit = false;
+    if (d.can_deposit === '1') deposit = true;
+    let withdraw = false;
+    if (d.can_withdraw === '1') withdraw = true;
+    return {
+      coin: d.currency,
+      deposit,
+      withdraw,
+      min_withdraw: _parse(d.min_withdrawal)
+    };
+  });
+}
+
 module.exports = {
+  walletAssetsO: empty,
+  walletAssets,
   depositHistoryO: empty,
   depositHistory,
   withdrawHistoryO: empty,

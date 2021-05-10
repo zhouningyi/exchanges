@@ -3,6 +3,13 @@ const Utils = require('./../utils');
 
 const spotConfig = {
   // // // // // // // 公共部分  // // // // // // //
+  walletAssets: {
+    method: 'GET',
+    name_cn: '冲提状态',
+    sign: true,
+    endpoint: 'sapi/v1/capital/config/getall',
+    notNull: [],
+  },
   bulkHistoryData: {
     method: 'POST',
     name_cn: '现货K线数据',
@@ -198,7 +205,7 @@ const usdtContractConfig = {
     name_cn: '变换用户的持仓模式(所有symbol)',
     endpoint: 'fapi/v1/positionSide/dual',
     method: 'POST',
-    notNull: ['position_mode'],
+    notNull: ['position_side'],
     sign: true
   },
   usdtContractOrderInfo: {

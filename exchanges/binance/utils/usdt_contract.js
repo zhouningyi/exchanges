@@ -393,10 +393,18 @@ function usdtContractPositionMode(o) {
 }
 
 function usdtContractUpdatePositionModeO(o) {
+  const { position_side } = o;
+  if (position_side === 'BOTH') return { dualSidePosition: false };
+  if (position_side === 'LONG_SHORT') return { dualSidePosition: true };
+  console.log(`usdtContractUpdatePositionModeO/position_side未知:${position_side}...`);
+  return null;
 }
 
-function usdtContractUpdatePositionMode(d) {
-  console.log(d, 'usdtContractUpdatePositionMode..');
+function usdtContractUpdatePositionMode(d, o) {
+  if (d && d.msg === 'success') {
+    return { ...balance_type, ...o };
+  }
+  console.log(d, 'usdtContractUpdatePositionMode modify fail..');
 }
 
 function usdtContractAdl() {

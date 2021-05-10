@@ -62,12 +62,12 @@ module.exports = {
     desc: '系统状态',
     notNull: []
   },
-  coins: {
-    name: 'coins',
-    name_cn: '币种信息',
-    sign: false,
+  walletAssets: {
+    name: 'walletAssets',
+    name_cn: '钱包币种信息',
+    sign: true,
     endpoint: 'account/v3/currencies',
-    desc: '获取平台所有币种列表。并非所有币种都可被用于交易。在ISO 4217标准中未被定义的币种代码可能使用的是自定义代码',
+    desc: '获取资金账户所有币种基础信息和链上充提状态',
     notNull: [],
   },
   assetTotalBalance: {

@@ -36,6 +36,13 @@ const spotConfig = {
     notNull: [],
     check: 'assets'
   },
+  walletAssets: {
+    name_cn: '币种钱包冲提状态',
+    endpoint: 'v2/reference/currencies',
+    sign: false,
+    desc: '',
+    notNull: []
+  },
   spotKline: {
     name: 'spotKline',
     name_cn: 'k线图',
